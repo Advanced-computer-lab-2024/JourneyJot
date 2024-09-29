@@ -12,6 +12,7 @@ const isAuthorized = (req, res, next) => {
   }
 };
 
+//81
 router.get('/all', isAuthorized, async (req, res) => {
   try {
     const products = await Product.find().populate('sellerId', 'name').exec(); //msh mota2aked hangeeb el prodects mn el seller ID?
@@ -20,5 +21,24 @@ router.get('/all', isAuthorized, async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch products' });
   }
 });
+
+//83
+router.get('/search', isAuthorized, async (req, res) => {
+    const { name } = req.query;
+  
+    try {
+      const products = await Product.find({
+        name: { $regex: name, $options: 'i' }  
+      }).populate('sellerId', 'name').exec();
+  
+      if (products.length > 0) {
+        res.json(products);
+      } else {
+        res.status(404).json({ message: 'No products found matching the query.' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to search products.' });
+    }
+  });
 
 module.exports = router;
