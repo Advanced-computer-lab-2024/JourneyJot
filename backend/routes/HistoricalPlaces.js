@@ -1,11 +1,11 @@
-import express from "express";
-import HistoricalPlace from "../models/HistoricalPlacesSchema.js"; 
+const express = require("express");
+const HistoricalPlace = require("../models/HistoricalPlacesSchema.js");
 
 const router = express.Router();
 
-
-router.post("/historical-places", async (req, res) => {
-  const { name, location, description, openingHours, ticketPrices, pictures } = req.body;
+router.post("/", async (req, res) => {
+  const { name, location, description, openingHours, ticketPrices, pictures } =
+    req.body;
 
   try {
     const historicalPlace = new HistoricalPlace({
@@ -23,7 +23,7 @@ router.post("/historical-places", async (req, res) => {
   }
 });
 
-router.get("/historical-places", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const historicalPlaces = await HistoricalPlace.find();
     res.status(200).json(historicalPlaces);
@@ -32,8 +32,9 @@ router.get("/historical-places", async (req, res) => {
   }
 });
 
-router.put("/historical-places/:id", async (req, res) => {
-  const { name, location, description, openingHours, ticketPrices, pictures } = req.body;
+router.put("/:id", async (req, res) => {
+  const { name, location, description, openingHours, ticketPrices, pictures } =
+    req.body;
 
   try {
     const historicalPlace = await HistoricalPlace.findByIdAndUpdate(
@@ -41,21 +42,25 @@ router.put("/historical-places/:id", async (req, res) => {
       { name, location, description, openingHours, ticketPrices, pictures },
       { new: true }
     );
-    if (!historicalPlace) return res.status(404).json({ message: "Historical Place not found" });
+    if (!historicalPlace)
+      return res.status(404).json({ message: "Historical Place not found" });
     res.status(200).json(historicalPlace);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-router.delete("/historical-places/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
-    const historicalPlace = await HistoricalPlace.findByIdAndDelete(req.params.id);
-    if (!historicalPlace) return res.status(404).json({ message: "Historical Place not found" });
+    const historicalPlace = await HistoricalPlace.findByIdAndDelete(
+      req.params.id
+    );
+    if (!historicalPlace)
+      return res.status(404).json({ message: "Historical Place not found" });
     res.status(200).json({ message: "Historical Place deleted successfully" });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-export default router; 
+module.exports = router;

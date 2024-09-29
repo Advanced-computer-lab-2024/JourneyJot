@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const historicalPlacesRouter = require("./routes/HistoricalPlaces");
-const museumsRouter = require("./routes/Museum");
+const museumsRouter = require("./routes/Museums");
 const tagsRouter = require("./routes/Tag");
 
 mongoose.set("strictQuery", false);
@@ -24,10 +24,6 @@ mongoose
   })
   .catch((err) => console.log(err));
 
-app.use("/api/historical-places", historicalPlacesRouter);
-app.use("/api/museums", museumsRouter);
+app.use("/historical-places", historicalPlacesRouter);
+app.use("/museums", museumsRouter);
 app.use("/api", tagsRouter);
-
-app.use((req, res, next) => {
-  res.status(404).send("Not Found");
-});

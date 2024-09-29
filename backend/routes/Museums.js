@@ -1,9 +1,9 @@
-import express from "express";
-import Museum from "../models/MuseumsSchema.js";
+const express = require("express");
+const Museum = require("../models/MusuemsSchema.js");
 
 const router = express.Router();
 
-router.post("/museums", async (req, res) => {
+router.post("/", async (req, res) => {
   const { name, location, openingHours, ticketPrices, description, pictures } =
     req.body;
 
@@ -23,7 +23,7 @@ router.post("/museums", async (req, res) => {
   }
 });
 
-router.get("/museums", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const museums = await Museum.find();
     res.status(200).json(museums);
@@ -32,7 +32,7 @@ router.get("/museums", async (req, res) => {
   }
 });
 
-router.put("/museums/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const { name, location, openingHours, ticketPrices, description } = req.body;
 
   try {
@@ -48,7 +48,7 @@ router.put("/museums/:id", async (req, res) => {
   }
 });
 
-router.delete("/museums/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const museum = await Museum.findByIdAndDelete(req.params.id);
     if (!museum) return res.status(404).json({ message: "Museum not found" });
@@ -58,4 +58,4 @@ router.delete("/museums/:id", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

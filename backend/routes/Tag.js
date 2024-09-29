@@ -1,5 +1,5 @@
 const express = require("express");
-const Tag = require("../models/Tag"); // Adjust path as necessary
+const Tag = require("../models/tagsSchema"); // Adjust path as necessary
 
 const router = express.Router();
 
