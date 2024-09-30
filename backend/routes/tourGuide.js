@@ -95,10 +95,11 @@ router.put('/:id', async (req, res) => {
 			req.params.id,
 			req.body
 		);
+
 		if (!updatedTourGuide) {
-			return res.status(400).send({ message: 'TourGuide not found' });
+			return res.status(400).send({ message: 'updatedTourGuide not found' });
 		}
-		return res.status(200).send({ message: 'TourGuide found' });
+		return res.status(200).send({ message: 'updatedTourGuide found' });
 	} catch (error) {
 		console.log(error.message);
 		res.status(500).send({ message: error.message });
