@@ -29,7 +29,7 @@ router.get('/search', isAuthorized, async (req, res) => {
     try {
       const products = await Product.find({
         name: { $regex: name, $options: 'i' }
-      }).populate('sellerId', 'name').exec(); //msh mota2aked hangeeb el prodects mn el seller ID?
+      }).populate('sellerId', 'name').exec();//msh mota2aked hangeeb el prodects mn el seller ID?
 
       if (products.length > 0) {
         res.json(products);
@@ -40,5 +40,20 @@ router.get('/search', isAuthorized, async (req, res) => {
       res.status(500).json({ message: 'Failed to search products.' });
     }
   });
+  
+  router.get('/filter', async (req, res) => {
+    const { minPrice, maxPrice } = req.query;
+    try {
+        const products = await Product.find({
+            price: { $gte: minPrice || 0, $lte: maxPrice || Infinity },
+        });
+        if (products.length === 0) {
+            return res.status(404).json({ message: 'No products found in the price range' });
+        }
+        res.json(products);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 module.exports = router;
