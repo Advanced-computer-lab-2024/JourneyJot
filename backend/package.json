@@ -5,16 +5,15 @@
     "express": "^4.21.0",
     "git": "^0.1.5",
     "mongoose": "^8.6.4",
-    "nodemon": "^3.1.7",
-    "react": "^18.3.1"
+    "nodemon": "^3.1.7"
   },
   "name": "journeyjot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "App.js",
   "scripts": {
-    "start": "node backend/App.js",
-    "dev": "nodemon backend/App.js"
+    "start": "node App.js",
+    "dev": "nodemon App.js"
   },
   "author": "",
   "license": "ISC"
