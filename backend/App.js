@@ -4,8 +4,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 require('dotenv').config();
+
 const productRoutes = require('./routes/Products');
 const advertiserRoutes = require('./routes/Advertisers');
+const tourGuidesRoutes = require('./routes/TourGuide');
 
 const app = express();
 app.use(express.json());
@@ -14,6 +16,7 @@ const MONGO_URI = process.env.MONGO_URI;
 
 app.use('/products', productRoutes);
 app.use('/advertisers', advertiserRoutes);
+app.use('/tourGuides', tourGuidesRoutes);
 
 mongoose
 	.connect(MONGO_URI)
