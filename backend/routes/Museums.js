@@ -24,11 +24,36 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
+  const { category, tag, name } = req.query; // Get category, tag, and name from query parameters
+
   try {
-    const museums = await Museum.find();
-    res.status(200).json(museums);
+    // Build a query object with the available parameters
+    const query = {};
+
+    if (category) {
+      query.category = category;
+    }
+
+    if (tag) {
+      query.tags = tag; // Assuming `tags` is an array of strings
+    }
+
+    if (name) {
+      query.description = { $regex: name, $options: "i" }; // Case-insensitive search for museum names
+    }
+
+    // Find museums that match the query (any combination of category, tag, or name)
+    const museums = await Museum.find(query);
+
+    if (museums.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No museums found for the given criteria" });
+    }
+
+    res.json(museums); // Send the results back
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: "An error occurred while fetching museums" });
   }
 });
 
