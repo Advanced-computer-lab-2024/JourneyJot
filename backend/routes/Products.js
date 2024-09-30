@@ -29,7 +29,7 @@ router.get('/search', isAuthorized, async (req, res) => {
     try {
       const products = await Product.find({
         name: { $regex: name, $options: 'i' }
-      }).populate('sellerId', 'name').exec();
+      }).populate('sellerId', 'name').exec(); //msh mota2aked hangeeb el prodects mn el seller ID?
 
       if (products.length > 0) {
         res.json(products);
