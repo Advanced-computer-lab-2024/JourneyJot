@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const productRoutes = require('./routes/Products');
 const advertiserRoutes = require('./routes/Advertisers');
-const tourGuidesRoutes = require('./routes/TourGuide');
+const tourGuidesRoutes = require('./routes/tourGuide');
 
 const app = express();
 app.use(express.json());

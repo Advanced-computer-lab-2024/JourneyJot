@@ -20,5 +20,5 @@ const tourGuideSchema = new Schema(
 	{ timestamps: true }
 );
 
-const TourGuide = mongoose.model('Tourguide', tourGuideSchema);
+const TourGuide = mongoose.model('TourGuide', tourGuideSchema);
 module.exports = TourGuide;
