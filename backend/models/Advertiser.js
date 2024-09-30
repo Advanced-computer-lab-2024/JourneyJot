@@ -17,6 +17,6 @@ const advertiserSchema = new Schema({
 	bookingOpen: { type: Boolean, default: true },
 });
 
-const Advertiser = mongoose.model('Advertiser', advertiserSchema);
+const Advertiser = mongoose.model('advertiser', advertiserSchema);
 
 module.exports = Advertiser;
