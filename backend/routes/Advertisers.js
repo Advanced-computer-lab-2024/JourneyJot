@@ -6,6 +6,7 @@ const Advertiser = require('../models/Advertiser.js');
 
 router.post('/', async (req, res) => {
 	try {
+		console.log(req.body);
 		if (
 			!req.body.title ||
 			!req.body.date ||

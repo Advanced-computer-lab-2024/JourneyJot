@@ -18,6 +18,7 @@ app.use('/products', productRoutes);
 app.use('/advertisers', advertiserRoutes);
 app.use('/tourGuides', tourGuidesRoutes);
 
+
 mongoose
 	.connect(MONGO_URI)
 	.then(() => {
