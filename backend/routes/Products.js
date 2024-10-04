@@ -13,47 +13,46 @@ const isAuthorized = (req, res, next) => {
 };
 
 //81
-router.get('/all', isAuthorized, async (req, res) => {
-  try {
-    const products = await Product.find().populate('sellerId', 'name').exec(); //msh mota2aked hangeeb el prodects mn el seller ID?
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch products' });
-  }
-});
+const getAllProducts = async (req, res) => {
+    if (!isAuthorized(req, res, ['Admin', 'Seller','Tourist'])) return;
+    try {
+        const products = await Product.find({});
+        if (products.length === 0) {
+            return res.status(404).json({ message: "No products found" });
+        }
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 //83
-router.get('/search', isAuthorized, async (req, res) => {
-    const { name } = req.query;
-
+const searchProductByName = async (req, res) => {
+    const { productName } = req.query;
     try {
-      const products = await Product.find({
-        name: { $regex: name, $options: 'i' }
-      }).populate('sellerId', 'name').exec();//msh mota2aked hangeeb el prodects mn el seller ID?
-
-      if (products.length > 0) {
-        res.json(products);
-      } else {
-        res.status(404).json({ message: 'No products found matching the query.' });
-      }
+        const products = await Product.find({ name: { $regex: productName, $options: "i" } });
+        if (products.length === 0) {
+            return res.status(404).json({ message: "No products found" });
+        }
+        res.status(200).json(products);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to search products.' });
+        res.status(400).json({ error: error.message });
     }
-  });
+};
   
-  router.get('/filter', async (req, res) => {
+  //84
+const filterProductsByPrice = async (req, res) => {
     const { minPrice, maxPrice } = req.query;
     try {
         const products = await Product.find({
-            price: { $gte: minPrice || 0, $lte: maxPrice || Infinity },
+            price: { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) }
         });
         if (products.length === 0) {
-            return res.status(404).json({ message: 'No products found in the price range' });
+            return res.status(404).json({ message: "No products found in this price range" });
         }
-        res.json(products);
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
-});
-
-module.exports = router;
+};
+module.exports = { getAllProducts, searchProductByName, filterProductsByPrice };
