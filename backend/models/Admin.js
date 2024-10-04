@@ -1,47 +1,30 @@
-import mongoose from 'mongoose';
-import { isAlpha, isAlphaNumeric } from '../../helper/validation.js';
-import idvalidator from "mongoose-id-validator";
+const mongoose = require('mongoose');
 
-
-const adminSchema = new mongoose.Schema({
+const AdminSchema = new mongoose.Schema({
   username: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
+    type: String,
+    required: true,
+    unique: true,
   },
   password: {
-      type: String,
-      required: true,
-  },
-  email: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
+    type: String,
+    required: true,
   },
   role: {
-      type: String,
-      enum: ['superadmin', 'admin', 'moderator'],
-      default: 'admin',
+    type: String,
+    default: 'admin',  // Set the default role as 'admin'
   },
-  createdAt: {
-      type: Date,
-      default: Date.now,
+  fullName: {
+    type: String,
+    required: true,
   },
-  updatedAt: {
-      type: Date,
-      default: Date.now,
-  }
-});
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+}, { timestamps: true });
 
-// Middleware to update the `updatedAt` field before saving
-adminSchema.pre('save', function (next) {
-  this.updatedAt = Date.now();
-  next();
-});
+module.exports = mongoose.model('Admin', AdminSchema);
 
-// Export the Admin model
-export default mongoose.model('Admin', adminSchema);
 
