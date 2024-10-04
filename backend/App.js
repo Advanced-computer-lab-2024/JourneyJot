@@ -13,7 +13,7 @@ require("dotenv").config();
 
 mongoose.set("strictQuery", false);
 
-app.use(bodyParser.json()); // Middleware to parse the body of the request
+//app.use(bodyParser.json()); // Middleware to parse the body of the request
 const app = express();
 app.use(cors());
 app.use(express.json());
