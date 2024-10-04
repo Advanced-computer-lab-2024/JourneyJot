@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 require("dotenv").config();
+const {searchProductByName, getAllProducts, filterProductsByPrice}= require('./routes/Products')
 
 const app = express();
 app.use(express.json());
@@ -18,3 +19,8 @@ mongoose
     });
   })
   .catch((err) => console.log(err));
+
+app.use(express.json())
+app.get("/searchProductByName",searchProductByName);
+app.get('/getAllProducts', getAllProducts);
+app.get('/filterProductsByPrice', filterProductsByPrice);
