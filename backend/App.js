@@ -13,7 +13,7 @@ require("dotenv").config();
 
 mongoose.set("strictQuery", false);
 
-app.use(bodyParser.json()); // Middleware to parse the body of the request
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -32,7 +32,7 @@ mongoose
   .catch((err) => console.log(err));
 
 // Use the tour guide routes
-app.use("/profiles", TourGuideRoute);
+app.use("/TourGuide", TourGuideRoute);
 // Use the advertiser routes
 app.use("/advertisers", AdvertiserRoute);
 app.use("/itineraries", ItineraryRoutes);
