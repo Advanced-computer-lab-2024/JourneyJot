@@ -1,15 +1,15 @@
 // src/api.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000'; // Adjust based on your server location
+const API_URL = 'http://localhost:3000'; // Adjust based on your server location
 
 export const fetchTourGuides = async () => {
-  const response = await axios.get(`${API_URL}/TourGuide`);
+  const response = await axios.get(`${API_URL}/tourGuides`);
   return response.data;
 };
 
 export const createTourGuide = async (guide) => {
-  const response = await axios.post(`${API_URL}/TourGuide`, guide);
+  const response = await axios.post(`${API_URL}/create`, guide); // Add /create here
   return response.data;
 };
 

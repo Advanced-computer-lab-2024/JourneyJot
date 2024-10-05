@@ -1,10 +1,11 @@
 // routes/TourGuideRoute.js
+
 const express = require('express');
 const router = express.Router();
 const TourGuide = require('../models/TourGuide');
 
 // Create a new tour guide profile
-router.post('/', async (req, res) => {
+router.post('/create', async (req, res) => {
     const { name, mobile, experience, previousWork, accepted } = req.body;
 
     const newGuide = new TourGuide({
@@ -22,7 +23,6 @@ router.post('/', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
-
 // Read all tour guide profiles
 router.get('/', async (req, res) => {
     try {
