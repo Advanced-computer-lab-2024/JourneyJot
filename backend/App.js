@@ -24,6 +24,11 @@ app.use("/activity", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
 app.use("/admin", adminRoutes);
 app.use("/tourists", touristRoutes);
+app.use("/TourGuide", TourGuideRoute);
+app.use("/advertisers", AdvertiserRoute);
+app.use("/historical-places", historicalPlacesRouter);
+app.use("/museums", museumsRouter);
+app.use("/api", tagsRouter);
 
 // Log incoming requests
 app.use((req, res, next) => {
