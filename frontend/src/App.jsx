@@ -7,16 +7,14 @@ import AdvertisersPage from "./pages/AdvertisersPage";
 import ItinerariesPage from "./pages/ItinerariesPage";
 import TourGuidesPage from "./pages/CreateTourGuidePage";
 
-
-
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/products" element={<ShowProducts />} />
-      <Route path="/TourGuide" element ={<TourGuidesPage/>} />
-      <Route path="/advertisers" elemnet ={<AdvertisersPage/>} />
-      <Route path="/itineraries" element ={<ItinerariesPage/>} />
+      <Route path="/tourGuides" element={<TourGuidesPage />} />
+      <Route path="/advertisers" element={<AdvertisersPage />} />
+      <Route path="/itineraries" element={<ItinerariesPage />} />
     </Routes>
   );
 };
