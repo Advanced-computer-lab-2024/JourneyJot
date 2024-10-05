@@ -1,5 +1,5 @@
 const express = require("express");
-const HistoricalPlace = require("../models/HistoricalPlacesSchema.js");
+const HistoricalPlace = require("../models/HistoricalPlace.js");
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 const express = require("express");
-const Museum = require("../models/MusuemsSchema.js");
+const Museum = require("../models/Museum.js");
 
 const router = express.Router();
 
