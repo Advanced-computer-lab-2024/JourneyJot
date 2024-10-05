@@ -1,21 +1,42 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const HistoricalPlaceSchema = new mongoose.Schema({
+const HistoricalPlaceSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    location: String,
-    // ... other fields specific to HistoricalPlace
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TourismGovernor', // Assuming Tourism Governors create historical places
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "TourismGovernor", // Assuming Tourism Governors create historical places
+      required: true,
     },
     createdAt: {
-        type: Date,
-        default: Date.now,
+      type: Date,
+      default: Date.now,
     },
-});
+    description: {
+      type: String,
+      required: true,
+    },
+    location: {
+      type: String,
+      required: true,
+    },
+    pictures: {
+      type: [String],
+      required: true,
+    },
+    openingHours: {
+      type: Number,
+      required: true,
+    },
+    ticketPrices: {
+      type: Number,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('HistoricalPlace', HistoricalPlaceSchema);
+module.exports = mongoose.model("HistoricalPlace", HistoricalPlaceSchema);

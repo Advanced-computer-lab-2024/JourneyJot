@@ -1,21 +1,42 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const MuseumSchema = new mongoose.Schema({
+const MuseumSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    location: String,
-    // ... other fields specific to Museum
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TourismGovernor', // Assuming Tourism Governors create museums
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "TourismGovernor", // Assuming Tourism Governors create museums
+      required: true,
     },
     createdAt: {
-        type: Date,
-        default: Date.now,
+      type: Date,
+      default: Date.now,
     },
-});
+    description: {
+      type: String,
+      required: true,
+    },
+    location: {
+      type: String,
+      required: true,
+    },
+    pictures: {
+      type: [String], //ex:{link.jpg kda}
+      required: true,
+    },
+    openingHours: {
+      type: Number,
+      required: true,
+    },
+    ticketPrices: {
+      type: Number,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Museum', MuseumSchema);
+module.exports = mongoose.model("Museum", MuseumSchema);
