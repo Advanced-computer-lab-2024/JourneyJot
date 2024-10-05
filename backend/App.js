@@ -10,23 +10,23 @@ const ItineraryRoutes = require("./routes/ItineraryRoute");
 const productRoutes = require("./routes/Products");
 const activityRoutes = require("./routes/Activity");
 const itineraryRoutes = require("./routes/Itinerary");
-const adminRoutes = require("./routes/adminRoutes");
+// const adminRoutes = require("./routes/adminRoutes");
 const touristRoutes = require("./routes/touristRoutes");
 const cors = require("cors");
 
 require("dotenv").config();
-const {
-  createTourist,
-  GetTouristInfo,
-  updateTouristInfo,
-} = require("./routes/TouristController");
-const { createAdvertiser } = require("./routes/AdvertiserController");
-const {
-  createSeller,
-  GetSellerInfo,
-  updateSellerInfo,
-} = require("./routes/SellerController");
-const { createTourGuide } = require("./routes/TourGuideController");
+// const {
+//   createTourist,
+//   GetTouristInfo,
+//   updateTouristInfo,
+// } = require("./routes/TouristController");
+// const { createAdvertiser } = require("./routes/AdvertiserController");
+// const {
+//   createSeller,
+//   GetSellerInfo,
+//   updateSellerInfo,
+// } = require("./routes/SellerController");
+// const { createTourGuide } = require("./routes/TourGuideController");
 
 const app = express();
 app.use(cors());
@@ -34,21 +34,21 @@ app.use(express.json());
 app.use("/products", productRoutes);
 app.use("/activity", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
-app.use("/admin", adminRoutes);
+// app.use("/admin", adminRoutes);
 app.use("/tourists", touristRoutes);
 app.use("/TourGuide", TourGuideRoute);
 app.use("/advertisers", AdvertiserRoute);
 app.use("/historical-places", historicalPlacesRouter);
 app.use("/museums", museumsRouter);
 app.use("/api", tagsRouter);
-app.post("/addTourist", createTourist);
-app.get("/TouristInfo", GetTouristInfo);
-app.put("/updateTourist", updateTouristInfo);
-app.post("/addAdvertiser", createAdvertiser);
-app.post("/addTourGuide", createTourGuide);
-app.post("/addSeller", createSeller);
-app.get("/sellerInfo", GetSellerInfo);
-app.put("/updateSeller", updateSellerInfo);
+// app.post("/addTourist", createTourist);
+// app.get("/TouristInfo", GetTouristInfo);
+// app.put("/updateTourist", updateTouristInfo);
+// app.post("/addAdvertiser", createAdvertiser);
+// app.post("/addTourGuide", createTourGuide);
+// app.post("/addSeller", createSeller);
+// app.get("/sellerInfo", GetSellerInfo);
+// app.put("/updateSeller", updateSellerInfo);
 
 // Log incoming requests
 app.use((req, res, next) => {
