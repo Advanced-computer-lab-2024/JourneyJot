@@ -12,6 +12,7 @@ const ShowProducts = () => {
       .get("http://localhost:8000/products")
       .then((response) => {
         setProducts(response.data.products);
+        console.log("Fetched products:", response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -19,12 +20,25 @@ const ShowProducts = () => {
         setLoading(false);
       });
   }, []);
+
   return (
     <div className="p-4">
       <div className=" flex justify-between items-center">
         <h1 className="text-2xl font-bold">Products</h1>
       </div>
-      {loading ? <Spinner /> : <ProductCard products={products} />}
+      <div>{loading ? <Spinner /> : <ProductCard products={products} />}</div>
+      <div className="flex justify-end items-center space-x-4">
+        <Link to={"addProduct"}>
+          <button className="flex  bg-teal-500 rounded-md px-6">
+            Add Product
+          </button>
+        </Link>
+        <Link>
+          <button className="flex  bg-teal-500 rounded-md px-6">
+            Sort By Rating
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };
