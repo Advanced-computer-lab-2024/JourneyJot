@@ -1,56 +1,57 @@
-/** @format */
-
 const mongoose = require('mongoose');
+const moment = require('moment'); // For handling date validations
 
-const touristSchema = new mongoose.Schema({
-	username: {
-		type: String,
-		required: true,
-		unique: true,
-	},
-	email: {
-		type: String,
-		required: true,
-		unique: true,
-	},
-	password: {
-		type: String,
-		required: true,
-	},
-	mobileNumber: {
-		type: String,
-		required: true,
-	},
-	nationality: {
-		type: String,
-		required: true,
-	},
-	dob: {
-		type: Date,
-		required: true,
-	},
-	jobStatus: {
-		type: String, // Either 'Job' or 'Student'
-		enum: ['Job', 'Student'],
-		required: true,
-	},
-	canBook: {
-		type: Boolean,
-		default: true,
-	},
-	createdAt: {
-		type: Date,
-		default: Date.now,
-	},
-});
+const TouristSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    immutable: true,  // Prevent username from being changed after creation
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  fullName: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  mobileNumber: {
+    type: String,
+    required: true,
+  },
+  nationality: {
+    type: String,
+    required: true,
+  },
+  dateOfBirth: {
+    type: Date,
+    required: true,
+    immutable: true,  // Prevent DOB from being changed after creation
+    validate: {
+      validator: function (value) {
+        // Ensure the user is 18 years or older
+        return moment().diff(value, 'years') >= 18;
+      },
+      message: 'You must be at least 18 years old to register.'
+    }
+  },
+  jobOrStudent: {
+    type: String,
+    enum: ['job', 'student'],  // Allow only 'job' or 'student' values
+    required: true,
+  },
+  wallet: {
+    type: Number,
+    required: true,
+    default: 0,  // Default value for wallet
+    immutable: true,  // Prevent wallet from being changed after creation
+  },
+}, { timestamps: true });
 
-// Prevent changing DOB after the first save
-touristSchema.pre('save', function (next) {
-	if (this.isModified('dob')) {
-		return next(new Error('DOB cannot be modified after registration.'));
-	}
-	next();
-});
-
-const Tourist = mongoose.model('Tourist', touristSchema);
-module.exports = Tourist;
+module.exports = mongoose.model('Tourist', TouristSchema);
