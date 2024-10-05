@@ -11,41 +11,55 @@ const isAuthorized = (req, res, next) => {
   }
 };
 
-//81
-router.get("/all", isAuthorized, async (req, res) => {
+router.get("/getAllProducts", isAuthorized, async (req, res) => {
+  // <- Middleware applied correctly
   try {
-    const products = await Product.find().populate("sellerId", "name").exec(); //msh mota2aked hangeeb el prodects mn el seller ID?
-    res.json(products);
+    const products = await Product.find({});
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
+    }
+    res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch products" });
+    res.status(400).json({ error: error.message });
   }
 });
 
-//83
-router.get("/search", isAuthorized, async (req, res) => {
-  const { name } = req.query;
-
+router.get("/searchProductByName", isAuthorized, async (req, res) => {
+  // <- Added middleware here as well
+  const { productName } = req.query;
   try {
     const products = await Product.find({
-      name: { $regex: name, $options: "i" },
-    })
-      .populate("sellerId", "name")
-      .exec();
-
-    if (products.length > 0) {
-      res.json(products);
-    } else {
-      res
-        .status(404)
-        .json({ message: "No products found matching the query." });
+      name: { $regex: productName, $options: "i" },
+    });
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
     }
+    res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ message: "Failed to search products." });
+    res.status(400).json({ error: error.message });
   }
 });
 
-// posting a new product
-router.post("/addProduct", async (req, res) => {
+router.get("/filterProductsByPrice", isAuthorized, async (req, res) => {
+  // <- Added middleware here as well
+  const { minPrice, maxPrice } = req.query;
+  try {
+    const products = await Product.find({
+      price: { $gte: parseFloat(minPrice), $lte: parseFloat(maxPrice) },
+    });
+    if (products.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No products found in this price range" });
+    }
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.post("/addProduct", isAuthorized, async (req, res) => {
+  // <- Added middleware here as well
   try {
     const product = new Product({
       details: req.body.details,
@@ -64,7 +78,8 @@ router.post("/addProduct", async (req, res) => {
 });
 
 // getting all products sorted by rating
-router.get("/", async (req, res) => {
+router.get("/", isAuthorized, async (req, res) => {
+  // <- Added middleware here as well
   try {
     const products = await Product.find().sort({ rating: 1 });
     res.status(200).json({ products });
@@ -73,12 +88,13 @@ router.get("/", async (req, res) => {
   }
 });
 
-// eddting a product by id
-router.put("/:id", async (req, res) => {
+// editing a product by id
+router.put("/:id", isAuthorized, async (req, res) => {
+  // <- Added middleware here as well
   try {
     const product = await Product.findById(req.params.id);
     if (product) {
-      // checking if details was passed in the request
+      // checking if details were passed in the request
       if (req.body.details) product.details = req.body.details;
       // checking if price was passed in the request
       if (req.body.price) product.price = req.body.price;

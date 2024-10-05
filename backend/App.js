@@ -15,6 +15,11 @@ const touristRoutes = require("./routes/touristRoutes");
 const cors = require("cors");
 
 require("dotenv").config();
+const {
+  searchProductByName,
+  getAllProducts,
+  filterProductsByPrice,
+} = require("./routes/Products");
 
 const app = express();
 app.use(cors());
