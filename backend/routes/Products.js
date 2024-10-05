@@ -58,7 +58,7 @@ router.get("/filterProductsByPrice", isAuthorized, async (req, res) => {
   }
 });
 
-router.post("/addProduct", isAuthorized, async (req, res) => {
+router.post("/addProduct", async (req, res) => {
   // <- Added middleware here as well
   try {
     const product = new Product({
@@ -78,10 +78,10 @@ router.post("/addProduct", isAuthorized, async (req, res) => {
 });
 
 // getting all products sorted by rating
-router.get("/", isAuthorized, async (req, res) => {
+router.get("/", async (req, res) => {
   // <- Added middleware here as well
   try {
-    const products = await Product.find().sort({ rating: 1 });
+    const products = await Product.find().sort({ rating: -1 });
     res.status(200).json({ products });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -89,7 +89,7 @@ router.get("/", isAuthorized, async (req, res) => {
 });
 
 // editing a product by id
-router.put("/:id", isAuthorized, async (req, res) => {
+router.put("/:id", async (req, res) => {
   // <- Added middleware here as well
   try {
     const product = await Product.findById(req.params.id);

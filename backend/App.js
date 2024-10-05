@@ -16,10 +16,17 @@ const cors = require("cors");
 
 require("dotenv").config();
 const {
-  searchProductByName,
-  getAllProducts,
-  filterProductsByPrice,
-} = require("./routes/Products");
+  createTourist,
+  GetTouristInfo,
+  updateTouristInfo,
+} = require("./routes/TouristController");
+const { createAdvertiser } = require("./routes/AdvertiserController");
+const {
+  createSeller,
+  GetSellerInfo,
+  updateSellerInfo,
+} = require("./routes/SellerController");
+const { createTourGuide } = require("./routes/TourGuideController");
 
 const app = express();
 app.use(cors());
@@ -34,6 +41,14 @@ app.use("/advertisers", AdvertiserRoute);
 app.use("/historical-places", historicalPlacesRouter);
 app.use("/museums", museumsRouter);
 app.use("/api", tagsRouter);
+app.post("/addTourist", createTourist);
+app.get("/TouristInfo", GetTouristInfo);
+app.put("/updateTourist", updateTouristInfo);
+app.post("/addAdvertiser", createAdvertiser);
+app.post("/addTourGuide", createTourGuide);
+app.post("/addSeller", createSeller);
+app.get("/sellerInfo", GetSellerInfo);
+app.put("/updateSeller", updateSellerInfo);
 
 // Log incoming requests
 app.use((req, res, next) => {

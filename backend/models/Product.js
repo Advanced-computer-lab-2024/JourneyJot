@@ -5,17 +5,17 @@ const reviewSchema = new Schema(
   {
     reviewer: {
       type: String,
-      required: true,
+      required: false,
     },
     comment: {
       type: String,
-      required: true,
+      required: false,
     },
     rating: {
       type: Number,
-      required: true,
+      required: false,
       min: 1,
-      max: 5, 
+      max: 5,
     },
   },
   { timestamps: true }
@@ -24,26 +24,26 @@ const productSchema = new Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: false,
     },
 
     details: {
       type: String,
-      required: true,
+      required: false,
     },
     price: {
       type: Number,
-      required: true,
+      required: false,
     },
     quantity: {
       type: Number,
-      required: true,
+      required: false,
     },
     rating: {
       type: Number,
       required: false,
     },
-    reviews: [reviewSchema], 
+    reviews: [reviewSchema],
   },
   { timestamps: true }
 );
