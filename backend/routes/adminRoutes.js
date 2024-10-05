@@ -75,7 +75,8 @@ router.post('/admin', verifyAdmin,addAdmin);
 // Create a new Tourism Governor
 router.post('/tourism-governor', verifyAdmin,addTourismGovernor);
 // Define the delete route
-router.delete('//:userType//:userId', verifyAdmin, deleteUserByType);
+router.delete('/:userType/:userId', verifyAdmin, deleteUserByType);
+
 
 console.log('addAdmin function:', addAdmin);
 console.log('addTourismGovernor function:', addTourismGovernor);

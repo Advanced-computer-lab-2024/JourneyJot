@@ -8,14 +8,14 @@ const TourismGovernor = require('..//models//TourismGovernor');
 
 
 
-const addAdmin = async (req, res) => {
+exports.addAdmin = async (req, res) => {
     console.log('Add Admin route hit');
     try {
         const { username, password, fullName, email } = req.body;
 
-        // Validate input
-        if (!username || !password || !fullName || !email) {
-            return res.status(400).json({ message: 'Please provide username, password, fullName, and email' });
+        // Validate input (only username and password are required)
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Please provide a username and password' });
         }
 
         // Validate password length
@@ -23,21 +23,21 @@ const addAdmin = async (req, res) => {
             return res.status(400).json({ message: 'Password must be at least 8 characters long' });
         }
 
-        // Check if username or email already exists
-        const existingAdmin = await Admin.findOne({ $or: [{ username }, { email }] });
+        // Check if username already exists
+        const existingAdmin = await Admin.findOne({ username });
         if (existingAdmin) {
-            return res.status(400).json({ message: 'Username or email already exists' });
+            return res.status(400).json({ message: 'Username already exists' });
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create new Admin
+        // Create a new Admin (optional fullName and email)
         const newAdmin = new Admin({
             username,
             password: hashedPassword,
-            fullName,
-            email,
+            fullName: fullName || 'Unnamed Admin',  // Use provided fullName or default
+            email: email || 'noemail@provided.com',  // Use provided email or default
         });
 
         await newAdmin.save();
@@ -45,14 +45,13 @@ const addAdmin = async (req, res) => {
         res.status(201).json({ message: 'Admin created successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', error });
     }
 };
 
 
-
 // Updated deleteUser controller function in adminController.js
-const deleteUserByType = async (req, res) => {
+exports.deleteUserByType = async (req, res) => {
     try {
         const userId = req.params.userId;
         const userType = req.params.userType.toLowerCase(); // Convert to lowercase for consistency
@@ -95,7 +94,7 @@ const deleteUserByType = async (req, res) => {
 
 
 // Controller function to add a new tourism governor
-const addTourismGovernor = async (req, res) => {
+exports.addTourismGovernor = async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -127,9 +126,3 @@ const addTourismGovernor = async (req, res) => {
   }
 };
 
-module.exports = {
-    deleteUserByType,
-    addAdmin,
-    addTourismGovernor,
-  };
-  

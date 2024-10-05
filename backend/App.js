@@ -21,7 +21,7 @@ app.use((req, res, next) => {
 // Set up your routes
 
 app.use("/admin", adminRoutes);  
-app.post('/tourists', touristRoutes);
+app.use('/tourists', touristRoutes);
 
 // Handle undefined routes 
 app.use((req, res) => {

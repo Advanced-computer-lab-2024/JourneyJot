@@ -12,19 +12,16 @@ const AdminSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: 'admin',  // Set the default role as 'admin'
+    default: 'admin',  // Default role is 'admin'
   },
   fullName: {
     type: String,
-    required: true,
+    default: 'Unnamed Admin',  // Default value if not provided
   },
   email: {
     type: String,
-    required: true,
-    unique: true,
+    default: 'noemail@provided.com',  // Default value if not provided
   },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Admin', AdminSchema);
-
-
