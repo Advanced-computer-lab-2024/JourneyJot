@@ -16,6 +16,7 @@ const itinerarySchema = new Schema(
 		accessibility: { type: Boolean, default: false },
 		pickupLocation: { type: String, required: true },
 		dropOffLocation: { type: String, required: true },
+		budget: { type: Number, required: true },
 	},
 	{ timestamps: true }
 );

@@ -4,8 +4,15 @@ const express = require('express');
 const Activity = require('../models/Activity');
 const router = express.Router();
 
-// Create a new activity
-router.post('/', async (req, res) => {
+router.get('/activity', async (req, res) => {
+    try {
+        const activities = await Activity.find({ date: { $gte: new Date() } });
+        res.json(activities);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+router.post('/activity', async (req, res) => {
 	try {
 		// Check if all required fields are present in the request body
 		if (
@@ -45,48 +52,65 @@ router.post('/', async (req, res) => {
 });
 
 // Get all activities with optional filters and sorting
-router.get('/', async (req, res) => {
-	try {
-		// Prepare a query object
-		const query = {};
+router.get('/filter', async (req, res) => {
+    try {
+        const query = {};
 
-		// Check for query parameters and add filters accordingly
-		if (req.query.budget) {
-			query.price = { $lte: req.query.budget }; // Finds activities less than or equal to the budget
-		}
+        // Add filters based on query parameters
+        if (req.query.budget) {
+            query.price = { $lte: req.query.budget }; // Less than or equal to budget
+        }
 
-		if (req.query.date) {
-			query.date = { $gte: new Date(req.query.date) }; // Finds activities on or after the specified date
-		}
+        if (req.query.date) {
+            query.date = { $gte: new Date(req.query.date) }; // On or after the specified date
+        }
 
-		if (req.query.category) {
-			query.category = req.query.category; // Matches the exact category
-		}
+        if (req.query.category) {
+            query.category = req.query.category; // Exact category match
+        }
 
-		if (req.query.ratings) {
-			query.ratings = { $gte: req.query.ratings }; // Finds activities with ratings greater than or equal to the specified rating
-		}
+        if (req.query.ratings) {
+            query.ratings = { $gte: req.query.ratings }; // Greater than or equal to specified rating
+        }
 
-		// Fetch activities based on the constructed query
-		let activities = await Activity.find(query);
+        // Fetch filtered activities
+        const activities = await Activity.find(query);
 
-		// Sorting based on query parameters (price or ratings)
-		if (req.query.sortBy) {
-			const sortCriteria = {};
-			if (req.query.sortBy === 'price') {
-				sortCriteria.price = req.query.order === 'desc' ? -1 : 1; // Sort by price ascending or descending
-			} else if (req.query.sortBy === 'ratings') {
-				sortCriteria.ratings = req.query.order === 'desc' ? -1 : 1; // Sort by ratings ascending or descending
-			}
-			activities = await Activity.find(query).sort(sortCriteria); // Apply sorting
-		}
+        // Return the result
+        return res.status(200).json({ count: activities.length, data: activities });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+});
 
-		// Return the result
-		return res.status(200).json({ count: activities.length, data: activities });
-	} catch (error) {
-		console.log(error.message);
-		res.status(500).send({ message: error.message });
-	}
+// Sort activities based on price or ratings
+router.get('/sort', async (req, res) => {
+    try {
+        const sortCriteria = {};
+
+        // Determine the sorting criteria based on query parameters
+        if (req.query.sortBy) {
+            if (req.query.sortBy === 'price') {
+                sortCriteria.price = req.query.order === 'desc' ? -1 : 1; // Ascending or descending sort
+            } else if (req.query.sortBy === 'ratings') {
+                sortCriteria.ratings = req.query.order === 'desc' ? -1 : 1; // Ascending or descending sort
+            } else {
+                return res.status(400).send({ message: 'Invalid sortBy parameter. Use "price" or "ratings".' });
+            }
+        } else {
+            return res.status(400).send({ message: 'Missing sortBy parameter.' });
+        }
+
+        // Fetch all activities and apply sorting
+        const activities = await Activity.find({}).sort(sortCriteria);
+
+        // Return the sorted result
+        return res.status(200).json({ count: activities.length, data: activities });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
 });
 
 // Get a specific activity by ID

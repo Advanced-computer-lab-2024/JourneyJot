@@ -27,5 +27,24 @@ router.get('/', async (req, res) => {
         res.status(500).send({ message: error.message });
     }
 });
+// Get Historical Places with optional filtering by tags
+router.get('/historical-places', async (req, res) => {
+    try {
+        const { tags } = req.query;
+
+        // Build the filter object
+        let filter = {};
+
+        if (tags) {
+            filter.tags = { $in: tags.split(',') }; // Filter for specific tags
+        }
+
+        const historicalPlaces = await HistoricalPlace.find(filter);
+        res.json(historicalPlaces);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 
 module.exports = router;

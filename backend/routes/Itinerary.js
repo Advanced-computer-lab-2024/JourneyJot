@@ -5,7 +5,7 @@ const router = express.Router();
 const Itinerary = require('../models/Itinerary');
 
 // CREATE a new Tour Guide itinerary
-router.post('/', async (req, res) => {
+router.post('/itinerary', async (req, res) => {
 	try {
 		// Check for missing required fields
 		const requiredFields = [
@@ -117,6 +117,36 @@ router.delete('/:id', async (req, res) => {
 		console.log(error.message);
 		res.status(500).send({ message: error.message });
 	}
+});// Get Itineraries with optional filtering
+router.get('/itineraries', async (req, res) => {
+    try {
+        const { budget, date, preferences, language } = req.query;
+
+        // Build the filter object
+        let filter = {};
+
+        if (budget) {
+            filter.budget = { $lte: Number(budget) }; // Filter for budget less than or equal to specified amount
+        }
+
+        if (date) {
+            filter.date = { $gte: new Date(date) }; // Filter for itineraries on or after the specified date
+        }
+
+        if (preferences) {
+            filter.preferences = { $in: preferences.split(',') }; // Filter for specific preferences
+        }
+
+        if (language) {
+            filter.language = language; // Filter for specific language
+        }
+
+        const itineraries = await Itinerary.find(filter);
+        res.json(itineraries);
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
+
 
 module.exports = router;

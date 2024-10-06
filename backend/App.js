@@ -11,9 +11,9 @@ const historicalPlaceRoutes = require('./routes/HistoricalPlace'); // Add this l
 
 const app = express();
 app.use(express.json());
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 const MONGO_URI = process.env.MONGO_URI;
-
+app.use('/filter', activityRoutes);
 app.use('/products', productRoutes);
 app.use('/activity', activityRoutes);
 app.use('/itinerary', itineraryRoutes);
