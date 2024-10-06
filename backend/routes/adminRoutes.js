@@ -69,7 +69,13 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
+router.get('/me', verifyAdmin, (req, res) => {
+  const admin = req.admin; // Assuming the verifyAdmin middleware attaches admin to req
+  if (!admin) {
+    return res.status(404).json({ message: 'Admin not found' });
+  }
+  res.json(admin); // Respond with admin details
+});
 // Create a new admin
 router.post('/admin', verifyAdmin,addAdmin);
 // Create a new Tourism Governor
