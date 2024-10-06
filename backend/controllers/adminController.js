@@ -9,46 +9,49 @@ const TourismGovernor = require('..//models//TourismGovernor');
 
 
 exports.addAdmin = async (req, res) => {
-    console.log('Add Admin route hit');
+    console.log("admin route hit")
     try {
-        const { username, password, fullName, email } = req.body;
-
-        // Validate input (only username and password are required)
-        if (!username || !password) {
-            return res.status(400).json({ message: 'Please provide a username and password' });
-        }
-
-        // Validate password length
-        if (password.length < 8) {
-            return res.status(400).json({ message: 'Password must be at least 8 characters long' });
-        }
-
-        // Check if username already exists
-        const existingAdmin = await Admin.findOne({ username });
-        if (existingAdmin) {
-            return res.status(400).json({ message: 'Username already exists' });
-        }
-
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create a new Admin (optional fullName and email)
-        const newAdmin = new Admin({
-            username,
-            password: hashedPassword,
-            fullName: fullName || 'Unnamed Admin',  // Use provided fullName or default
-            email: email || 'noemail@provided.com',  // Use provided email or default
-        });
-
-        await newAdmin.save();
-
-        res.status(201).json({ message: 'Admin created successfully' });
+      const { username, password, fullName, email } = req.body;
+  
+      // Validate input (only username and password are required)
+      if (!username || !password) {
+        return res.status(400).json({ message: 'Please provide a username and password' });
+      }
+  
+      // Validate password length
+      if (password.length < 8) {
+        return res.status(400).json({ message: 'Password must be at least 8 characters long' });
+      }
+  
+      // Check if username already exists
+      const existingAdmin = await Admin.findOne({ username });
+      if (existingAdmin) {
+        return res.status(400).json({ message: 'Username already exists' });
+      }
+  
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      // Create a new Admin, allow email to be null or undefined if not provided
+      const newAdmin = new Admin({
+        username,
+        password: hashedPassword,
+        fullName: fullName || 'Unnamed Admin',
+        email: email || undefined  // Allow email to be undefined if not provided
+      });
+  
+      await newAdmin.save();
+      res.status(201).json({ message: 'Admin created successfully' });
     } catch (error) {
-        console.error(error);
+      console.error(error);
+      if (error.code === 11000) {
+        res.status(400).json({ message: 'Duplicate field error: ' + JSON.stringify(error.keyValue) });
+      } else {
         res.status(500).json({ message: 'Server error', error });
+      }
     }
-};
-
+  };
+  
 
 // Updated deleteUser controller function in adminController.js
 exports.deleteUserByType = async (req, res) => {

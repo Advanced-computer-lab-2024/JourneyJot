@@ -20,7 +20,8 @@ const AdminSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    default: 'noemail@provided.com',  // Default value if not provided
+    unique: true,      // Ensure that non-null emails are unique
+    sparse: true       // Allow null or undefined emails without throwing an error
   },
 }, { timestamps: true });
 
