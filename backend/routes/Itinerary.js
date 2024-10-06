@@ -61,18 +61,6 @@ router.get("/", async (req, res) => {
     return res.status(500).send({ message: error.message });
   }
 });
-router.get("/:id", async (req, res) => {
-  //working
-  try {
-    const itinerary = await Itinerary.findById(req.params.id);
-    if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
-    }
-    res.status(200).json(itinerary);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
 
 router.put("/:id", async (req, res) => {
   try {
@@ -131,7 +119,7 @@ router.get("/filter", async (req, res) => {
     let filter = {};
 
     if (budget) {
-      filter.budget = { $lte: Number(budget) }; // Filter for budget less than or equal to specified amount
+      filter.price = { $lte: Number(budget) }; // Filter for budget less than or equal to specified amount
     }
 
     if (date) {
@@ -150,6 +138,19 @@ router.get("/filter", async (req, res) => {
     res.json(itineraries);
   } catch (error) {
     res.status(500).send(error);
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  //working
+  try {
+    const itinerary = await Itinerary.findById(req.params.id);
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+    res.status(200).json(itinerary);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 });
 

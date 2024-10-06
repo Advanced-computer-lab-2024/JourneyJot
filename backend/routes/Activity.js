@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const activities = await Activity.find({ date: { $gte: new Date() } });
+    const activities = await Activity.find();
     res.json(activities);
   } catch (err) {
     res.status(500).send(err);
