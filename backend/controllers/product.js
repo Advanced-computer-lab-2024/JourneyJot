@@ -20,7 +20,7 @@ exports.searchByName = async (req, res) => {
     if (products.length === 0) {
       return res.status(404).json({ message: "No products found" });
     }
-    res.status(200).json(products);
+    res.status(200).json({ products });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -37,7 +37,7 @@ exports.filterByPrice = async (req, res) => {
         .status(404)
         .json({ message: "No products found in this price range" });
     }
-    res.status(200).json(products);
+    res.status(200).json({ products });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

@@ -9,11 +9,13 @@ const ShowProducts = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [sort, setSort] = useState(false);
+  const [searchedProduct, setSearchedProduct] = useState("");
+
   useEffect(() => {
     setLoading(true);
     if (!sort) {
       axios
-        .get("http://localhost:3000/product")
+        .get("http://localhost:3000/products")
         .then((response) => {
           setProducts(response.data.products);
           console.log("Fetched products:", response.data);
@@ -26,7 +28,7 @@ const ShowProducts = () => {
     }
     if (sort) {
       axios
-        .get("http://localhost:3000/product/sortProducts")
+        .get("http://localhost:3000/products/sortProducts")
         .then((response) => {
           setProducts(response.data.products);
           console.log("Fetched products:", response.data);
@@ -42,7 +44,7 @@ const ShowProducts = () => {
   const filterByPrice = () => {
     setLoading(true);
     axios
-      .get("http://localhost:3000/product/filterProductsByPrice", {
+      .get("http://localhost:3000/products/filterProductsByPrice", {
         params: { minPrice: minPrice, maxPrice: maxPrice },
       })
       .then((response) => {
@@ -56,10 +58,34 @@ const ShowProducts = () => {
       });
   };
 
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get("http://localhost:3000/products/searchProducts", {
+        params: { productName: searchedProduct },
+      })
+      .then((response) => {
+        setProducts(response.data.products);
+        console.log("Fetched products:", response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+        setLoading(false);
+      });
+  }, [searchedProduct]);
+
   return (
     <div className="p-4">
-      <div className=" flex justify-between items-center">
+      <div className=" flex space-x-4 items-center">
         <h1 className="text-2xl font-bold">Products</h1>
+        <input
+          type="search"
+          placeholder="Search..."
+          value={searchedProduct}
+          onChange={(e) => setSearchedProduct(e.target.value)}
+          className="w-full max-w-md px-4 py-2 border-2 border-gray-300 rounded-lg shadow-lg bg-gray-100 text-gray-900 placeholder-gray-500"
+        ></input>
       </div>
       <div>{loading ? <Spinner /> : <ProductCard products={products} />}</div>
       <div className="flex justify-end items-center space-x-4">

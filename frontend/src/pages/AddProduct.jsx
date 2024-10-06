@@ -17,7 +17,7 @@ const AddProduct = () => {
     };
     setLoading(true);
     axios
-      .post("http://localhost:3000/product/addProduct", data)
+      .post("http://localhost:3000/products/addProduct", data)
       .then(() => {
         setLoading(false);
         navigate("/products");
