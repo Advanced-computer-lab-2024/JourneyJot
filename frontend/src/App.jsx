@@ -4,19 +4,22 @@ import ShowProducts from "./pages/ShowProducts";
 import HomePage from "./pages/HomePage";
 import AddProduct from "./pages/AddProduct";
 import AdvertisersPage from "./pages/AdvertisersPage";
-import ItinerariesPage from "./pages/ItinerariesPage";
 import TourGuidesPage from "./pages/CreateTourGuidePage";
+import TourGuideListPage from "./pages/TourGuideListPage";
+import ItineraryPage from './pages/ItineraryPage';
+
 
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/products" element={<ShowProducts />} />
-      <Route path="/tourGuides" element={<TourGuidesPage />} />
+      <Route path="/tourGuides" element={<TourGuideListPage />} />
       <Route path="/advertisers" element={<AdvertisersPage />} />
-      <Route path="/itineraries" element={<ItinerariesPage />} />
+      <Route path="/itinerary" element={<ItineraryPage />} />
     </Routes>
   );
 };
+
 
 export default App;

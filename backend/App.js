@@ -6,12 +6,13 @@ const tagsRouter = require("./Routes/Tag");
 const bodyParser = require("body-parser");
 const tourGuideRoute = require('./Routes/TourGuideRoute'); 
 const AdvertiserRoute = require("./Routes/AdvertiserRoute");
-const ItineraryRoutes = require("./Routes/ItineraryRoute");
+const itineraryRoutes = require('./routes/ItineraryRoute');
 const productRoutes = require("./Routes/Products");
 const cors = require("cors");
 require("dotenv").config();
 
 mongoose.set("strictQuery", false);
+
 
 const app = express();
 app.use(cors());
@@ -34,7 +35,7 @@ mongoose
 app.use('/tourGuides', tourGuideRoute);
 // Use the advertiser routes
 app.use("/advertisers", AdvertiserRoute);
-app.use("/itineraries", ItineraryRoutes);
+app.use('/itineraries', itineraryRoutes);
 app.use("/historical-places", historicalPlacesRouter);
 app.use("/museums", museumsRouter);
 app.use("/api", tagsRouter);

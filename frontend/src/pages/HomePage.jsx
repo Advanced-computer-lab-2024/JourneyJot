@@ -7,8 +7,12 @@ const HomePage = () => {
       <Link to={"/products"}>
         <button className="bg-red-500 rounded-md">View Products</button>
       </Link>
+      
     </div>
   );
 };
 
 export default HomePage;
+
+
+ 

@@ -4,7 +4,7 @@ const router = express.Router();
 const Advertiser = require('../models/Advertiser');
 
 // Create a new advertiser profile
-router.post('/', async (req, res) => {
+router.post('/create', async (req, res) => {
     const { companyName, website, hotline, companyProfile, accepted } = req.body;
 
     const newAdvertiser = new Advertiser({

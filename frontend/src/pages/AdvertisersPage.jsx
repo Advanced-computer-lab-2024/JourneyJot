@@ -1,30 +1,51 @@
+// src/pages/AdvertiserPage.jsx
 import React, { useEffect, useState } from 'react';
 import { fetchAdvertisers } from '../api';
 import AdvertiserForm from '../components/AdvertiserForm';
 import AdvertiserList from '../components/AdvertiserList';
 
-const AdvertisersPage = () => {
-  const [advertisers, setAdvertisers] = useState([]);
+const AdvertiserPage = () => {
+    const [advertisers, setAdvertisers] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentAdvertiser, setCurrentAdvertiser] = useState(null);
 
-  useEffect(() => {
     const loadAdvertisers = async () => {
-      const fetchedAdvertisers = await fetchAdvertisers();
-      setAdvertisers(fetchedAdvertisers);
+        try {
+            const data = await fetchAdvertisers();
+            setAdvertisers(data);
+        } catch (error) {
+            console.error("Error fetching advertisers:", error);
+        }
     };
-    loadAdvertisers();
-  }, []);
 
-  const handleAdvertiserAdded = (newAdvertiser) => {
-    setAdvertisers((prev) => [...prev, newAdvertiser]);
-  };
+    useEffect(() => {
+        loadAdvertisers();
+    }, []);
 
-  return (
-    <div>
-      <h1>Advertisers</h1>
-      <AdvertiserForm onAdvertiserAdded={handleAdvertiserAdded} />
-      <AdvertiserList advertisers={advertisers} />
-    </div>
-  );
+    const handleEdit = (advertiser) => {
+        setCurrentAdvertiser(advertiser);
+        setIsEditing(true);
+    };
+
+    const handleBack = () => {
+        setCurrentAdvertiser(null);
+        setIsEditing(false);
+        loadAdvertisers();
+    };
+
+    return (
+        <div className="container">
+            <h1>Advertisers</h1>
+            {isEditing ? (
+                <AdvertiserForm advertiser={currentAdvertiser} onSubmit={handleBack} />
+            ) : (
+                <>
+                    <AdvertiserList advertisers={advertisers} onEdit={handleEdit} />
+                    <button onClick={() => setIsEditing(true)}>Create New Advertiser</button>
+                </>
+            )}
+        </div>
+    );
 };
 
-export default AdvertisersPage;
+export default AdvertiserPage;

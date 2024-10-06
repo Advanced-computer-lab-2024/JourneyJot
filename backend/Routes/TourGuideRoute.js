@@ -7,14 +7,7 @@ const TourGuide = require('../models/TourGuide');
 // Create a new tour guide profile
 router.post('/create', async (req, res) => {
     const { name, mobile, experience, previousWork, accepted } = req.body;
-
-    const newGuide = new TourGuide({
-        name,
-        mobile,
-        experience,
-        previousWork,
-        accepted,
-    });
+    const newGuide = new TourGuide({ name, mobile, experience, previousWork, accepted });
 
     try {
         const savedProfile = await newGuide.save();
@@ -23,6 +16,7 @@ router.post('/create', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
+
 // Read all tour guide profiles
 router.get('/', async (req, res) => {
     try {

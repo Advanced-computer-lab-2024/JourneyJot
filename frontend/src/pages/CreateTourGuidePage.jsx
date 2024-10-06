@@ -1,30 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { fetchTourGuides } from '../api';
+// src/pages/CreateTourGuidePage.jsx
+import React from 'react';
 import TourGuideForm from '../components/TourGuideForm';
-import TourGuideList from '../components/TourGuideList';
 
-const TourGuidesPage = () => {
-  const [guides, setGuides] = useState([]);
-
-  useEffect(() => {
-    const loadGuides = async () => {
-      const fetchedGuides = await fetchTourGuides();
-      setGuides(fetchedGuides);
-    };
-    loadGuides();
-  }, []);
-
-  const handleGuideAdded = (newGuide) => {
-    setGuides((prev) => [...prev, newGuide]);
-  };
-
-  return (
-    <div>
-      <h1>Tour Guides</h1>
-      <TourGuideForm onGuideAdded={handleGuideAdded} />
-      <TourGuideList guides={guides} />
-    </div>
-  );
+const CreateTourGuidePage = ({ onFormSubmit }) => {
+    return (
+        <div>
+            <h1>Create Tour Guide</h1>
+            <TourGuideForm onFormSubmit={onFormSubmit} />
+        </div>
+    );
 };
 
-export default TourGuidesPage;
+export default CreateTourGuidePage;

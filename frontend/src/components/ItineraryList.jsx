@@ -1,20 +1,20 @@
+// src/components/ItineraryList.jsx
 import React from 'react';
+import ItineraryItem from './ItineraryItem';
 
-const ItineraryList = ({ itineraries }) => (
-  <ul>
-    {itineraries.map((itinerary) => (
-      <li key={itinerary._id}>
-        <strong>{itinerary.title}</strong> - Guided by {itinerary.tourGuide.name}
-        <ul>
-          {itinerary.activities.map((activity, index) => (
-            <li key={index}>
-              {activity.description} at {activity.location} on {new Date(activity.date).toLocaleDateString()}
-            </li>
-          ))}
-        </ul>
-      </li>
-    ))}
-  </ul>
-);
+const ItineraryList = ({ itineraries, onDelete, onEdit }) => {
+    return (
+        <div>
+            {itineraries.map((itinerary) => (
+                <ItineraryItem
+                    key={itinerary.id}
+                    itinerary={itinerary}
+                    onDelete={onDelete}
+                    onEdit={onEdit}
+                />
+            ))}
+        </div>
+    );
+};
 
 export default ItineraryList;
