@@ -20,7 +20,7 @@ const AddProduct = () => {
       .post("http://localhost:8000/products/addProduct", data)
       .then(() => {
         setLoading(false);
-        navigate("/");
+        navigate("/products");
       })
       .catch((err) => {
         setLoading(false);

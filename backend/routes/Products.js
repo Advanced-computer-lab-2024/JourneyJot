@@ -11,16 +11,13 @@ const isAuthorized = (req, res, next) => {
   }
 };
 
-router.get("/getAllProducts", isAuthorized, async (req, res) => {
+router.get("/sortProducts", async (req, res) => {
   // <- Middleware applied correctly
   try {
-    const products = await Product.find({});
-    if (products.length === 0) {
-      return res.status(404).json({ message: "No products found" });
-    }
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    const products = await Product.find().sort({ rating: -1 });
+    res.status(200).json({ products });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 });
 
@@ -40,8 +37,7 @@ router.get("/searchProductByName", isAuthorized, async (req, res) => {
   }
 });
 
-router.get("/filterProductsByPrice", isAuthorized, async (req, res) => {
-  // <- Added middleware here as well
+router.get("/filterProductsByPrice", async (req, res) => {
   const { minPrice, maxPrice } = req.query;
   try {
     const products = await Product.find({
@@ -59,7 +55,6 @@ router.get("/filterProductsByPrice", isAuthorized, async (req, res) => {
 });
 
 router.post("/addProduct", async (req, res) => {
-  // <- Added middleware here as well
   try {
     const product = new Product({
       details: req.body.details,
@@ -77,11 +72,9 @@ router.post("/addProduct", async (req, res) => {
   }
 });
 
-// getting all products sorted by rating
 router.get("/", async (req, res) => {
-  // <- Added middleware here as well
   try {
-    const products = await Product.find().sort({ rating: -1 });
+    const products = await Product.find();
     res.status(200).json({ products });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -90,7 +83,6 @@ router.get("/", async (req, res) => {
 
 // editing a product by id
 router.put("/:id", async (req, res) => {
-  // <- Added middleware here as well
   try {
     const product = await Product.findById(req.params.id);
     if (product) {
@@ -103,6 +95,19 @@ router.put("/:id", async (req, res) => {
         message: "Product updated successfully",
         product,
       });
+    } else {
+      res.status(404).json({ message: "Product not found" });
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (product) {
+      res.status(200).json({ product });
     } else {
       res.status(404).json({ message: "Product not found" });
     }
