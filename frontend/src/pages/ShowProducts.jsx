@@ -60,19 +60,21 @@ const ShowProducts = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios
-      .get("http://localhost:3000/products/searchProducts", {
-        params: { productName: searchedProduct },
-      })
-      .then((response) => {
-        setProducts(response.data.products);
-        console.log("Fetched products:", response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-        setLoading(false);
-      });
+    if (searchedProduct.trim()) {
+      axios
+        .get("http://localhost:3000/products/searchProductByName", {
+          params: { productName: searchedProduct },
+        })
+        .then((response) => {
+          setProducts(response.data.products);
+          console.log("Fetched products:", response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data: ", error);
+          setLoading(false);
+        });
+    }
   }, [searchedProduct]);
 
   return (

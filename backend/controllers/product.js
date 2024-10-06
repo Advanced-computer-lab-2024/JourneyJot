@@ -17,9 +17,6 @@ exports.searchByName = async (req, res) => {
     const products = await Product.find({
       name: { $regex: productName, $options: "i" },
     });
-    if (products.length === 0) {
-      return res.status(404).json({ message: "No products found" });
-    }
     res.status(200).json({ products });
   } catch (error) {
     res.status(400).json({ error: error.message });
