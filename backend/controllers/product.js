@@ -48,6 +48,7 @@ exports.addProduct = async (req, res) => {
       quantity: req.body.quantity,
       rating: req.body.rating,
     });
+    if (req.body.name) product.name = req.body.name;
     await product.save();
     res.status(201).json({
       message: "Product created successfully",
