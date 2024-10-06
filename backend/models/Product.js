@@ -22,6 +22,10 @@ const reviewSchema = new Schema(
 );
 const productSchema = new Schema(
   {
+    picture: {
+      type: String,
+      required: false,
+    },
     name: {
       type: String,
       required: false,

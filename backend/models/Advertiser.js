@@ -1,34 +1,29 @@
-// models/Advertiser.js
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+/** @format */
 
-// Define the Advertiser schema
-const AdvertiserSchema = new Schema(
-  {
-    companyName: { type: String, required: true },
-    website: { type: String, required: true },
-    hotline: { type: String, required: true },
-    companyProfile: { type: String, default: "" },
-    accepted: { type: Boolean, default: false },
-    Username: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    Email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    Password: {
-      type: String,
-      required: true,
-    },
-  },
-  { timestamps: true }
+// models/AdvertiserProfile.js
+const mongoose = require('mongoose');
+
+const advertiserProfileSchema = new mongoose.Schema({
+	website: {
+		type: String,
+		required: true,
+		trim: true,
+	},
+	hotline: {
+		type: String,
+		required: true,
+	},
+	companyProfile: {
+		type: String,
+		required: true,
+	},
+	// Add any additional fields you want for advertisers here
+});
+
+// Create the AdvertiserProfile model
+const AdvertiserProfile = mongoose.model(
+	'AdvertiserProfile',
+	advertiserProfileSchema
 );
 
-// Create the Advertiser model
-const Advertiser = mongoose.model("Advertiser", AdvertiserSchema);
-
-module.exports = Advertiser;
+module.exports = AdvertiserProfile;

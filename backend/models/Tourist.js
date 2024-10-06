@@ -1,60 +1,62 @@
-const mongoose = require("mongoose");
-const moment = require("moment"); // For handling date validations
+/** @format */
 
-const TouristSchema = new mongoose.Schema(
-  {
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      immutable: true, // Prevent username from being changed after creation
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    fullName: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    mobileNumber: {
-      type: String,
-      required: true,
-    },
-    nationality: {
-      type: String,
-      required: true,
-    },
-    dateOfBirth: {
-      type: Date,
-      required: true,
-      immutable: true, // Prevent DOB from being changed after creation
-      validate: {
-        validator: function (value) {
-          // Ensure the user is 18 years or older
-          return moment().diff(value, "years") >= 18;
-        },
-        message: "You must be at least 18 years old to register.",
-      },
-    },
-    jobOrStudent: {
-      type: String,
-      enum: ["job", "student"], // Allow only 'job' or 'student' values
-      required: true,
-    },
-    wallet: {
-      type: Number,
-      required: true,
-      default: 0, // Default value for wallet
-      immutable: true, // Prevent wallet from being changed after creation
-    },
-  },
-  { timestamps: true }
+const mongoose = require('mongoose');
+const helperMethods = require('../helper/methods');
+
+const touristSchema = new mongoose.Schema(
+	{
+		email: {
+			type: String,
+			required: [true, 'Email is required'],
+			unique: true,
+			match: [/.+@.+\..+/, 'Please enter a valid email'],
+		},
+		username: {
+			type: String,
+			required: [true, 'Username is required'],
+			unique: true,
+		},
+		password: {
+			type: String,
+			required: [true, 'Password is required'],
+			minlength: 6,
+		},
+		mobileNumber: {
+			type: String,
+			required: [true, 'Mobile number is required'],
+			match: [/^\d{10,15}$/, 'Please enter a valid mobile number'],
+		},
+		nationality: {
+			type: String,
+			required: [true, 'Nationality is required'],
+		},
+		dob: {
+			type: Date,
+			required: [true, 'Date of Birth is required'],
+			validate: {
+				validator: function (value) {
+					return helperMethods.calculateAge(value) > 18;
+				},
+				message: 'You must be 18 years or older to register',
+			},
+		},
+		occupation: {
+			type: String,
+			enum: ['Job', 'Student'],
+			required: [true, 'Occupation is required'],
+		},
+		wallet: {
+			balance: {
+				type: Number,
+				default: 0, // Default balance set to 0
+			},
+			currency: {
+				type: String,
+				default: 'USD', // Default currency set to USD
+			},
+		},
+	},
+	{ timestamps: true }
 );
 
-module.exports = mongoose.model("Tourist", TouristSchema);
+module.exports = mongoose.model('Tourist', touristSchema);

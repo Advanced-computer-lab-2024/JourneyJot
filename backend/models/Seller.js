@@ -1,26 +1,22 @@
+/** @format */
+
+// models/SellerProfile.js
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const sellerSchema = new Schema({
-  Username: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  Email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  Password: {
-    type: String,
-    required: true
-  },
-  Description: {
-    type: String,
-    required: true,
-  }
-}, { timestamps: true });
+const sellerProfileSchema = new mongoose.Schema({
+	name: {
+		type: String,
+		required: true,
+		trim: true,
+	},
+	description: {
+		type: String,
+		required: true,
+	},
+	// Add any additional fields you want for sellers here
+});
 
-const Seller = mongoose.model('Seller', sellerSchema);
-module.exports = Seller;
+// Create the SellerProfile model
+const SellerProfile = mongoose.model('SellerProfile', sellerProfileSchema);
+
+module.exports = SellerProfile;
