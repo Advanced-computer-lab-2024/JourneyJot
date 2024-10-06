@@ -11,20 +11,24 @@ const ShowProducts = () => {
   const [sort, setSort] = useState(false);
   const [searchedProduct, setSearchedProduct] = useState("");
 
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://localhost:3000/products");
+      setProducts(response.data.products);
+      console.log("Fetched products:", response.data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
+    //sort and unsort products
     setLoading(true);
     if (!sort) {
-      axios
-        .get("http://localhost:3000/products")
-        .then((response) => {
-          setProducts(response.data.products);
-          console.log("Fetched products:", response.data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching data: ", error);
-          setLoading(false);
-        });
+      fetchProducts();
     }
     if (sort) {
       axios
@@ -59,6 +63,7 @@ const ShowProducts = () => {
   };
 
   useEffect(() => {
+    // handle if user is searching for something
     setLoading(true);
     if (searchedProduct.trim()) {
       axios
@@ -74,6 +79,8 @@ const ShowProducts = () => {
           console.error("Error fetching data: ", error);
           setLoading(false);
         });
+    } else {
+      fetchProducts();
     }
   }, [searchedProduct]);
 
