@@ -13,7 +13,7 @@ const ShowProducts = () => {
     setLoading(true);
     if (!sort) {
       axios
-        .get("http://localhost:8000/products")
+        .get("http://localhost:3000/product")
         .then((response) => {
           setProducts(response.data.products);
           console.log("Fetched products:", response.data);
@@ -26,7 +26,7 @@ const ShowProducts = () => {
     }
     if (sort) {
       axios
-        .get("http://localhost:8000/products/sortProducts")
+        .get("http://localhost:3000/product/sortProducts")
         .then((response) => {
           setProducts(response.data.products);
           console.log("Fetched products:", response.data);
@@ -42,7 +42,7 @@ const ShowProducts = () => {
   const filterByPrice = () => {
     setLoading(true);
     axios
-      .get("http://localhost:8000/products/filterProductsByPrice", {
+      .get("http://localhost:3000/product/filterProductsByPrice", {
         params: { minPrice: minPrice, maxPrice: maxPrice },
       })
       .then((response) => {

@@ -20,7 +20,8 @@ const productRouter = require("./routes/product");
 const TouristItineraryRouter = require("./routes/tourist-itinerary");
 
 // Other imports...
-
+const cors = require("cors");
+app.use(cors());
 // Connect to mongoDB
 
 mongoose.connect(

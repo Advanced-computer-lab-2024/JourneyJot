@@ -15,9 +15,7 @@ const EditProduct = () => {
     // Fetch the product details
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/products/${id}`
-        );
+        const response = await axios.get(`http://localhost:3000/product/${id}`);
         setProductDetails(response.data.product.details);
         setProductPrice(response.data.product.price);
       } catch (err) {
@@ -38,7 +36,7 @@ const EditProduct = () => {
     };
     setLoading(true);
     try {
-      await axios.put(`http://localhost:8000/products/${id}`, data);
+      await axios.put(`http://localhost:3000/product/${id}`, data);
       setLoading(false);
       navigate("/products");
     } catch (err) {
