@@ -20,7 +20,7 @@ const LoginPage = () => {
     try {
       const response = await login(formData);
       console.log("Login successful", response.data);
-      navigate("/admins"); // Updated: Redirect to dashboard after successful login
+      navigate("/home-page"); // Updated: Redirect to dashboard after successful login
     } catch (error) {
       console.error("Login failed", error.response.data);
     }

@@ -50,3 +50,9 @@ export const touristSignup = (userData) => {
 export const touristLogin = (userData) => {
   return axios.post(`${API_URL}/tourists/login`, userData);
 };
+
+export const fetchTourGuideProfile = async () =>
+  axios.get(`${API_URL}/tour-guides/profile`);
+
+export const updateTourGuideProfile = async (profile) =>
+  axios.put(`${API_URL}/tour-guides/profile`, profile);

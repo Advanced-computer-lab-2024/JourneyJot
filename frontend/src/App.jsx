@@ -12,13 +12,14 @@ import LoginPage from "./pages/LoginPage";
 import Admins from "./pages/Admins";
 import TouristSignUp from "./pages/TouristSignUp";
 import TouristLoginPage from "./pages/TouristLoginPage";
+import TourGuideProfile from "./pages/TourGuideProfile";
 // eslint-disable-next-line react-hooks/rules-of-hooks
 
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/" element={<SignupPage />} />
+      <Route path="/home-page" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/Tourist-Signup" element={<TouristSignUp />} />
       <Route path="/tourist-Login" element={<TouristLoginPage />} />
@@ -29,6 +30,7 @@ const App = () => {
       <Route path="/TourGuide" element={<TourGuidesPage />} />
       <Route path="/advertisers" element={<AdvertisersPage />} />
       <Route path="/itineraries" element={<ItinerariesPage />} />
+      <Route path="/tour-guide/profile" element={<TourGuideProfile />} />
     </Routes>
   );
 };
