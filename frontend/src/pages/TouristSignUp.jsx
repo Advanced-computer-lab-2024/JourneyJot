@@ -1,16 +1,18 @@
-/** @format */
-
+import React from "react";
 import { useState } from "react";
-import { signup } from "../api";
 import { Link, useNavigate } from "react-router-dom";
+import { touristSignup } from "../api";
 
-const SignupPage = () => {
+const TouristSignUp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
-    role: "", // Add role field
+    mobileNumber: "",
+    nationality: "",
+    dob: "",
+    occupation: "",
   });
 
   const handleChange = (e) => {
@@ -20,11 +22,11 @@ const SignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await signup(formData);
-      console.log("Signup successful", response.data);
-      navigate("/login");
+      const response = await touristSignup(formData);
+      console.log("Signup successful");
+      navigate("/tourist-Login");
     } catch (error) {
-      console.error("Signup failed", error.response.data);
+      console.error("Signup failed");
     }
   };
 
@@ -44,7 +46,6 @@ const SignupPage = () => {
         />
         <input
           placeholder="Email"
-          label="Email"
           type="email"
           name="email"
           value={formData.email}
@@ -54,7 +55,6 @@ const SignupPage = () => {
         />
         <input
           placeholder="Password"
-          label="Password"
           type="password"
           name="password"
           value={formData.password}
@@ -62,33 +62,51 @@ const SignupPage = () => {
           required
           className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
-        <div className="form-group">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Role
-          </label>
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
-          >
-            <option value="">Select Role</option>
-            <option value="admin">Admin</option>
-            <option value="seller">Seller</option>
-            <option value="tour_guide">Tour Guide</option>
-            <option value="advertiser">Advertiser</option>
-          </select>
-        </div>
+        <input
+          placeholder="Mobile Number"
+          type="tel"
+          name="mobileNumber"
+          value={formData.mobileNumber}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
+        <input
+          placeholder="Date of Birth"
+          type="date"
+          name="dob"
+          value={formData.dob}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
+        <input
+          placeholder="Nationality"
+          type="text"
+          name="nationality"
+          value={formData.nationality}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
+        <input
+          placeholder="Occupation"
+          type="text"
+          name="occupation"
+          value={formData.occupation}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
         <button
-          label="Sign Up"
+          type="submit"
           className="w-full bg-teal-500 text-white py-2 rounded-md shadow-md hover:bg-teal-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
         >
           Sign Up
         </button>
-        <Link to="/Tourist-Signup">
+        <Link to="/signup">
           <h1 className="text-center underline text-teal-500 hover:text-teal-600 transition-all duration-200">
-            Sign up as a tourist
+            Sign up page
           </h1>
         </Link>
       </form>
@@ -96,4 +114,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default TouristSignUp;

@@ -1,10 +1,10 @@
 /** @format */
 
 import { useState } from "react";
-import { login } from "../api";
+import { touristLogin } from "../api";
 import { useNavigate } from "react-router-dom";
 
-const LoginPage = () => {
+const TouristLoginPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "", // Updated: Login with username instead of email
@@ -18,7 +18,7 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await login(formData);
+      const response = await touristLogin(formData);
       console.log("Login successful", response.data);
       navigate("/admins"); // Updated: Redirect to dashboard after successful login
     } catch (error) {
@@ -65,4 +65,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default TouristLoginPage;
