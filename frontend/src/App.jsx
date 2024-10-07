@@ -14,6 +14,7 @@ import TouristSignUp from './pages/TouristSignUp';
 import TouristLoginPage from './pages/TouristLoginPage';
 import TourGuideProfile from './pages/TourGuideProfile';
 import Dashboard from './components/DashBoard';
+import TourismGovernor from './pages/TourismGovernor.jsx';
 // eslint-disable-next-line react-hooks/rules-of-hooks
 
 // /** @format */
