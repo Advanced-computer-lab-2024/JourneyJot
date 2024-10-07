@@ -127,6 +127,12 @@ const TouristGuest = () => {
 
 	const filterAttractions = async () => {
 		try {
+			// Check if preferences is defined and not empty
+			if (!preferences) {
+				console.warn('No preferences provided.');
+				return; // Exit if no preferences
+			}
+
 			const response = await axios.get(
 				'http://localhost:3000/attractions/filter',
 				{
@@ -135,9 +141,14 @@ const TouristGuest = () => {
 					},
 				}
 			);
-			setAttractions(response.data);
+
+			// Assuming response.data is an object with { count, data }
+			setAttractions(response.data.data); // Update state with attractions
 		} catch (error) {
-			console.error('Error filtering attractions:', error);
+			console.error(
+				'Error filtering attractions:',
+				error.response ? error.response.data : error.message
+			);
 		}
 	};
 
