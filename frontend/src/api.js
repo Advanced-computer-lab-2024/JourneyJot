@@ -59,8 +59,8 @@ export const updateTourGuideProfile = async (profile) =>
 
 export const fetchAdvertiserProfile = async () => {
   try {
-    const response = await fetch("/api/advertiser/profile", { method: "GET" });
-    return await response.json();
+    const response = await axios.get(`${API_URL}/advertisers/profile`); // Adjusted to use axios
+    return response.data;
   } catch (error) {
     throw new Error("Error fetching advertiser profile");
   }
@@ -68,15 +68,28 @@ export const fetchAdvertiserProfile = async () => {
 
 export const updateAdvertiserProfile = async (profileData) => {
   try {
-    const response = await fetch("/api/advertiser/profile", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(profileData),
-    });
-    return await response.json();
+    const response = await axios.put(`${API_URL}/advertisers/profile`, profileData); // Adjusted to use axios
+    return response.data;
   } catch (error) {
     throw new Error("Error updating advertiser profile");
+  }
+};
+
+// Tourist Profile API Calls
+export const fetchTouristProfile = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/tourists/profile`); // Adjusted to use axios
+    return response.data;
+  } catch (error) {
+    throw new Error("Error fetching tourist profile");
+  }
+};
+
+export const updateTouristProfile = async (profileData) => {
+  try {
+    const response = await axios.put(`${API_URL}/tourists/profile`, profileData); // Adjusted to use axios
+    return response.data;
+  } catch (error) {
+    throw new Error("Error updating tourist profile");
   }
 };

@@ -11,6 +11,7 @@ const TouristLoginPage = () => {
     password: "",
   });
 
+  const [error, setError] = useState("");
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -20,9 +21,13 @@ const TouristLoginPage = () => {
     try {
       const response = await touristLogin(formData);
       console.log("Login successful", response.data);
-      navigate("/home-page"); // Updated: Redirect to dashboard after successful login
+
+      // Redirect to Tourist Profile page after successful login
+      navigate("/tourist-profile"); 
     } catch (error) {
-      console.error("Login failed", error.response.data);
+      console.error("Login failed", error);
+      // Set error message to display on the page
+      setError("Login failed. Please check your username and password.");
     }
   };
 
@@ -31,6 +36,10 @@ const TouristLoginPage = () => {
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
         Login
       </h2>
+
+      {/* Show error message if login fails */}
+      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <input
