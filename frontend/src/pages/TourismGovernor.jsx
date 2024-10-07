@@ -12,6 +12,8 @@ const TourismGovernor = () => {
     nativePrice: "",
     studentPrice: "",
     image: "",
+    type: "", // New field for location type
+    historicalPeriod: "", // New field for historical period tags
   }); // Form data for add/edit
   const [editingId, setEditingId] = useState(null); // ID of the place being edited
 
@@ -64,6 +66,8 @@ const TourismGovernor = () => {
       nativePrice: place.nativePrice,
       studentPrice: place.studentPrice,
       image: place.image,
+      type: place.type, // Populate type in formData for editing
+      historicalPeriod: place.historicalPeriod, // Populate historicalPeriod in formData for editing
     });
   };
 
@@ -85,6 +89,8 @@ const TourismGovernor = () => {
       nativePrice: "",
       studentPrice: "",
       image: "",
+      type: "", // Reset type field
+      historicalPeriod: "", // Reset historical period field
     });
   };
 
@@ -158,6 +164,30 @@ const TourismGovernor = () => {
           onChange={handleInputChange}
           required
         />
+
+        {/* New Type Dropdown */}
+        <select
+          name="type"
+          value={formData.type}
+          onChange={handleInputChange}
+          required
+        >
+          <option value="">Select Type</option>
+          <option value="Monuments">Monuments</option>
+          <option value="Museums">Museums</option>
+          <option value="Religious Sites">Religious Sites</option>
+          <option value="Palaces/Castles">Palaces/Castles</option>
+        </select>
+
+        {/* New Historical Period Field */}
+        <input
+          type="text"
+          name="historicalPeriod"
+          placeholder="Historical Period (e.g., 19th Century)"
+          value={formData.historicalPeriod}
+          onChange={handleInputChange}
+        />
+
         <button type="submit">{editingId ? "Update" : "Create "} Place</button>
         {editingId && <button onClick={resetForm}>Cancel Edit</button>}
       </form>
@@ -170,6 +200,8 @@ const TourismGovernor = () => {
             <p>{place.description}</p>
             <p>Location: {place.location}</p>
             <p>Opening Hours: {place.openingHours}</p>
+            <p>Type: {place.type}</p>
+            <p>Historical Period: {place.historicalPeriod}</p>
             <p>
               Ticket Prices: Foreigner - ${place.foreignPrice}, Native - $
               {place.nativePrice}, Student - ${place.studentPrice}
