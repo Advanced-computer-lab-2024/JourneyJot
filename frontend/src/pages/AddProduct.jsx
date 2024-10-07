@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+/** @format */
+
+import { useState } from "react";
 import Spinner from "../components/Spinner";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";

@@ -1,5 +1,5 @@
-import React from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+/** @format */
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import Spinner from "../components/Spinner";
