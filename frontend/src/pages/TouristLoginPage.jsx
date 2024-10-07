@@ -20,7 +20,7 @@ const TouristLoginPage = () => {
     try {
       const response = await touristLogin(formData);
       console.log("Login successful", response.data);
-      navigate("/home-page"); // Updated: Redirect to dashboard after successful login
+      navigate("/tourist/homePage"); // Updated: Redirect to dashboard after successful login
     } catch (error) {
       console.error("Login failed", error.response.data);
     }

@@ -17,11 +17,11 @@ const viewList = require("../middleware/view-list");
 
 const attractionRouter = express.Router();
 
-attractionRouter.post("/", authenticate, roleCheck, createAttraction); // Create attraction
+attractionRouter.post("/", createAttraction); // Create attraction
 attractionRouter.get("/", getAttractions); // Get all attractions
 attractionRouter.get("/filter", filterAttractionsByTag); // Filter attractions by tags
 attractionRouter.get("/:id", getAttraction); // Get one attractions
-attractionRouter.put("/:id", authenticate, roleCheck, updateAttraction); // Update attraction
-attractionRouter.delete("/:id", authenticate, roleCheck, deleteAttraction); // Delete attraction
+attractionRouter.put("/:id", updateAttraction); // Update attraction
+attractionRouter.delete("/:id", deleteAttraction); // Delete attraction
 
 module.exports = attractionRouter;

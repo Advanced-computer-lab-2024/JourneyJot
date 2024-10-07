@@ -18,11 +18,13 @@ const preferenceTagRouter = require("./routes/preference-tag");
 const categoryRouter = require("./routes/category");
 const productRouter = require("./routes/product");
 const TouristItineraryRouter = require("./routes/tourist-itinerary");
-
-// Other imports...
 const cors = require("cors");
-app.use(cors());
-// Connect to mongoDB
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Your frontend's origin
+    credentials: true,
+  })
+);
 
 mongoose.connect(
   "mongodb+srv://gandoza:gandoza@mernapp.jly0k.mongodb.net/?retryWrites=true&w=majority&appName=MernApp"
