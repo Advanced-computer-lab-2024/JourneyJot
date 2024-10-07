@@ -9,27 +9,30 @@ const ShowProducts = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [sort, setSort] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); // New state for search
+  const [searchedProduct, setSearchedProduct] = useState("");
 
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://localhost:3000/products");
+      setProducts(response.data.products);
+      console.log("Fetched products:", response.data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
+    //sort and unsort products
     setLoading(true);
     if (!sort) {
-      axios
-        .get("http://localhost:8000/products")
-        .then((response) => {
-          setProducts(response.data.products);
-          console.log("Fetched products:", response.data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching data: ", error);
-          setLoading(false);
-        });
+      fetchProducts();
     }
     if (sort) {
       axios
-        .get("http://localhost:8000/products/sortProducts")
+        .get("http://localhost:3000/products/sortProducts")
         .then((response) => {
           setProducts(response.data.products);
           console.log("Fetched products:", response.data);
@@ -45,7 +48,7 @@ const ShowProducts = () => {
   const filterByPrice = () => {
     setLoading(true);
     axios
-      .get("http://localhost:8000/products/filterProductsByPrice", {
+      .get("http://localhost:3000/products/filterProductsByPrice", {
         params: { minPrice: minPrice, maxPrice: maxPrice },
       })
       .then((response) => {
@@ -59,27 +62,39 @@ const ShowProducts = () => {
       });
   };
 
-  const searchByName = () => {
+  useEffect(() => {
+    // handle if user is searching for something
     setLoading(true);
-    axios
-      .get("http://localhost:8000/products/searchProductByName", {
-        params: { productName: searchQuery },
-      })
-      .then((response) => {
-        setProducts(response.data.products);
-        console.log("Searched products:", response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error searching products: ", error);
-        setLoading(false);
-      });
-  };
+    if (searchedProduct.trim()) {
+      axios
+        .get("http://localhost:3000/products/searchProductByName", {
+          params: { productName: searchedProduct },
+        })
+        .then((response) => {
+          setProducts(response.data.products);
+          console.log("Fetched products:", response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data: ", error);
+          setLoading(false);
+        });
+    } else {
+      fetchProducts();
+    }
+  }, [searchedProduct]);
 
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center">
+      <div className=" flex space-x-4 items-center">
         <h1 className="text-2xl font-bold">Products</h1>
+        <input
+          type="search"
+          placeholder="Search..."
+          value={searchedProduct}
+          onChange={(e) => setSearchedProduct(e.target.value)}
+          className="w-full max-w-md px-4 py-2 border-2 border-gray-300 rounded-lg shadow-lg bg-gray-100 text-gray-900 placeholder-gray-500"
+        ></input>
       </div>
       <div className="flex space-x-4">
         {/* New Search Field */}

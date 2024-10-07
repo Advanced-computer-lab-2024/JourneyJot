@@ -17,10 +17,7 @@ exports.searchByName = async (req, res) => {
     const products = await Product.find({
       name: { $regex: productName, $options: "i" },
     });
-    if (products.length === 0) {
-      return res.status(404).json({ message: "No products found" });
-    }
-    res.status(200).json(products);
+    res.status(200).json({ products });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -37,7 +34,7 @@ exports.filterByPrice = async (req, res) => {
         .status(404)
         .json({ message: "No products found in this price range" });
     }
-    res.status(200).json(products);
+    res.status(200).json({ products });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -51,6 +48,7 @@ exports.addProduct = async (req, res) => {
       quantity: req.body.quantity,
       rating: req.body.rating,
     });
+    if (req.body.name) product.name = req.body.name;
     await product.save();
     res.status(201).json({
       message: "Product created successfully",
