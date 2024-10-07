@@ -33,7 +33,7 @@ const LoginPage = () => {
 			);
 
 			// Redirect the user after successful login
-			navigate('/advertiser-dashboard');
+			navigate('/admins');
 		} catch (error) {
 			console.error('Login failed:', error.response.data);
 		}

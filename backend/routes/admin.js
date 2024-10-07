@@ -8,6 +8,7 @@ const {
 	deleteAccount,
 	addGovernor,
 	addAdmin,
+	viewAdmins,
 } = require('../controllers/admin');
 adminRouter.delete(
 	'/delete-account/:userId',

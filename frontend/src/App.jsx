@@ -6,7 +6,6 @@ import AddProduct from './pages/AddProduct';
 import EditProduct from './pages/EditProduct';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
-import Admins from './pages/Admins';
 import TouristSignUp from './pages/TouristSignUp';
 import TouristLoginPage from './pages/TouristLoginPage';
 import TourGuideProfile from './pages/TourGuideProfile';
@@ -18,6 +17,12 @@ import AdvertiserProfile from './components/AdvertiserProfile.jsx';
 import SellerProfile from './components/SellerProfile.jsx';
 import SellerDashBoard from './components/SellerDashBoard.jsx';
 import ActivitiesComponent from './components/Activities.jsx';
+import AdminDashboard from './components/AdminDashBoard.jsx';
+import AddAdmin from './components/AddAdmin.jsx';
+import AddGovernor from './components/AddGovernor.jsx';
+import AdminDeleteUser from './components/AdminDeleteUser.jsx';
+import CategoryManagement from './components/CategoryManagement.jsx';
+import PreferenceTagManagement from './components/PreferenceTagManagement.jsx';
 
 const App = () => {
 	return (
@@ -47,10 +52,6 @@ const App = () => {
 				element={<ShowProducts />}
 			/>
 			<Route
-				path='/admins'
-				element={<Admins />}
-			/>
-			<Route
 				path='/products/addProduct'
 				element={<AddProduct />}
 			/>
@@ -75,6 +76,32 @@ const App = () => {
 				path='/tour-guide-dashboard/itineraries'
 				element={<Itineraries />}
 			/>
+			<Route
+				path='/admins'
+				element={<AdminDashboard />}
+			/>
+
+			<Route
+				path='/admins/addAdmin'
+				element={<AddAdmin />}
+			/>
+			<Route
+				path='/admins/addGovernor'
+				element={<AddGovernor />}
+			/>
+			<Route
+				path='/admins/deleteUser'
+				element={<AdminDeleteUser />}
+			/>
+			<Route
+				path='/admins/category-management'
+				element={<CategoryManagement />}
+			/>
+			<Route
+				path='/admins/preference-tag-management'
+				element={<PreferenceTagManagement />}
+			/>
+
 			<Route
 				path='/tourism-governor'
 				element={<TourismGovernor />}
