@@ -81,7 +81,7 @@ exports.getFilteredActivities = async (req, res) => {
     const query = {};
 
     // Add filters based on query parameters
-    if (req.query.budget) {
+    if (req.query.price) {
       query.price = { $lte: req.query.price }; // Less than or equal to budget
     }
 

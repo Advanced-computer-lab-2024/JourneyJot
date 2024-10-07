@@ -4,6 +4,7 @@ import ActivitiesCard from "./ActivitiesCard";
 import ItinerariesCard from "./ItinerariesCard";
 import AttractionsCard from "./AttractionsCard";
 import { useNavigate } from "react-router-dom";
+import Header from "./Header";
 const TouristGuest = () => {
   const [activities, setActivities] = useState([]);
   const [itineraries, setItineraries] = useState([]);
@@ -143,25 +144,7 @@ const TouristGuest = () => {
   return (
     <div className="container mx-auto py-8 px-4 flex flex-col space-y-12">
       {/* Header Section with Sign Up and Log In buttons */}
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-4xl font-bold text-blue-900">
-          Welcome to JourneyJot
-        </h1>
-        <div className="flex space-x-4">
-          <button
-            onClick={() => navigate("/signup")}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none"
-          >
-            Sign Up
-          </button>
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none"
-          >
-            Log In
-          </button>
-        </div>
-      </div>
+      <Header />
 
       {/* Filter Section */}
       <div className="bg-white p-6 rounded-lg shadow-lg flex flex-wrap gap-4 items-center justify-center">

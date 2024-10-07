@@ -12,7 +12,7 @@ const touristRouter = Router();
 
 touristRouter.post("/signup", signUp);
 touristRouter.post("/login", login);
-touristRouter.get("/profile", getTouristProfile);
+touristRouter.get("/profile", auth_check, getTouristProfile);
 touristRouter.put("/profile", auth_check, updateTouristProfile);
 
 module.exports = touristRouter;
