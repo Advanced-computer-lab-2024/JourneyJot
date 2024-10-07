@@ -19,11 +19,9 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const response = await login(formData);
-      const { token } = response.data; // Extract the token from the response
-      console.log(response.config);
-      // Log the token to ensure it exists
+      const { token, role } = response.data; // Extract the token and role from the response
       console.log("Received token:", token);
-      console.log(token);
+      console.log("User role:", role);
 
       // Save the token in localStorage
       localStorage.setItem("token", token);
@@ -31,9 +29,20 @@ const LoginPage = () => {
         "Token stored in localStorage:",
         localStorage.getItem("token")
       );
+      console.log(role);
 
-      // Redirect the user after successful login
-      navigate("/advertiser-dashboard");
+      // Navigate based on user role
+      if (role === "admin") {
+        navigate("/admins");
+      } else if (role === "tour_guide") {
+        navigate("/tour-guide-dashboard"); // Replace with the actual path for the tour guide dashboard
+      } else if (role === "advertiser") {
+        navigate("/advertiser-dashboard/profile");
+      } else if (role === "seller") {
+        navigate("/seller-dashboard"); // Replace with the actual path for the advertiser dashboard
+      } else {
+        console.error("Unknown role:", role);
+      }
     } catch (error) {
       console.error("Login failed:", error.response.data);
     }

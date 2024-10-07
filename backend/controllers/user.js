@@ -65,6 +65,7 @@ exports.login = (req, res, next) => {
 							return res.status(200).json({
 								message: 'Authentication successful',
 								token: results,
+								role: user[0].role,
 							});
 						}
 					);
