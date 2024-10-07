@@ -67,20 +67,15 @@ exports.deleteAttraction = async (req, res) => {
 };
 
 exports.filterAttractionsByTag = async (req, res) => {
-  // not done
   try {
-    const { tags } = req.query;
+    const { preferences } = req.query;
 
-    // Build the filter object
-    let filter = {};
-
-    if (tags) {
-      filter.tags = { $in: tags.split(",") }; // Filter for specific tags
+    if (preferences) {
+      const attractions = await Attraction.find({ tags: preferences });
     }
 
-    const historicalPlaces = await HistoricalPlace.find(filter);
-    res.json(historicalPlaces);
+    res.json({ count: attractions.length, data: attractions });
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({ message: error.message });
   }
 };

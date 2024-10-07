@@ -69,27 +69,32 @@ exports.deleteItinerary = async (req, res) => {
 
 exports.sortByPriceOrRating = async (req, res) => {
   try {
-    const sortCriteria = {};
+    const filterCriteria = {};
 
-    // Determine the sorting criteria based on query parameters
-    if (req.query.sortBy) {
-      if (req.query.sortBy === "price") {
-        sortCriteria.price = req.query.order === "desc" ? -1 : 1; // Ascending or descending sort
-      } else if (req.query.sortBy === "ratings") {
-        sortCriteria.ratings = req.query.order === "desc" ? -1 : 1; // Ascending or descending sort
+    // Check for price in query parameters and filter for itineraries with a price less than the given number
+    if (req.query.price) {
+      const maxPrice = parseFloat(req.query.price);
+      if (!isNaN(maxPrice)) {
+        filterCriteria.price = { $lt: maxPrice }; // Less than the given price
       } else {
-        return res.status(400).send({
-          message: 'Invalid sortBy parameter. Use "price" or "ratings".',
-        });
+        return res.status(400).send({ message: "Invalid price format." });
       }
-    } else {
-      return res.status(400).send({ message: "Missing sortBy parameter." });
     }
 
-    // Fetch all activities and apply sorting
-    const itineraries = await Itinerary.find({}).sort(sortCriteria);
+    // Check for ratings in query parameters and filter by ratings greater than or equal to the given value
+    if (req.query.ratings) {
+      const minRating = parseFloat(req.query.ratings);
+      if (!isNaN(minRating)) {
+        filterCriteria.ratings = { $gte: minRating }; // Minimum rating filter
+      } else {
+        return res.status(400).send({ message: "Invalid ratings format." });
+      }
+    }
 
-    // Return the sorted result
+    // Fetch itineraries based on the filtering criteria
+    const itineraries = await Itinerary.find(filterCriteria);
+
+    // Return the filtered result
     return res
       .status(200)
       .json({ count: itineraries.length, data: itineraries });
