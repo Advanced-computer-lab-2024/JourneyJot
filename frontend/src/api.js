@@ -56,3 +56,27 @@ export const fetchTourGuideProfile = async () =>
 
 export const updateTourGuideProfile = async (profile) =>
   axios.put(`${API_URL}/tour-guides/profile`, profile);
+
+export const fetchAdvertiserProfile = async () => {
+  try {
+    const response = await fetch("/api/advertiser/profile", { method: "GET" });
+    return await response.json();
+  } catch (error) {
+    throw new Error("Error fetching advertiser profile");
+  }
+};
+
+export const updateAdvertiserProfile = async (profileData) => {
+  try {
+    const response = await fetch("/api/advertiser/profile", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileData),
+    });
+    return await response.json();
+  } catch (error) {
+    throw new Error("Error updating advertiser profile");
+  }
+};

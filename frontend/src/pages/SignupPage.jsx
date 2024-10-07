@@ -22,11 +22,18 @@ const SignupPage = () => {
     try {
       const response = await signup(formData);
       console.log("Signup successful", response.data);
-      navigate("/login");
+  
+      // Redirect based on role
+      if (formData.role === "advertiser") {
+        navigate("/advertiser-profile");
+      } else {
+        navigate("/login");  // Other roles
+      }
     } catch (error) {
       console.error("Signup failed", error.response.data);
     }
   };
+  
 
   return (
     <div className="max-w-lg mx-auto bg-white p-8 shadow-lg rounded-lg">
