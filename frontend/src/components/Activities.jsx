@@ -22,6 +22,7 @@ const ActivitiesComponent = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [editActivityId, setEditActivityId] = useState(null);
+  const [selectedActivity, setSelectedActivity] = useState(null); // To store selected activity for viewing
 
   // Fetch all activities on component mount
   useEffect(() => {
@@ -39,10 +40,10 @@ const ActivitiesComponent = () => {
         };
 
         const response = await axios.get(
-          "http://localhost:3000/activities",
+          "http://localhost:3000/activities/",
           config
         );
-        setActivities(response.data);
+        setActivities(response.data.activities || response.data); // Adjust based on your response structure
       } catch (error) {
         console.error("Failed to fetch activities", error);
       }
@@ -118,24 +119,28 @@ const ActivitiesComponent = () => {
         "http://localhost:3000/activities/",
         config
       );
-      setActivities(response.data);
-      setNewActivity({
-        date: "",
-        time: "",
-        location: {
-          type: "Point",
-          coordinates: ["", ""],
-        },
-        price: "",
-        priceRange: "",
-        category: "",
-        tags: [],
-        specialDiscounts: "",
-        bookingOpen: false,
-      }); // Reset form
+      setActivities(response.data.activities || response.data); // Adjust based on your response structure
+      resetForm(); // Reset form
     } catch (error) {
       console.error("Failed to save activity", error);
     }
+  };
+
+  const resetForm = () => {
+    setNewActivity({
+      date: "",
+      time: "",
+      location: {
+        type: "Point",
+        coordinates: ["", ""],
+      },
+      price: "",
+      priceRange: "",
+      category: "",
+      tags: [],
+      specialDiscounts: "",
+      bookingOpen: false,
+    });
   };
 
   // Edit an activity
@@ -163,9 +168,15 @@ const ActivitiesComponent = () => {
     try {
       await axios.delete(`http://localhost:3000/activities/${id}`, config);
       setActivities(activities.filter((activity) => activity._id !== id));
+      console.log("Activity deleted:", id);
     } catch (error) {
       console.error("Failed to delete activity", error);
     }
+  };
+
+  // View activity details
+  const handleView = (activity) => {
+    setSelectedActivity(activity);
   };
 
   return (
@@ -173,6 +184,7 @@ const ActivitiesComponent = () => {
       <h2 className="text-2xl mb-4">Activities</h2>
 
       <form onSubmit={handleSubmit} className="mb-6">
+        {/* Form fields for creating/updating activities */}
         <div className="mb-4">
           <label>Date</label>
           <input
@@ -194,26 +206,25 @@ const ActivitiesComponent = () => {
           />
         </div>
         <div className="mb-4">
-          <label>Location (Longitude)</label>
-          <input
-            type="text"
-            name="coordinates.0"
-            value={newActivity.location.coordinates[0]}
-            onChange={handleInputChange}
-            placeholder="Longitude"
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label>Location (Latitude)</label>
-          <input
-            type="text"
-            name="coordinates.1"
-            value={newActivity.location.coordinates[1]}
-            onChange={handleInputChange}
-            placeholder="Latitude"
-            className="w-full p-2 border border-gray-300 rounded"
-          />
+          <label>Location Coordinates</label>
+          <div className="flex space-x-2">
+            <input
+              type="text"
+              name="coordinates.0"
+              placeholder="Longitude"
+              value={newActivity.location.coordinates[0]}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+            <input
+              type="text"
+              name="coordinates.1"
+              placeholder="Latitude"
+              value={newActivity.location.coordinates[1]}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
         </div>
         <div className="mb-4">
           <label>Price</label>
@@ -222,7 +233,6 @@ const ActivitiesComponent = () => {
             name="price"
             value={newActivity.price}
             onChange={handleInputChange}
-            placeholder="Price"
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
@@ -233,7 +243,6 @@ const ActivitiesComponent = () => {
             name="priceRange"
             value={newActivity.priceRange}
             onChange={handleInputChange}
-            placeholder="Price Range"
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
@@ -244,18 +253,16 @@ const ActivitiesComponent = () => {
             name="category"
             value={newActivity.category}
             onChange={handleInputChange}
-            placeholder="Category"
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
         <div className="mb-4">
-          <label>Tags</label>
+          <label>Tags (comma separated)</label>
           <input
             type="text"
             name="tags"
-            value={newActivity.tags.join(", ")} // Convert array to string for display
+            value={newActivity.tags.join(", ")} // Join for display
             onChange={handleInputChange}
-            placeholder="Tags (comma separated)"
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
@@ -266,18 +273,19 @@ const ActivitiesComponent = () => {
             name="specialDiscounts"
             value={newActivity.specialDiscounts}
             onChange={handleInputChange}
-            placeholder="Special Discounts"
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
         <div className="mb-4">
-          <label>Booking Open</label>
-          <input
-            type="checkbox"
-            name="bookingOpen"
-            checked={newActivity.bookingOpen}
-            onChange={handleInputChange}
-          />
+          <label>
+            <input
+              type="checkbox"
+              name="bookingOpen"
+              checked={newActivity.bookingOpen}
+              onChange={handleInputChange}
+            />
+            Booking Open
+          </label>
         </div>
         <div className="mb-4">
           <button type="submit" className="bg-blue-500 text-white p-2 rounded">
@@ -292,52 +300,29 @@ const ActivitiesComponent = () => {
         {activities.length > 0 ? (
           <ul>
             {activities.map((activity) => (
-              <li
-                key={activity._id}
-                className="mb-4 p-4 border border-gray-300 rounded"
-              >
-                <p>
-                  <strong>Date:</strong> {activity.date}
-                </p>
-                <p>
-                  <strong>Time:</strong> {activity.time}
-                </p>
-                <p>
-                  <strong>Location:</strong> ({activity.location.coordinates[0]}
-                  , {activity.location.coordinates[1]})
-                </p>
-                <p>
-                  <strong>Price:</strong> {activity.price}
-                </p>
-                <p>
-                  <strong>Price Range:</strong> {activity.priceRange}
-                </p>
-                <p>
-                  <strong>Category:</strong> {activity.category}
-                </p>
-                <p>
-                  <strong>Tags:</strong> {activity.tags.join(", ")}
-                </p>
-                <p>
-                  <strong>Special Discounts:</strong>{" "}
-                  {activity.specialDiscounts}
-                </p>
-                <p>
-                  <strong>Booking Open:</strong>{" "}
-                  {activity.bookingOpen ? "Yes" : "No"}
-                </p>
-                <button
-                  onClick={() => handleEdit(activity)}
-                  className="bg-yellow-500 text-white p-2 rounded mr-2"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(activity._id)}
-                  className="bg-red-500 text-white p-2 rounded"
-                >
-                  Delete
-                </button>
+              <li key={activity._id} className="border-b py-2">
+                <div>
+                  <strong>{activity.category}</strong> - {activity.date} at{" "}
+                  {activity.time}
+                  <button
+                    onClick={() => handleView(activity)}
+                    className="ml-4 text-blue-500"
+                  >
+                    See Activity
+                  </button>
+                  <button
+                    onClick={() => handleEdit(activity)}
+                    className="ml-2 text-yellow-500"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(activity._id)}
+                    className="ml-2 text-red-500"
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -345,6 +330,43 @@ const ActivitiesComponent = () => {
           <p>No activities available.</p>
         )}
       </div>
+
+      {/* Selected Activity Details */}
+      {selectedActivity && (
+        <div className="mt-6 p-4 border border-gray-300">
+          <h4 className="text-lg">Activity Details</h4>
+          <p>
+            <strong>Date:</strong> {selectedActivity.date}
+          </p>
+          <p>
+            <strong>Time:</strong> {selectedActivity.time}
+          </p>
+          <p>
+            <strong>Location:</strong>{" "}
+            {selectedActivity.location.coordinates.join(", ")}
+          </p>
+          <p>
+            <strong>Price:</strong> {selectedActivity.price}
+          </p>
+          <p>
+            <strong>Price Range:</strong> {selectedActivity.priceRange}
+          </p>
+          <p>
+            <strong>Category:</strong> {selectedActivity.category}
+          </p>
+          <p>
+            <strong>Tags:</strong> {selectedActivity.tags.join(", ")}
+          </p>
+          <p>
+            <strong>Special Discounts:</strong>{" "}
+            {selectedActivity.specialDiscounts}
+          </p>
+          <p>
+            <strong>Booking Open:</strong>{" "}
+            {selectedActivity.bookingOpen ? "Yes" : "No"}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
