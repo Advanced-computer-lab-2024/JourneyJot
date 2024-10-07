@@ -98,9 +98,9 @@ exports.getTouristProfile = async (req, res) => {
   try {
     const userId = req.user._id; // Assuming you're using a middleware to attach user info to req.user
     const tourist = await Tourist.findById(userId);
-
+    console.log(req.user);
     if (!tourist) {
-      return res.status(404).json({ message: "Tourist not found" });
+      return res.status(403).json({ message: "Tourist not found" });
     }
 
     res.status(200).json({ profile: tourist });
