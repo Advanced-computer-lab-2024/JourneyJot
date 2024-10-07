@@ -9,7 +9,7 @@ const roleCheck = require('../middleware/governor-check'); // Check if user is a
 
 const tagRouter = express.Router();
 
-tagRouter.post('/', authenticate, roleCheck, createTag); // Create tag
-tagRouter.get('/', authenticate, roleCheck, getTags); // Get all tags
+tagRouter.post('/', createTag); // Create tag
+tagRouter.get('/', getTags); // Get all tags
 
 module.exports = tagRouter;
