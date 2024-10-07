@@ -37,7 +37,7 @@ const AddProduct = () => {
       <div className="flex justify-center">
         <input
           type="text"
-          placeholder="Product Name"
+          placeholder="Product Details"
           value={ProductDetails}
           onChange={(e) => setProductDetails(e.target.value)}
           className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover: shadow-xl"
