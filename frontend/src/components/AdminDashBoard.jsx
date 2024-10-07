@@ -1,8 +1,9 @@
 /** @format */
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
@@ -31,7 +32,7 @@ const AdminDashboard = () => {
               Add Tour Guide
             </Link>
             <Link
-              to="/products"
+              onClick={() => navigate("/products")}
               className="text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium"
             >
               Products

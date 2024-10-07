@@ -1,7 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const TouristHomePage = () => {
+  const navigate = useNavigate();
   return (
     <div>
       <Link to={"profile"}>
@@ -9,11 +10,13 @@ const TouristHomePage = () => {
           My Profile
         </button>
       </Link>
-      <Link to={"products"}>
-        <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow hover:bg-blue-700 transition duration-200">
-          Products
-        </button>
-      </Link>
+
+      <button
+        onClick={() => navigate("/products")}
+        className="bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow hover:bg-blue-700 transition duration-200"
+      >
+        Products
+      </button>
     </div>
   );
 };
