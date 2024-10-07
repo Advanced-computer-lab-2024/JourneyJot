@@ -21,7 +21,7 @@ const Admins = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/categories");
+      const response = await axios.get("http://localhost:3000/categories");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -30,7 +30,7 @@ const Admins = () => {
 
   const fetchTags = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/tags");
+      const response = await axios.get("http://localhost:3000/pref-tags");
       setTags(response.data);
     } catch (error) {
       console.error("Error fetching tags:", error);
@@ -61,12 +61,12 @@ const Admins = () => {
     if (editingCategoryId) {
       // Update existing category
       await axios.put(
-        `http://localhost:5000/categories/${editingCategoryId}`,
+        `http://localhost:3000/categories/${editingCategoryId}`,
         categoryFormData
       );
     } else {
       // Create new category
-      await axios.post("http://localhost:5000/categories", categoryFormData);
+      await axios.post("http://localhost:3000/categories", categoryFormData);
     }
     fetchCategories();
     resetCategoryForm();
@@ -78,12 +78,12 @@ const Admins = () => {
     if (editingTagId) {
       // Update existing tag
       await axios.put(
-        `http://localhost:5000/tags/${editingTagId}`,
+        `http://localhost:3000/pref-tags/${editingTagId}`,
         tagFormData
       );
     } else {
       // Create new tag
-      await axios.post("http://localhost:5000/tags", tagFormData);
+      await axios.post("http://localhost:3000/pref-tags", tagFormData);
     }
     fetchTags();
     resetTagForm();
@@ -107,13 +107,13 @@ const Admins = () => {
 
   // Delete Category
   const handleCategoryDelete = async (id) => {
-    await axios.delete(`http://localhost:5000/categories/${id}`);
+    await axios.delete(`http://localhost:3000/categories/${id}`);
     fetchCategories();
   };
 
   // Delete Tag
   const handleTagDelete = async (id) => {
-    await axios.delete(`http://localhost:5000/tags/${id}`);
+    await axios.delete(`http://localhost:3000/pref-tags/${id}`);
     fetchTags();
   };
 
