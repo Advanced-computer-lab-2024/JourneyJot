@@ -31,12 +31,12 @@ const AdminDashboard = () => {
             >
               Add Tour Guide
             </Link>
-            <Link
+            <button
               onClick={() => navigate("/products")}
               className="text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium"
             >
               Products
-            </Link>
+            </button>
           </div>
         </div>
       </nav>
