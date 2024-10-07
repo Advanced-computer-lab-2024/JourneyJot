@@ -1,4 +1,3 @@
-/** @format */
 import { Routes, Route } from "react-router-dom";
 import ShowProducts from "./pages/ShowProducts";
 import HomePage from "./pages/HomePage";
@@ -20,7 +19,7 @@ import SellerDashBoard from "./components/SellerDashBoard.jsx";
 import ActivitiesComponent from "./components/Activities.jsx";
 import TouristHomePage from "./pages/TouristHomePage.jsx";
 import TouristProfile from "./components/TouristProfile.jsx";
-
+import TouristGuest from "./components/TouristGuest.jsx";
 const App = () => {
   return (
     <Routes>
@@ -58,6 +57,7 @@ const App = () => {
       <Route path="/seller-dashboard/profile" element={<SellerProfile />} />
       <Route path="/tourist/homePage" element={<TouristHomePage />} />
       <Route path="/tourist/homePage/profile" element={<TouristProfile />} />
+      <Route path="/tourist-guest" element={<TouristGuest />} />
     </Routes>
   );
 };
