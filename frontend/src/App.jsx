@@ -20,6 +20,8 @@ import AdvertiserDashBoard from "./components/AdvertiserDashBoard.jsx";
 import AdvertiserProfile from "./components/AdvertiserProfile.jsx";
 import SellerProfile from "./components/SellerProfile.jsx";
 import SellerDashBoard from "./components/SellerDashBoard.jsx";
+import TouristHomePage from "./pages/TouristHomePage.jsx";
+import TouristProfile from "./components/TouristProfile.jsx";
 
 const App = () => {
   return (
@@ -54,6 +56,8 @@ const App = () => {
       />
       <Route path="/seller-dashboard" element={<SellerDashBoard />} />
       <Route path="/seller-dashboard/profile" element={<SellerProfile />} />
+      <Route path="/tourist/homePage" element={<TouristHomePage />} />
+      <Route path="/tourist/homePage/profile" element={<TouristProfile />} />
     </Routes>
   );
 };

@@ -7,6 +7,7 @@ const Tag = require("../models/Tag"); // Import Tag model
 
 exports.createAttraction = async (req, res) => {
   try {
+    console.log(req.body);
     const newAttraction = new Attraction(req.body);
     await newAttraction.save();
     res.status(201).json({
