@@ -14,10 +14,7 @@ import TouristSignUp from "./pages/TouristSignUp";
 import TouristLoginPage from "./pages/TouristLoginPage";
 import TourGuideProfile from "./pages/TourGuideProfile";
 import TouristProfile from './pages/TouristProfile';
-
-
-
-// eslint-disable-next-line react-hooks/rules-of-hooks
+import AdvertiserProfile from "./pages/AdvertiserProfile"; // Ensure this is included
 
 const App = () => {
   return (
@@ -35,8 +32,8 @@ const App = () => {
       <Route path="/advertisers" element={<AdvertisersPage />} />
       <Route path="/itineraries" element={<ItinerariesPage />} />
       <Route path="/tour-guide/profile" element={<TourGuideProfile />} />
-      <Route path="/advertiser-profile" element={<AdvertiserProfile />} />
-     <Route path="/tourist-profile" element={<TouristProfile />} />   
+      <Route path="/advertiser/profile" element={<AdvertiserProfile />} />
+      <Route path="/tourist/profile" element={<TouristProfile />} />   
     </Routes>
   );
 };
