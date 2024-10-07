@@ -1,39 +1,33 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import ActivitiesCard from "./ActivitiesCard";
+import ItinerariesCard from "./ItinerariesCard";
+import AttractionsCard from "./AttractionsCard";
+import { useNavigate } from "react-router-dom";
 const TouristGuest = () => {
   const [activities, setActivities] = useState([]);
-  const [filteredActivities, setFilteredActivities] = useState([]);
   const [itineraries, setItineraries] = useState([]);
-  const [historicalPlaces, setHistoricalPlaces] = useState([]);
-  const [filteredHistoricalPlaces, setFilteredHistoricalPlaces] = useState([]);
+  const [attractions, setAttractions] = useState([]);
+  const navigate = useNavigate();
 
-  // Filters state
   const [budget, setBudget] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
+  const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
-  const [rating, setRating] = useState("");
-  const [itineraryBudget, setItineraryBudget] = useState("");
-  const [itineraryDate, setItineraryDate] = useState("");
-  const [itineraryPreference, setItineraryPreference] = useState("");
-  const [itineraryLanguage, setItineraryLanguage] = useState("");
-  const [tag, setTag] = useState("");
+  const [ratings, setRatings] = useState("");
+  const [preferences, setPreferences] = useState("");
+  const [language, setLanguage] = useState("");
 
-  // Sorting state
-  const [sortBy, setSortBy] = useState("");
-
-  // Fetch Activities, Itineraries, and Historical Places
+  // Fetch Activities, Itineraries, and Attractions
   useEffect(() => {
     fetchActivities();
     fetchItineraries();
-    fetchHistoricalPlaces();
+    fetchAttractions();
   }, []);
 
   const fetchActivities = async () => {
     try {
       const response = await axios.get("http://localhost:3000/activities");
       setActivities(response.data);
-      setFilteredActivities(response.data); // Initialize with all activities
     } catch (error) {
       console.error("Error fetching activities:", error);
     }
@@ -43,23 +37,245 @@ const TouristGuest = () => {
     try {
       const response = await axios.get("http://localhost:3000/itineraries");
       setItineraries(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching itineraries:", error);
     }
   };
 
-  const fetchHistoricalPlaces = async () => {
+  const fetchAttractions = async () => {
     try {
       const response = await axios.get("http://localhost:3000/attractions");
-      setHistoricalPlaces(response.data);
-      setFilteredHistoricalPlaces(response.data); // Initialize with all historical places
+      setAttractions(response.data);
     } catch (error) {
-      console.error("Error fetching historical places:", error);
+      console.error("Error fetching attractions:", error);
     }
   };
 
-  return <div></div>;
+  const filterActivities = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/activities/filter",
+        {
+          params: {
+            price: budget,
+            date,
+            category,
+            ratings,
+          },
+        }
+      );
+      setActivities(response.data);
+    } catch (error) {
+      console.error("Error filtering activities:", error);
+    }
+  };
+
+  const sortItineraries = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/itineraries/sort",
+        {
+          params: {
+            price,
+            ratings,
+          },
+        }
+      );
+      setItineraries(response.data);
+    } catch (error) {
+      console.error("Error sorting itineraries:", error);
+    }
+  };
+
+  const sortActivities = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/activities/sort",
+        {
+          params: {
+            price,
+            ratings,
+          },
+        }
+      );
+      setActivities(response.data);
+    } catch (error) {
+      console.error("Error filtering activities:", error);
+    }
+  };
+
+  const filterItineraries = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/itineraries/filter",
+        {
+          params: {
+            budget,
+            date,
+            language,
+            preferences,
+          },
+        }
+      );
+      setItineraries(response.data);
+    } catch (error) {
+      console.error("Error filtering activities:", error);
+    }
+  };
+
+  const filterAttractions = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/attractions/filter",
+        {
+          params: {
+            preferences,
+          },
+        }
+      );
+      setAttractions(response.data);
+    } catch (error) {
+      console.error("Error filtering attractions:", error);
+    }
+  };
+
+  return (
+    <div className="container mx-auto py-8 px-4 flex flex-col space-y-12">
+      {/* Header Section with Sign Up and Log In buttons */}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-4xl font-bold text-blue-900">
+          Welcome to JourneyJot
+        </h1>
+        <div className="flex space-x-4">
+          <button
+            onClick={() => navigate("/signup")}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none"
+          >
+            Sign Up
+          </button>
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none"
+          >
+            Log In
+          </button>
+        </div>
+      </div>
+
+      {/* Filter Section */}
+      <div className="bg-white p-6 rounded-lg shadow-lg flex flex-wrap gap-4 items-center justify-center">
+        <input
+          type="number"
+          placeholder="Budget"
+          value={budget}
+          onChange={(e) => setBudget(e.target.value)}
+          className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+        />
+        <input
+          type="date"
+          placeholder="Date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+        />
+        <input
+          type="text"
+          placeholder="Category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+        />
+        <input
+          type="number"
+          placeholder="Ratings"
+          value={ratings}
+          onChange={(e) => setRatings(e.target.value)}
+          className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+          min="1"
+          max="5"
+          step="0.1"
+        />
+        <input
+          type="text"
+          placeholder="Preferences or Tags"
+          value={preferences}
+          onChange={(e) => setPreferences(e.target.value)}
+          className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+        />
+        <input
+          type="text"
+          placeholder="Language"
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+        />
+      </div>
+
+      {/* Activities Section */}
+      <div className="text-center">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-extrabold text-blue-900">Activities</h1>
+          <div className="flex space-x-2">
+            <button
+              onClick={filterActivities}
+              className="bg-blue-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
+              Filter
+            </button>
+            <button
+              onClick={sortActivities}
+              className="bg-gray-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600"
+            >
+              Sort
+            </button>
+          </div>
+        </div>
+        <div className="flex justify-center">
+          <ActivitiesCard activities={activities} />
+        </div>
+      </div>
+
+      {/* Itineraries Section */}
+      <div className="text-center">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-extrabold text-blue-900">Itineraries</h1>
+          <div className="flex space-x-2">
+            <button
+              onClick={filterItineraries}
+              className="bg-blue-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
+              Filter
+            </button>
+            <button
+              onClick={sortItineraries}
+              className="bg-gray-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600"
+            >
+              Sort
+            </button>
+          </div>
+        </div>
+        <div className="flex justify-center">
+          <ItinerariesCard itineraries={itineraries} />
+        </div>
+      </div>
+
+      {/* Attractions Section */}
+      <div className="text-center">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-extrabold text-blue-900">Attractions</h1>
+          <button
+            onClick={filterAttractions}
+            className="bg-blue-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            Filter
+          </button>
+        </div>
+        <div className="flex justify-center">
+          <AttractionsCard attractions={attractions} />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default TouristGuest;

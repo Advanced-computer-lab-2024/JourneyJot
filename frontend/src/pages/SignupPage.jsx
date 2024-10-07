@@ -92,6 +92,15 @@ const SignupPage = () => {
           </h1>
         </Link>
       </form>
+
+      {/* Already have an account? Log In Link */}
+      <div className="mt-4 text-center">
+        <Link to="/login">
+          <h1 className="underline text-teal-500 hover:text-teal-600 transition-all duration-200">
+            Already have an account? Log In
+          </h1>
+        </Link>
+      </div>
     </div>
   );
 };

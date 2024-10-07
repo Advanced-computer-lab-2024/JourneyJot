@@ -23,7 +23,8 @@ import TouristGuest from "./components/TouristGuest.jsx";
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<SignupPage />} />
+      <Route path="/" element={<TouristGuest />} />
+      <Route path="/signup" element={<SignupPage />} />
       <Route path="/home-page" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/Tourist-Signup" element={<TouristSignUp />} />
@@ -57,7 +58,6 @@ const App = () => {
       <Route path="/seller-dashboard/profile" element={<SellerProfile />} />
       <Route path="/tourist/homePage" element={<TouristHomePage />} />
       <Route path="/tourist/homePage/profile" element={<TouristProfile />} />
-      <Route path="/tourist-guest" element={<TouristGuest />} />
     </Routes>
   );
 };
