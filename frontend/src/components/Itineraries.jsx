@@ -20,6 +20,7 @@ const ItinerariesComponent = () => {
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [editItineraryId, setEditItineraryId] = useState(null);
+	const [availableDatesError, setAvailableDatesError] = useState('');
 
 	// Fetch all itineraries on component mount
 	useEffect(() => {
@@ -51,11 +52,30 @@ const ItinerariesComponent = () => {
 	// Handle form input changes
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
-		// Handle array input for activities and locations
+
 		if (name === 'activities' || name === 'locations') {
 			setNewItinerary({
 				...newItinerary,
-				[name]: value.split(',').map((item) => item.trim()), // Convert comma-separated input to array
+				[name]: value.split(',').map((item) => item.trim()),
+			});
+		} else if (name === 'availableDates') {
+			const dates = value.split(',').map((item) => item.trim());
+			const validDates = dates.filter((date) => {
+				const parsedDate = new Date(date);
+				return parsedDate instanceof Date && !isNaN(parsedDate);
+			});
+
+			if (validDates.length < dates.length) {
+				setAvailableDatesError(
+					'Some dates are invalid. Only valid dates will be saved.'
+				);
+			} else {
+				setAvailableDatesError('');
+			}
+
+			setNewItinerary({
+				...newItinerary,
+				availableDates: validDates,
 			});
 		} else {
 			setNewItinerary({ ...newItinerary, [name]: value });
@@ -78,6 +98,12 @@ const ItinerariesComponent = () => {
 			},
 		};
 
+		// Check for errors before submitting
+		if (availableDatesError) {
+			console.error('Cannot submit due to invalid dates:', availableDatesError);
+			return; // Prevent submission if there's an error
+		}
+
 		try {
 			if (isEditing) {
 				// Update itinerary
@@ -96,6 +122,7 @@ const ItinerariesComponent = () => {
 					config
 				);
 			}
+
 			// Refresh the itineraries list
 			const response = await axios.get(
 				'http://localhost:3000/itineraries/',
@@ -161,7 +188,7 @@ const ItinerariesComponent = () => {
 					<input
 						type='text'
 						name='activities'
-						value={newItinerary.activities.join(', ')} // Convert array to string for display
+						value={newItinerary.activities.join(', ')}
 						onChange={handleInputChange}
 						placeholder='Activities (comma separated)'
 						className='w-full p-2 border border-gray-300 rounded'
@@ -172,7 +199,7 @@ const ItinerariesComponent = () => {
 					<input
 						type='text'
 						name='locations'
-						value={newItinerary.locations.join(', ')} // Convert array to string for display
+						value={newItinerary.locations.join(', ')}
 						onChange={handleInputChange}
 						placeholder='Locations (comma separated)'
 						className='w-full p-2 border border-gray-300 rounded'
@@ -227,11 +254,15 @@ const ItinerariesComponent = () => {
 					<input
 						type='text'
 						name='availableDates'
-						value={newItinerary.availableDates.join(', ')} // Convert array to string for display
+						value={newItinerary.availableDates.join(', ')}
 						onChange={handleInputChange}
-						placeholder='Available Dates (comma separated)'
+						placeholder='Available Dates (YYYY-MM-DD, comma separated)'
 						className='w-full p-2 border border-gray-300 rounded'
 					/>
+					{availableDatesError && (
+						<p className='text-red-500'>{availableDatesError}</p>
+					)}{' '}
+					{/* Show error message */}
 				</div>
 				<div className='mb-4'>
 					<label>Accessibility</label>
