@@ -8,6 +8,7 @@ const CategoryManagement = () => {
 	const [newCategory, setNewCategory] = useState('');
 	const [isEditing, setIsEditing] = useState(false);
 	const [editCategoryId, setEditCategoryId] = useState(null);
+	const [error, setError] = useState(null);
 
 	// Fetch categories on component mount
 	useEffect(() => {
@@ -17,9 +18,15 @@ const CategoryManagement = () => {
 				const response = await axios.get('http://localhost:3000/categories', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
-				setCategories(response.data);
+				if (Array.isArray(response.data)) {
+					setCategories(response.data);
+				} else {
+					console.error('Unexpected response format:', response.data);
+					setError('Failed to load categories.');
+				}
 			} catch (error) {
 				console.error('Error fetching categories:', error);
+				setError('Failed to load categories.');
 			}
 		};
 
@@ -39,14 +46,13 @@ const CategoryManagement = () => {
 			const response = await axios.post(
 				'http://localhost:3000/categories',
 				{ name: newCategory },
-				{
-					headers: { Authorization: `Bearer ${token}` },
-				}
+				{ headers: { Authorization: `Bearer ${token}` } }
 			);
 			setCategories((prev) => [...prev, response.data.category]);
 			setNewCategory('');
 		} catch (error) {
 			console.error('Failed to add category:', error);
+			setError('Failed to add category.');
 		}
 	};
 
@@ -58,10 +64,10 @@ const CategoryManagement = () => {
 			const response = await axios.put(
 				`http://localhost:3000/categories/${editCategoryId}`,
 				{ name: newCategory },
-				{
-					headers: { Authorization: `Bearer ${token}` },
-				}
+				{ headers: { Authorization: `Bearer ${token}` } }
 			);
+
+			// Update the categories state with the edited category
 			setCategories((prev) =>
 				prev.map((category) =>
 					category._id === editCategoryId ? response.data.category : category
@@ -72,6 +78,7 @@ const CategoryManagement = () => {
 			setEditCategoryId(null);
 		} catch (error) {
 			console.error('Failed to edit category:', error);
+			setError('Failed to edit category.');
 		}
 	};
 
@@ -92,13 +99,14 @@ const CategoryManagement = () => {
 			setCategories((prev) => prev.filter((category) => category._id !== id));
 		} catch (error) {
 			console.error('Failed to delete category:', error);
+			setError('Failed to delete category.');
 		}
 	};
 
 	return (
 		<div className='p-8'>
 			<h2 className='text-2xl mb-4'>Category Management</h2>
-
+			{error && <p className='text-red-500'>{error}</p>} {/* Error Message */}
 			<form
 				onSubmit={isEditing ? handleEditCategory : handleAddCategory}
 				className='mb-6'>
@@ -119,29 +127,30 @@ const CategoryManagement = () => {
 					{isEditing ? 'Update Category' : 'Add Category'}
 				</button>
 			</form>
-
 			<h3 className='text-xl mb-4'>Current Categories</h3>
 			{categories.length > 0 ? (
 				<ul className='list-disc pl-5'>
-					{categories.map((category) => (
-						<li
-							key={category._id}
-							className='mb-2 flex justify-between'>
-							<span>{category.name}</span>
-							<div>
-								<button
-									className='bg-yellow-500 text-white p-1 rounded mr-2'
-									onClick={() => handleStartEdit(category)}>
-									Edit
-								</button>
-								<button
-									className='bg-red-500 text-white p-1 rounded'
-									onClick={() => handleDeleteCategory(category._id)}>
-									Delete
-								</button>
-							</div>
-						</li>
-					))}
+					{categories.map((category) =>
+						category && category.name ? (
+							<li
+								key={category._id}
+								className='mb-2 flex justify-between'>
+								<span>{category.name}</span>
+								<div>
+									<button
+										className='bg-yellow-500 text-white p-1 rounded mr-2'
+										onClick={() => handleStartEdit(category)}>
+										Edit
+									</button>
+									<button
+										className='bg-red-500 text-white p-1 rounded'
+										onClick={() => handleDeleteCategory(category._id)}>
+										Delete
+									</button>
+								</div>
+							</li>
+						) : null
+					)}
 				</ul>
 			) : (
 				<p>No categories available.</p>
