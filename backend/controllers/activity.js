@@ -110,7 +110,28 @@ exports.getFilteredActivities = async (req, res) => {
 
 exports.sortByPriceOrRating = async (req, res) => {
   try {
+    const filterCriteria = {};
     const sortCriteria = {};
+
+    // Check for price in query parameters and filter for activities with a price less than the given number
+    if (req.query.price) {
+      const maxPrice = parseFloat(req.query.price);
+      if (!isNaN(maxPrice)) {
+        filterCriteria.price = { $lt: maxPrice }; // Less than the given price
+      } else {
+        return res.status(400).send({ message: "Invalid price format." });
+      }
+    }
+
+    // Check for ratings in query parameters and filter by ratings greater than or equal to the given value
+    if (req.query.ratings) {
+      const minRating = parseFloat(req.query.ratings);
+      if (!isNaN(minRating)) {
+        filterCriteria.ratings = { $gte: minRating }; // Minimum rating filter
+      } else {
+        return res.status(400).send({ message: "Invalid ratings format." });
+      }
+    }
 
     // Determine the sorting criteria based on query parameters
     if (req.query.sortBy) {
@@ -123,14 +144,12 @@ exports.sortByPriceOrRating = async (req, res) => {
           message: 'Invalid sortBy parameter. Use "price" or "ratings".',
         });
       }
-    } else {
-      return res.status(400).send({ message: "Missing sortBy parameter." });
     }
 
-    // Fetch all activities and apply sorting
-    const activities = await Activity.find({}).sort(sortCriteria);
+    // Fetch activities based on filter criteria and apply sorting if provided
+    const activities = await Activity.find(filterCriteria).sort(sortCriteria);
 
-    // Return the sorted result
+    // Return the sorted and filtered result
     return res.status(200).json({ count: activities.length, data: activities });
   } catch (error) {
     console.log(error.message);

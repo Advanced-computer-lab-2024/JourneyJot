@@ -21,9 +21,7 @@ const TouristLoginPage = () => {
     try {
       const response = await touristLogin(formData);
       console.log("Login successful", response.data);
-
-      // Redirect to Tourist Profile page after successful login
-      navigate("/tourist-profile"); 
+      navigate("/home-page"); // Updated: Redirect to dashboard after successful login
     } catch (error) {
       console.error("Login failed", error);
       // Set error message to display on the page

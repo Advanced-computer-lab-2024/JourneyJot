@@ -20,10 +20,9 @@ const preferenceTagRouter = require("./routes/preference-tag");
 const categoryRouter = require("./routes/category");
 const productRouter = require("./routes/product");
 const TouristItineraryRouter = require("./routes/tourist-itinerary");
-
-// Other imports...
 const cors = require("cors");
-app.use(cors());  // Enable CORS for all routes
+app.use(cors());
+// Connect to mongoDB
 
 // MongoDB connection
 mongoose.connect(

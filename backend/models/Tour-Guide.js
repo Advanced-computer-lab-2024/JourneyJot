@@ -8,7 +8,7 @@ const tourGuideProfileSchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 		required: [true, 'Mobile number is required'],
-		match: /^\d{10}$/,
+		match: /^\d{11}$/,
 	},
 	yearsOfExperience: {
 		type: Number,

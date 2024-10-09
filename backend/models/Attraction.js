@@ -8,38 +8,38 @@ const attractionSchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
-			required: true,
+			required: false,
 		},
 		description: {
 			type: String,
-			required: true,
+			required: false,
 		},
 		pictures: [
 			{
 				type: String, // URLs or paths to images
-				required: true,
+				required: false,
 			},
 		],
 		location: {
 			type: String,
-			required: true,
+			required: false,
 		},
 		openingHours: {
 			type: String, // e.g., "9 AM - 5 PM"
-			required: true,
+			required: false,
 		},
 		ticketPrices: {
 			native: {
 				type: Number,
-				required: true,
+				required: false,
 			},
 			foreigner: {
 				type: Number,
-				required: true,
+				required: false,
 			},
 			student: {
 				type: Number,
-				required: true,
+				required: false,
 			},
 		},
 		tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }], // Reference to Tag schema
