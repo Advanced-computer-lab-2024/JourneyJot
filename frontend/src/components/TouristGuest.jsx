@@ -29,7 +29,6 @@ const TouristGuest = () => {
 		try {
 			const response = await axios.get('http://localhost:3000/activities');
 			setActivities(response.data.activities);
-			console.log(response.data);
 		} catch (error) {
 			console.error('Error fetching activities:', error);
 		}

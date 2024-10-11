@@ -4,30 +4,59 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-exports.deleteAccount = async (req, res) => {
+// Function to create initial admin
+exports.initialAdmin = async () => {
 	try {
-		const userId = req.params.userId;
+		// Check if admin already exists
+		const adminExists = await User.findOne({
+			username: 'gando',
+			role: 'admin',
+		});
 
-		// Find the user by ID and delete them
-		const deletedUser = await User.findByIdAndDelete(userId);
+		if (!adminExists) {
+			// Hash the default password
+			const hashedPassword = await bcrypt.hash('gando', 10);
 
-		if (!deletedUser) {
+			// Create the initial admin user with only username and password
+			const admin = new User({
+				username: 'gando',
+				password: hashedPassword,
+				role: 'admin', // Set role to 'admin'
+			});
+
+			// Save the admin user
+			await admin.save();
+			console.log('Initial admin "gando" created');
+		} else {
+			console.log('Initial admin already exists');
+		}
+	} catch (error) {
+		console.error('Error creating initial admin:', error);
+	}
+};
+
+exports.deleteAccount = async (req, res) => {
+	const { username } = req.params; // Get the username from the request params
+
+	try {
+		// Find and delete the user by username
+		const user = await User.findOneAndDelete({ username });
+
+		if (!user) {
+			// If no user is found, return a 404 error
 			return res.status(404).json({ message: 'User not found' });
 		}
 
-		// Delete the user's tour guide profile if they exist
-
-		res
-			.status(200)
-			.json({ message: 'Account deleted successfully', data: deletedUser });
+		// Successfully deleted the user
+		return res.status(200).json({ message: 'User deleted successfully' });
 	} catch (error) {
-		console.error('Error deleting account:', error);
-		res.status(500).json({ message: 'Server error', error: error.message });
+		// Catch any errors during the deletion process
+		return res.status(500).json({ message: error.message });
 	}
 };
 
 exports.addGovernor = async (req, res) => {
-	const { username, password, email } = req.body;
+	const { username, password } = req.body;
 
 	// Check if username or password is missing
 	if (!username || !password) {
@@ -48,7 +77,6 @@ exports.addGovernor = async (req, res) => {
 
 		// Create a new governor user
 		const newGovernor = new User({
-			email,
 			username,
 			password: hashedPassword,
 			role: 'governor', // Setting the role to governor
@@ -69,7 +97,7 @@ exports.addGovernor = async (req, res) => {
 	}
 };
 exports.addAdmin = async (req, res) => {
-	const { username, password, email } = req.body;
+	const { username, password } = req.body;
 
 	// Check if username or password is missing
 	if (!username || !password) {
@@ -90,7 +118,6 @@ exports.addAdmin = async (req, res) => {
 
 		// Create a new governor user
 		const newAdmin = new User({
-			email,
 			username,
 			password: hashedPassword,
 			role: 'admin', // Setting the role to governor

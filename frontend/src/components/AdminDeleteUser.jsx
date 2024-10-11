@@ -4,13 +4,13 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const AdminDeleteUser = () => {
-	const [userId, setUserId] = useState('');
+	const [username, setUsername] = useState('');
 	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
 
 	// Handle input change for user ID
 	const handleInputChange = (e) => {
-		setUserId(e.target.value);
+		setUsername(e.target.value);
 	};
 
 	// Handle delete user account submission
@@ -28,7 +28,7 @@ const AdminDeleteUser = () => {
 
 		try {
 			const response = await axios.delete(
-				`http://localhost:3000/admins/delete-account/${userId}`,
+				`http://localhost:3000/admins/delete-account/${username}`,
 				{
 					headers: { Authorization: `Bearer ${token}` },
 				}
@@ -37,7 +37,7 @@ const AdminDeleteUser = () => {
 			console.log(response);
 
 			// Reset the userId input
-			setUserId('');
+			setUsername('');
 		} catch (error) {
 			console.error(
 				'Failed to delete user:',
@@ -67,13 +67,13 @@ const AdminDeleteUser = () => {
 				onSubmit={handleSubmit}
 				className='mb-6'>
 				<div className='mb-4'>
-					<label>User ID</label>
+					<label>Username</label>
 					<input
 						type='text'
-						value={userId}
+						value={username}
 						onChange={handleInputChange}
 						className='w-full p-2 border border-gray-300 rounded'
-						placeholder='Enter user ID to delete'
+						placeholder='Enter username to delete'
 						required
 					/>
 				</div>

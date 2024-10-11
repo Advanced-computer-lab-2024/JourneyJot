@@ -6,7 +6,6 @@ const AddAdmin = () => {
 	const [newAdmin, setNewAdmin] = useState({
 		username: '',
 		password: '',
-		email: '', // New email field
 		role: 'admin',
 	});
 	const [isCreating, setIsCreating] = useState(false);
@@ -67,18 +66,6 @@ const AddAdmin = () => {
 							onChange={handleInputChange}
 							className='w-full p-2 border border-gray-300 rounded'
 							placeholder='Enter admin username'
-							required
-						/>
-					</div>
-					<div className='mb-4'>
-						<label>Email</label>
-						<input
-							type='email'
-							name='email'
-							value={newAdmin.email}
-							onChange={handleInputChange}
-							className='w-full p-2 border border-gray-300 rounded'
-							placeholder='Enter admin email'
 							required
 						/>
 					</div>

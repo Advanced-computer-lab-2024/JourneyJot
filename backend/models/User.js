@@ -14,8 +14,12 @@ const userSchema = new mongoose.Schema({
 	},
 	email: {
 		type: String,
-		required: true,
-		unique: true,
+		required: function () {
+			// Email is required only if the role is not admin or governor
+			return this.role !== 'admin' && this.role !== 'governor';
+		},
+		unique: true, // You still want unique emails for non-null values
+		sparse: true,
 	},
 	password: {
 		type: String,

@@ -7,7 +7,6 @@ const AddGovernor = () => {
 	const [newGovernor, setNewGovernor] = useState({
 		username: '',
 		password: '',
-		email: '',
 		role: 'governor',
 	});
 	const [isCreating, setIsCreating] = useState(false);
@@ -111,18 +110,6 @@ const AddGovernor = () => {
 							onChange={handleInputChange}
 							className='w-full p-2 border border-gray-300 rounded'
 							placeholder='Enter governor password'
-							required
-						/>
-					</div>
-					<div className='mb-4'>
-						<label>Email</label>
-						<input
-							type='email'
-							name='email'
-							value={newGovernor.email}
-							onChange={handleInputChange}
-							className='w-full p-2 border border-gray-300 rounded'
-							placeholder='Enter governor email'
 							required
 						/>
 					</div>

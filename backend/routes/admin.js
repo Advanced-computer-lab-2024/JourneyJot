@@ -11,7 +11,7 @@ const {
 	viewAdmins,
 } = require('../controllers/admin');
 adminRouter.delete(
-	'/delete-account/:userId',
+	'/delete-account/:username',
 	authMiddleware,
 	adminMiddleware,
 	deleteAccount
