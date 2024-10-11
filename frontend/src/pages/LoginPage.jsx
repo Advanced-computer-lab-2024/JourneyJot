@@ -38,6 +38,8 @@ const LoginPage = () => {
 				navigate('/tour-guide-dashboard'); // Replace with the actual path for the tour guide dashboard
 			} else if (role === 'advertiser') {
 				navigate('/advertiser-dashboard');
+			} else if (role === 'governor') {
+				navigate('/tourism-governor');
 			} else if (role === 'seller') {
 				navigate('/seller-dashboard'); // Replace with the actual path for the advertiser dashboard
 			} else {
