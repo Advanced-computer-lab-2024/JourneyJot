@@ -28,7 +28,7 @@ app.use(
 );
 
 mongoose.connect(
-	'mongodb+srv://gandoza:gandoza@mernapp.jly0k.mongodb.net/?retryWrites=true&w=majority&appName=MernApp'
+	'mongodb+srv://gando27:gando27@mernapp.jly0k.mongodb.net/?retryWrites=true&w=majority&appName=MernApp'
 );
 console.log('MongoDB connected');
 initialAdmin.initialAdmin();
