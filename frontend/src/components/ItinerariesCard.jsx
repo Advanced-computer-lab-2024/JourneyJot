@@ -10,21 +10,22 @@ const ItinerariesCard = ({ itineraries = [] }) => {
             className="border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-2xl transition-shadow duration-300"
           >
             <div className="flex flex-col h-full space-y-4">
-              {/* Itinerary Title */}
+              {/* Tour Guide ID (optional display) */}
+              <div className="text-gray-700">
+                <span className="font-semibold">Tour Guide Name: </span>
+                {itinerary.tourGuideId}{" "}
+                {/* Display the tour guide Name instead of ID, using .populate in the get Request */}
+              </div>
+
+              {/* Itinerary Title (assumed as part of activities) */}
               <h2 className="text-xl font-semibold text-blue-900">
-                Itinerary: {itinerary.title}
+                Itinerary: {itinerary.activities.join(", ")}
               </h2>
 
               {/* Locations */}
               <div className="text-gray-700">
                 <span className="font-semibold">Locations: </span>
                 {itinerary.locations.join(", ")}
-              </div>
-
-              {/* Activities */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Activities: </span>
-                {itinerary.activities.join(", ")}
               </div>
 
               {/* Timeline */}
@@ -36,7 +37,7 @@ const ItinerariesCard = ({ itineraries = [] }) => {
               {/* Duration */}
               <div className="text-gray-700">
                 <span className="font-semibold">Duration: </span>
-                {itinerary.duration} hours
+                {itinerary.duration}
               </div>
 
               {/* Language */}
@@ -45,16 +46,31 @@ const ItinerariesCard = ({ itineraries = [] }) => {
                 {itinerary.language}
               </div>
 
+              {/* Price */}
+              <div className="text-gray-700">
+                <span className="font-semibold">Price: </span>${itinerary.price}
+              </div>
+
+              {/* Rating */}
+              {itinerary.rating && (
+                <div className="text-gray-700">
+                  <span className="font-semibold">Rating: </span>
+                  {itinerary.rating} / 5
+                </div>
+              )}
+
               {/* Available Dates */}
               <div className="text-gray-700">
                 <span className="font-semibold">Available Dates: </span>
-                {itinerary.availableDates.join(", ")}
+                {itinerary.availableDates
+                  .map((date) => new Date(date).toLocaleDateString())
+                  .join(", ")}
               </div>
 
               {/* Accessibility */}
               <div className="text-gray-700">
                 <span className="font-semibold">Accessibility: </span>
-                {itinerary.accessibility ? "Yes" : "No"}
+                {itinerary.accessibility}
               </div>
 
               {/* Pickup and Dropoff Locations */}

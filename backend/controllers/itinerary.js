@@ -69,38 +69,25 @@ exports.deleteItinerary = async (req, res) => {
 
 exports.sortByPriceOrRating = async (req, res) => {
   try {
-    const filterCriteria = {};
+    const { type } = req.query;
+    let sortCriteria = {};
 
-    // Check for price in query parameters and filter for itineraries with a price less than the given number
-    if (req.query.price) {
-      const maxPrice = parseFloat(req.query.price);
-      if (!isNaN(maxPrice)) {
-        filterCriteria.price = { $lt: maxPrice }; // Less than the given price
-      } else {
-        return res.status(400).send({ message: "Invalid price format." });
-      }
+    if (type === "price") {
+      sortCriteria.price = 1; // Sort by price in ascending order
+    } else if (type === "rating") {
+      sortCriteria.ratings = -1; // Sort by ratings in descending order
+    } else {
+      return res.status(400).json({ message: "Invalid sort type" });
     }
 
-    // Check for ratings in query parameters and filter by ratings greater than or equal to the given value
-    if (req.query.ratings) {
-      const minRating = parseFloat(req.query.ratings);
-      if (!isNaN(minRating)) {
-        filterCriteria.ratings = { $gte: minRating }; // Minimum rating filter
-      } else {
-        return res.status(400).send({ message: "Invalid ratings format." });
-      }
-    }
-
-    // Fetch itineraries based on the filtering criteria
-    const itineraries = await Itinerary.find(filterCriteria);
-
-    // Return the filtered result
+    const itineraries = await Itinerary.find().sort(sortCriteria);
     return res
       .status(200)
       .json({ count: itineraries.length, data: itineraries });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
+    return res
+      .status(500)
+      .json({ message: "Error sorting itineraries", error });
   }
 };
 

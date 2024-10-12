@@ -110,49 +110,20 @@ exports.getFilteredActivities = async (req, res) => {
 
 exports.sortByPriceOrRating = async (req, res) => {
   try {
-    const filterCriteria = {};
-    const sortCriteria = {};
+    const { type } = req.query;
+    let sortCriteria = {};
 
-    // Check for price in query parameters and filter for activities with a price less than the given number
-    if (req.query.price) {
-      const maxPrice = parseFloat(req.query.price);
-      if (!isNaN(maxPrice)) {
-        filterCriteria.price = { $lt: maxPrice }; // Less than the given price
-      } else {
-        return res.status(400).send({ message: "Invalid price format." });
-      }
+    if (type === "price") {
+      sortCriteria.price = 1; // Sort by price in ascending order
+    } else if (type === "rating") {
+      sortCriteria.ratings = -1; // Sort by ratings in descending order
+    } else {
+      return res.status(400).json({ message: "Invalid sort type" });
     }
 
-    // Check for ratings in query parameters and filter by ratings greater than or equal to the given value
-    if (req.query.ratings) {
-      const minRating = parseFloat(req.query.ratings);
-      if (!isNaN(minRating)) {
-        filterCriteria.ratings = { $gte: minRating }; // Minimum rating filter
-      } else {
-        return res.status(400).send({ message: "Invalid ratings format." });
-      }
-    }
-
-    // Determine the sorting criteria based on query parameters
-    if (req.query.sortBy) {
-      if (req.query.sortBy === "price") {
-        sortCriteria.price = req.query.order === "desc" ? -1 : 1; // Ascending or descending sort
-      } else if (req.query.sortBy === "ratings") {
-        sortCriteria.ratings = req.query.order === "desc" ? -1 : 1; // Ascending or descending sort
-      } else {
-        return res.status(400).send({
-          message: 'Invalid sortBy parameter. Use "price" or "ratings".',
-        });
-      }
-    }
-
-    // Fetch activities based on filter criteria and apply sorting if provided
-    const activities = await Activity.find(filterCriteria).sort(sortCriteria);
-
-    // Return the sorted and filtered result
+    const activities = await Activity.find().sort(sortCriteria);
     return res.status(200).json({ count: activities.length, data: activities });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send({ message: error.message });
+    return res.status(500).json({ message: "Error sorting activities", error });
   }
 };

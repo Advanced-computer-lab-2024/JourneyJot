@@ -41,16 +41,16 @@ const TouristProfile = () => {
         console.log("Profile data response:", response.data);
 
         setProfileData({
-          email: response.data.sellerProfile.email || "",
-          username: response.data.sellerProfile.username || "",
+          email: response.data.email || "",
+          username: response.data.username || "",
           password: "", // Keep password field empty by default
-          mobileNumber: response.data.sellerProfile.mobileNumber || "",
-          nationality: response.data.sellerProfile.nationality || "",
-          dob: response.data.sellerProfile.dob || "",
-          occupation: response.data.sellerProfile.occupation || "",
+          mobileNumber: response.data.mobileNumber || "",
+          nationality: response.data.nationality || "",
+          dob: response.data.dob || "",
+          occupation: response.data.occupation || "",
           wallet: {
-            balance: response.data.sellerProfile.wallet?.balance || 0,
-            currency: response.data.sellerProfile.wallet?.currency || "USD",
+            balance: response.data.wallet?.balance || 0,
+            currency: response.data.wallet?.currency || "USD",
           },
         });
       } catch (error) {

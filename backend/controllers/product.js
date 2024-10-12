@@ -43,12 +43,14 @@ exports.filterByPrice = async (req, res) => {
 exports.addProduct = async (req, res) => {
   try {
     const product = new Product({
+      name: req.body.name,
+      picture: req.body.picture,
       details: req.body.details,
       price: req.body.price,
       quantity: req.body.quantity,
       rating: req.body.rating,
     });
-    if (req.body.name) product.name = req.body.name;
+
     await product.save();
     res.status(201).json({
       message: "Product created successfully",
@@ -73,10 +75,12 @@ exports.editProductByID = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (product) {
-      // checking if details were passed in the request
-      if (req.body.details) product.details = req.body.details;
-      // checking if price was passed in the request
-      if (req.body.price) product.price = req.body.price;
+      product.name = req.body.name || product.name;
+      product.picture = req.body.picture || product.picture;
+      product.details = req.body.details || product.details;
+      product.price = req.body.price || product.price;
+      product.quantity = req.body.quantity || product.quantity;
+      product.rating = req.body.rating || product.rating;
       await product.save();
       res.status(200).json({
         message: "Product updated successfully",

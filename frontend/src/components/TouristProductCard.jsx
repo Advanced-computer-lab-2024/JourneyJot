@@ -2,7 +2,7 @@
 
 import { Link } from "react-router-dom";
 
-const ProductCard = ({ products = [] }) => {
+const TouristProductCard = ({ products = [] }) => {
   console.log("Products passed to ProductCard:", products);
 
   return (
@@ -27,11 +27,6 @@ const ProductCard = ({ products = [] }) => {
               <p className="text-gray-700">Price: ${product.price}</p>
               <p className="text-gray-700">Quantity: {product.quantity}</p>
               <p className="text-gray-700">Rating: {product.rating || "N/A"}</p>
-              <Link to={`editProduct/${product._id}`}>
-                <button className="bg-teal-500 rounded-md w-24 mt-2">
-                  Edit
-                </button>
-              </Link>
             </div>
           </div>
         ))
@@ -42,4 +37,4 @@ const ProductCard = ({ products = [] }) => {
   );
 };
 
-export default ProductCard;
+export default TouristProductCard;

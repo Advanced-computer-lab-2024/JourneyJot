@@ -13,7 +13,8 @@ const ActivitiesCard = ({ activities = [] }) => {
               {/* Date */}
               <div className="text-gray-700">
                 <span className="font-semibold">Date: </span>
-                {activity.date}
+                {new Date(activity.date).toLocaleDateString()}{" "}
+                {/* Format the date */}
               </div>
 
               {/* Time */}
@@ -25,7 +26,8 @@ const ActivitiesCard = ({ activities = [] }) => {
               {/* Location */}
               <div className="text-gray-700">
                 <span className="font-semibold">Location: </span>
-                {activity.location.coordinates}
+                {activity.location.coordinates.join(", ")}{" "}
+                {/* Display coordinates */}
               </div>
 
               {/* Price */}
@@ -34,28 +36,48 @@ const ActivitiesCard = ({ activities = [] }) => {
               </div>
 
               {/* Price Range */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Price Range: </span>
-                {activity.priceRange}
-              </div>
+              {activity.priceRange && ( // Display price range only if it exists
+                <div className="text-gray-700">
+                  <span className="font-semibold">Price Range: </span>
+                  {activity.priceRange}
+                </div>
+              )}
 
-              {/* tags */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Tags: </span>
-                {activity.tags}
-              </div>
+              {/* Tags */}
+              {activity.tags &&
+                activity.tags.length > 0 && ( // Check if tags exist and have length
+                  <div className="text-gray-700">
+                    <span className="font-semibold">Tags: </span>
+                    {activity.tags.map((tag) => (
+                      <span key={tag} className="mr-2">
+                        {tag}{" "}
+                        {/* Assuming `tag` is a string. Adjust if it's an object. */}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
-              {/* special discounts */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Special Discounts: </span>
-                {activity.specialDiscounts}
-              </div>
+              {/* Special Discounts */}
+              {activity.specialDiscounts && ( // Display special discounts only if they exist
+                <div className="text-gray-700">
+                  <span className="font-semibold">Special Discounts: </span>
+                  {activity.specialDiscounts}
+                </div>
+              )}
 
               {/* Booking Open */}
               <div className="text-gray-700">
                 <span className="font-semibold">Booking Open: </span>
-                {activity.bookingOpen}
+                {activity.bookingOpen ? "Yes" : "No"}
               </div>
+
+              {/* Rating */}
+              {activity.rating && ( // Display rating only if it exists
+                <div className="text-gray-700">
+                  <span className="font-semibold">Rating: </span>
+                  {activity.rating} / 5
+                </div>
+              )}
             </div>
           </div>
         ))

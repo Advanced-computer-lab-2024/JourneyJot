@@ -51,6 +51,12 @@ const activitySchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    rating: {
+      type: Number,
+      required: false,
+      min: 1,
+      max: 5,
+    },
     advertiserId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Reference to the User model

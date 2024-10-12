@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Spinner from "../components/Spinner";
 import { Link } from "react-router-dom";
-import ProductCard from "../components/ProductCard";
+import TouristProductCard from "../components/TouristProductCard";
 
-const ShowProducts = () => {
+const TouristProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [minPrice, setMinPrice] = useState("");
@@ -96,15 +96,9 @@ const ShowProducts = () => {
         />
       </div>
       <div className="mb-4">
-        {loading ? <Spinner /> : <ProductCard products={products} />}
+        {loading ? <Spinner /> : <TouristProductCard products={products} />}
       </div>
-      <div className="flex flex-col md:flex-row justify-between items-center">
-        <Link to={"addProduct"}>
-          <button className="bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200">
-            Add Product
-          </button>
-        </Link>
-
+      <div className="flex flex-col md:flex-row justify-end items-center">
         <button
           className="bg-teal-500 text-white rounded-md px-6 py-2 mt-4 md:mt-0 shadow-md hover:bg-teal-600 transition duration-200"
           onClick={() => setSort((prevState) => !prevState)}
@@ -136,4 +130,4 @@ const ShowProducts = () => {
   );
 };
 
-export default ShowProducts;
+export default TouristProducts;
