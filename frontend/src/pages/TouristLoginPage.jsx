@@ -19,6 +19,8 @@ const TouristLoginPage = () => {
     e.preventDefault();
     try {
       const response = await touristLogin(formData);
+      const token = response.data.token;
+      localStorage.setItem("token", token);
       console.log("Login successful", response.data);
       navigate("/tourist/homePage"); // Updated: Redirect to dashboard after successful login
     } catch (error) {

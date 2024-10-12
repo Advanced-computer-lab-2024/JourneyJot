@@ -11,21 +11,22 @@ const TouristGuest = () => {
   const [activities, setActivities] = useState([]);
   const [itineraries, setItineraries] = useState([]);
   const [attractions, setAttractions] = useState([]);
-
+  const [categories, setCategories] = useState([]); // State to hold categories
   const [budget, setBudget] = useState("");
   const [date, setDate] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(""); // Selected category
   const [ratings, setRatings] = useState("");
   const [preferences, setPreferences] = useState("");
   const [language, setLanguage] = useState("");
 
   const [activeTab, setActiveTab] = useState("Activities"); // State to track active tab
 
-  // Fetch Activities, Itineraries, and Attractions
+  // Fetch Activities, Itineraries, Attractions, and Categories
   useEffect(() => {
     fetchActivities();
     fetchItineraries();
     fetchAttractions();
+    fetchCategories(); // Fetch categories on component mount
   }, []);
 
   const fetchActivities = async () => {
@@ -52,6 +53,15 @@ const TouristGuest = () => {
       setAttractions(response.data);
     } catch (error) {
       console.error("Error fetching attractions:", error);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/categories"); // Update this URL to match your API endpoint for categories
+      setCategories(response.data); // Assuming your response is an array of categories
+    } catch (error) {
+      console.error("Error fetching categories:", error);
     }
   };
 
@@ -266,13 +276,20 @@ const TouristGuest = () => {
             onChange={(e) => setDate(e.target.value)}
             className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
-          <input
-            type="text"
-            placeholder="Category"
+          <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
+          >
+            <option value="">Select Activity Category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.name}>
+                {" "}
+                {/* Adjust according to your category structure */}
+                {cat.name}
+              </option>
+            ))}
+          </select>
           <input
             type="number"
             placeholder="Ratings"

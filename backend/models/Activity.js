@@ -33,8 +33,9 @@ const activitySchema = new mongoose.Schema(
       required: false, // If you want it to be optional
     },
     category: {
-      type: [String],
-      required: true, // Category like 'food', 'concert', etc.
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category", // Reference to the Category model
+      required: true,
     },
     tags: [
       {
