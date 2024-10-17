@@ -1,32 +1,32 @@
 /** @format */
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import ActivitiesCard from "./ActivitiesCard";
-import ItinerariesCard from "./ItinerariesCard";
-import AttractionsCard from "./AttractionsCard";
-import Header from "./Header"; // Ensure this Header includes Profile and Products buttons
+import ActivitiesCard from "../../components/Advertiser/ActivitiesCard";
+import ItinerariesCard from "../../components/TourGuide/ItinerariesCard";
+import AttractionsCard from "../../components/TourismGoverner/AttractionsCard";
 
-const TouristGuest = () => {
+const TouristHomePage = () => {
+  const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
   const [itineraries, setItineraries] = useState([]);
   const [attractions, setAttractions] = useState([]);
-  const [categories, setCategories] = useState([]); // State to hold categories
+
   const [budget, setBudget] = useState("");
   const [date, setDate] = useState("");
-  const [category, setCategory] = useState(""); // Selected category
+  const [category, setCategory] = useState("");
   const [ratings, setRatings] = useState("");
   const [preferences, setPreferences] = useState("");
   const [language, setLanguage] = useState("");
 
   const [activeTab, setActiveTab] = useState("Activities"); // State to track active tab
 
-  // Fetch Activities, Itineraries, Attractions, and Categories
+  // Fetch Activities, Itineraries, and Attractions
   useEffect(() => {
     fetchActivities();
     fetchItineraries();
     fetchAttractions();
-    fetchCategories(); // Fetch categories on component mount
   }, []);
 
   const fetchActivities = async () => {
@@ -53,15 +53,6 @@ const TouristGuest = () => {
       setAttractions(response.data);
     } catch (error) {
       console.error("Error fetching attractions:", error);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/categories"); // Update this URL to match your API endpoint for categories
-      setCategories(response.data); // Assuming your response is an array of categories
-    } catch (error) {
-      console.error("Error fetching categories:", error);
     }
   };
 
@@ -255,8 +246,23 @@ const TouristGuest = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header Section Login and SignUp buttons */}
-      <Header />
+      <header className="flex justify-between items-center p-4 bg-white shadow-md">
+        <h1 className="text-xl font-bold">Tourist Home Page</h1>
+        <div className="flex space-x-4">
+          <button
+            onClick={() => navigate("/tourist/homePage/profile")} // Navigate to Profile page
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            My Profile
+          </button>
+          <button
+            onClick={() => navigate("/tourist/homePage/products")} // Navigate to Products page
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Products
+          </button>
+        </div>
+      </header>
 
       {/* Main Content */}
       <div className="container mx-auto py-8 px-4">
@@ -276,20 +282,13 @@ const TouristGuest = () => {
             onChange={(e) => setDate(e.target.value)}
             className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
-          <select
+          <input
+            type="text"
+            placeholder="Category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-          >
-            <option value="">Select Activity Category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>
-                {" "}
-                {/* Adjust according to your category structure */}
-                {cat.name}
-              </option>
-            ))}
-          </select>
+          />
           <input
             type="number"
             placeholder="Ratings"
@@ -342,4 +341,4 @@ const TouristGuest = () => {
   );
 };
 
-export default TouristGuest;
+export default TouristHomePage;

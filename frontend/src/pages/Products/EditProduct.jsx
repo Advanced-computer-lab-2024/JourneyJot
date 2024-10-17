@@ -2,7 +2,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import Spinner from "../components/Spinner";
+import Spinner from "../../components/General/Spinner";
 
 const EditProduct = () => {
   const { id } = useParams();

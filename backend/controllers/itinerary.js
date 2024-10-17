@@ -22,7 +22,7 @@ exports.createItinerary = async (req, res) => {
 
 exports.getItineraries = async (req, res) => {
   try {
-    const itineraries = await Itinerary.find({});
+    const itineraries = await Itinerary.find({}).populate("tourGuideId");
     res.status(200).json(itineraries);
   } catch (error) {
     res.status(500).json({ message: "Error fetching itineraries", error });

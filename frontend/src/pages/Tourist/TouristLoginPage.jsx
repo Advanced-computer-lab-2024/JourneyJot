@@ -1,7 +1,7 @@
 /** @format */
 
 import { useState } from "react";
-import { touristLogin } from "../api";
+import { touristLogin } from "../../api";
 import { useNavigate } from "react-router-dom";
 
 const TouristLoginPage = () => {
