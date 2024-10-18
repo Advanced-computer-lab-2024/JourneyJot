@@ -12,37 +12,45 @@ const TourGuideProfile = () => {
 	const [error, setError] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
 
-	useEffect(() => {
-		const fetchProfile = async () => {
-			try {
-				const token = localStorage.getItem('token');
-				if (!token) {
-					throw new Error('No token found. Please login again.');
-				}
-
-				const config = {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				};
-
-				const response = await axios.get(
-					'http://localhost:3000/tour-guides/profile',
-					config
-				);
-
-				setProfileData({
-					mobileNumber: response.data.tourGuideProfile.mobileNumber || '',
-					yearsOfExperience:
-						response.data.tourGuideProfile.yearsOfExperience || '',
-					previousWork: response.data.tourGuideProfile.previousWork || '',
-				});
-			} catch (error) {
-				setError('Failed to fetch profile');
-				console.error('Failed to fetch profile:', error);
+	const fetchProfile = async () => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				throw new Error('No token found. Please login again.');
 			}
-		};
 
+			const config = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+
+			const response = await axios.get(
+				'http://localhost:3000/tour-guides/profile',
+				config
+			);
+
+			const { mobileNumber, yearsOfExperience, previousWork } =
+				response.data.tourGuideProfile || {};
+
+			// Check if all fields are empty
+			if (!mobileNumber && !yearsOfExperience && !previousWork) {
+				setError('Profile information is missing. Please update your profile.');
+			} else {
+				setProfileData({
+					mobileNumber: mobileNumber || '',
+					yearsOfExperience: yearsOfExperience || '',
+					previousWork: previousWork || '',
+				});
+				setError(null); // Clear any previous errors
+			}
+		} catch (error) {
+			setError('Failed to fetch profile');
+			console.error('Failed to fetch profile:', error);
+		}
+	};
+
+	useEffect(() => {
 		fetchProfile();
 	}, []);
 
@@ -65,8 +73,18 @@ const TourGuideProfile = () => {
 				profileData,
 				config
 			);
-			setProfileData(response.data);
+
+			// Make sure the profile data is updated in the state
+			const updatedProfile = response.data.tourGuideProfile || {};
+			setProfileData({
+				mobileNumber: updatedProfile.mobileNumber || '',
+				yearsOfExperience: updatedProfile.yearsOfExperience || '',
+				previousWork: updatedProfile.previousWork || '',
+			});
+
+			// Re-render the UI after profile update
 			setIsEditing(false);
+			setError(null); // Clear any error message
 			console.log('Profile updated successfully', response.data);
 		} catch (error) {
 			setError('Failed to update profile');
