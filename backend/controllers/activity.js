@@ -7,8 +7,9 @@ const Activity = require("../models/Activity");
 // Create a new activity
 exports.createActivity = async (req, res) => {
   try {
+    const formattedDate = new Date(req.body.date).toISOString().split("T")[0];
     const activity = new Activity({
-      date: req.body.date,
+      date: formattedDate,
       time: req.body.time,
       price: req.body.price,
       priceRange: req.body.priceRange,

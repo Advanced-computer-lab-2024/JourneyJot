@@ -6,17 +6,17 @@ import ActivitiesCard from "../../components/Advertiser/ActivitiesCard";
 const ActivitiesPage = () => {
   const [activities, setActivities] = useState([]);
 
-  useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/activities");
-        console.log(response.data.activities);
-        setActivities(response.data.activities);
-      } catch (error) {
-        console.error("Error fetching activities:", error);
-      }
-    };
+  const fetchActivities = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/activities");
+      console.log(response.data.activities);
+      setActivities(response.data.activities);
+    } catch (error) {
+      console.error("Error fetching activities:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchActivities();
   }, []);
 
@@ -32,6 +32,7 @@ const ActivitiesPage = () => {
         activities={activities}
         isAdvertiser={true}
         onDelete={handleDelete}
+        fetchActivities={fetchActivities}
       />
     </div>
   );
