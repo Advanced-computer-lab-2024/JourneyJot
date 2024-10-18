@@ -11,7 +11,7 @@ const AttractionsCard = ({ attractions = [] }) => {
             key={attraction._id}
             className="border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-2xl transition-shadow duration-300"
           >
-            <div className="flex flex-col h-full space-y-4">
+            <div className="flex flex-col h-full space-y-4 text-left">
               {/* Name */}
               <h2 className="text-xl font-semibold text-blue-900">
                 {attraction.name || "No name provided"}{" "}

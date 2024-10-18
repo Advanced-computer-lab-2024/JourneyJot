@@ -9,79 +9,84 @@ const ItinerariesCard = ({ itineraries = [] }) => {
             key={itinerary._id}
             className="border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-2xl transition-shadow duration-300"
           >
-            <div className="flex flex-col h-full space-y-4">
-              {/* Tour Guide ID (optional display) */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Tour Guide Name: </span>
-                {itinerary.tourGuideId}{" "}
-                {/* Display the tour guide Name instead of ID, using .populate in the get Request */}
-              </div>
+            <div className="flex flex-col h-full space-y-4 text-left">
+              <h2 className="text-xl font-semibold text-blue-900">Itinerary</h2>
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                {/* Tour Guide ID (optional display) */}
+                <li>
+                  <span className="font-semibold">Tour Guide Name: </span>
+                  {itinerary.tourGuideId}{" "}
+                  {/* Display the tour guide Name instead of ID, using .populate in the get Request */}
+                </li>
 
-              {/* Itinerary Title (assumed as part of activities) */}
-              <h2 className="text-xl font-semibold text-blue-900">
-                Itinerary: {itinerary.activities.join(", ")}
-              </h2>
+                {/* Itinerary Title (assumed as part of activities) */}
+                <li>
+                  <span className="font-semibold">Activities: </span>
+                  {itinerary.activities.join(", ")}
+                </li>
 
-              {/* Locations */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Locations: </span>
-                {itinerary.locations.join(", ")}
-              </div>
+                {/* Locations */}
+                <li>
+                  <span className="font-semibold">Locations: </span>
+                  {itinerary.locations.join(", ")}
+                </li>
 
-              {/* Timeline */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Timeline: </span>
-                {itinerary.timeline}
-              </div>
+                {/* Timeline */}
+                <li>
+                  <span className="font-semibold">Timeline: </span>
+                  {itinerary.timeline}
+                </li>
 
-              {/* Duration */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Duration: </span>
-                {itinerary.duration}
-              </div>
+                {/* Duration */}
+                <li>
+                  <span className="font-semibold">Duration: </span>
+                  {itinerary.duration}
+                </li>
 
-              {/* Language */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Language: </span>
-                {itinerary.language}
-              </div>
+                {/* Language */}
+                <li>
+                  <span className="font-semibold">Language: </span>
+                  {itinerary.language}
+                </li>
 
-              {/* Price */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Price: </span>${itinerary.price}
-              </div>
+                {/* Price */}
+                <li>
+                  <span className="font-semibold">Price: </span>$
+                  {itinerary.price}
+                </li>
 
-              {/* Rating */}
-              {itinerary.rating && (
-                <div className="text-gray-700">
-                  <span className="font-semibold">Rating: </span>
-                  {itinerary.rating} / 5
-                </div>
-              )}
+                {/* Rating */}
+                {itinerary.rating && (
+                  <li>
+                    <span className="font-semibold">Rating: </span>
+                    {itinerary.rating} / 5
+                  </li>
+                )}
 
-              {/* Available Dates */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Available Dates: </span>
-                {itinerary.availableDates
-                  .map((date) => new Date(date).toLocaleDateString())
-                  .join(", ")}
-              </div>
+                {/* Available Dates */}
+                <li>
+                  <span className="font-semibold">Available Dates: </span>
+                  {itinerary.availableDates
+                    .map((date) => new Date(date).toLocaleDateString())
+                    .join(", ")}
+                </li>
 
-              {/* Accessibility */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Accessibility: </span>
-                {itinerary.accessibility}
-              </div>
+                {/* Accessibility */}
+                <li>
+                  <span className="font-semibold">Accessibility: </span>
+                  {itinerary.accessibility}
+                </li>
 
-              {/* Pickup and Dropoff Locations */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Pickup Location: </span>
-                {itinerary.pickupLocation}
-              </div>
-              <div className="text-gray-700">
-                <span className="font-semibold">Dropoff Location: </span>
-                {itinerary.dropoffLocation}
-              </div>
+                {/* Pickup and Dropoff Locations */}
+                <li>
+                  <span className="font-semibold">Pickup Location: </span>
+                  {itinerary.pickupLocation}
+                </li>
+                <li>
+                  <span className="font-semibold">Dropoff Location: </span>
+                  {itinerary.dropoffLocation}
+                </li>
+              </ul>
             </div>
           </div>
         ))

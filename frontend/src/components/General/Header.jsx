@@ -6,7 +6,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex justify-between items-center m-4">
+    <div className="flex justify-between items-center m-4 mt-7">
       <h1 className="text-4xl font-bold text-blue-900">
         Welcome to JourneyJot
       </h1>

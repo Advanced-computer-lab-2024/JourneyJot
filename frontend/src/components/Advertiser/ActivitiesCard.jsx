@@ -71,76 +71,59 @@ const ActivitiesCard = ({
               key={activity._id}
               className="border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-2xl transition-shadow duration-300"
             >
-              <div className="flex flex-col h-full space-y-4">
-                {/* Date */}
-                <div className="text-gray-700">
-                  <span className="font-semibold">Date: </span>
-                  {new Date(activity.date).toLocaleDateString()}
-                </div>
-
-                {/* Time */}
-                <div className="text-gray-700">
-                  <span className="font-semibold">Time: </span>
-                  {activity.time}
-                </div>
-
-                {/* Location */}
-                <div className="text-gray-700">
-                  <span className="font-semibold">Location: </span>
-                  {activity.location.coordinates.join(", ")}
-                </div>
-
-                {/* Price */}
-                <div className="text-gray-700">
-                  <span className="font-semibold">Price: </span>$
-                  {activity.price}
-                </div>
-
-                {/* Price Range */}
-                {activity.priceRange && (
-                  <div className="text-gray-700">
-                    <span className="font-semibold">Price Range: </span>
-                    {activity.priceRange}
-                  </div>
-                )}
-
-                {/* Tags */}
-                {activity.tags && (
-                  <div className="text-gray-700">
-                    <span className="font-semibold">Tags: </span>
-                    {activity.tags.name}
-                  </div>
-                )}
-
-                {/* Category */}
-                {activity.category && (
-                  <div className="text-gray-700">
-                    <span className="font-semibold">Category: </span>
-                    {activity.category.name}
-                  </div>
-                )}
-
-                {/* Special Discounts */}
-                {activity.specialDiscounts && (
-                  <div className="text-gray-700">
-                    <span className="font-semibold">Special Discounts: </span>
-                    {activity.specialDiscounts}
-                  </div>
-                )}
-
-                {/* Booking Open */}
-                <div className="text-gray-700">
-                  <span className="font-semibold">Booking Open: </span>
-                  {activity.bookingOpen ? "Yes" : "No"}
-                </div>
-
-                {/* Rating */}
-                {activity.rating && (
-                  <div className="text-gray-700">
-                    <span className="font-semibold">Rating: </span>
-                    {activity.rating} / 5
-                  </div>
-                )}
+              <div className="flex flex-col h-full space-y-4 text-left">
+                <ul className="list-disc list-inside space-y-2">
+                  <li className="text-gray-700">
+                    <span className="font-semibold">Date: </span>
+                    {new Date(activity.date).toLocaleDateString()}
+                  </li>
+                  <li className="text-gray-700">
+                    <span className="font-semibold">Time: </span>
+                    {activity.time}
+                  </li>
+                  <li className="text-gray-700">
+                    <span className="font-semibold">Location: </span>
+                    {activity.location.coordinates.join(", ")}
+                  </li>
+                  <li className="text-gray-700">
+                    <span className="font-semibold">Price: </span>$
+                    {activity.price}
+                  </li>
+                  {activity.priceRange && (
+                    <li className="text-gray-700">
+                      <span className="font-semibold">Price Range: </span>
+                      {activity.priceRange}
+                    </li>
+                  )}
+                  {activity.tags && (
+                    <li className="text-gray-700">
+                      <span className="font-semibold">Tags: </span>
+                      {activity.tags.name}
+                    </li>
+                  )}
+                  {activity.category && (
+                    <li className="text-gray-700">
+                      <span className="font-semibold">Category: </span>
+                      {activity.category.name}
+                    </li>
+                  )}
+                  {activity.specialDiscounts && (
+                    <li className="text-gray-700">
+                      <span className="font-semibold">Special Discounts: </span>
+                      {activity.specialDiscounts}
+                    </li>
+                  )}
+                  <li className="text-gray-700">
+                    <span className="font-semibold">Booking Open: </span>
+                    {activity.bookingOpen ? "Yes" : "No"}
+                  </li>
+                  {activity.rating && (
+                    <li className="text-gray-700">
+                      <span className="font-semibold">Rating: </span>
+                      {activity.rating} / 5
+                    </li>
+                  )}
+                </ul>
 
                 {/* Edit and Delete buttons */}
                 {isAdvertiser && (
@@ -180,10 +163,6 @@ const ActivitiesCard = ({
     </div>
   );
 };
-
-{
-  /* Edit Activity Modal */
-}
 
 const EditActivityModal = ({ activity, onClose, onUpdate }) => {
   const [formData, setFormData] = useState({
