@@ -17,11 +17,11 @@ const activitySchema = new mongoose.Schema(
       type: {
         type: String, // 'Point'
         enum: ["Point"],
-        required: true,
+        required: false,
       },
       coordinates: {
         type: [Number], // [longitude, latitude]
-        required: true,
+        required: false,
       },
     },
     price: {
@@ -35,15 +35,13 @@ const activitySchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category", // Reference to the Category model
-      required: true,
+      required: false,
     },
-    tags: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Tag", // Reference to the Tags model
-        required: false,
-      },
-    ],
+    tags: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tag", // Reference to the Tags model
+      required: false,
+    },
     specialDiscounts: {
       type: String,
       required: false,
@@ -61,7 +59,7 @@ const activitySchema = new mongoose.Schema(
     advertiserId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Reference to the User model
-      required: true,
+      required: false,
     },
   },
   { timestamps: true }

@@ -18,7 +18,7 @@ import AdvertiserDashBoard from "./components/Advertiser/AdvertiserDashBoard.jsx
 import AdvertiserProfile from "./components/Advertiser/AdvertiserProfile.jsx";
 import SellerProfile from "./components/Seller/SellerProfile.jsx";
 import SellerDashBoard from "./components/Seller/SellerDashBoard.jsx";
-import ActivitiesComponent from "./components/Advertiser/Activities.jsx";
+import ActivitiesComponent from "./components/Advertiser/CreateActivity.jsx";
 import AdminDashboard from "./components/Admin/AdminDashBoard.jsx";
 import AddAdmin from "./components/Admin/AddAdmin.jsx";
 import AddGovernor from "./components/Admin/AddGovernor.jsx";
@@ -27,6 +27,7 @@ import CategoryManagement from "./components/Admin/CategoryManagement.jsx";
 import PreferenceTagManagement from "./components/Admin/PreferenceTagManagement.jsx";
 import TouristProfile from "./components/Tourist/TouristProfile.jsx";
 import TouristGuest from "./components/General/TouristGuest.jsx";
+import ActivitiesPage from "./pages/Advertiser/ActivitiesPage.jsx";
 
 const App = () => {
   return (
@@ -74,6 +75,10 @@ const App = () => {
       <Route
         path="/advertiser-dashboard/activities"
         element={<ActivitiesComponent />}
+      />
+      <Route
+        path="/advertiser-dashboard/activities/all-activities"
+        element={<ActivitiesPage />}
       />
       <Route path="/seller-dashboard" element={<SellerDashBoard />} />
       <Route path="/seller-dashboard/profile" element={<SellerProfile />} />

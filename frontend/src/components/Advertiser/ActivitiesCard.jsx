@@ -1,6 +1,28 @@
 import React from "react";
+import axios from "axios";
 
-const ActivitiesCard = ({ activities = [] }) => {
+const ActivitiesCard = ({
+  activities = [],
+  isAdvertiser = false,
+  onDelete,
+}) => {
+  const handleEdit = (activityId) => {
+    // Logic for editing the activity (e.g., navigate to edit page)
+    alert(`Edit activity with ID: ${activityId}`);
+  };
+
+  const handleDelete = async (activityId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/activities/${activityId}`
+      );
+      onDelete(activityId);
+      console.log("Activity deleted:", response.data);
+    } catch (error) {
+      console.error("Error deleting activity:", error);
+    }
+  };
+
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
       {activities.length > 0 ? (
@@ -44,18 +66,20 @@ const ActivitiesCard = ({ activities = [] }) => {
               )}
 
               {/* Tags */}
-              {activity.tags &&
-                activity.tags.length > 0 && ( // Check if tags exist and have length
-                  <div className="text-gray-700">
-                    <span className="font-semibold">Tags: </span>
-                    {activity.tags.map((tag) => (
-                      <span key={tag} className="mr-2">
-                        {tag}{" "}
-                        {/* Assuming `tag` is a string. Adjust if it's an object. */}
-                      </span>
-                    ))}
-                  </div>
-                )}
+              {activity.tags && (
+                <div className="text-gray-700">
+                  <span className="font-semibold">Tags: </span>
+                  {activity.tags.name}
+                </div>
+              )}
+
+              {/* Category */}
+              {activity.category && (
+                <div className="text-gray-700">
+                  <span className="font-semibold">Category: </span>
+                  {activity.category.name}
+                </div>
+              )}
 
               {/* Special Discounts */}
               {activity.specialDiscounts && ( // Display special discounts only if they exist
@@ -76,6 +100,24 @@ const ActivitiesCard = ({ activities = [] }) => {
                 <div className="text-gray-700">
                   <span className="font-semibold">Rating: </span>
                   {activity.rating} / 5
+                </div>
+              )}
+
+              {/* Edit and Delete buttons */}
+              {isAdvertiser && (
+                <div className="flex space-x-2 mt-4">
+                  <button
+                    onClick={() => handleEdit(activity._id)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(activity._id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
                 </div>
               )}
             </div>

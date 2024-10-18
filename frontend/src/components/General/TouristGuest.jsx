@@ -283,7 +283,7 @@ const TouristGuest = () => {
           >
             <option value="">Select Activity Category</option>
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>
+              <option key={cat._id} value={cat.name}>
                 {" "}
                 {/* Adjust according to your category structure */}
                 {cat.name}

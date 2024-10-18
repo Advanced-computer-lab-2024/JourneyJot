@@ -21,7 +21,7 @@ const activityRouter = express.Router();
 activityRouter.post("/", authenticate, advertiserCheck, createActivity); // Create activity
 activityRouter.get("/", getActivities); // Get all activities
 activityRouter.put("/:id", authenticate, advertiserCheck, updateActivity); // Update activity
-activityRouter.delete("/:id", authenticate, advertiserCheck, deleteActivity); // Delete activity
+activityRouter.delete("/:id", deleteActivity); // Delete activity
 activityRouter.get("/filter", getFilteredActivities); // Filter activities
 activityRouter.get("/sort", sortByPriceOrRating); // Sort activities
 activityRouter.get("/:id", getActivity); // Get single activity by id

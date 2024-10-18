@@ -8,14 +8,24 @@ const Activity = require("../models/Activity");
 exports.createActivity = async (req, res) => {
   try {
     const activity = new Activity({
-      ...req.body,
-      advertiserId: req.user._id, // Assuming req.user is set after authentication
+      date: req.body.date,
+      time: req.body.time,
+      price: req.body.price,
+      priceRange: req.body.priceRange,
+      category: req.body.category,
+      tags: req.body.tags,
+      specialDiscounts: req.body.specialDiscounts,
+      bookingOpen: req.body.bookingOpen,
+      rating: req.body.rating,
+      // advertiserId: req.user._id,
     });
     await activity.save();
     return res
       .status(201)
       .json({ message: "Activity created successfully", activity });
   } catch (error) {
+    console.log(req.user);
+    console.log(error);
     return res.status(500).json({ message: "Error creating activity", error });
   }
 };
@@ -25,7 +35,7 @@ exports.getActivities = async (req, res) => {
   try {
     const { category } = req.query;
     const query = category ? { category } : {};
-    const activities = await Activity.find(query);
+    const activities = await Activity.find(query).populate("category tags");
     res.status(200).json({ activities });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -35,7 +45,9 @@ exports.getActivities = async (req, res) => {
 exports.getActivity = async (req, res) => {
   const { id } = req.params;
   try {
-    const activity = await Activity.findById(id);
+    const activity = await Activity.findById(id).populate(
+      "advertiserId category tags"
+    );
     return res.status(200).json(activity);
   } catch (error) {
     return res
@@ -98,7 +110,7 @@ exports.getFilteredActivities = async (req, res) => {
     }
 
     // Fetch filtered activities
-    const activities = await Activity.find(query);
+    const activities = await Activity.find(query).populate("category, tags");
 
     // Return the result
     return res.status(200).json({ count: activities.length, data: activities });
@@ -121,7 +133,9 @@ exports.sortByPriceOrRating = async (req, res) => {
       return res.status(400).json({ message: "Invalid sort type" });
     }
 
-    const activities = await Activity.find().sort(sortCriteria);
+    const activities = await Activity.find()
+      .sort(sortCriteria)
+      .populate("category, tags");
     return res.status(200).json({ count: activities.length, data: activities });
   } catch (error) {
     return res.status(500).json({ message: "Error sorting activities", error });
