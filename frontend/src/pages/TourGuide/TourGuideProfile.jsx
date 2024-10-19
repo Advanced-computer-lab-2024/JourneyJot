@@ -9,8 +9,15 @@ const TourGuideProfile = () => {
 		yearsOfExperience: '',
 		previousWork: '',
 	});
+	const [initialProfileData, setInitialProfileData] = useState({
+		mobileNumber: '',
+		yearsOfExperience: '',
+		previousWork: '',
+	});
 	const [error, setError] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
+	const [image, setImage] = useState('');
+	const [imageUploadError, setImageUploadError] = useState(null);
 
 	const fetchProfile = async () => {
 		try {
@@ -42,6 +49,12 @@ const TourGuideProfile = () => {
 					yearsOfExperience: yearsOfExperience || '',
 					previousWork: previousWork || '',
 				});
+				// Keep the initial profile data for cancel action
+				setInitialProfileData({
+					mobileNumber: mobileNumber || '',
+					yearsOfExperience: yearsOfExperience || '',
+					previousWork: previousWork || '',
+				});
 				setError(null); // Clear any previous errors
 			}
 		} catch (error) {
@@ -56,6 +69,34 @@ const TourGuideProfile = () => {
 
 	const handleChange = (e) => {
 		setProfileData({ ...profileData, [e.target.name]: e.target.value });
+	};
+
+	function handleImage(e) {
+		setImage(e.target.files[0]);
+	}
+
+	const submitImage = async (e) => {
+		e.preventDefault();
+		try {
+			if (!image) {
+				throw new Error('Please select an image.');
+			}
+
+			const formData = new FormData();
+			formData.append('image', image);
+
+			const result = await axios.post(
+				'http://localhost:3000/upload',
+				formData,
+				{ headers: { 'Content-Type': 'multipart/form-data' } }
+			);
+
+			console.log('Image uploaded successfully:', result.data);
+			setImageUploadError(null); // Clear any upload errors
+		} catch (error) {
+			setImageUploadError('Failed to upload image');
+			console.error('Failed to upload image:', error);
+		}
 	};
 
 	const handleSubmit = async (e) => {
@@ -74,9 +115,14 @@ const TourGuideProfile = () => {
 				config
 			);
 
-			// Make sure the profile data is updated in the state
+			// Update the initial profile data to reflect changes
 			const updatedProfile = response.data.tourGuideProfile || {};
 			setProfileData({
+				mobileNumber: updatedProfile.mobileNumber || '',
+				yearsOfExperience: updatedProfile.yearsOfExperience || '',
+				previousWork: updatedProfile.previousWork || '',
+			});
+			setInitialProfileData({
 				mobileNumber: updatedProfile.mobileNumber || '',
 				yearsOfExperience: updatedProfile.yearsOfExperience || '',
 				previousWork: updatedProfile.previousWork || '',
@@ -92,6 +138,12 @@ const TourGuideProfile = () => {
 		}
 	};
 
+	const handleCancel = () => {
+		// Reset to the initial values when cancel is clicked
+		setProfileData(initialProfileData);
+		setIsEditing(false);
+	};
+
 	return (
 		<div className='max-w-lg mx-auto p-6 bg-gray-100 rounded-lg shadow-lg'>
 			<h1 className='text-2xl font-bold text-center mb-6'>
@@ -101,26 +153,41 @@ const TourGuideProfile = () => {
 			{!isEditing ? (
 				<div className='mb-6'>
 					<h2 className='text-xl font-semibold mb-2'>Profile Details</h2>
-					<div className='bg-white p-4 rounded-lg shadow'>
-						<p className='mb-2'>
-							<strong>Mobile Number:</strong>{' '}
-							<span className='text-gray-700'>
-								{profileData.mobileNumber || 'N/A'}
-							</span>
-						</p>
-						<p className='mb-2'>
-							<strong>Years of Experience:</strong>{' '}
-							<span className='text-gray-700'>
-								{profileData.yearsOfExperience || 'N/A'}
-							</span>
-						</p>
-						<p className='mb-2'>
-							<strong>Previous Work:</strong>{' '}
-							<span className='text-gray-700'>
-								{profileData.previousWork || 'N/A'}
-							</span>
-						</p>
-					</div>
+					<form
+						className='bg-white p-4 rounded-lg shadow'
+						onSubmit={submitImage}>
+						<input
+							type='file'
+							accept='image/*'
+							onChange={handleImage}
+						/>
+						{imageUploadError && (
+							<p className='text-red-500 text-center'>{imageUploadError}</p>
+						)}
+						<button
+							className='mt-4 bg-green-600 text-white py-2 rounded-md shadow hover:bg-green-700 transition duration-200'
+							type='submit'>
+							Upload Image
+						</button>
+					</form>
+					<p className='mb-2'>
+						<strong>Mobile Number:</strong>{' '}
+						<span className='text-gray-700'>
+							{profileData.mobileNumber || 'N/A'}
+						</span>
+					</p>
+					<p className='mb-2'>
+						<strong>Years of Experience:</strong>{' '}
+						<span className='text-gray-700'>
+							{profileData.yearsOfExperience || 'N/A'}
+						</span>
+					</p>
+					<p className='mb-2'>
+						<strong>Previous Work:</strong>{' '}
+						<span className='text-gray-700'>
+							{profileData.previousWork || 'N/A'}
+						</span>
+					</p>
 					<button
 						className='mt-4 w-full bg-blue-600 text-white py-2 rounded-md shadow hover:bg-blue-700 transition duration-200'
 						onClick={() => setIsEditing(true)}>
@@ -176,7 +243,7 @@ const TourGuideProfile = () => {
 						<button
 							className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition duration-200'
 							type='button'
-							onClick={() => setIsEditing(false)}>
+							onClick={handleCancel}>
 							Cancel
 						</button>
 					</div>
