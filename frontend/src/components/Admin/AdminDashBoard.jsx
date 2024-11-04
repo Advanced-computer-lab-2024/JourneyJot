@@ -1,9 +1,11 @@
 /** @format */
 
 import { Link, useNavigate } from 'react-router-dom';
+import ChangePassword from '../Helper/admin-change-password'; // Import the ChangePassword component
 
 const AdminDashboard = () => {
 	const navigate = useNavigate();
+
 	return (
 		<div className='min-h-screen bg-gray-50'>
 			{/* Navbar */}
@@ -27,6 +29,12 @@ const AdminDashboard = () => {
 							to='/admins/addGovernor'
 							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
 							Add Tour Guide
+						</Link>
+						{/* Link to Change Password page */}
+						<Link
+							to='/admins/change-password'
+							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
+							Change Password
 						</Link>
 						<button
 							onClick={() => navigate('/products')}
@@ -72,6 +80,11 @@ const AdminDashboard = () => {
 							className='block bg-orange-500 text-white text-center py-4 rounded-md hover:bg-orange-600 transition-all duration-200 transform hover:scale-105'>
 							Preference Tag Management
 						</Link>
+					</div>
+					{/* Change Password Section */}
+					<div className='mt-8'>
+						<h2 className='text-2xl font-semibold mb-4'>Change Password</h2>
+						<ChangePassword /> {/* Include the ChangePassword component */}
 					</div>
 				</div>
 			</div>

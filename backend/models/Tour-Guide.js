@@ -20,8 +20,8 @@ const tourGuideProfileSchema = new mongoose.Schema({
 		required: [false, 'Previous work experience is not required'],
 	},
 	image: {
-		type: String,
-		required: [false, 'Image is not required'],
+		type: String, // Image is stored as a string URL in MongoDB
+		default: null, // Default image is null if no image is provided
 	},
 });
 const TourGuideProfile = mongoose.model(

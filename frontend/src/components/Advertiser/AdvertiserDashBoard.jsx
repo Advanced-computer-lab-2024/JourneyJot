@@ -16,8 +16,13 @@ const AdvertiserDashBoard = () => {
 						</Link>
 						<Link
 							to='/advertiser-dashboard/activities'
-							className='text-blue-600 hover:text-blue-800'>
+							className='text-blue-600 hover:text-blue-800 mx-4'>
 							Activities
+						</Link>
+						<Link
+							to='/advertiser-dashboard/change-password'
+							className='text-blue-600 hover:text-blue-800'>
+							Change Password
 						</Link>
 					</div>
 				</div>

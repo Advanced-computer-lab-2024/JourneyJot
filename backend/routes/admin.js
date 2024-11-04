@@ -8,8 +8,8 @@ const {
 	deleteAccount,
 	addGovernor,
 	addAdmin,
-	viewAdmins,
 } = require('../controllers/admin');
+const { changePassword } = require('../helper/change-password');
 adminRouter.delete(
 	'/delete-account/:username',
 	authMiddleware,
@@ -18,5 +18,6 @@ adminRouter.delete(
 );
 adminRouter.post('/addGovernor', authMiddleware, adminMiddleware, addGovernor);
 adminRouter.post('/addAdmin', authMiddleware, adminMiddleware, addAdmin);
+adminRouter.post('/changePassword', authMiddleware, changePassword);
 
 module.exports = adminRouter;

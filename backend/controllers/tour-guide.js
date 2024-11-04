@@ -14,9 +14,11 @@ exports.createTourGuideProfile = async (req, res) => {
 		}
 
 		user.tourGuideProfile = {
-			mobileNumber,
-			yearsOfExperience,
-			previousWork: previousWork || null, // Optional field
+			...user.tourGuideProfile, // Retain existing fields
+			mobileNumber: mobileNumber || user.tourGuideProfile.mobileNumber,
+			yearsOfExperience:
+				yearsOfExperience || user.tourGuideProfile.yearsOfExperience,
+			previousWork: previousWork || user.tourGuideProfile.previousWork, // Optional field
 		};
 
 		await user.save();

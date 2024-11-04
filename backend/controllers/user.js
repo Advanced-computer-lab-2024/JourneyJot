@@ -58,10 +58,12 @@ exports.login = (req, res, next) => {
 						{
 							expiresIn: '12h',
 						},
+
 						(errors, results) => {
 							if (errors) {
 								return res.status(500).json({ error: errors.message });
 							}
+
 							return res.status(200).json({
 								message: 'Authentication successful',
 								token: results,

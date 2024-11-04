@@ -35,8 +35,7 @@ mongoose.connect(
 console.log('MongoDB connected');
 initialAdmin.initialAdmin();
 
-app.use(express.static(path.join(__dirname, 'images')));
-
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/tourists', touristRouter);
 app.use('/users', userRouter);
 app.use('/tour-guides', tourGuideRouter);
