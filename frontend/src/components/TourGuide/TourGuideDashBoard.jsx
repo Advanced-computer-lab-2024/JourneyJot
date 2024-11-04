@@ -16,8 +16,13 @@ const Dashboard = () => {
 						</Link>
 						<Link
 							to='/tour-guide-dashboard/itineraries'
-							className='text-blue-600 hover:text-blue-800'>
+							className='text-blue-600 hover:text-blue-800 mx-4'>
 							Itineraries
+						</Link>
+						<Link
+							to='/tour-guide-dashboard/change-password'
+							className='text-blue-600 hover:text-blue-800'>
+							Change Password
 						</Link>
 					</div>
 				</div>
