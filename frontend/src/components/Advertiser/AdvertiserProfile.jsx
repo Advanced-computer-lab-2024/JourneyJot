@@ -157,6 +157,31 @@ const AdvertiserProfile = () => {
 		setProfileData(initialProfileData);
 		setIsEditing(false);
 	};
+	const requestDeletion = async () => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				throw new Error('No token found. Please login again.');
+			}
+
+			const config = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+
+			// Fix: Add an empty object {} as the second parameter for the request body
+			const response = await axios.put(
+				'http://localhost:3000/advertisers/account',
+				{}, // empty request body
+				config
+			);
+
+			console.log('Account deletion requested successfully', response.data);
+		} catch (error) {
+			console.error('Failed to delete account:', error);
+		}
+	};
 
 	return (
 		<div className='max-w-xl mx-auto p-6 bg-white shadow-lg rounded-lg'>
@@ -209,8 +234,8 @@ const AdvertiserProfile = () => {
 						Edit Profile
 					</button>
 					<button
-						className="mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200"
-					>
+						onClick={requestDeletion}
+						className='mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200'>
 						Request to Delete My Profile
 					</button>
 				</div>

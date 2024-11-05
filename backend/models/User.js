@@ -53,6 +53,7 @@ const userSchema = new mongoose.Schema({
 	},
 	acceptedTerms: { type: Boolean, default: false, required: true }, // new field
 	// For admin verification
+	status: { type: String, default: 'active' },
 });
 
 // Create the User model

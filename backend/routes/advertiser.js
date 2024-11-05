@@ -10,7 +10,7 @@ const {
 } = require('../controllers/advertiser');
 const { uploadImages, upload } = require('../controllers/upload');
 const { changePassword } = require('../helper/change-password');
-const { acceptTerms } = require('../controllers/accept-terms');
+const { deleteRequest } = require('../controllers/deletion-request');
 const advertiserRouter = express.Router();
 // Update tour guide profile
 advertiserRouter.put('/profile', auth_check, createAdvertiserProfile);
@@ -22,4 +22,5 @@ advertiserRouter.post(
 	uploadImages
 );
 advertiserRouter.post('/changePassword', auth_check, changePassword);
+advertiserRouter.put('/account', auth_check, deleteRequest);
 module.exports = advertiserRouter;
