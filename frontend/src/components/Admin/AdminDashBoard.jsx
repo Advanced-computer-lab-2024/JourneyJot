@@ -1,6 +1,7 @@
 /** @format */
 
 import { Link, useNavigate } from 'react-router-dom';
+import { FaUserCircle } from 'react-icons/fa';
 
 const AdminDashboard = () => {
 	const navigate = useNavigate();
@@ -10,10 +11,20 @@ const AdminDashboard = () => {
 			{/* Navbar */}
 			<nav className='bg-white shadow-lg'>
 				<div className='max-w-7xl mx-auto px-6 py-4 flex justify-between items-center'>
-					<h1 className='text-2xl font-extrabold text-gray-800'>
-						Admin Dashboard
-					</h1>
+					<div className='flex items-center space-x-2'>
+						<FaUserCircle className='text-3xl text-gray-600' /> {/* Profile icon */}
+						<span className='text-lg font-medium text-gray-700'>Profile</span>
+					</div>
+					<div className='flex items-center space-x-4'>
+						<h1 className='text-2xl font-extrabold text-gray-800'>Admin Dashboard</h1>
+
+					</div>
 					<div className='space-x-8'>
+						<Link
+							to='/change-password'
+							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
+							Change Password
+						</Link>
 						<Link
 							to='/admins/deleteUser'
 							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>

@@ -208,6 +208,11 @@ const AdvertiserProfile = () => {
 						className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mt-4 w-full'>
 						Edit Profile
 					</button>
+					<button
+						className="mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200"
+					>
+						Request to Delete My Profile
+					</button>
 				</div>
 			) : (
 				<form

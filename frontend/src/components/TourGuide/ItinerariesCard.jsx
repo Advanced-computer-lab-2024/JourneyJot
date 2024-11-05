@@ -1,6 +1,14 @@
 import React from "react";
 
 const ItinerariesCard = ({ itineraries = [] }) => {
+  const handleShareItinerary = (itinerary) => {
+    alert(`Share link for itinerary: ${itinerary.name}`);
+    // Implement actual sharing logic here
+  };
+  const handleBookItinerary = (itinerary) => {
+    alert(`Book ${itinerary.name}`);
+    // Implement actual booking logic here
+  };
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
       {itineraries.length > 0 ? (
@@ -15,9 +23,9 @@ const ItinerariesCard = ({ itineraries = [] }) => {
                 {/* Tour Guide ID (optional display) */}
                 <li>
                   <span className="font-semibold">Tour Guide Name: </span>
-
-                  {/* Display the tour guide Name instead of ID, using .populate in the get Request */}
+                  {itinerary.tourGuideId?.username || "Unknown"} {/* Use the `username` field or any other relevant property */}
                 </li>
+
 
                 {/* Itinerary Title (assumed as part of activities) */}
                 <li>
@@ -87,6 +95,19 @@ const ItinerariesCard = ({ itineraries = [] }) => {
                   {itinerary.dropoffLocation}
                 </li>
               </ul>
+              <button
+                onClick={() => handleBookItinerary(itinerary)}
+                className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
+              >
+                Book A Ticket
+              </button>
+              <button
+                onClick={() => handleShareItinerary(itinerary)}
+                className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
+              >
+                Share
+              </button>
+
             </div>
           </div>
         ))

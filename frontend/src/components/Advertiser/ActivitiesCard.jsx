@@ -60,6 +60,15 @@ const ActivitiesCard = ({
     } catch (error) {
       console.error("Error updating activity:", error);
     }
+
+  };
+  const handleShareActivity = (activity) => {
+    alert(`Share link for activity: ${activity.name}`);
+    // Implement actual sharing logic here
+  };
+  const handleShareBook = (activity) => {
+    alert(`Book ${activity.name}`);
+    // Implement actual booking logic here
   };
 
   return (
@@ -124,6 +133,19 @@ const ActivitiesCard = ({
                     </li>
                   )}
                 </ul>
+                <button
+                  onClick={() => handleShareBook(activity)}
+                  className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
+                >
+                  Book A Ticket
+                </button>
+                <button
+                  onClick={() => handleShareActivity(activity)}
+                  className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
+                >
+                  Share
+                </button>
+
 
                 {/* Edit and Delete buttons */}
                 {isAdvertiser && (

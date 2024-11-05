@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ActivitiesCard from "../Advertiser/ActivitiesCard";
 import ItinerariesCard from "../TourGuide/ItinerariesCard";
-import AttractionsCard from "../TourismGoverner/AttractionsCard";
+import AttractionsCard from "../TourismGovernor/AttractionsCard";
 import Header from "./Header"; // Ensure this Header includes Profile and Products buttons
 
 const TouristGuest = () => {
@@ -323,11 +323,10 @@ const TouristGuest = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`py-2 px-4 -mb-px font-semibold text-lg ${
-                  activeTab === tab
+                className={`py-2 px-4 -mb-px font-semibold text-lg ${activeTab === tab
                     ? "border-b-2 border-blue-600 text-blue-600"
                     : "text-gray-500 hover:text-blue-600"
-                }`}
+                  }`}
               >
                 {tab}
               </button>

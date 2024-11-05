@@ -123,7 +123,9 @@ const TourGuideProfile = () => {
 						onClick={() => setIsEditing(true)}>
 						Edit Profile
 					</button>
+
 				</div>
+
 			) : (
 				<form
 					className='bg-white p-6 rounded-lg shadow'
