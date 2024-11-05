@@ -35,6 +35,12 @@ const AdminDashboard = () => {
 							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
 							Change Password
 						</Link>
+						{/* Link to Admin Account Review page */}
+						<Link
+							to='/admins/admin-account-review'
+							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
+							Admin Account Review
+						</Link>
 						<button
 							onClick={() => navigate('/products')}
 							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
@@ -83,6 +89,12 @@ const AdminDashboard = () => {
 							to='/admins/change-password'
 							className='block bg-red-500 text-white text-center py-4 rounded-md hover:bg-orange-600 transition-all duration-200 transform hover:scale-105'>
 							Change Password
+						</Link>
+						{/* Link to Admin Account Review page in the grid */}
+						<Link
+							to='/admins/admin-account-review'
+							className='block bg-teal-500 text-white text-center py-4 rounded-md hover:bg-teal-600 transition-all duration-200 transform hover:scale-105'>
+							Admin Account Review
 						</Link>
 					</div>
 				</div>

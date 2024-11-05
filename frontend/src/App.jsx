@@ -33,6 +33,7 @@ import TouristChangePassword from './components/Helper/tourist-change-password.j
 import AdvertiserChangePassword from './components/Helper/advertiser-change-password.jsx';
 import SellerChangePassword from './components/Helper/seller-change-password.jsx';
 import TourGuideChangePassword from './components/Helper/tour-guide-change-password.jsx';
+import AdminDocumentReview from './components/Admin/AdminDocumentReview.jsx';
 
 const App = () => {
 	return (
@@ -137,6 +138,10 @@ const App = () => {
 			<Route
 				path='/admins/change-password'
 				element={<AdminChangePassword />}
+			/>
+			<Route
+				path='/admins/admin-account-review'
+				element={<AdminDocumentReview />}
 			/>
 			<Route
 				path='/tourism-governor'
