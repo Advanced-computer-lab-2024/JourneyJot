@@ -3,6 +3,7 @@
 // controllers/activityController.js
 
 const Activity = require('../models/Activity');
+const Category = require('../models/Category');
 
 // Create a new activity
 exports.createActivity = async (req, res) => {
@@ -102,6 +103,7 @@ exports.deleteActivity = async (req, res) => {
 exports.getFilteredActivities = async (req, res) => {
 	try {
 		const query = {};
+		console.log(req.query);
 
 		// Add filters based on query parameters
 		if (req.query.price) {
@@ -113,15 +115,21 @@ exports.getFilteredActivities = async (req, res) => {
 		}
 
 		if (req.query.category) {
-			query.category = req.query.category; // Exact category match
+			// Step 1: Find the category by name to get its ID
+			const category = await Category.findOne({ name: req.query.category });
+			if (!category) {
+				return res.status(404).json({ message: 'Category not found' });
+			}
+			// Step 2: Use the category ID in the activity query
+			query.category = category._id;
 		}
-
 		if (req.query.ratings) {
 			query.ratings = { $gte: req.query.ratings }; // Greater than or equal to specified rating
 		}
 
 		// Fetch filtered activities
-		const activities = await Activity.find(query).populate('category, tags');
+		const activities = await Activity.find(query).populate('category tags');
+		console.log(activities); // Debugging log to check fetched activities
 
 		// Return the result
 		return res.status(200).json({ count: activities.length, data: activities });
