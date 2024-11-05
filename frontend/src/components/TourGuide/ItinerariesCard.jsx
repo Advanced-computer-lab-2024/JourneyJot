@@ -15,7 +15,7 @@ const ItinerariesCard = ({ itineraries = [] }) => {
                 {/* Tour Guide ID (optional display) */}
                 <li>
                   <span className="font-semibold">Tour Guide Name: </span>
-                  {itinerary.tourGuideId}{" "}
+
                   {/* Display the tour guide Name instead of ID, using .populate in the get Request */}
                 </li>
 
