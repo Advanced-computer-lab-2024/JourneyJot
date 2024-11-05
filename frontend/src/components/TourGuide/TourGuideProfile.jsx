@@ -8,6 +8,7 @@ const TourGuideProfile = () => {
 		mobileNumber: '',
 		yearsOfExperience: '',
 		previousWork: '',
+		profileImage: 'http://localhost:3000/1729275293579-strawberry.jpeg', // Add the image URL here
 	});
 	const [error, setError] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
@@ -30,7 +31,7 @@ const TourGuideProfile = () => {
 					'http://localhost:3000/tour-guides/profile',
 					config
 				);
-				console.log('Profile data response:', response.data); // Log the response data
+				console.log('Profile data response:', response.data);
 
 				// Ensure the response data has the expected structure
 				setProfileData({
@@ -38,6 +39,9 @@ const TourGuideProfile = () => {
 					yearsOfExperience:
 						response.data.tourGuideProfile.yearsOfExperience || '',
 					previousWork: response.data.tourGuideProfile.previousWork || '',
+					profileImage:
+						response.data.tourGuideProfile.profileImage ||
+						'http://localhost:3000/1729275293579-strawberry.jpeg', // Replace with actual image data
 				});
 			} catch (error) {
 				setError('Failed to fetch profile');
@@ -86,6 +90,15 @@ const TourGuideProfile = () => {
 				<div className='mb-6'>
 					<h2 className='text-xl font-semibold mb-2'>Profile Details</h2>
 					<div className='bg-white p-4 rounded-lg shadow'>
+						{/* Add Image here */}
+						<div className='text-center mb-4'>
+							<img
+								src={profileData.profileImage}
+								alt='Profile'
+								className='w-32 h-32 rounded-full mx-auto'
+							/>
+						</div>
+
 						<p className='mb-2'>
 							<strong>Mobile Number:</strong>{' '}
 							<span className='text-gray-700'>
@@ -151,6 +164,7 @@ const TourGuideProfile = () => {
 							className='mt-1 block w-full border border-gray-300 rounded-md p-2 focus:border-blue-500 focus:ring focus:ring-blue-200'
 						/>
 					</label>
+					<div></div>
 					<div className='flex justify-between mt-4'>
 						<button
 							className='bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200'

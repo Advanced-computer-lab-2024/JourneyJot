@@ -13,14 +13,14 @@ const TouristHomePage = () => {
   const [itineraries, setItineraries] = useState([]);
   const [attractions, setAttractions] = useState([]);
 
-  const [budget, setBudget] = useState("");
-  const [date, setDate] = useState("");
-  const [category, setCategory] = useState("");
-  const [ratings, setRatings] = useState("");
-  const [preferences, setPreferences] = useState("");
-  const [language, setLanguage] = useState("");
+  const [budget, setBudget] = useState('');
+  const [date, setDate] = useState('');
+  const [category, setCategory] = useState('');
+  const [ratings, setRatings] = useState('');
+  const [preferences, setPreferences] = useState('');
+  const [language, setLanguage] = useState('');
 
-  const [activeTab, setActiveTab] = useState("Activities"); // State to track active tab
+  const [activeTab, setActiveTab] = useState('Activities'); // State to track active tab
 
   // Fetch Activities, Itineraries, and Attractions
   useEffect(() => {
@@ -31,35 +31,35 @@ const TouristHomePage = () => {
 
   const fetchActivities = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/activities");
+      const response = await axios.get('http://localhost:3000/activities');
       setActivities(response.data.activities);
     } catch (error) {
-      console.error("Error fetching activities:", error);
+      console.error('Error fetching activities:', error);
     }
   };
 
   const fetchItineraries = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/itineraries");
+      const response = await axios.get('http://localhost:3000/itineraries');
       setItineraries(response.data);
     } catch (error) {
-      console.error("Error fetching itineraries:", error);
+      console.error('Error fetching itineraries:', error);
     }
   };
 
   const fetchAttractions = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/attractions");
+      const response = await axios.get('http://localhost:3000/attractions');
       setAttractions(response.data);
     } catch (error) {
-      console.error("Error fetching attractions:", error);
+      console.error('Error fetching attractions:', error);
     }
   };
 
   const filterActivities = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/activities/filter",
+        'http://localhost:3000/activities/filter',
         {
           params: {
             price: budget,
@@ -71,14 +71,14 @@ const TouristHomePage = () => {
       );
       setActivities(response.data.data);
     } catch (error) {
-      console.error("Error filtering activities:", error);
+      console.error('Error filtering activities:', error);
     }
   };
 
   const sortItineraries = async (type) => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/itineraries/sort",
+        'http://localhost:3000/itineraries/sort',
         {
           params: {
             type, // 'price' or 'rating'
@@ -87,14 +87,14 @@ const TouristHomePage = () => {
       );
       setItineraries(response.data.data);
     } catch (error) {
-      console.error("Error sorting itineraries:", error);
+      console.error('Error sorting itineraries:', error);
     }
   };
 
   const sortActivities = async (type) => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/activities/sort",
+        'http://localhost:3000/activities/sort',
         {
           params: {
             type, // 'price' or 'rating'
@@ -103,14 +103,14 @@ const TouristHomePage = () => {
       );
       setActivities(response.data.data);
     } catch (error) {
-      console.error("Error sorting activities:", error);
+      console.error('Error sorting activities:', error);
     }
   };
 
   const filterItineraries = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/itineraries/filter",
+        'http://localhost:3000/itineraries/filter',
         {
           params: {
             budget,
@@ -122,19 +122,19 @@ const TouristHomePage = () => {
       );
       setItineraries(response.data);
     } catch (error) {
-      console.error("Error filtering itineraries:", error);
+      console.error('Error filtering itineraries:', error);
     }
   };
 
   const filterAttractions = async () => {
     try {
       if (!preferences) {
-        console.warn("No preferences provided.");
+        console.warn('No preferences provided.');
         return;
       }
 
       const response = await axios.get(
-        "http://localhost:3000/attractions/filter",
+        'http://localhost:3000/attractions/filter',
         {
           params: {
             preferences,
@@ -145,7 +145,7 @@ const TouristHomePage = () => {
       setAttractions(response.data.data);
     } catch (error) {
       console.error(
-        "Error filtering attractions:",
+        'Error filtering attractions:',
         error.response ? error.response.data : error.message
       );
     }
@@ -318,53 +318,53 @@ const TouristHomePage = () => {
       </header>
 
       {/* Main Content */}
-      <div className="container mx-auto py-8 px-4">
+      <div className='container mx-auto py-8 px-4'>
         {/* Filter Section */}
-        <div className="bg-white p-6 rounded-lg shadow-lg flex flex-wrap gap-4 items-center justify-center mb-8">
+        <div className='bg-white p-6 rounded-lg shadow-lg flex flex-wrap gap-4 items-center justify-center mb-8'>
           <input
-            type="number"
-            placeholder="Budget"
+            type='number'
+            placeholder='Budget'
             value={budget}
             onChange={(e) => setBudget(e.target.value)}
-            className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
           />
           <input
-            type="date"
-            placeholder="Date"
+            type='date'
+            placeholder='Date'
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
           />
           <input
-            type="text"
-            placeholder="Category"
+            type='text'
+            placeholder='Category'
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
           />
           <input
-            type="number"
-            placeholder="Ratings"
+            type='number'
+            placeholder='Ratings'
             value={ratings}
             onChange={(e) => setRatings(e.target.value)}
-            className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-            min="1"
-            max="5"
-            step="0.1"
+            className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
+            min='1'
+            max='5'
+            step='0.1'
           />
           <input
-            type="text"
-            placeholder="Preferences or Tags"
+            type='text'
+            placeholder='Preferences or Tags'
             value={preferences}
             onChange={(e) => setPreferences(e.target.value)}
-            className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
           />
           <input
-            type="text"
-            placeholder="Language"
+            type='text'
+            placeholder='Language'
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
           />
         </div>
 

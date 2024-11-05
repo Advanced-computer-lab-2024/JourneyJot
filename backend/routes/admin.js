@@ -8,8 +8,10 @@ const {
 	deleteAccount,
 	addGovernor,
 	addAdmin,
-	viewAdmins,
+	getPendingUsers,
+	updateUserStatus,
 } = require('../controllers/admin');
+const { changePassword } = require('../helper/change-password');
 adminRouter.delete(
 	'/delete-account/:username',
 	authMiddleware,
@@ -18,5 +20,20 @@ adminRouter.delete(
 );
 adminRouter.post('/addGovernor', authMiddleware, adminMiddleware, addGovernor);
 adminRouter.post('/addAdmin', authMiddleware, adminMiddleware, addAdmin);
+adminRouter.post('/changePassword', authMiddleware, changePassword);
+// Get all pending users
+adminRouter.get(
+	'/pending-users',
+	authMiddleware,
+	adminMiddleware,
+	getPendingUsers
+);
+
+// Update user status
+adminRouter.put(
+	'/update-user-status/:userId',
+	authMiddleware,
+	updateUserStatus
+);
 
 module.exports = adminRouter;

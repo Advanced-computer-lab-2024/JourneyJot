@@ -17,7 +17,14 @@ const advertiserProfileSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	// Add any additional fields you want for advertisers here
+	image: {
+		type: String, // Image is stored as a string URL in MongoDB
+		default: null, // Default image is null if no image is provided
+	},
+	file: {
+		type: String, // File is stored as a string URL in MongoDB
+		default: null, // Default file is null if no file is provided
+	},
 });
 
 // Create the AdvertiserProfile model

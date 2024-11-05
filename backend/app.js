@@ -1,6 +1,7 @@
 /** @format */
 
 const express = require('express');
+const path = require('path');
 const app = express();
 app.use(express.json());
 const mongoose = require('mongoose');
@@ -17,8 +18,8 @@ const tagRouter = require('./routes/tags');
 const preferenceTagRouter = require('./routes/preference-tag');
 const categoryRouter = require('./routes/category');
 const productRouter = require('./routes/product');
-const TouristItineraryRouter = require('./routes/tourist-itinerary');
 const initialAdmin = require('./controllers/admin');
+const uploadRouter = require('./routes/upload');
 const cors = require('cors');
 app.use(
 	cors({
@@ -32,6 +33,9 @@ mongoose.connect(
 );
 console.log('MongoDB connected');
 initialAdmin.initialAdmin();
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/tourists', touristRouter);
 app.use('/users', userRouter);
 app.use('/tour-guides', tourGuideRouter);
@@ -45,5 +49,6 @@ app.use('/tags', tagRouter);
 app.use('/pref-tags', preferenceTagRouter);
 app.use('/categories', categoryRouter);
 app.use('/products', productRouter);
-app.use('/tourist-itineraries', TouristItineraryRouter);
+app.use('/upload', uploadRouter);
+
 module.exports = app;
