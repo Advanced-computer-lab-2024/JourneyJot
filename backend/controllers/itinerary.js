@@ -22,7 +22,7 @@ exports.createItinerary = async (req, res) => {
 
 exports.getItineraries = async (req, res) => {
 	try {
-		const itineraries = await Itinerary.find({})
+		const itineraries = await Itinerary.find({ flagged: false }) // Exclude flagged itineraries
 			.populate({
 				path: 'tourGuideId',
 				match: { status: 'active' }, // Only include itineraries for active tour guides
@@ -31,9 +31,8 @@ exports.getItineraries = async (req, res) => {
 
 		// Filter out any itineraries where the populated tourGuideId is null (i.e., not active)
 		const activeItineraries = itineraries.filter(
-			(itinerary) => itinerary.tourGuideId
+			(itinerary) => itinerary.tourGuideId // Only include itineraries with active tour guides
 		);
-		console.log(activeItineraries);
 
 		res.status(200).json(activeItineraries);
 	} catch (error) {

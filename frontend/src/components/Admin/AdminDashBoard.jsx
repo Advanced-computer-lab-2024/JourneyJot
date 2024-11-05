@@ -12,8 +12,8 @@ const AdminDashboard = () => {
 			<nav className='bg-white shadow-md'>
 				<div className='max-w-7xl mx-auto px-6 py-4 flex justify-between items-center'>
 					<div className='flex items-center space-x-2'>
-						<FaUserCircle className='text-3xl text-gray-600' />{' '}
-						<span className='text-lg font-medium text-gray-700'>Profile</span>
+						<FaUserCircle className='text-3xl text-gray-600' />
+						<span className='text-lg font-semibold text-gray-700'>Profile</span>
 					</div>
 					<h1 className='text-2xl font-extrabold text-gray-800'>
 						Admin Dashboard
@@ -26,6 +26,7 @@ const AdminDashboard = () => {
 							'/admins/change-password',
 							'/admins/admin-account-review',
 							'/admins/view-users',
+							'/admins/flag-events',
 						].map((path, index) => (
 							<Link
 								key={index}
@@ -50,7 +51,7 @@ const AdminDashboard = () => {
 			{/* Dashboard Content */}
 			<div className='max-w-7xl mx-auto px-6 py-10'>
 				<div className='bg-white shadow-lg rounded-lg p-8'>
-					<h2 className='text-xl font-semibold text-gray-800 mb-4'>
+					<h2 className='text-2xl font-semibold text-gray-800 mb-4'>
 						Welcome, Admin
 					</h2>
 					<p className='text-gray-600 mb-6'>
@@ -98,14 +99,19 @@ const AdminDashboard = () => {
 								label: 'Users List',
 								color: 'bg-indigo-400',
 							},
+							{
+								path: '/admins/flag-events',
+								label: 'Flag Event',
+								color: 'bg-indigo-400',
+							},
 						].map(({ path, label, color }, index) => (
 							<Link
 								key={index}
 								to={path}
-								className={`${color} text-white text-center py-4 rounded-md hover:${color.replace(
+								className={`${color} text-white text-center py-4 rounded-lg hover:${color.replace(
 									'500',
 									'600'
-								)} transition-all duration-200 transform hover:scale-105`}>
+								)} transition-all duration-300 transform hover:scale-105 shadow-lg`}>
 								{label}
 							</Link>
 						))}

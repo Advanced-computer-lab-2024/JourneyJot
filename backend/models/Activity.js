@@ -61,6 +61,7 @@ const activitySchema = new mongoose.Schema(
 			min: 1,
 			max: 5,
 		},
+		flagged: { type: Boolean, default: false },
 	},
 	{ timestamps: true }
 );

@@ -36,6 +36,7 @@ import TourGuideChangePassword from './components/Helper/tour-guide-change-passw
 import AdminDocumentReview from './components/Admin/AdminDocumentReview.jsx';
 import TouristComplaintsPage from './pages/Tourist/Complaints.jsx';
 import UserList from './components/Admin/UserList.jsx';
+import Flag from './components/Admin/Flag.jsx';
 
 const App = () => {
 	return (
@@ -153,6 +154,12 @@ const App = () => {
 				path='/admins/view-users'
 				element={<UserList />}
 			/>
+
+			<Route
+				path='/admins/flag-events'
+				element={<Flag />}
+			/>
+
 			<Route
 				path='/tourism-governor'
 				element={<TourismGovernor />}

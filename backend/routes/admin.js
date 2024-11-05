@@ -13,6 +13,7 @@ const {
 	viewUsers,
 } = require('../controllers/admin');
 const { changePassword } = require('../helper/change-password');
+const { flagItinerary, flagActivity } = require('../controllers/flag-events');
 adminRouter.delete(
 	'/delete-account/:username',
 	authMiddleware,
@@ -37,5 +38,17 @@ adminRouter.put(
 	updateUserStatus
 );
 adminRouter.get('/users', authMiddleware, adminMiddleware, viewUsers);
+adminRouter.put(
+	'/itineraries/:id',
+	authMiddleware,
+	adminMiddleware,
+	flagItinerary
+);
+adminRouter.put(
+	'/activities/:id',
+	authMiddleware,
+	adminMiddleware,
+	flagActivity
+);
 
 module.exports = adminRouter;

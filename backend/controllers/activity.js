@@ -27,7 +27,11 @@ exports.createActivity = async (req, res) => {
 exports.getActivities = async (req, res) => {
 	try {
 		const { category } = req.query;
-		const query = category ? { category } : {};
+		// Modify the query to include the flagged condition
+		const query = {
+			...(category ? { category } : {}),
+			flagged: false, // Only include activities that are not flagged
+		};
 
 		const activities = await Activity.find(query)
 			.populate('category tags')
