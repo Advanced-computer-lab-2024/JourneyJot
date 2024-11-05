@@ -49,8 +49,13 @@ exports.login = (req, res, next) => {
 			}
 
 			// Check if the user is accepted by the admin
-			if (user.registrationStatus !== 'approved') {
-				return res.status(403).json({ message: 'Account has been rejected' });
+			if (
+				['tour_guide', 'advertiser', 'seller'].includes(user.role) &&
+				user.registrationStatus !== 'approved'
+			) {
+				return res
+					.status(403)
+					.json({ message: 'Account has been rejected or not approved yet' });
 			}
 
 			// Compare password
