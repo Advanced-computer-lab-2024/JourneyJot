@@ -3,6 +3,10 @@
 import React from "react";
 
 const AttractionsCard = ({ attractions = [] }) => {
+  const handleShareAttraction = (attraction) => {
+    alert(`Share link for itinerary: ${attraction.name}`);
+    // Implement actual sharing logic here
+  };
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
       {attractions.length > 0 ? (
@@ -83,6 +87,12 @@ const AttractionsCard = ({ attractions = [] }) => {
                       <li key={tag._id}>{tag.name || "No tag name"}</li> // Handle optional tag name
                     ))}
                   </ul>
+                  <button
+                    onClick={() => handleShareAttraction(attraction)}
+                    className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
+                  >
+                    Share
+                  </button>
                 </div>
               )}
             </div>

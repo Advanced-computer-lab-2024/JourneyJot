@@ -28,7 +28,13 @@ import PreferenceTagManagement from "./components/Admin/PreferenceTagManagement.
 import TouristProfile from "./components/Tourist/TouristProfile.jsx";
 import TouristGuest from "./components/General/TouristGuest.jsx";
 import ActivitiesPage from "./pages/Advertiser/ActivitiesPage.jsx";
-
+import ChangePassword from "./components/General/ChangePassword.jsx";
+import TourismGovernorDashboard from "./components/TourismGovernor/TourismGovernorDashBoard.jsx";
+import TouristPoints from "./pages/Tourist/TouristPoints.jsx";
+import TouristWallet from "./pages/Tourist/TouristWallet.jsx";
+import History from "./pages/Tourist/History.jsx";
+import UpcomingBookings from "./pages/Tourist/UpcomingBookings.jsx";
+import Complaint from "./pages/Tourist/Complaint.jsx";
 const App = () => {
   return (
     <Routes>
@@ -82,8 +88,17 @@ const App = () => {
       />
       <Route path="/seller-dashboard" element={<SellerDashBoard />} />
       <Route path="/seller-dashboard/profile" element={<SellerProfile />} />
+      <Route path="/change-password" element={<ChangePassword />} />
+      <Route path="/tourism-governor-dashboard" element={<TourismGovernorDashboard />} />
+      <Route path="/tourist/homePage/points" element={<TouristPoints />} />
+      <Route path="/tourist/homePage/wallet" element={<TouristWallet />} />
+      <Route path="/tourist/homePage/history" element={<History />} />
+      <Route path="/tourist/homePage/bookings" element={<UpcomingBookings />} />
+      <Route path="/tourist/homePage/complaint" element={<Complaint />} />
+
     </Routes>
   );
 };
 
 export default App;
+

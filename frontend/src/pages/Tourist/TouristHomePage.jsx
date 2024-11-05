@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ActivitiesCard from "../../components/Advertiser/ActivitiesCard";
 import ItinerariesCard from "../../components/TourGuide/ItinerariesCard";
-import AttractionsCard from "../../components/TourismGoverner/AttractionsCard";
+import AttractionsCard from "../../components/TourismGovernor/AttractionsCard";
 
 const TouristHomePage = () => {
   const navigate = useNavigate();
@@ -150,6 +150,9 @@ const TouristHomePage = () => {
       );
     }
   };
+  const changeCurrency = () => {
+    //implement
+  };
 
   // Render content based on active tab
   const renderTabContent = () => {
@@ -162,6 +165,12 @@ const TouristHomePage = () => {
                 Activities
               </h1>
               <div className="flex space-x-2">
+                <button
+                  onClick={changeCurrency} // Change currency button
+                  className="bg-green-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
+                >
+                  Change Currency
+                </button>
                 <button
                   onClick={filterActivities}
                   className="bg-blue-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -196,6 +205,12 @@ const TouristHomePage = () => {
               </h1>
               <div className="flex space-x-2">
                 <button
+                  onClick={changeCurrency} // Change currency button
+                  className="bg-green-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
+                >
+                  Change Currency
+                </button>
+                <button
                   onClick={filterItineraries}
                   className="bg-blue-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 >
@@ -228,6 +243,12 @@ const TouristHomePage = () => {
                 Attractions
               </h1>
               <button
+                onClick={changeCurrency} // Change currency button
+                className="bg-green-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
+              >
+                Change Currency
+              </button>
+              <button
                 onClick={filterAttractions}
                 className="bg-blue-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
               >
@@ -249,6 +270,38 @@ const TouristHomePage = () => {
       <header className="flex justify-between items-center p-4 bg-white shadow-md">
         <h1 className="text-xl font-bold">Tourist Home Page</h1>
         <div className="flex space-x-4">
+          <button
+            onClick={() => navigate("/tourist/homePage/complaint")}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Complaints
+          </button>
+          <button
+            onClick={() => navigate("/tourist/homePage/bookings")}
+
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Upcoming Bookings
+          </button>
+          <button
+            onClick={() => navigate("/tourist/homePage/history")}
+
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            History
+          </button>
+          <button
+            onClick={() => navigate("/tourist/homePage/points")}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Points
+          </button>
+          <button
+            onClick={() => navigate("/tourist/homePage/wallet")}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Wallet
+          </button>
           <button
             onClick={() => navigate("/tourist/homePage/profile")} // Navigate to Profile page
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
@@ -322,11 +375,10 @@ const TouristHomePage = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`py-2 px-4 -mb-px font-semibold text-lg ${
-                  activeTab === tab
-                    ? "border-b-2 border-blue-600 text-blue-600"
-                    : "text-gray-500 hover:text-blue-600"
-                }`}
+                className={`py-2 px-4 -mb-px font-semibold text-lg ${activeTab === tab
+                  ? "border-b-2 border-blue-600 text-blue-600"
+                  : "text-gray-500 hover:text-blue-600"
+                  }`}
               >
                 {tab}
               </button>
