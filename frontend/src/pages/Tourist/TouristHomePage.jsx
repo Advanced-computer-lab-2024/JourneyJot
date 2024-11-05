@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ActivitiesCard from "../../components/Advertiser/ActivitiesCard";
 import ItinerariesCard from "../../components/TourGuide/ItinerariesCard";
-import AttractionsCard from "../../components/TourismGoverner/AttractionsCard";
+import AttractionsCard from "../../components/TourismGovernor/AttractionsCard";
 
 const TouristHomePage = () => {
   const navigate = useNavigate();
