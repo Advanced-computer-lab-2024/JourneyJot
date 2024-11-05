@@ -51,6 +51,7 @@ const userSchema = new mongoose.Schema({
 		enum: ['pending', 'approved', 'rejected'],
 		default: 'pending', // Default status when a user registers
 	},
+	acceptedTerms: { type: Boolean, default: false, required: true }, // new field
 	// For admin verification
 });
 

@@ -13,15 +13,18 @@ const SignupPage = () => {
 		role: '',
 		idFile: null, // For ID file upload
 		additionalFiles: [], // For additional role-specific files
+		acceptedTerms: false, // Track if terms are accepted
 	});
 
 	const handleChange = (e) => {
-		const { name, value, files } = e.target;
+		const { name, value, files, type, checked } = e.target;
 
 		if (name === 'idFile') {
 			setFormData({ ...formData, idFile: files[0] });
 		} else if (name === 'additionalFiles') {
 			setFormData({ ...formData, additionalFiles: files });
+		} else if (type === 'checkbox') {
+			setFormData({ ...formData, [name]: checked });
 		} else {
 			setFormData({ ...formData, [name]: value });
 		}
@@ -30,12 +33,19 @@ const SignupPage = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
+		// Check if terms and conditions are accepted
+		if (!formData.acceptedTerms) {
+			alert('You must accept the terms and conditions to sign up.');
+			return;
+		}
+
 		const data = new FormData();
 		data.append('username', formData.username);
 		data.append('email', formData.email);
 		data.append('password', formData.password);
 		data.append('role', formData.role);
 		data.append('idFile', formData.idFile);
+		data.append('acceptedTerms', formData.acceptedTerms);
 
 		Array.from(formData.additionalFiles).forEach((file) => {
 			data.append('additionalFiles', file);
@@ -129,6 +139,24 @@ const SignupPage = () => {
 						/>
 					</div>
 				)}
+
+				<label className='flex items-center'>
+					<input
+						type='checkbox'
+						name='acceptedTerms'
+						checked={formData.acceptedTerms}
+						onChange={handleChange}
+						className='mr-2'
+					/>
+					<span className='text-gray-700'>
+						I accept the{' '}
+						<Link
+							to='/terms'
+							className='text-teal-500 underline'>
+							terms and conditions
+						</Link>
+					</span>
+				</label>
 
 				<button
 					type='submit'

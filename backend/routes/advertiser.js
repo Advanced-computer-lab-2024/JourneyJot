@@ -10,6 +10,7 @@ const {
 } = require('../controllers/advertiser');
 const { uploadImages, upload } = require('../controllers/upload');
 const { changePassword } = require('../helper/change-password');
+const { acceptTerms } = require('../controllers/accept-terms');
 const advertiserRouter = express.Router();
 // Update tour guide profile
 advertiserRouter.put('/profile', auth_check, createAdvertiserProfile);

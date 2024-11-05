@@ -10,6 +10,7 @@ const {
 	addAdmin,
 	getPendingUsers,
 	updateUserStatus,
+	viewUsers,
 } = require('../controllers/admin');
 const { changePassword } = require('../helper/change-password');
 adminRouter.delete(
@@ -35,5 +36,6 @@ adminRouter.put(
 	authMiddleware,
 	updateUserStatus
 );
+adminRouter.get('/users', authMiddleware, adminMiddleware, viewUsers);
 
 module.exports = adminRouter;

@@ -9,49 +9,35 @@ const AdminDashboard = () => {
 	return (
 		<div className='min-h-screen bg-gray-50'>
 			{/* Navbar */}
-			<nav className='bg-white shadow-lg'>
+			<nav className='bg-white shadow-md'>
 				<div className='max-w-7xl mx-auto px-6 py-4 flex justify-between items-center'>
 					<div className='flex items-center space-x-2'>
-						<FaUserCircle className='text-3xl text-gray-600' /> {/* Profile icon */}
+						<FaUserCircle className='text-3xl text-gray-600' />{' '}
 						<span className='text-lg font-medium text-gray-700'>Profile</span>
 					</div>
-					<div className='flex items-center space-x-4'>
-						<h1 className='text-2xl font-extrabold text-gray-800'>Admin Dashboard</h1>
-
-					</div>
-					<div className='space-x-8'>
-						<Link
-							to='/change-password'
-							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
-							Change Password
-						</Link>
-						<Link
-							to='/admins/deleteUser'
-							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
-							Manage Users
-						</Link>
-						<Link
-							to='/admins/addAdmin'
-							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
-							Add Admin
-						</Link>
-						<Link
-							to='/admins/addGovernor'
-							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
-							Add Tour Guide
-						</Link>
-						{/* Link to Change Password page */}
-						<Link
-							to='/admins/change-password'
-							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
-							Change Password
-						</Link>
-						{/* Link to Admin Account Review page */}
-						<Link
-							to='/admins/admin-account-review'
-							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
-							Admin Account Review
-						</Link>
+					<h1 className='text-2xl font-extrabold text-gray-800'>
+						Admin Dashboard
+					</h1>
+					<div className='flex items-center space-x-8'>
+						{[
+							'/admins/deleteUser',
+							'/admins/addAdmin',
+							'/admins/addGovernor',
+							'/admins/change-password',
+							'/admins/admin-account-review',
+							'/admins/view-users',
+						].map((path, index) => (
+							<Link
+								key={index}
+								to={path}
+								className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
+								{path
+									.split('/')
+									.pop()
+									.replace('-', ' ')
+									.replace(/\b\w/g, (char) => char.toUpperCase())}
+							</Link>
+						))}
 						<button
 							onClick={() => navigate('/products')}
 							className='text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium'>
@@ -63,50 +49,66 @@ const AdminDashboard = () => {
 
 			{/* Dashboard Content */}
 			<div className='max-w-7xl mx-auto px-6 py-10'>
-				<div className='bg-white shadow-md rounded-lg p-6'>
-					<h2 className='text-xl font-semibold text-gray-700 mb-4'>
+				<div className='bg-white shadow-lg rounded-lg p-8'>
+					<h2 className='text-xl font-semibold text-gray-800 mb-4'>
 						Welcome, Admin
 					</h2>
 					<p className='text-gray-600 mb-6'>
 						Manage platform users, add new admins, and more.
 					</p>
 					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-						<Link
-							to='/admins/deleteUser'
-							className='block bg-blue-600 text-white text-center py-4 rounded-md hover:bg-blue-700 transition-all duration-200 transform hover:scale-105'>
-							Manage Users
-						</Link>
-						<Link
-							to='/admins/addAdmin'
-							className='block bg-green-600 text-white text-center py-4 rounded-md hover:bg-green-700 transition-all duration-200 transform hover:scale-105'>
-							Add New Admin
-						</Link>
-						<Link
-							to='/admins/addGovernor'
-							className='block bg-purple-600 text-white text-center py-4 rounded-md hover:bg-purple-700 transition-all duration-200 transform hover:scale-105'>
-							Add Tour Guide
-						</Link>
-						<Link
-							to='/admins/category-management'
-							className='block bg-yellow-500 text-white text-center py-4 rounded-md hover:bg-yellow-600 transition-all duration-200 transform hover:scale-105'>
-							Category Management
-						</Link>
-						<Link
-							to='/admins/preference-tag-management'
-							className='block bg-orange-500 text-white text-center py-4 rounded-md hover:bg-orange-600 transition-all duration-200 transform hover:scale-105'>
-							Preference Tag Management
-						</Link>
-						<Link
-							to='/admins/change-password'
-							className='block bg-red-500 text-white text-center py-4 rounded-md hover:bg-orange-600 transition-all duration-200 transform hover:scale-105'>
-							Change Password
-						</Link>
-						{/* Link to Admin Account Review page in the grid */}
-						<Link
-							to='/admins/admin-account-review'
-							className='block bg-teal-500 text-white text-center py-4 rounded-md hover:bg-teal-600 transition-all duration-200 transform hover:scale-105'>
-							Admin Account Review
-						</Link>
+						{[
+							{
+								path: '/admins/deleteUser',
+								label: 'Manage Users',
+								color: 'bg-blue-600',
+							},
+							{
+								path: '/admins/addAdmin',
+								label: 'Add New Admin',
+								color: 'bg-green-600',
+							},
+							{
+								path: '/admins/addGovernor',
+								label: 'Add Tour Guide',
+								color: 'bg-purple-600',
+							},
+							{
+								path: '/admins/category-management',
+								label: 'Category Management',
+								color: 'bg-yellow-500',
+							},
+							{
+								path: '/admins/preference-tag-management',
+								label: 'Preference Tag Management',
+								color: 'bg-orange-500',
+							},
+							{
+								path: '/admins/change-password',
+								label: 'Change Password',
+								color: 'bg-red-500',
+							},
+							{
+								path: '/admins/admin-account-review',
+								label: 'Admin Account Review',
+								color: 'bg-teal-500',
+							},
+							{
+								path: '/admins/view-users',
+								label: 'Users List',
+								color: 'bg-indigo-400',
+							},
+						].map(({ path, label, color }, index) => (
+							<Link
+								key={index}
+								to={path}
+								className={`${color} text-white text-center py-4 rounded-md hover:${color.replace(
+									'500',
+									'600'
+								)} transition-all duration-200 transform hover:scale-105`}>
+								{label}
+							</Link>
+						))}
 					</div>
 				</div>
 			</div>

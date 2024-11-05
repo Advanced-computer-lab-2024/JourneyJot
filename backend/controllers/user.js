@@ -3,10 +3,18 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User'); // Assuming the User model is in the models folder
 const jwt = require('jsonwebtoken');
-
 exports.signUp = async (req, res) => {
 	try {
-		const { username, email, password, role } = req.body;
+		const { username, email, password, role, acceptedTerms } = req.body;
+
+		// Check if terms and conditions are accepted
+		if (!acceptedTerms) {
+			return res
+				.status(400)
+				.json({
+					message: 'You must accept the terms and conditions to register',
+				});
+		}
 
 		// Hash the password with bcrypt
 		const saltRounds = 10;
@@ -25,6 +33,7 @@ exports.signUp = async (req, res) => {
 			role,
 			idFile,
 			additionalFiles,
+			acceptedTerms, // Set acceptedTerms
 		});
 
 		await newUser.save();
@@ -38,6 +47,7 @@ exports.signUp = async (req, res) => {
 			.json({ message: 'Error during registration', error: error.message });
 	}
 };
+
 exports.login = (req, res, next) => {
 	User.findOne({ username: req.body.username })
 		.exec()
