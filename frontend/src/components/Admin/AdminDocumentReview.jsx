@@ -79,31 +79,32 @@ const AdminDocumentReview = () => {
 			<h2 className='text-2xl font-semibold mb-4'>Admin Document Review</h2>
 			{error && <p className='text-red-500'>{error}</p>}
 			{users.length === 0 ? (
-				<p>No pending users at the moment.</p>
+				<p className='text-gray-500'>No pending users at the moment.</p>
 			) : (
 				users.map((user) => (
 					<div
 						key={user._id}
-						className='border p-4 mb-4 rounded shadow'>
-						<p>
+						className='border p-4 mb-4 rounded-lg shadow-md hover:shadow-lg transition-shadow'>
+						<p className='font-semibold'>
 							<strong>Username:</strong> {user.username}
 						</p>
-						<p>
+						<p className='font-semibold'>
 							<strong>Role:</strong> {user.role}
 						</p>
-						<p>
-							<strong>Status:</strong> {user.status}
+						<p className='font-semibold'>
+							<strong>Status:</strong> {user.registrationStatus}
 						</p>
-						<p>
+						<p className='font-semibold'>
 							<strong>Uploaded ID:</strong>{' '}
 							<a
-								href={`/uploads/${user.idFile}`}
+								href={`http://localhost:3000/uploads/${user.idFile}`} // Ensure correct file URL
 								target='_blank'
-								rel='noopener noreferrer'>
-								View ID
+								rel='noopener noreferrer'
+								className='text-blue-600 hover:underline'>
+								View ID Document
 							</a>
 						</p>
-						<p>
+						<p className='font-semibold'>
 							<strong>Additional Documents:</strong>
 						</p>
 						<ul>
@@ -111,23 +112,24 @@ const AdminDocumentReview = () => {
 								user.additionalFiles.map((file, idx) => (
 									<li key={idx}>
 										<a
-											href={`/uploads/${file}`}
+											href={`http://localhost:3000/uploads/${file}`} // Ensure correct file URL
 											target='_blank'
-											rel='noopener noreferrer'>
-											View Document {idx + 1}
+											rel='noopener noreferrer'
+											className='text-blue-600 hover:underline'>
+											View Additional Document {idx + 1}
 										</a>
 									</li>
 								))}
 						</ul>
-						<div className='mt-2'>
+						<div className='mt-4'>
 							<button
 								onClick={() => handleStatusUpdate(user._id, 'approved')}
-								className='px-4 py-2 bg-green-500 text-white rounded mr-2'>
+								className='px-4 py-2 bg-green-600 text-white rounded-md shadow hover:bg-green-700 transition-colors mr-2'>
 								Accept
 							</button>
 							<button
 								onClick={() => handleStatusUpdate(user._id, 'rejected')}
-								className='px-4 py-2 bg-red-500 text-white rounded'>
+								className='px-4 py-2 bg-red-600 text-white rounded-md shadow hover:bg-red-700 transition-colors'>
 								Reject
 							</button>
 						</div>
