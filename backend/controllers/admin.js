@@ -132,3 +132,32 @@ exports.addAdmin = async (req, res) => {
 		res.status(500).json({ message: 'Server error' });
 	}
 };
+exports.getPendingUsers = async (req, res) => {
+	try {
+		const users = await User.find({ registrationStatus: 'pending' });
+		res.status(200).json(users);
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: 'Error retrieving users', error: error.message });
+	}
+};
+
+exports.updateUserStatus = async (req, res) => {
+	try {
+		const { userId } = req.params;
+		const { status } = req.body;
+		const user = await User.findById(userId);
+
+		if (!user) return res.status(404).json({ message: 'User not found' });
+
+		user.registrationStatus = status;
+		await user.save();
+
+		res.status(200).json({ message: `User status updated to ${status}`, user });
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: 'Error updating user status', error: error.message });
+	}
+};

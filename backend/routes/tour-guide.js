@@ -12,6 +12,7 @@ const auth_check = require('../middleware/auth-check');
 const tourGuideCheck = require('../middleware/tour-guide-check');
 const { uploadImages, upload } = require('../controllers/upload');
 const { changePassword } = require('../helper/change-password');
+const { uploadFiles, uploadFile } = require('../controllers/file');
 const tourGuideRouter = express.Router();
 // Update tour guide profile
 tourGuideRouter.put(
@@ -34,5 +35,11 @@ tourGuideRouter.post(
 	uploadImages
 );
 tourGuideRouter.post('/changePassword', auth_check, changePassword);
+tourGuideRouter.post(
+	'/upload-file',
+	auth_check,
+	uploadFile.single('file'),
+	uploadFiles
+);
 
 module.exports = tourGuideRouter;

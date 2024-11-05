@@ -17,6 +17,10 @@ const sellerProfileSchema = new mongoose.Schema({
 		type: String, // Image is stored as a string URL in MongoDB
 		default: null, // Default image is null if no image is provided
 	},
+	file: {
+		type: String, // File is stored as a string URL in MongoDB
+		default: null, // Default file is null if no file is provided
+	},
 	// Add any additional fields you want for sellers here
 });
 

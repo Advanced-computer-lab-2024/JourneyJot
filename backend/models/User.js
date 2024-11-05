@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
 		enum: ['tour_guide', 'advertiser', 'seller', 'admin', 'governor'],
 		required: true,
 	},
+
+	idFile: { type: String }, // Stores path to ID document
+	additionalFiles: [{ type: String }], // Stores paths to additional documents
+
 	tourGuideProfile: {
 		type: TourGuideProfile.schema, // Reference to TourGuideProfile schema
 		default: null,
@@ -42,6 +46,12 @@ const userSchema = new mongoose.Schema({
 		type: SellerProfile.schema,
 		default: null,
 	},
+	registrationStatus: {
+		type: String,
+		enum: ['pending', 'approved', 'rejected'],
+		default: 'pending', // Default status when a user registers
+	},
+	// For admin verification
 });
 
 // Create the User model

@@ -18,7 +18,6 @@ const tagRouter = require('./routes/tags');
 const preferenceTagRouter = require('./routes/preference-tag');
 const categoryRouter = require('./routes/category');
 const productRouter = require('./routes/product');
-const TouristItineraryRouter = require('./routes/tourist-itinerary');
 const initialAdmin = require('./controllers/admin');
 const uploadRouter = require('./routes/upload');
 const cors = require('cors');
@@ -49,7 +48,6 @@ app.use('/tags', tagRouter);
 app.use('/pref-tags', preferenceTagRouter);
 app.use('/categories', categoryRouter);
 app.use('/products', productRouter);
-app.use('/tourist-itineraries', TouristItineraryRouter);
 app.use('/upload', uploadRouter);
 
 module.exports = app;
