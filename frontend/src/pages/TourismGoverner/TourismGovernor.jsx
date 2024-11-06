@@ -11,7 +11,7 @@ const TourismGovernor = () => {
 		location: '',
 		openingHours: '',
 		ticketPrices: {
-			foreign: '',
+			foreigner: '',
 			native: '',
 			student: '',
 		},
@@ -63,6 +63,18 @@ const TourismGovernor = () => {
 		}));
 	};
 
+	// Handle tag selection from the dropdown
+	const handleTagChange = (e) => {
+		const selectedTags = Array.from(
+			e.target.selectedOptions,
+			(option) => option.value
+		);
+		setFormData((prevState) => ({
+			...prevState,
+			tags: selectedTags,
+		}));
+	};
+
 	// Add or Update Place
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -102,7 +114,7 @@ const TourismGovernor = () => {
 			location: place.location,
 			openingHours: place.openingHours,
 			ticketPrices: {
-				foreign: place.ticketPrices.foreign,
+				foreigner: place.ticketPrices.foreigner,
 				native: place.ticketPrices.native,
 				student: place.ticketPrices.student,
 			},
@@ -130,7 +142,7 @@ const TourismGovernor = () => {
 			location: '',
 			openingHours: '',
 			ticketPrices: {
-				foreign: '',
+				foreigner: '',
 				native: '',
 				student: '',
 			},
@@ -196,9 +208,9 @@ const TourismGovernor = () => {
 				<div className='mb-4'>
 					<input
 						type='number'
-						name='ticketPrices.foreign'
+						name='ticketPrices.foreigner'
 						placeholder='Ticket Price (Foreigners)'
-						value={formData.ticketPrices.foreign}
+						value={formData.ticketPrices.foreigner}
 						onChange={handleInputChange}
 						required
 						className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
@@ -227,13 +239,13 @@ const TourismGovernor = () => {
 					/>
 				</div>
 
-				{/* New Image URL Input */}
+				{/* Image URL Input */}
 				<div className='mb-4'>
 					<input
 						type='text'
 						name='image'
 						placeholder='Image URL'
-						onChange={handleImageChange} // Handle image addition
+						onChange={handleImageChange}
 						className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
 					/>
 				</div>
@@ -249,19 +261,13 @@ const TourismGovernor = () => {
 					))}
 				</div>
 
-				{/* New Tags Dropdown */}
+				{/* Tags Dropdown */}
 				<div className='mb-4'>
 					<select
 						name='tags'
 						multiple
 						value={formData.tags}
-						onChange={(e) => {
-							const selectedTags = Array.from(
-								e.target.selectedOptions,
-								(option) => option.value
-							);
-							setFormData({ ...formData, tags: selectedTags });
-						}}
+						onChange={handleTagChange}
 						className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'>
 						<option value='Monuments'>Monuments</option>
 						<option value='Museums'>Museums</option>
@@ -270,64 +276,36 @@ const TourismGovernor = () => {
 					</select>
 				</div>
 
-				<div className='flex justify-between'>
+				<div className='flex items-center justify-between'>
 					<button
 						type='submit'
-						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>
-						{editingId ? 'Update' : 'Create '} Place
+						className='bg-blue-500 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline'>
+						{editingId ? 'Update Place' : 'Add Place'}
 					</button>
-					{editingId && (
-						<button
-							type='button'
-							onClick={resetForm}
-							className='bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>
-							Cancel Edit
-						</button>
-					)}
 				</div>
 			</form>
 
-			{/* Display list of museums and historical places */}
-			<ul className='list-disc pl-5'>
+			{/* List of places */}
+			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{places.map((place) => (
-					<li
+					<div
 						key={place._id}
-						className='mb-4'>
-						<h2 className='text-xl font-semibold'>{place.name}</h2>
-						<p className='text-gray-700'>{place.description}</p>
-						<p className='text-gray-600'>Location: {place.location}</p>
-						<p className='text-gray-600'>Opening Hours: {place.openingHours}</p>
-						<p className='text-gray-600'>Type: {place.tags.join(', ')}</p>
-						<p className='text-gray-600'>
-							Ticket Prices: Foreigner - ${place.ticketPrices.foreign}, Native -
-							${place.ticketPrices.native}, Student - $
-							{place.ticketPrices.student}
-						</p>
-						<div className='flex flex-wrap gap-2 mt-2'>
-							{place.pictures.map((pic, index) => (
-								<img
-									key={index}
-									src={pic}
-									alt={place.name}
-									className='w-32 h-24 object-cover rounded shadow-md'
-								/>
-							))}
-						</div>
-						<div className='mt-2'>
-							<button
-								onClick={() => handleEdit(place)}
-								className='bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline mr-2'>
-								Edit
-							</button>
-							<button
-								onClick={() => handleDelete(place._id)}
-								className='bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline'>
-								Delete
-							</button>
-						</div>
-					</li>
+						className='border rounded p-4'>
+						<h3 className='text-xl font-semibold'>{place.name}</h3>
+						<p>{place.description}</p>
+						<button
+							onClick={() => handleEdit(place)}
+							className='bg-yellow-500 text-white py-2 px-4 rounded mt-2'>
+							Edit
+						</button>
+						<button
+							onClick={() => handleDelete(place._id)}
+							className='bg-red-500 text-white py-2 px-4 rounded mt-2'>
+							Delete
+						</button>
+					</div>
 				))}
-			</ul>
+			</div>
 		</div>
 	);
 };

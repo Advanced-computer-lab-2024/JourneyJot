@@ -1,110 +1,151 @@
 /** @format */
 
-import React from "react";
+import React, { useState, useEffect } from 'react';
 
-const AttractionsCard = ({ attractions = [] }) => {
-  const handleShareAttraction = (attraction) => {
-    alert(`Share link for itinerary: ${attraction.name}`);
-    // Implement actual sharing logic here
-  };
-  return (
-    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
-      {attractions.length > 0 ? (
-        attractions.map((attraction) => (
-          <div
-            key={attraction._id}
-            className="border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-2xl transition-shadow duration-300"
-          >
-            <div className="flex flex-col h-full space-y-4 text-left">
-              {/* Name */}
-              <h2 className="text-xl font-semibold text-blue-900">
-                {attraction.name || "No name provided"}{" "}
-                {/* Handle optional name */}
-              </h2>
+const AttractionsCard = ({ attractions = [], tags = [], onFilterChange }) => {
+	const [selectedTag, setSelectedTag] = useState('');
 
-              {/* Description */}
-              <p className="text-gray-600">
-                {attraction.description || "No description available."}{" "}
-                {/* Handle optional description */}
-              </p>
+	// Handle the filtering based on selected tag
+	const handleFilterChange = (event) => {
+		setSelectedTag(event.target.value);
+		onFilterChange(event.target.value); // Pass the selected tag to parent
+	};
 
-              {/* Activities */}
-              {/* Removed as not defined in the schema */}
+	// Filter the attractions based on the selected tag
+	const filteredAttractions = selectedTag
+		? attractions.filter(
+				(attraction) => attraction.tags && attraction.tags.includes(selectedTag) // Check if the tag exists in the attraction's tags
+		  )
+		: attractions;
 
-              {/* Pictures */}
-              {attraction.pictures && attraction.pictures.length > 0 && (
-                <div className="text-gray-700">
-                  <span className="font-semibold">Pictures: </span>
-                  {attraction.pictures.join(", ")}
-                </div>
-              )}
+	const handleShareAttraction = (attraction) => {
+		alert(`Share link for itinerary: ${attraction.name}`);
+		// Implement actual sharing logic here
+	};
 
-              {/* Location */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Location: </span>
-                {attraction.location || "Location not specified."}{" "}
-                {/* Handle optional location */}
-              </div>
+	return (
+		<div>
+			{/* Filter Section */}
+			<div className='mb-4'>
+				<label
+					htmlFor='filter'
+					className='font-semibold text-gray-700'>
+					Filter by Tag:
+				</label>
+				<select
+					id='filter'
+					className='ml-2 border border-gray-300 rounded-md p-2'
+					value={selectedTag}
+					onChange={handleFilterChange}>
+					<option value=''>All Tags</option>
+					{tags.map((tag, index) => (
+						<option
+							key={index}
+							value={tag}>
+							{tag}
+						</option>
+					))}
+				</select>
+			</div>
 
-              {/* Opening Hours */}
-              <div className="text-gray-700">
-                <span className="font-semibold">Opening Hours: </span>
-                {attraction.openingHours || "Hours not available."}{" "}
-                {/* Handle optional opening hours */}
-              </div>
+			{/* Attractions Grid */}
+			<div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-6'>
+				{filteredAttractions.length > 0 ? (
+					filteredAttractions.map((attraction) => (
+						<div
+							key={attraction._id}
+							className='border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-xl transition-shadow duration-300 transform hover:scale-105'>
+							<div className='flex flex-col h-full space-y-6'>
+								{/* Name */}
+								<h2 className='text-2xl font-semibold text-blue-900'>
+									{attraction.name || 'No name provided'}
+								</h2>
 
-              {/* Ticket Prices */}
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Ticket Prices:
-                </h3>
-                <ul className="mt-2 space-y-1">
-                  {attraction.ticketPrices && (
-                    <>
-                      <li className="text-gray-700">
-                        <span className="font-semibold">Natives: </span>$
-                        {attraction.ticketPrices.native || "N/A"}
-                      </li>
-                      <li className="text-gray-700">
-                        <span className="font-semibold">Foreigners: </span>$
-                        {attraction.ticketPrices.foreigner || "N/A"}
-                      </li>
-                      <li className="text-gray-700">
-                        <span className="font-semibold">Students: </span>$
-                        {attraction.ticketPrices.student || "N/A"}
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </div>
+								{/* Description */}
+								<p className='text-gray-700 text-base'>
+									{attraction.description || 'No description available.'}
+								</p>
 
-              {/* Tags */}
-              {attraction.tags && attraction.tags.length > 0 && (
-                <div className="text-gray-700">
-                  <span className="font-semibold">Tags: </span>
-                  <ul className="list-disc pl-5">
-                    {attraction.tags.map((tag) => (
-                      <li key={tag._id}>{tag.name || "No tag name"}</li> // Handle optional tag name
-                    ))}
-                  </ul>
-                  <button
-                    onClick={() => handleShareAttraction(attraction)}
-                    className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
-                  >
-                    Share
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        ))
-      ) : (
-        <p className="text-center text-gray-500 col-span-full">
-          No attractions available.
-        </p>
-      )}
-    </div>
-  );
+								{/* Pictures */}
+								{attraction.pictures && attraction.pictures.length > 0 && (
+									<div className='text-gray-700'>
+										<span className='font-semibold'>Pictures: </span>
+										<ul className='list-disc pl-5'>
+											{attraction.pictures.map((pic, index) => (
+												<li key={index}>{pic}</li>
+											))}
+										</ul>
+									</div>
+								)}
+
+								{/* Location */}
+								<div className='text-gray-700'>
+									<span className='font-semibold'>Location: </span>
+									{attraction.location || 'Location not specified.'}
+								</div>
+
+								{/* Opening Hours */}
+								<div className='text-gray-700'>
+									<span className='font-semibold'>Opening Hours: </span>
+									{attraction.openingHours || 'Hours not available.'}
+								</div>
+
+								{/* Ticket Prices */}
+								<div>
+									<h3 className='text-lg font-semibold text-gray-800'>
+										Ticket Prices:
+									</h3>
+									<ul className='mt-2 space-y-1 text-gray-700'>
+										{attraction.ticketPrices ? (
+											<>
+												<li>
+													<span className='font-semibold'>Natives: </span>$
+													{attraction.ticketPrices.native || 'N/A'}
+												</li>
+												<li>
+													<span className='font-semibold'>Foreigners: </span>$
+													{attraction.ticketPrices.foreigner || 'N/A'}
+												</li>
+												<li>
+													<span className='font-semibold'>Students: </span>$
+													{attraction.ticketPrices.student || 'N/A'}
+												</li>
+											</>
+										) : (
+											<li>Prices not available</li>
+										)}
+									</ul>
+								</div>
+
+								{/* Tags */}
+								{attraction.tags && attraction.tags.length > 0 && (
+									<div className='text-gray-700'>
+										<span className='font-semibold'>Tags: </span>
+										<ul className='list-disc pl-5'>
+											{attraction.tags.map((tag, index) => (
+												<li key={index}>{tag || 'No tag name'}</li>
+											))}
+										</ul>
+									</div>
+								)}
+
+								{/* Share Button */}
+								<button
+									className='mt-4 py-2 px-4 bg-blue-600 text-white rounded-md'
+									onClick={() => handleShareAttraction(attraction)}>
+									Share
+								</button>
+							</div>
+						</div>
+					))
+				) : (
+					<p className='text-center text-gray-500 col-span-full'>
+						No attractions available.
+					</p>
+				)}
+			</div>
+		</div>
+	);
 };
 
 export default AttractionsCard;

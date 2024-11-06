@@ -1,95 +1,133 @@
 /** @format */
 
-// controllers/attractionController.js
-
 const Attraction = require('../models/Attraction');
 const Tag = require('../models/Tag'); // Import Tag model
 
+// Create a new attraction
 exports.createAttraction = async (req, res) => {
 	try {
-		console.log(req.body);
+		console.log(req.body); // For debugging: log the request body
+
+		// Create a new Attraction using the data in the request body
 		const newAttraction = new Attraction(req.body);
+
+		// Save the new attraction to the database
 		await newAttraction.save();
+
+		// Send a response with the new attraction details
 		res.status(201).json({
 			message: 'Attraction created successfully',
 			attraction: newAttraction,
 		});
 	} catch (error) {
+		// Error handling
 		res.status(500).json({ message: 'Error creating attraction', error });
 	}
 };
 
+// Get all attractions
 exports.getAttractions = async (req, res) => {
 	try {
-		const attractions = await Attraction.find().populate('tags'); // Populate tags
+		// Fetch all attractions (no need for populate since tags is now a string)
+		const attractions = await Attraction.find();
+
+		// Send a successful response with the list of attractions
 		res.status(200).json(attractions);
 	} catch (error) {
-		res.status(500).json({ message: 'Error fetching attractions', error });
-	}
-};
-exports.getAttraction = async (req, res) => {
-	const { id } = req.params;
-	try {
-		const attractions = await Attraction.findById(id).populate('tags'); // Populate tags
-		res.status(200).json(attractions);
-	} catch (error) {
+		// Error handling
 		res.status(500).json({ message: 'Error fetching attractions', error });
 	}
 };
 
-exports.updateAttraction = async (req, res) => {
+// Get a specific attraction by ID
+exports.getAttraction = async (req, res) => {
+	const { id } = req.params; // Extract the ID from the URL params
 	try {
-		const { id } = req.params;
+		// Fetch the specific attraction by ID (no need for populate)
+		const attraction = await Attraction.findById(id);
+
+		// Check if the attraction was found
+		if (!attraction) {
+			return res.status(404).json({ message: 'Attraction not found' });
+		}
+
+		// Send the attraction details
+		res.status(200).json(attraction);
+	} catch (error) {
+		// Error handling
+		res.status(500).json({ message: 'Error fetching attraction', error });
+	}
+};
+
+// Update an attraction by ID
+exports.updateAttraction = async (req, res) => {
+	const { id } = req.params; // Extract ID from params for updating
+	try {
+		// Update the attraction with the new data from the request body (no need for populate)
 		const updatedAttraction = await Attraction.findByIdAndUpdate(id, req.body, {
 			new: true,
-		}).populate('tags'); // Populate tags
-		if (!updatedAttraction)
+		});
+
+		// Check if the attraction was found and updated
+		if (!updatedAttraction) {
 			return res.status(404).json({ message: 'Attraction not found' });
+		}
+
+		// Send the updated attraction details
 		res.status(200).json({
 			message: 'Attraction updated successfully',
 			attraction: updatedAttraction,
 		});
 	} catch (error) {
+		// Error handling
 		res.status(500).json({ message: 'Error updating attraction', error });
 	}
 };
 
+// Delete an attraction by ID
 exports.deleteAttraction = async (req, res) => {
+	const { id } = req.params; // Extract ID from URL params
 	try {
-		const { id } = req.params;
+		// Find and delete the attraction
 		const deletedAttraction = await Attraction.findByIdAndDelete(id);
-		if (!deletedAttraction)
+
+		// Check if the attraction was found and deleted
+		if (!deletedAttraction) {
 			return res.status(404).json({ message: 'Attraction not found' });
+		}
+
+		// Send a successful response
 		res.status(200).json({ message: 'Attraction deleted successfully' });
 	} catch (error) {
+		// Error handling
 		res.status(500).json({ message: 'Error deleting attraction', error });
 	}
 };
 
+// Filter attractions based on provided tags
 exports.filterAttractionsByTag = async (req, res) => {
 	try {
-		const { preferences } = req.query;
-		let attractions = []; // Initialize attractions
+		const { preferences } = req.query; // Get preferences from the query params
+		let attractions = []; // Initialize an empty array for matching attractions
 
-		// Check if preferences exist and are not empty
 		if (preferences) {
+			// Process the preferences to filter attractions by tags
 			const tagNames = preferences
-				.split(',')
-				.map((tag) => tag.trim())
-				.filter((tag) => tag); // Split, trim, and filter out empty values
+				.split(',') // Split by commas
+				.map((tag) => tag.trim()) // Remove leading/trailing spaces
+				.filter((tag) => tag); // Remove empty strings
 
-			// Find tags by names
-			const tags = await Tag.find({ name: { $in: tagNames } });
-			const tagIds = tags.map((tag) => tag._id); // Get ObjectIds of the found tags
-
-			if (tagIds.length > 0) {
-				attractions = await Attraction.find({ tags: { $in: tagIds } }); // Use $in for matching any tag
-			}
+			// Find attractions that contain any of the specified tags
+			attractions = await Attraction.find({
+				tags: { $in: tagNames }, // Use $in to check if tags are in the array
+			});
 		}
 
+		// Send a response with the filtered attractions
 		res.json({ count: attractions.length, data: attractions });
 	} catch (error) {
-		console.error('Error filtering attractions:', error); // Log error for debugging
+		// Log and send error response
+		console.error('Error filtering attractions:', error);
 		res.status(500).send({ message: error.message });
 	}
 };
