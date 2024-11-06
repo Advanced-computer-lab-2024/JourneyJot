@@ -1,20 +1,39 @@
 /** @format */
 
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const AttractionsCard = ({ attractions = [], tags = [], onFilterChange }) => {
+const AttractionsCard = () => {
+	const [attractions, setAttractions] = useState([]);
+	const [tags, setTags] = useState([]);
 	const [selectedTag, setSelectedTag] = useState('');
+
+	// Fetch data from the API using axios
+	useEffect(() => {
+		// Fetch attractions data
+		axios
+			.get('http://localhost:3000/attractions') // Replace with your API endpoint for attractions
+			.then((response) => {
+				setAttractions(response.data);
+				// Extract tags from the attractions or another API endpoint
+				const allTags = response.data.flatMap((attraction) => attraction.tags);
+				const uniqueTags = [...new Set(allTags)]; // Remove duplicate tags
+				setTags(uniqueTags);
+			})
+			.catch((error) => {
+				console.error('Error fetching attractions:', error);
+			});
+	}, []);
 
 	// Handle the filtering based on selected tag
 	const handleFilterChange = (event) => {
 		setSelectedTag(event.target.value);
-		onFilterChange(event.target.value); // Pass the selected tag to parent
 	};
 
 	// Filter the attractions based on the selected tag
 	const filteredAttractions = selectedTag
 		? attractions.filter(
-				(attraction) => attraction.tags && attraction.tags.includes(selectedTag) // Check if the tag exists in the attraction's tags
+				(attraction) => attraction.tags && attraction.tags.includes(selectedTag)
 		  )
 		: attractions;
 
