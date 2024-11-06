@@ -9,16 +9,21 @@ import AttractionsCard from '../../components/TourismGovernor/AttractionsCard';
 
 const TouristGuest = () => {
 	const navigate = useNavigate();
+
 	const [activities, setActivities] = useState([]);
 	const [itineraries, setItineraries] = useState([]);
 	const [attractions, setAttractions] = useState([]);
+
 	const [categories, setCategories] = useState([]);
-	const [tags, setTags] = useState([]);
+	const [category, setCategory] = useState('');
+
+	const [preferences, setPreferences] = useState([]);
+	const [preferenceTag, setPreferenceTag] = useState('');
+
 	const [budget, setBudget] = useState('');
 	const [date, setDate] = useState('');
-	const [category, setCategory] = useState('');
 	const [ratings, setRatings] = useState('');
-	const [preferences, setPreferences] = useState('');
+
 	const [language, setLanguage] = useState('');
 
 	const [activeTab, setActiveTab] = useState('Activities');
@@ -71,7 +76,7 @@ const TouristGuest = () => {
 	const fetchTags = async () => {
 		try {
 			const response = await axios.get('http://localhost:3000/pref-tags');
-			setTags(response.data);
+			setPreferences(response.data);
 		} catch (error) {
 			console.error('Error fetching tags:', error);
 		}
@@ -87,7 +92,7 @@ const TouristGuest = () => {
 						date,
 						category,
 						ratings,
-						preferences,
+						preferenceTag,
 					},
 				}
 			);
@@ -149,7 +154,7 @@ const TouristGuest = () => {
 				'http://localhost:3000/attractions/filter',
 				{
 					params: {
-						preferences,
+						preferenceTag,
 						category,
 					},
 				}
@@ -336,21 +341,21 @@ const TouristGuest = () => {
 
 						<div className='filter-item'>
 							<label
-								htmlFor='tags'
+								htmlFor='preferenceTag'
 								className='block text-sm font-medium'>
 								Tags (Preferences)
 							</label>
 							<select
-								id='tags'
-								value={preferences}
-								onChange={(e) => setPreferences(e.target.value)}
+								id='preferenceTag'
+								value={preferenceTag}
+								onChange={(e) => setPreferenceTag(e.target.value)}
 								className='form-select w-full mt-1'>
 								<option value=''>All Preferences</option>
-								{tags.map((tag) => (
+								{preferences.map((pref) => (
 									<option
-										key={tag._id}
-										value={tag.name}>
-										{tag.name}
+										key={pref._id}
+										value={pref.name}>
+										{pref.name}
 									</option>
 								))}
 							</select>
@@ -421,7 +426,6 @@ const TouristGuest = () => {
 								<option value=''>All Languages</option>
 								<option value='English'>English</option>
 								<option value='Arabic'>Arabic</option>
-								<option value='Spanish'>Spanish</option>
 							</select>
 						</div>
 					</div>
