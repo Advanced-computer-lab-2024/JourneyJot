@@ -4,52 +4,60 @@
 
 const Activity = require('../models/Activity');
 const Category = require('../models/Category');
-
+const PreferenceTag = require('../models/preferenceTag');
 // Create a new activity
 exports.createActivity = async (req, res) => {
 	try {
 		const formattedDate = new Date(req.body.date).toISOString().split('T')[0];
 		const activity = new Activity({
 			advertiserId: req.user._id,
-			...req.body, // Spread the body data into the new itinerary
+			...req.body, // Spread the body data into the new activity
 		});
 		await activity.save();
 		return res
 			.status(201)
 			.json({ message: 'Activity created successfully', activity });
 	} catch (error) {
-		console.log(req.user);
-		console.log(error);
+		console.log(error); // Better logging of the error, not req.user
 		return res.status(500).json({ message: 'Error creating activity', error });
 	}
 };
 
 // Get all activities
+// Get all activities
 exports.getActivities = async (req, res) => {
 	try {
 		const { category, preferenceTag } = req.query;
-		// Modify the query to include the flagged condition
+
+		// Prepare the query object
 		const query = {
 			...(category ? { category } : {}),
+			...(preferenceTag ? { preferenceTag } : {}),
 			flagged: false, // Only include activities that are not flagged
 		};
 
+		// Fetch activities with population
 		const activities = await Activity.find(query)
-			.populate('category tags')
+			.populate('category preferenceTag') // Populate category and preferenceTag
 			.populate({
 				path: 'advertiserId',
 				match: { status: 'active' }, // Only include activities for active advertisers
 			})
 			.exec();
 
-		// Filter out any activities where the populated advertiserId is null (i.e., advertiser is not active)
+		// Filter out activities where advertiserId is null (i.e., advertiser is not active)
 		const activeActivities = activities.filter(
 			(activity) => activity.advertiserId
 		);
 
-		console.log(activeActivities); // Debugging log to check active activities
+		// Log the active activities for debugging
+		console.log(activeActivities);
+
+		// Return the active activities
 		res.status(200).json({ activities: activeActivities });
 	} catch (error) {
+		// Log the error message for debugging
+		console.error('Error fetching activities:', error.message);
 		res.status(400).json({ error: error.message });
 	}
 };
@@ -58,7 +66,7 @@ exports.getActivity = async (req, res) => {
 	const { id } = req.params;
 	try {
 		const activity = await Activity.findById(id).populate(
-			'advertiserId category tags'
+			'advertiserId category preferenceTag' // Populate both category and preferenceTag
 		);
 		return res.status(200).json(activity);
 	} catch (error) {
@@ -127,6 +135,21 @@ exports.getFilteredActivities = async (req, res) => {
 			console.log('Category filter:', query.category);
 		}
 
+		if (req.query.preferenceTag) {
+			// Step 1: Find the preferenceTag by name to get its ID
+			const preferenceTag = await PreferenceTag.findOne({
+				name: req.query.preferenceTag,
+			});
+
+			if (!preferenceTag) {
+				return res.status(404).json({ message: 'PreferenceTag not found' });
+			}
+
+			// Step 2: Use the preferenceTag ID in the activity query
+			query.preferenceTag = preferenceTag._id;
+			console.log('PreferenceTag filter:', query.preferenceTag);
+		}
+
 		if (req.query.rating) {
 			let rating = parseFloat(req.query.rating); // Convert rating to float to ensure it's a valid number
 			console.log('Requested Rating:', rating); // Log the requested rating for debugging
@@ -140,7 +163,10 @@ exports.getFilteredActivities = async (req, res) => {
 		}
 
 		// Fetch filtered activities
-		const activities = await Activity.find(query).populate('category tags');
+		const activities = await Activity.find(query).populate(
+			'category preferenceTag'
+		); // Populate both category and preferenceTag
+
 		console.log('Filtered Activities:', activities); // Debugging log to check fetched activities
 
 		// Return the result
@@ -154,22 +180,21 @@ exports.getFilteredActivities = async (req, res) => {
 exports.sortByPriceOrRating = async (req, res) => {
 	try {
 		const { type } = req.query;
-		let sortCriteria = {};
+		const sortCriteria =
+			type === 'price'
+				? { price: 1 } // Sort by price in ascending order
+				: type === 'rating'
+				? { rating: -1 } // Sort by rating in descending order
+				: {}; // Default to no sorting
 
-		// Set sort criteria based on query parameter
-		if (type === 'price') {
-			sortCriteria.price = 1; // Sort by price in ascending order
-		} else if (type === 'rating') {
-			sortCriteria.rating = -1; // Sort by rating in descending order
-		} else {
-			// Return early with a message if the sort type is invalid
+		if (!sortCriteria) {
 			return res.status(400).json({ message: 'Invalid sort type' });
 		}
 
 		// Fetch and sort activities based on the criteria
 		const activities = await Activity.find()
 			.sort(sortCriteria)
-			.populate('category tags'); // Corrected .populate syntax
+			.populate('category preferenceTag'); // Corrected .populate syntax
 
 		return res.status(200).json({ count: activities.length, data: activities });
 	} catch (error) {

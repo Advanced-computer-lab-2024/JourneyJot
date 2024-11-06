@@ -7,26 +7,29 @@ import ActivitiesCard from '../../components/Advertiser/ActivitiesCard';
 import ItinerariesCard from '../../components/TourGuide/ItinerariesCard';
 import AttractionsCard from '../../components/TourismGovernor/AttractionsCard';
 
-const TouristHomePage = () => {
+const TouristGuest = () => {
 	const navigate = useNavigate();
 	const [activities, setActivities] = useState([]);
 	const [itineraries, setItineraries] = useState([]);
 	const [attractions, setAttractions] = useState([]);
 	const [categories, setCategories] = useState([]);
+	const [tags, setTags] = useState([]);
 	const [budget, setBudget] = useState('');
 	const [date, setDate] = useState('');
 	const [category, setCategory] = useState('');
 	const [ratings, setRatings] = useState('');
 	const [preferences, setPreferences] = useState('');
 	const [language, setLanguage] = useState('');
+
 	const [activeTab, setActiveTab] = useState('Activities');
 
-	// Fetch Activities, Itineraries, and Attractions
+	// Fetch Activities, Itineraries, Attractions, Categories, and Tags
 	useEffect(() => {
 		fetchActivities();
 		fetchItineraries();
 		fetchAttractions();
 		fetchCategories();
+		fetchTags();
 	}, []);
 
 	const fetchActivities = async () => {
@@ -65,6 +68,15 @@ const TouristHomePage = () => {
 		}
 	};
 
+	const fetchTags = async () => {
+		try {
+			const response = await axios.get('http://localhost:3000/pref-tags');
+			setTags(response.data);
+		} catch (error) {
+			console.error('Error fetching tags:', error);
+		}
+	};
+
 	const filterActivities = async () => {
 		try {
 			const response = await axios.get(
@@ -75,12 +87,27 @@ const TouristHomePage = () => {
 						date,
 						category,
 						ratings,
+						preferences,
 					},
 				}
 			);
 			setActivities(response.data.data);
 		} catch (error) {
 			console.error('Error filtering activities:', error);
+		}
+	};
+
+	const sortItineraries = async (type) => {
+		try {
+			const response = await axios.get(
+				'http://localhost:3000/itineraries/sort',
+				{
+					params: { type },
+				}
+			);
+			setItineraries(response.data.data);
+		} catch (error) {
+			console.error('Error sorting itineraries:', error);
 		}
 	};
 
@@ -107,7 +134,6 @@ const TouristHomePage = () => {
 						budget,
 						date,
 						language,
-						preferences,
 					},
 				}
 			);
@@ -119,28 +145,21 @@ const TouristHomePage = () => {
 
 	const filterAttractions = async () => {
 		try {
-			if (!preferences) {
-				console.warn('No preferences provided.');
-				return;
-			}
-
 			const response = await axios.get(
 				'http://localhost:3000/attractions/filter',
 				{
-					params: { preferences },
+					params: {
+						preferences,
+						category,
+					},
 				}
 			);
-
 			setAttractions(response.data.data);
 		} catch (error) {
-			console.error(
-				'Error filtering attractions:',
-				error.response ? error.response.data : error.message
-			);
+			console.error('Error filtering attractions:', error);
 		}
 	};
 
-	// Render content based on active tab
 	const renderTabContent = () => {
 		switch (activeTab) {
 			case 'Activities':
@@ -187,12 +206,12 @@ const TouristHomePage = () => {
 									Filter
 								</button>
 								<button
-									onClick={() => sortActivities('price')}
+									onClick={() => sortItineraries('price')}
 									className='bg-gray-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600'>
 									Sort by Price
 								</button>
 								<button
-									onClick={() => sortActivities('rating')}
+									onClick={() => sortItineraries('rating')}
 									className='bg-gray-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600'>
 									Sort by Rating
 								</button>
@@ -222,105 +241,196 @@ const TouristHomePage = () => {
 					</div>
 				);
 			default:
-				return null;
+				return <div>No content available.</div>;
 		}
 	};
 
 	return (
-		<div className='min-h-screen bg-gray-50'>
+		<div className='bg-gray-100 min-h-screen'>
 			<header className='flex justify-between items-center p-4 bg-white shadow-md'>
-				<h1 className='text-xl font-bold'>Tourist Home Page</h1>
+				<h1 className='text-xl font-semibold text-gray-800'>
+					Tourist Home Page
+				</h1>
 				<div className='flex space-x-4'>
-					<button className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'>
-						Book Hotel
-					</button>
-					<button className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'>
-						Book Flight
-					</button>
+					<button className='btn btn-primary'>Book Hotel</button>
+					<button className='btn btn-primary'>Book Flight</button>
 					<button
 						onClick={() => navigate('/tourist/homePage/profile')}
-						className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'>
+						className='btn btn-primary'>
 						My Profile
 					</button>
 					<button
 						onClick={() => navigate('/tourist/homePage/complaints')}
-						className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'>
+						className='btn btn-primary'>
 						Complaints
 					</button>
 					<button
 						onClick={() => navigate('/tourist/homePage/products')}
-						className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'>
+						className='btn btn-primary'>
 						Products
 					</button>
 					<button
 						onClick={() => navigate('/tourist/homePage/change-password')}
-						className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'>
+						className='btn btn-primary'>
 						Change Password
 					</button>
 				</div>
 			</header>
-
-			<div className='container mx-auto py-8 px-4'>
-				{/* Filter Section */}
-				<div className='bg-white p-6 rounded-lg shadow-lg flex flex-wrap gap-4 items-center justify-center mb-8'>
-					<input
-						type='number'
-						placeholder='Budget'
-						value={budget}
-						onChange={(e) => setBudget(e.target.value)}
-						className='px-4 py-2 rounded-md border-2 border-gray-300'
-					/>
-					<input
-						type='date'
-						value={date}
-						onChange={(e) => setDate(e.target.value)}
-						className='px-4 py-2 rounded-md border-2 border-gray-300'
-					/>
-					<select
-						value={category}
-						onChange={(e) => setCategory(e.target.value)}
-						className='px-4 py-2 rounded-md border-2 border-gray-300'>
-						{categories.map((cat) => (
-							<option
-								key={cat._id}
-								value={cat.name}>
-								{cat.name}
-							</option>
-						))}
-					</select>
-					<input
-						type='number'
-						placeholder='Ratings'
-						value={ratings}
-						onChange={(e) => setRatings(e.target.value)}
-						className='px-4 py-2 rounded-md border-2 border-gray-300'
-					/>
-				</div>
-
-				{/* Tab Navigation */}
-				<div className='flex space-x-4 mb-8'>
+			<div className='container mx-auto mt-8'>
+				{/* Tabs for Activities, Itineraries, and Attractions */}
+				<div className='tabs mb-6 flex justify-center space-x-6'>
 					<button
-						onClick={() => setActiveTab('Activities')}
-						className='text-xl font-bold text-blue-600 focus:outline-none'>
+						className={`tab-btn ${
+							activeTab === 'Activities'
+								? 'bg-blue-500 text-white'
+								: 'text-blue-500'
+						} hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
+						onClick={() => setActiveTab('Activities')}>
 						Activities
 					</button>
 					<button
-						onClick={() => setActiveTab('Itineraries')}
-						className='text-xl font-bold text-blue-600 focus:outline-none'>
+						className={`tab-btn ${
+							activeTab === 'Itineraries'
+								? 'bg-blue-500 text-white'
+								: 'text-blue-500'
+						} hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
+						onClick={() => setActiveTab('Itineraries')}>
 						Itineraries
 					</button>
 					<button
-						onClick={() => setActiveTab('Attractions')}
-						className='text-xl font-bold text-blue-600 focus:outline-none'>
+						className={`tab-btn ${
+							activeTab === 'Attractions'
+								? 'bg-blue-500 text-white'
+								: 'text-blue-500'
+						} hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
+						onClick={() => setActiveTab('Attractions')}>
 						Attractions
 					</button>
 				</div>
 
-				{/* Tab Content */}
+				{/* Filters */}
+				<div className='filters mb-6 p-6 bg-white rounded-lg shadow-lg'>
+					<h2 className='text-xl font-bold mb-4'>Filters</h2>
+					<div className='grid grid-cols-2 gap-4'>
+						<div className='filter-item'>
+							<label
+								htmlFor='category'
+								className='block text-sm font-medium'>
+								Category
+							</label>
+							<select
+								id='category'
+								value={category}
+								onChange={(e) => setCategory(e.target.value)}
+								className='form-select w-full mt-1'>
+								<option value=''>All Categories</option>
+								{categories.map((cat) => (
+									<option
+										key={cat._id}
+										value={cat.name}>
+										{cat.name}
+									</option>
+								))}
+							</select>
+						</div>
+
+						<div className='filter-item'>
+							<label
+								htmlFor='tags'
+								className='block text-sm font-medium'>
+								Tags (Preferences)
+							</label>
+							<select
+								id='tags'
+								value={preferences}
+								onChange={(e) => setPreferences(e.target.value)}
+								className='form-select w-full mt-1'>
+								<option value=''>All Preferences</option>
+								{tags.map((tag) => (
+									<option
+										key={tag._id}
+										value={tag.name}>
+										{tag.name}
+									</option>
+								))}
+							</select>
+						</div>
+
+						<div className='filter-item'>
+							<label
+								htmlFor='budget'
+								className='block text-sm font-medium'>
+								Budget
+							</label>
+							<input
+								id='budget'
+								type='number'
+								value={budget}
+								onChange={(e) => setBudget(e.target.value)}
+								placeholder='Enter your budget'
+								className='form-input w-full mt-1'
+							/>
+						</div>
+
+						<div className='filter-item'>
+							<label
+								htmlFor='date'
+								className='block text-sm font-medium'>
+								Date
+							</label>
+							<input
+								id='date'
+								type='date'
+								value={date}
+								onChange={(e) => setDate(e.target.value)}
+								className='form-input w-full mt-1'
+							/>
+						</div>
+
+						<div className='filter-item'>
+							<label
+								htmlFor='ratings'
+								className='block text-sm font-medium'>
+								Ratings
+							</label>
+							<select
+								id='ratings'
+								value={ratings}
+								onChange={(e) => setRatings(e.target.value)}
+								className='form-select w-full mt-1'>
+								<option value=''>All Ratings</option>
+								<option value='1'>1 Star</option>
+								<option value='2'>2 Stars</option>
+								<option value='3'>3 Stars</option>
+								<option value='4'>4 Stars</option>
+								<option value='5'>5 Stars</option>
+							</select>
+						</div>
+
+						<div className='filter-item'>
+							<label
+								htmlFor='language'
+								className='block text-sm font-medium'>
+								Language
+							</label>
+							<select
+								id='language'
+								value={language}
+								onChange={(e) => setLanguage(e.target.value)}
+								className='form-select w-full mt-1'>
+								<option value=''>All Languages</option>
+								<option value='english'>English</option>
+								<option value='arabic'>Arabic</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				{/* Render active tab content */}
 				{renderTabContent()}
 			</div>
 		</div>
 	);
 };
 
-export default TouristHomePage;
+export default TouristGuest;

@@ -42,9 +42,9 @@ const activitySchema = new mongoose.Schema(
 			ref: 'Category', // Reference to the Category model
 			required: false,
 		},
-		tags: {
+		preferenceTag: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Tag', // Reference to the Tags model
+			ref: 'PreferenceTag',
 			required: false,
 		},
 		specialDiscounts: {
