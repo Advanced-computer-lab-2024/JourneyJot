@@ -105,7 +105,7 @@ exports.sortByPriceOrRating = async (req, res) => {
 
 exports.filterItineraries = async (req, res) => {
 	try {
-		const { budget, date, preferences, language } = req.query;
+		const { budget, date, language } = req.query;
 
 		// Build the filter object
 		let filter = {};
@@ -115,11 +115,7 @@ exports.filterItineraries = async (req, res) => {
 		}
 
 		if (date) {
-			filter.date = { $gte: new Date(date) }; // Filter for itineraries on or after the specified date
-		}
-
-		if (preferences) {
-			filter.preferences = { $in: preferences.split(',') }; // Filter for specific preferences
+			filter.availableDates = { $gte: new Date(date) }; // Filter for itineraries on or after the specified date
 		}
 
 		if (language) {
