@@ -27,7 +27,7 @@ exports.createActivity = async (req, res) => {
 // Get all activities
 exports.getActivities = async (req, res) => {
 	try {
-		const { category } = req.query;
+		const { category, preferenceTag } = req.query;
 		// Modify the query to include the flagged condition
 		const query = {
 			...(category ? { category } : {}),
@@ -123,6 +123,15 @@ exports.getFilteredActivities = async (req, res) => {
 			// Step 2: Use the category ID in the activity query
 			query.category = category._id;
 		}
+		if (req.query.categ) {
+			// Step 1: Find the category by name to get its ID
+			const category = await Category.findOne({ name: req.query.category });
+			if (!category) {
+				return res.status(404).json({ message: 'Category not found' });
+			}
+			// Step 2: Use the category ID in the activity query
+			query.category = category._id;
+		}
 		if (req.query.ratings) {
 			query.ratings = { $gte: req.query.ratings }; // Greater than or equal to specified rating
 		}
@@ -144,19 +153,24 @@ exports.sortByPriceOrRating = async (req, res) => {
 		const { type } = req.query;
 		let sortCriteria = {};
 
+		// Set sort criteria based on query parameter
 		if (type === 'price') {
 			sortCriteria.price = 1; // Sort by price in ascending order
 		} else if (type === 'rating') {
-			sortCriteria.ratings = -1; // Sort by ratings in descending order
+			sortCriteria.rating = -1; // Sort by rating in descending order
 		} else {
+			// Return early with a message if the sort type is invalid
 			return res.status(400).json({ message: 'Invalid sort type' });
 		}
 
+		// Fetch and sort activities based on the criteria
 		const activities = await Activity.find()
 			.sort(sortCriteria)
-			.populate('category, tags');
+			.populate('category tags'); // Corrected .populate syntax
+
 		return res.status(200).json({ count: activities.length, data: activities });
 	} catch (error) {
+		console.error('Error sorting activities:', error.message); // Improved error logging
 		return res.status(500).json({ message: 'Error sorting activities', error });
 	}
 };
