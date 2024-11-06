@@ -103,15 +103,17 @@ exports.deleteActivity = async (req, res) => {
 exports.getFilteredActivities = async (req, res) => {
 	try {
 		const query = {};
-		console.log(req.query);
+		console.log('Query parameters:', req.query); // Log the query parameters
 
 		// Add filters based on query parameters
 		if (req.query.price) {
-			query.price = { $lte: req.query.price }; // Less than or equal to budget
+			query.price = { $lte: parseFloat(req.query.price) }; // Ensure price is a number and filter less than or equal
+			console.log('Price filter:', query.price);
 		}
 
 		if (req.query.date) {
-			query.date = { $gte: new Date(req.query.date) }; // On or after the specified date
+			query.date = { $gte: new Date(req.query.date) }; // Filter by date on or after the specified date
+			console.log('Date filter:', query.date);
 		}
 
 		if (req.query.category) {
@@ -122,28 +124,29 @@ exports.getFilteredActivities = async (req, res) => {
 			}
 			// Step 2: Use the category ID in the activity query
 			query.category = category._id;
+			console.log('Category filter:', query.category);
 		}
-		if (req.query.categ) {
-			// Step 1: Find the category by name to get its ID
-			const category = await Category.findOne({ name: req.query.category });
-			if (!category) {
-				return res.status(404).json({ message: 'Category not found' });
+
+		if (req.query.rating) {
+			let rating = parseFloat(req.query.rating); // Convert rating to float to ensure it's a valid number
+			console.log('Requested Rating:', rating); // Log the requested rating for debugging
+
+			if (isNaN(rating)) {
+				return res.status(400).json({ message: 'Invalid rating value' }); // Handle invalid rating input
 			}
-			// Step 2: Use the category ID in the activity query
-			query.category = category._id;
-		}
-		if (req.query.ratings) {
-			query.ratings = { $gte: req.query.ratings }; // Greater than or equal to specified rating
+
+			query.rating = { $gte: rating }; // Filter by rating greater than or equal to specified rating
+			console.log('Rating filter:', query.rating); // Log the rating filter
 		}
 
 		// Fetch filtered activities
 		const activities = await Activity.find(query).populate('category tags');
-		console.log(activities); // Debugging log to check fetched activities
+		console.log('Filtered Activities:', activities); // Debugging log to check fetched activities
 
 		// Return the result
 		return res.status(200).json({ count: activities.length, data: activities });
 	} catch (error) {
-		console.log(error.message);
+		console.log('Error:', error.message);
 		res.status(500).send({ message: error.message });
 	}
 };

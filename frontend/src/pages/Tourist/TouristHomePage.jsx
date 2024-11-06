@@ -12,15 +12,14 @@ const TouristHomePage = () => {
 	const [activities, setActivities] = useState([]);
 	const [itineraries, setItineraries] = useState([]);
 	const [attractions, setAttractions] = useState([]);
-	const [categories, setCategories] = useState([]); // State for fetched categories
-
+	const [categories, setCategories] = useState([]);
 	const [budget, setBudget] = useState('');
 	const [date, setDate] = useState('');
 	const [category, setCategory] = useState('');
 	const [ratings, setRatings] = useState('');
 	const [preferences, setPreferences] = useState('');
 	const [language, setLanguage] = useState('');
-	const [activeTab, setActiveTab] = useState('Activities'); // State to track active tab
+	const [activeTab, setActiveTab] = useState('Activities');
 
 	// Fetch Activities, Itineraries, and Attractions
 	useEffect(() => {
@@ -57,6 +56,15 @@ const TouristHomePage = () => {
 		}
 	};
 
+	const fetchCategories = async () => {
+		try {
+			const response = await axios.get('http://localhost:3000/categories');
+			setCategories(response.data);
+		} catch (error) {
+			console.error('Error fetching categories:', error);
+		}
+	};
+
 	const filterActivities = async () => {
 		try {
 			const response = await axios.get(
@@ -76,30 +84,12 @@ const TouristHomePage = () => {
 		}
 	};
 
-	const sortItineraries = async (type) => {
-		try {
-			const response = await axios.get(
-				'http://localhost:3000/itineraries/sort',
-				{
-					params: {
-						type, // 'price' or 'rating'
-					},
-				}
-			);
-			setItineraries(response.data.data);
-		} catch (error) {
-			console.error('Error sorting itineraries:', error);
-		}
-	};
-
 	const sortActivities = async (type) => {
 		try {
 			const response = await axios.get(
 				'http://localhost:3000/activities/sort',
 				{
-					params: {
-						type, // 'price' or 'rating'
-					},
+					params: { type },
 				}
 			);
 			setActivities(response.data.data);
@@ -137,9 +127,7 @@ const TouristHomePage = () => {
 			const response = await axios.get(
 				'http://localhost:3000/attractions/filter',
 				{
-					params: {
-						preferences,
-					},
+					params: { preferences },
 				}
 			);
 
@@ -149,15 +137,6 @@ const TouristHomePage = () => {
 				'Error filtering attractions:',
 				error.response ? error.response.data : error.message
 			);
-		}
-	};
-
-	const fetchCategories = async () => {
-		try {
-			const response = await axios.get('http://localhost:3000/categories');
-			setCategories(response.data); // Assuming response.data contains the list of categories
-		} catch (error) {
-			console.error('Error fetching categories:', error);
 		}
 	};
 
@@ -208,12 +187,12 @@ const TouristHomePage = () => {
 									Filter
 								</button>
 								<button
-									onClick={() => sortItineraries('price')}
+									onClick={() => sortActivities('price')}
 									className='bg-gray-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600'>
 									Sort by Price
 								</button>
 								<button
-									onClick={() => sortItineraries('rating')}
+									onClick={() => sortActivities('rating')}
 									className='bg-gray-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600'>
 									Sort by Rating
 								</button>
@@ -259,29 +238,28 @@ const TouristHomePage = () => {
 						Book Flight
 					</button>
 					<button
-						onClick={() => navigate('/tourist/homePage/profile')} // Navigate to Profile page
+						onClick={() => navigate('/tourist/homePage/profile')}
 						className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'>
 						My Profile
 					</button>
 					<button
-						onClick={() => navigate('/tourist/homePage/complaints')} // Navigate to Profile page
+						onClick={() => navigate('/tourist/homePage/complaints')}
 						className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'>
 						Complaints
 					</button>
 					<button
-						onClick={() => navigate('/tourist/homePage/products')} // Navigate to Products page
+						onClick={() => navigate('/tourist/homePage/products')}
 						className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'>
 						Products
 					</button>
 					<button
-						onClick={() => navigate('/tourist/homePage/change-password')} // Navigate to Products page
+						onClick={() => navigate('/tourist/homePage/change-password')}
 						className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'>
-						changePassword
+						Change Password
 					</button>
 				</div>
 			</header>
 
-			{/* Main Content */}
 			<div className='container mx-auto py-8 px-4'>
 				{/* Filter Section */}
 				<div className='bg-white p-6 rounded-lg shadow-lg flex flex-wrap gap-4 items-center justify-center mb-8'>
@@ -290,24 +268,21 @@ const TouristHomePage = () => {
 						placeholder='Budget'
 						value={budget}
 						onChange={(e) => setBudget(e.target.value)}
-						className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
+						className='px-4 py-2 rounded-md border-2 border-gray-300'
 					/>
 					<input
 						type='date'
-						placeholder='Date'
 						value={date}
 						onChange={(e) => setDate(e.target.value)}
-						className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
+						className='px-4 py-2 rounded-md border-2 border-gray-300'
 					/>
-					{/* Category Drop-Down */}
 					<select
 						value={category}
 						onChange={(e) => setCategory(e.target.value)}
-						className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'>
-						<option value=''>Select Category</option>
+						className='px-4 py-2 rounded-md border-2 border-gray-300'>
 						{categories.map((cat) => (
 							<option
-								key={cat.id}
+								key={cat._id}
 								value={cat.name}>
 								{cat.name}
 							</option>
@@ -318,43 +293,27 @@ const TouristHomePage = () => {
 						placeholder='Ratings'
 						value={ratings}
 						onChange={(e) => setRatings(e.target.value)}
-						className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
-						min='1'
-						max='5'
-						step='0.1'
-					/>
-					<input
-						type='text'
-						placeholder='Preferences or Tags'
-						value={preferences}
-						onChange={(e) => setPreferences(e.target.value)}
-						className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
-					/>
-					<input
-						type='text'
-						placeholder='Language'
-						value={language}
-						onChange={(e) => setLanguage(e.target.value)}
-						className='border border-gray-300 p-3 w-60 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600'
+						className='px-4 py-2 rounded-md border-2 border-gray-300'
 					/>
 				</div>
 
-				{/* Tabs */}
-				<div className='mb-6'>
-					<div className='flex justify-center border-b border-gray-200'>
-						{['Activities', 'Itineraries', 'Attractions'].map((tab) => (
-							<button
-								key={tab}
-								onClick={() => setActiveTab(tab)}
-								className={`py-2 px-4 -mb-px font-semibold text-lg ${
-									activeTab === tab
-										? 'border-b-2 border-blue-600 text-blue-600'
-										: 'text-gray-500 hover:text-blue-600'
-								}`}>
-								{tab}
-							</button>
-						))}
-					</div>
+				{/* Tab Navigation */}
+				<div className='flex space-x-4 mb-8'>
+					<button
+						onClick={() => setActiveTab('Activities')}
+						className='text-xl font-bold text-blue-600 focus:outline-none'>
+						Activities
+					</button>
+					<button
+						onClick={() => setActiveTab('Itineraries')}
+						className='text-xl font-bold text-blue-600 focus:outline-none'>
+						Itineraries
+					</button>
+					<button
+						onClick={() => setActiveTab('Attractions')}
+						className='text-xl font-bold text-blue-600 focus:outline-none'>
+						Attractions
+					</button>
 				</div>
 
 				{/* Tab Content */}

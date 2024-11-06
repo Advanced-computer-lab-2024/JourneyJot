@@ -87,7 +87,7 @@ exports.sortByPriceOrRating = async (req, res) => {
 		if (type === 'price') {
 			sortCriteria.price = 1; // Sort by price in ascending order
 		} else if (type === 'rating') {
-			sortCriteria.ratings = -1; // Sort by ratings in descending order
+			sortCriteria.rating = -1; // Sort by ratings in descending order
 		} else {
 			return res.status(400).json({ message: 'Invalid sort type' });
 		}
