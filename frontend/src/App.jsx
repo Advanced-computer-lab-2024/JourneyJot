@@ -40,8 +40,9 @@ import Flag from './components/Admin/Flag.jsx';
 import FullProductPage from './pages/Products/FullProductPage.jsx';
 import PurchaseHistory from './pages/Tourist/PurchaseHistory.jsx';
 import TouristReservations from './pages/Tourist/TouristReservations.jsx';
+import TouristWallet from './pages/Tourist/TouristWallet.jsx';
+import TouristPoints from './pages/Tourist/TouristPoints.jsx';
 import ProductList from './components/Products/Archieve.jsx';
-
 const App = () => {
 	return (
 		<Routes>
@@ -215,6 +216,14 @@ const App = () => {
 			<Route
 				path='/seller-dashboard/change-password'
 				element={<SellerChangePassword />}
+			/>
+			<Route
+				path='tourist/homePage/wallet'
+				element={<TouristWallet />}
+			/>
+			<Route
+				path='tourist/homePage/points'
+				element={<TouristPoints />}
 			/>
 		</Routes>
 	);

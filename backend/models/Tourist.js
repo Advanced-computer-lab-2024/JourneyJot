@@ -79,6 +79,11 @@ const touristSchema = new mongoose.Schema(
         ref: "Attraction", // Reference to the Attraction model
       },
     ],
+    points: {
+      type: Number,
+      default: 0, // Default balance set to 0
+
+    }
   },
   { timestamps: true }
 );

@@ -3,16 +3,13 @@
 import { useState } from 'react';
 
 const TouristWallet = () => {
-    const [walletBalance] = useState(1500); // Replace 1500 with actual wallet balance if available
-
+    const [walletBalance] = useState("");
     const handleAddFunds = () => {
         alert('Redirecting to add funds page...');
-        // Replace this with actual logic to navigate to the add funds page or API call
     };
 
     const handleViewHistory = () => {
         alert('Opening transaction history...');
-        // Replace this with actual logic to view transaction history
     };
 
     return (
