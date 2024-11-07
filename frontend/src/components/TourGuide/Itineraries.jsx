@@ -185,29 +185,155 @@ const ItinerariesComponent = () => {
 			<form
 				onSubmit={handleSubmit}
 				className='mb-6'>
-				{/* Input fields for adding or editing itineraries */}
-				{/* ... (existing input fields code) */}
+				{/* Timeline */}
+				<input
+					type='text'
+					name='timeline'
+					value={newItinerary.timeline}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Timeline'
+					required
+				/>
 
-				{/* Submit button */}
+				{/* Activities */}
+				<input
+					type='text'
+					name='activities'
+					value={newItinerary.activities.join(', ')}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Activities (comma separated)'
+				/>
+
+				{/* Locations */}
+				<input
+					type='text'
+					name='locations'
+					value={newItinerary.locations.join(', ')}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Locations (comma separated)'
+				/>
+
+				{/* Duration */}
+				<input
+					type='text'
+					name='duration'
+					value={newItinerary.duration}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Duration'
+				/>
+
+				{/* Language */}
+				<input
+					type='text'
+					name='language'
+					value={newItinerary.language}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Language'
+				/>
+
+				{/* Price */}
+				<input
+					type='text'
+					name='price'
+					value={newItinerary.price}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Price'
+				/>
+
+				{/* Rating */}
+				<input
+					type='number'
+					name='rating'
+					value={newItinerary.rating}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Rating'
+					min='0'
+					max='5'
+				/>
+
+				{/* Available Dates */}
+				<input
+					type='text'
+					name='availableDates'
+					value={newItinerary.availableDates.join(', ')}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Available Dates (comma separated)'
+				/>
+
+				{/* Accessibility */}
+				<input
+					type='text'
+					name='accessibility'
+					value={newItinerary.accessibility}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Accessibility'
+				/>
+
+				{/* Pickup Location */}
+				<input
+					type='text'
+					name='pickupLocation'
+					value={newItinerary.pickupLocation}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Pickup Location'
+				/>
+
+				{/* Dropoff Location */}
+				<input
+					type='text'
+					name='dropoffLocation'
+					value={newItinerary.dropoffLocation}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Dropoff Location'
+				/>
+
+				{/* Error message for available dates */}
+				{availableDatesError && (
+					<p className='text-red-500 mb-4'>{availableDatesError}</p>
+				)}
+
+				{/* Submit Button */}
 				<button
 					type='submit'
-					className='bg-blue-500 text-white px-4 py-2 rounded'>
-					{isEditing ? 'Update Itinerary' : 'Add Itinerary'}
+					className='bg-blue-500 text-white py-2 px-4 rounded'>
+					{isEditing ? 'Update Itinerary' : 'Create Itinerary'}
 				</button>
 			</form>
 
-			<h3 className='text-xl'>Existing Itineraries</h3>
-			{itineraries.length === 0 ? (
-				<p>No itineraries available.</p>
-			) : (
+			<div>
+				<h3 className='text-xl mb-4'>Itineraries List</h3>
 				<ul>
 					{itineraries.map((itinerary) => (
 						<li
 							key={itinerary._id}
-							className='mb-4'>
-							{/* Display itinerary details */}
-							<div className='border p-4 rounded'>
-								<h4 className='text-lg font-semibold'>{itinerary.timeline}</h4>
+							className='mb-4 p-4 border border-gray-300 rounded'>
+							<div className='flex justify-between'>
+								<h4 className='font-bold'>{itinerary.timeline}</h4>
+								<div>
+									<button
+										onClick={() => handleEdit(itinerary)}
+										className='bg-yellow-500 text-white py-1 px-3 rounded mr-2'>
+										Edit
+									</button>
+									<button
+										onClick={() => handleDelete(itinerary._id)}
+										className='bg-red-500 text-white py-1 px-3 rounded'>
+										Delete
+									</button>
+								</div>
+							</div>
+							<div className='mt-2'>
 								<p>
 									<strong>Activities:</strong> {itinerary.activities.join(', ')}
 								</p>
@@ -239,25 +365,11 @@ const ItinerariesComponent = () => {
 								<p>
 									<strong>Dropoff Location:</strong> {itinerary.dropoffLocation}
 								</p>
-
-								{/* Edit and Delete buttons */}
-								<div className='flex justify-between mt-4'>
-									<button
-										onClick={() => handleEdit(itinerary)}
-										className='bg-yellow-500 text-white px-4 py-2 rounded'>
-										Edit
-									</button>
-									<button
-										onClick={() => handleDelete(itinerary._id)}
-										className='bg-red-500 text-white px-4 py-2 rounded'>
-										Delete
-									</button>
-								</div>
 							</div>
 						</li>
 					))}
 				</ul>
-			)}
+			</div>
 		</div>
 	);
 };

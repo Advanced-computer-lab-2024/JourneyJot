@@ -164,7 +164,7 @@ exports.getFilteredActivities = async (req, res) => {
 
 		// Fetch filtered activities
 		const activities = await Activity.find(query).populate(
-			'category preferenceTag'
+			'advertiserId category preferenceTag'
 		); // Populate both category and preferenceTag
 
 		console.log('Filtered Activities:', activities); // Debugging log to check fetched activities
@@ -194,7 +194,7 @@ exports.sortByPriceOrRating = async (req, res) => {
 		// Fetch and sort activities based on the criteria
 		const activities = await Activity.find()
 			.sort(sortCriteria)
-			.populate('category preferenceTag'); // Corrected .populate syntax
+			.populate('advertiserId category preferenceTag'); // Corrected .populate syntax
 
 		return res.status(200).json({ count: activities.length, data: activities });
 	} catch (error) {
