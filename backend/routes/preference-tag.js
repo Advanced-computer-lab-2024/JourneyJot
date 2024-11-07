@@ -13,12 +13,7 @@ preferenceTagRouter.post(
 	adminCheck,
 	adminController.createPreferenceTag
 );
-preferenceTagRouter.get(
-	'/',
-	authCheck,
-	adminCheck,
-	adminController.getAllPreferenceTags
-);
+preferenceTagRouter.get('/', adminController.getAllPreferenceTags);
 preferenceTagRouter.put(
 	'/:id',
 	authCheck,

@@ -21,6 +21,7 @@ const productRouter = require("./routes/product");
 const initialAdmin = require("./controllers/admin");
 const uploadRouter = require("./routes/upload");
 const complaintRouter = require("./routes/Complaints");
+const reviewRouter = require("./routes/reviews");
 const cors = require("cors");
 app.use(
   cors({
@@ -52,5 +53,6 @@ app.use("/categories", categoryRouter);
 app.use("/products", productRouter);
 app.use("/upload", uploadRouter);
 app.use("/complaints", complaintRouter);
+app.use("/reviews", reviewRouter);
 
 module.exports = app;

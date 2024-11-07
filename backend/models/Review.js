@@ -3,19 +3,25 @@ const Schema = mongoose.Schema;
 
 const reviewSchema = new Schema(
   {
-    reviewer: {
-      type: String,
-      required: false,
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
     },
     comment: {
       type: String,
       required: false,
     },
-    rating: {
-      type: Number,
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tourist",
       required: false,
-      min: 1,
-      max: 5,
     },
   },
   { timestamps: true }

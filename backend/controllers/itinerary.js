@@ -87,12 +87,14 @@ exports.sortByPriceOrRating = async (req, res) => {
 		if (type === 'price') {
 			sortCriteria.price = 1; // Sort by price in ascending order
 		} else if (type === 'rating') {
-			sortCriteria.ratings = -1; // Sort by ratings in descending order
+			sortCriteria.rating = -1; // Sort by ratings in descending order
 		} else {
 			return res.status(400).json({ message: 'Invalid sort type' });
 		}
 
-		const itineraries = await Itinerary.find().sort(sortCriteria);
+		const itineraries = await Itinerary.find()
+			.sort(sortCriteria)
+			.populate('tourGuideId');
 		return res
 			.status(200)
 			.json({ count: itineraries.length, data: itineraries });
@@ -105,7 +107,7 @@ exports.sortByPriceOrRating = async (req, res) => {
 
 exports.filterItineraries = async (req, res) => {
 	try {
-		const { budget, date, preferences, language } = req.query;
+		const { budget, date, language } = req.query;
 
 		// Build the filter object
 		let filter = {};
@@ -115,18 +117,14 @@ exports.filterItineraries = async (req, res) => {
 		}
 
 		if (date) {
-			filter.date = { $gte: new Date(date) }; // Filter for itineraries on or after the specified date
-		}
-
-		if (preferences) {
-			filter.preferences = { $in: preferences.split(',') }; // Filter for specific preferences
+			filter.availableDates = { $gte: new Date(date) }; // Filter for itineraries on or after the specified date
 		}
 
 		if (language) {
 			filter.language = language; // Filter for specific language
 		}
 
-		const itineraries = await Itinerary.find(filter);
+		const itineraries = await Itinerary.find(filter).populate('tourGuideId');
 		res.json(itineraries);
 	} catch (error) {
 		res.status(500).send(error);

@@ -6,6 +6,11 @@ const mongoose = require('mongoose');
 
 const attractionSchema = new mongoose.Schema(
 	{
+		governorId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User', // Reference to the User model
+			required: false,
+		},
 		name: {
 			type: String,
 			required: false,
@@ -42,7 +47,11 @@ const attractionSchema = new mongoose.Schema(
 				required: false,
 			},
 		},
-		tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }], // Reference to Tag schema
+		tags: {
+			type: [String],
+			required: true, // The tag is required
+			unique: true, // The tag must be unique across the collection
+		},
 	},
 	{ timestamps: true }
 );
