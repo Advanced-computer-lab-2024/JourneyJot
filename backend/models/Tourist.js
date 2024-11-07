@@ -1,10 +1,11 @@
-/** @format */
+// models/Tourist.js
 
 const mongoose = require('mongoose');
 const helperMethods = require('../helper/methods');
 
 const touristSchema = new mongoose.Schema(
 	{
+		// existing fields
 		email: {
 			type: String,
 			required: [true, 'Email is required'],
@@ -48,12 +49,25 @@ const touristSchema = new mongoose.Schema(
 		wallet: {
 			balance: {
 				type: Number,
-				default: 0, // Default balance set to 0
+				default: 0,
 			},
 			currency: {
 				type: String,
-				default: 'USD', // Default currency set to USD
+				default: 'USD',
 			},
+		},
+		// new fields
+		totalPoints: {
+			type: Number,
+			default: 0,
+		},
+		redeemablePoints: {
+			type: Number,
+			default: 0,
+		},
+		level: {
+			type: Number,
+			default: 1,
 		},
 	},
 	{ timestamps: true }

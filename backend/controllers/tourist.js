@@ -138,3 +138,61 @@ exports.updateTouristProfile = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+
+
+// Get tourist points and level
+exports.getTouristPointsAndLevel = async (req, res) => {
+	try {
+		const userId = req.user._id; // Assuming middleware attaches user info to req.user
+		const tourist = await Tourist.findById(userId);
+
+		if (!tourist) {
+			return res.status(404).json({ message: "Tourist not found" });
+		}
+
+		res.status(200).json({
+			totalPoints: tourist.totalPoints,
+			redeemablePoints: tourist.redeemablePoints,
+			level: tourist.level,
+		});
+	} catch (error) {
+		res.status(500).json({ message: "Server error", error: error.message });
+	}
+};
+exports.redeemPoints = async (req, res) => {
+  try {
+      const { pointsToRedeem } = req.body;
+      const tourist = await Tourist.findById(req.user.id); // Assuming req.user contains the logged-in user's ID
+
+      if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found" });
+      }
+
+      // Check if the tourist has enough redeemable points
+      if (tourist.redeemablePoints < pointsToRedeem) {
+          return res.status(400).json({ message: "Insufficient points to redeem" });
+      }
+
+      // Conversion rate: 10,000 points = 100 EGP
+      const conversionRate = 100 / 10000; // 0.01 EGP per point
+      const amountToAdd = pointsToRedeem * conversionRate;
+
+      // Update tourist's redeemable points and wallet balance
+      tourist.redeemablePoints -= pointsToRedeem;
+      tourist.wallet.balance += amountToAdd;
+
+      await tourist.save();
+
+      res.status(200).json({
+          message: "Points redeemed successfully",
+          pointsRedeemed: pointsToRedeem,
+          amountAddedToWallet: amountToAdd,
+          newWalletBalance: tourist.wallet.balance,
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Failed to redeem points" });
+  }
+};
+
