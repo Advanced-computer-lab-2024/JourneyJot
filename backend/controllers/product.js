@@ -96,7 +96,14 @@ exports.editProductByID = async (req, res) => {
 
 exports.getProductByID = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate({
+      path: "reviews", // Populate the reviews array
+      populate: {
+        path: "user", // Populate the user field inside each review
+        select: "username email", // Optionally, specify which fields of the user to select
+      },
+    });
+
     if (product) {
       res.status(200).json({ product });
     } else {
