@@ -1,11 +1,11 @@
 /** @format */
 
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import ActivitiesCard from "../../components/Advertiser/ActivitiesCard";
-import ItinerariesCard from "../../components/TourGuide/ItinerariesCard";
-import AttractionsCard from "../../components/TourismGovernor/AttractionsCard";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import ActivitiesCard from '../../components/Advertiser/ActivitiesCard';
+import ItinerariesCard from '../../components/TourGuide/ItinerariesCard';
+import AttractionsCard from '../../components/TourismGovernor/AttractionsCard';
 
 const TouristGuest = () => {
   const navigate = useNavigate();
@@ -15,16 +15,16 @@ const TouristGuest = () => {
   const [attractions, setAttractions] = useState([]);
 
   const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState('');
 
   const [preferences, setPreferences] = useState([]);
-  const [preferenceTag, setPreferenceTag] = useState("");
+  const [preferenceTag, setPreferenceTag] = useState('');
 
-  const [budget, setBudget] = useState("");
-  const [date, setDate] = useState("");
-  const [ratings, setRatings] = useState("");
+  const [budget, setBudget] = useState('');
+  const [date, setDate] = useState('');
+  const [ratings, setRatings] = useState('');
 
-  const [language, setLanguage] = useState("");
+  const [language, setLanguage] = useState('');
 
   const [activeTab, setActiveTab] = useState("Activities");
   const [rates, setRates] = useState({});
@@ -59,53 +59,53 @@ const TouristGuest = () => {
 
   const fetchActivities = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/activities");
+      const response = await axios.get('http://localhost:3000/activities');
       setActivities(response.data.activities);
     } catch (error) {
-      console.error("Error fetching activities:", error);
+      console.error('Error fetching activities:', error);
     }
   };
 
   const fetchItineraries = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/itineraries");
+      const response = await axios.get('http://localhost:3000/itineraries');
       setItineraries(response.data);
     } catch (error) {
-      console.error("Error fetching itineraries:", error);
+      console.error('Error fetching itineraries:', error);
     }
   };
 
   const fetchAttractions = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/attractions");
+      const response = await axios.get('http://localhost:3000/attractions');
       setAttractions(response.data);
     } catch (error) {
-      console.error("Error fetching attractions:", error);
+      console.error('Error fetching attractions:', error);
     }
   };
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/categories");
+      const response = await axios.get('http://localhost:3000/categories');
       setCategories(response.data);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error('Error fetching categories:', error);
     }
   };
 
   const fetchTags = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/pref-tags");
+      const response = await axios.get('http://localhost:3000/pref-tags');
       setPreferences(response.data);
     } catch (error) {
-      console.error("Error fetching tags:", error);
+      console.error('Error fetching tags:', error);
     }
   };
 
   const filterActivities = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/activities/filter",
+        'http://localhost:3000/activities/filter',
         {
           params: {
             price: budget,
@@ -118,42 +118,42 @@ const TouristGuest = () => {
       );
       setActivities(response.data.data);
     } catch (error) {
-      console.error("Error filtering activities:", error);
+      console.error('Error filtering activities:', error);
     }
   };
 
   const sortItineraries = async (type) => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/itineraries/sort",
+        'http://localhost:3000/itineraries/sort',
         {
           params: { type },
         }
       );
       setItineraries(response.data.data);
     } catch (error) {
-      console.error("Error sorting itineraries:", error);
+      console.error('Error sorting itineraries:', error);
     }
   };
 
   const sortActivities = async (type) => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/activities/sort",
+        'http://localhost:3000/activities/sort',
         {
           params: { type },
         }
       );
       setActivities(response.data.data);
     } catch (error) {
-      console.error("Error sorting activities:", error);
+      console.error('Error sorting activities:', error);
     }
   };
 
   const filterItineraries = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/itineraries/filter",
+        'http://localhost:3000/itineraries/filter',
         {
           params: {
             budget,
@@ -164,14 +164,14 @@ const TouristGuest = () => {
       );
       setItineraries(response.data);
     } catch (error) {
-      console.error("Error filtering itineraries:", error);
+      console.error('Error filtering itineraries:', error);
     }
   };
 
   const filterAttractions = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/attractions/filter",
+        'http://localhost:3000/attractions/filter',
         {
           params: {
             preferenceTag,
@@ -181,7 +181,7 @@ const TouristGuest = () => {
       );
       setAttractions(response.data.data);
     } catch (error) {
-      console.error("Error filtering attractions:", error);
+      console.error('Error filtering attractions:', error);
     }
   };
 
@@ -419,109 +419,121 @@ const TouristGuest = () => {
         </div>
 
         {/* Filters */}
-        <div className="filters mb-6 p-6 bg-white rounded-lg shadow-lg">
-          <h2 className="text-xl font-bold mb-4">Filters</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="filter-item">
-              <label htmlFor="category" className="block text-sm font-medium">
+        <div className='filters mb-6 p-6 bg-white rounded-lg shadow-lg'>
+          <h2 className='text-xl font-bold mb-4'>Filters</h2>
+          <div className='grid grid-cols-2 gap-4'>
+            <div className='filter-item'>
+              <label
+                htmlFor='category'
+                className='block text-sm font-medium'>
                 Category
               </label>
               <select
-                id="category"
+                id='category'
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="form-select w-full mt-1"
-              >
-                <option value="">All Categories</option>
+                className='form-select w-full mt-1'>
+                <option value=''>All Categories</option>
                 {categories.map((cat) => (
-                  <option key={cat._id} value={cat.name}>
+                  <option
+                    key={cat._id}
+                    value={cat.name}>
                     {cat.name}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div className="filter-item">
+            <div className='filter-item'>
               <label
-                htmlFor="preferenceTag"
-                className="block text-sm font-medium"
-              >
+                htmlFor='preferenceTag'
+                className='block text-sm font-medium'>
                 Tags (Preferences)
               </label>
               <select
-                id="preferenceTag"
+                id='preferenceTag'
                 value={preferenceTag}
                 onChange={(e) => setPreferenceTag(e.target.value)}
-                className="form-select w-full mt-1"
-              >
-                <option value="">All Preferences</option>
+                className='form-select w-full mt-1'>
+                <option value=''>All Preferences</option>
                 {preferences.map((pref) => (
-                  <option key={pref._id} value={pref.name}>
+                  <option
+                    key={pref._id}
+                    value={pref.name}>
                     {pref.name}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div className="filter-item">
-              <label htmlFor="budget" className="block text-sm font-medium">
+            <div className='filter-item'>
+              <label
+                htmlFor='budget'
+                className='block text-sm font-medium'>
                 Budget
               </label>
               <input
-                id="budget"
-                type="number"
+                id='budget'
+                type='number'
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
-                placeholder="Enter your budget"
-                className="form-input w-full mt-1"
+                placeholder='Enter your budget'
+                className='form-input w-full mt-1'
               />
             </div>
 
-            <div className="filter-item">
-              <label htmlFor="date" className="block text-sm font-medium">
+            <div className='filter-item'>
+              <label
+                htmlFor='date'
+                className='block text-sm font-medium'>
                 Date
               </label>
               <input
-                id="date"
-                type="date"
+                id='date'
+                type='date'
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="form-input w-full mt-1"
+                className='form-input w-full mt-1'
               />
             </div>
 
-            <div className="filter-item">
-              <label htmlFor="ratings" className="block text-sm font-medium">
+            <div className='filter-item'>
+              <label
+                htmlFor='ratings'
+                className='block text-sm font-medium'>
                 Ratings
               </label>
               <select
-                id="ratings"
+                id='ratings'
                 value={ratings}
                 onChange={(e) => setRatings(e.target.value)}
-                className="form-select w-full mt-1"
-              >
-                <option value="">All Ratings</option>
-                <option value="1">1 Star</option>
-                <option value="2">2 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="5">5 Stars</option>
+                className='form-select w-full mt-1'>
+                <option value=''>All Ratings</option>
+                <option value='1'>1 Star</option>
+                <option value='2'>2 Stars</option>
+                <option value='3'>3 Stars</option>
+                <option value='4'>4 Stars</option>
+                <option value='5'>5 Stars</option>
               </select>
             </div>
 
-            <div className="filter-item">
-              <label htmlFor="language" className="block text-sm font-medium">
+            <div className='filter-item'>
+              <label
+                htmlFor='language'
+                className='block text-sm font-medium'>
                 Language
               </label>
               <select
-                id="language"
+                id='language'
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="form-select w-full mt-1"
-              >
-                <option value="">All Languages</option>
-                <option value="English">English</option>
-                <option value="Arabic">Arabic</option>
+                className='form-select w-full mt-1'>
+                <option value=''>All Languages</option>
+                <option value='English'>English</option>
+                <option value='Arabic'>Arabic</option>
+                <option value='German'>German</option>
+                <option value='Spanish'>Spanish</option>
+                <option value='France'>France</option>
               </select>
             </div>
           </div>

@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import EditActivityModal from "./EditActivity";
-import DeleteActivityButton from "./DeleteActivity";
+/** @format */
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import EditActivityModal from './EditActivity';
+import DeleteActivityButton from './DeleteActivity';
 
 // StarRating Component to display stars
 const StarRating = ({ rating }) => {
@@ -9,33 +11,31 @@ const StarRating = ({ rating }) => {
   const emptyStars = 5 - fullStars;
 
   return (
-    <div className="flex space-x-1">
+    <div className='flex space-x-1'>
       {[...Array(fullStars)].map((_, index) => (
         <svg
           key={`full-${index}`}
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-5 h-5 text-yellow-500"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path d="M10 15.27l4.18 2.73-1.64-5.09L18 9.24l-5.19-.42L10 3 7.19 8.82 2 9.24l3.46 3.67-1.64 5.09L10 15.27z" />
+          xmlns='http://www.w3.org/2000/svg'
+          className='w-5 h-5 text-yellow-500'
+          fill='currentColor'
+          viewBox='0 0 20 20'>
+          <path d='M10 15.27l4.18 2.73-1.64-5.09L18 9.24l-5.19-.42L10 3 7.19 8.82 2 9.24l3.46 3.67-1.64 5.09L10 15.27z' />
         </svg>
       ))}
       {[...Array(emptyStars)].map((_, index) => (
         <svg
           key={`empty-${index}`}
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-5 h-5 text-gray-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+          xmlns='http://www.w3.org/2000/svg'
+          className='w-5 h-5 text-gray-300'
+          fill='none'
+          stroke='currentColor'
+          viewBox='0 0 24 24'>
           <path
-            fill="none"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 17.75l4.18 2.73-1.64-5.09L18 9.24l-5.19-.42L12 3l-2.81 5.82-5.19.42L7.46 15.42 3 18.15 12 17.75z"
+            fill='none'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            d='M12 17.75l4.18 2.73-1.64-5.09L18 9.24l-5.19-.42L12 3l-2.81 5.82-5.19.42L7.46 15.42 3 18.15 12 17.75z'
           />
         </svg>
       ))}
@@ -62,19 +62,19 @@ const ActivitiesCard = ({
     // Fetch categories and tags
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/categories");
+        const response = await axios.get('http://localhost:3000/categories');
         setCategories(response.data);
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error('Error fetching categories:', error);
       }
     };
 
     const fetchTags = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/pref-tags");
+        const response = await axios.get('http://localhost:3000/pref-tags');
         setTags(response.data);
       } catch (error) {
-        console.error("Error fetching tags:", error);
+        console.error('Error fetching tags:', error);
       }
     };
 
@@ -89,8 +89,8 @@ const ActivitiesCard = ({
 
   const handleUpdateActivity = async (updatedActivity) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found. Please login again.");
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found. Please login again.');
 
       const config = {
         headers: { Authorization: `Bearer ${token}` },
@@ -114,7 +114,7 @@ const ActivitiesCard = ({
       setIsEditModalOpen(false);
       fetchActivities();
     } catch (error) {
-      console.error("Error updating activity:", error);
+      console.error('Error updating activity:', error);
     }
   };
 
@@ -125,15 +125,15 @@ const ActivitiesCard = ({
 
   const confirmBooking = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found. Please login again.");
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found. Please login again.');
 
       const config = {
         headers: { Authorization: `Bearer ${token}` },
       };
 
       const respone = await axios.post(
-        "http://localhost:3000/tourists/bookActivity",
+        'http://localhost:3000/tourists/bookActivity',
         { activityId: selectedActivity._id },
         config
       );
@@ -141,7 +141,7 @@ const ActivitiesCard = ({
       console.log(respone);
       setIsConfirmModalOpen(false); // Close the modal after booking
     } catch (error) {
-      console.error("Error booking activity:", error);
+      console.error('Error booking activity:', error);
     }
   };
 
@@ -205,24 +205,21 @@ const ActivitiesCard = ({
                 {/* Book and Share Buttons */}
                 <button
                   onClick={() => handleBookActivity(activity)}
-                  className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 mt-4"
-                >
+                  className='bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 mt-4'>
                   Book A Ticket
                 </button>
                 <button
                   onClick={() => handleShareActivity(activity)}
-                  className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 mt-2"
-                >
+                  className='bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 mt-2'>
                   Share
                 </button>
 
                 {/* Edit and Delete for Advertisers */}
                 {isAdvertiser && (
-                  <div className="flex space-x-2 mt-4">
+                  <div className='flex space-x-2 mt-4'>
                     <button
                       onClick={() => handleEdit(activity)}
-                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    >
+                      className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'>
                       Edit
                     </button>
                     <DeleteActivityButton
@@ -235,7 +232,7 @@ const ActivitiesCard = ({
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500 col-span-full">
+          <p className='text-center text-gray-500 col-span-full'>
             No activities available.
           </p>
         )}
@@ -254,21 +251,19 @@ const ActivitiesCard = ({
 
       {/* Confirmation Modal for Booking */}
       {isConfirmModalOpen && selectedActivity && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <h3 className="text-lg font-semibold">Confirm Booking</h3>
+        <div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50'>
+          <div className='bg-white p-6 rounded-lg shadow-lg w-80'>
+            <h3 className='text-lg font-semibold'>Confirm Booking</h3>
             <p>Price: ${selectedActivity.price}</p>
-            <div className="flex space-x-4 mt-4">
+            <div className='flex space-x-4 mt-4'>
               <button
                 onClick={confirmBooking}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-              >
+                className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700'>
                 Confirm
               </button>
               <button
                 onClick={() => setIsConfirmModalOpen(false)}
-                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
-              >
+                className='bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700'>
                 Cancel
               </button>
             </div>

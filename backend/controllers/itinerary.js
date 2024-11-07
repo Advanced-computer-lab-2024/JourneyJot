@@ -92,7 +92,9 @@ exports.sortByPriceOrRating = async (req, res) => {
 			return res.status(400).json({ message: 'Invalid sort type' });
 		}
 
-		const itineraries = await Itinerary.find().sort(sortCriteria);
+		const itineraries = await Itinerary.find()
+			.sort(sortCriteria)
+			.populate('tourGuideId');
 		return res
 			.status(200)
 			.json({ count: itineraries.length, data: itineraries });
@@ -122,7 +124,7 @@ exports.filterItineraries = async (req, res) => {
 			filter.language = language; // Filter for specific language
 		}
 
-		const itineraries = await Itinerary.find(filter);
+		const itineraries = await Itinerary.find(filter).populate('tourGuideId');
 		res.json(itineraries);
 	} catch (error) {
 		res.status(500).send(error);

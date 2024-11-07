@@ -6,6 +6,11 @@ const mongoose = require('mongoose');
 
 const attractionSchema = new mongoose.Schema(
 	{
+		governorId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User', // Reference to the User model
+			required: false,
+		},
 		name: {
 			type: String,
 			required: false,

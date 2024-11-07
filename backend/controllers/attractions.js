@@ -1,7 +1,6 @@
 /** @format */
 
 const Attraction = require('../models/Attraction');
-const Tag = require('../models/Tag'); // Import Tag model
 
 // Create a new attraction
 exports.createAttraction = async (req, res) => {
@@ -9,7 +8,10 @@ exports.createAttraction = async (req, res) => {
 		console.log(req.body); // For debugging: log the request body
 
 		// Create a new Attraction using the data in the request body
-		const newAttraction = new Attraction(req.body);
+		const newAttraction = new Attraction({
+			governorId: req.user ? req.user._id : req.body.governorId, // Fallback to req.body.governorId
+			...req.body,
+		});
 
 		// Save the new attraction to the database
 		await newAttraction.save();
@@ -28,8 +30,8 @@ exports.createAttraction = async (req, res) => {
 // Get all attractions
 exports.getAttractions = async (req, res) => {
 	try {
-		// Fetch all attractions (no need for populate since tags is now a string)
-		const attractions = await Attraction.find();
+		// Fetch all attractions and populate governorId for detailed information
+		const attractions = await Attraction.find().populate('governorId');
 
 		// Send a successful response with the list of attractions
 		res.status(200).json(attractions);
@@ -43,8 +45,11 @@ exports.getAttractions = async (req, res) => {
 exports.getAttraction = async (req, res) => {
 	const { id } = req.params; // Extract the ID from the URL params
 	try {
-		// Fetch the specific attraction by ID (no need for populate)
-		const attraction = await Attraction.findById(id);
+		// Fetch the specific attraction by ID and populate governorId
+		const attraction = await Attraction.findById(id).populate(
+			'governorId',
+			'name email'
+		);
 
 		// Check if the attraction was found
 		if (!attraction) {
@@ -63,7 +68,7 @@ exports.getAttraction = async (req, res) => {
 exports.updateAttraction = async (req, res) => {
 	const { id } = req.params; // Extract ID from params for updating
 	try {
-		// Update the attraction with the new data from the request body (no need for populate)
+		// Update the attraction with the new data from the request body
 		const updatedAttraction = await Attraction.findByIdAndUpdate(id, req.body, {
 			new: true,
 		});
