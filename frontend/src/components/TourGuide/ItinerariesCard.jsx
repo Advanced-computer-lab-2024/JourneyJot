@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 // StarRating Component to display stars
@@ -42,12 +42,20 @@ const StarRating = ({ rating }) => {
 };
 
 const ItinerariesCard = ({ itineraries = [] }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItinerary, setSelectedItinerary] = useState(null);
+
   const handleShareItinerary = (itinerary) => {
     alert(`Share link for itinerary: ${itinerary.name}`);
     // Implement actual sharing logic here
   };
 
-  const handleBookTicket = async (itinerary) => {
+  const handleBookTicket = (itinerary) => {
+    setSelectedItinerary(itinerary);
+    setIsModalOpen(true);
+  };
+
+  const confirmBooking = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found. Please login again.");
@@ -56,15 +64,17 @@ const ItinerariesCard = ({ itineraries = [] }) => {
         headers: { Authorization: `Bearer ${token}` },
       };
 
-      const respone = await axios.post(
+      const response = await axios.post(
         "http://localhost:3000/tourists/bookItinerary",
-        { itineraryId: itinerary },
+        { itineraryId: selectedItinerary._id },
         config
       );
 
-      console.log(respone);
+      console.log(response);
+      setIsModalOpen(false); // Close the modal after booking
     } catch (error) {
       console.error("Error booking itinerary:", error);
+      setIsModalOpen(false); // Close the modal on error
     }
   };
 
@@ -82,8 +92,7 @@ const ItinerariesCard = ({ itineraries = [] }) => {
                 {/* Tour Guide ID (optional display) */}
                 <li>
                   <span className="font-semibold">Tour Guide Name: </span>
-                  {itinerary.tourGuideId?.username || "Unknown"}{" "}
-                  {/* Use the `username` field or any other relevant property */}
+                  {itinerary.tourGuideId?.username || "Unknown"}
                 </li>
 
                 {/* Itinerary Title (assumed as part of activities) */}
@@ -155,7 +164,7 @@ const ItinerariesCard = ({ itineraries = [] }) => {
                 )}
               </ul>
               <button
-                onClick={() => handleBookTicket(itinerary._id)}
+                onClick={() => handleBookTicket(itinerary)}
                 className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
               >
                 Book A Ticket
@@ -173,6 +182,34 @@ const ItinerariesCard = ({ itineraries = [] }) => {
         <p className="text-center text-gray-500 col-span-full">
           No itineraries available.
         </p>
+      )}
+
+      {/* Confirmation Modal */}
+      {isModalOpen && selectedItinerary && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h3 className="text-lg font-semibold text-center">
+              Are you sure you want to book this ticket?
+            </h3>
+            <p className="text-center my-4">
+              Price: ${selectedItinerary.price}
+            </p>
+            <div className="flex justify-between">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-md"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmBooking}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

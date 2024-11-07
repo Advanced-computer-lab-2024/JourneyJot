@@ -7,6 +7,9 @@ const AttractionsCard = () => {
   const [attractions, setAttractions] = useState([]);
   const [tags, setTags] = useState([]);
   const [selectedTag, setSelectedTag] = useState("");
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Modal state
+  const [selectedAttraction, setSelectedAttraction] = useState(null); // Selected attraction
+  const [selectedTicketType, setSelectedTicketType] = useState(""); // Selected ticket type
 
   // Fetch data from the API using axios
   useEffect(() => {
@@ -35,7 +38,14 @@ const AttractionsCard = () => {
       )
     : attractions;
 
-  const handleBookTicket = async (attraction) => {
+  // Handle the booking logic
+  const handleBookTicket = (attraction) => {
+    setSelectedAttraction(attraction); // Set selected attraction for booking
+    setIsConfirmModalOpen(true); // Open the ticket selection modal
+  };
+
+  // Handle confirmation of ticket selection
+  const confirmBooking = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found. Please login again.");
@@ -44,20 +54,30 @@ const AttractionsCard = () => {
         headers: { Authorization: `Bearer ${token}` },
       };
 
-      const respone = await axios.post(
+      const ticketPrice = selectedAttraction.ticketPrices[selectedTicketType];
+
+      if (!ticketPrice) {
+        throw new Error("Selected ticket type is unavailable.");
+      }
+
+      const response = await axios.post(
         "http://localhost:3000/tourists/bookAttraction",
-        { attractionId: attraction },
+        {
+          attractionId: selectedAttraction._id,
+          ticketType: selectedTicketType,
+        },
         config
       );
 
-      console.log(respone);
+      console.log(response);
+      setIsConfirmModalOpen(false); // Close modal after booking
     } catch (error) {
       console.error("Error booking attraction:", error);
     }
   };
 
   const handleShareAttraction = (attraction) => {
-    alert(`Share link for itinerary: ${attraction.name}`);
+    alert(`Share link for attraction: ${attraction.name}`);
   };
 
   return (
@@ -168,7 +188,7 @@ const AttractionsCard = () => {
                 <div className="flex flex-col space-y-2 mt-4">
                   <button
                     className="py-2 px-4 bg-green-600 text-white rounded-md"
-                    onClick={() => handleBookTicket(attraction._id)}
+                    onClick={() => handleBookTicket(attraction)}
                   >
                     Book Ticket
                   </button>
@@ -188,6 +208,63 @@ const AttractionsCard = () => {
           </p>
         )}
       </div>
+
+      {/* Ticket Selection Modal */}
+      {isConfirmModalOpen && selectedAttraction && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h3 className="text-lg font-semibold">Select Ticket Type</h3>
+            <div className="mb-4">
+              <label className="font-semibold text-gray-700">
+                Choose a ticket:
+              </label>
+              <select
+                value={selectedTicketType}
+                onChange={(e) => setSelectedTicketType(e.target.value)}
+                className="ml-2 border border-gray-300 rounded-md p-2"
+              >
+                <option value="">Select Ticket Type</option>
+                {selectedAttraction.ticketPrices && (
+                  <>
+                    {selectedAttraction.ticketPrices.native && (
+                      <option value="native">Natives</option>
+                    )}
+                    {selectedAttraction.ticketPrices.foreigner && (
+                      <option value="foreigner">Foreigners</option>
+                    )}
+                    {selectedAttraction.ticketPrices.student && (
+                      <option value="student">Students</option>
+                    )}
+                  </>
+                )}
+              </select>
+            </div>
+            {selectedTicketType && (
+              <div>
+                <p className="font-semibold">Price: </p>
+                <p>
+                  $
+                  {selectedAttraction.ticketPrices[selectedTicketType] || "N/A"}
+                </p>
+              </div>
+            )}
+            <div className="flex space-x-4 mt-4">
+              <button
+                onClick={confirmBooking}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Confirm
+              </button>
+              <button
+                onClick={() => setIsConfirmModalOpen(false)}
+                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

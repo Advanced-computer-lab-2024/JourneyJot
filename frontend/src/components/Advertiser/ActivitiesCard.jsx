@@ -53,6 +53,8 @@ const ActivitiesCard = ({
   const [currentActivity, setCurrentActivity] = useState(null);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Modal state
+  const [selectedActivity, setSelectedActivity] = useState(null); // Store selected activity
 
   useEffect(() => {
     // Fetch categories and tags
@@ -114,7 +116,12 @@ const ActivitiesCard = ({
     }
   };
 
-  const handleBookActivity = async (activity) => {
+  const handleBookActivity = (activity) => {
+    setSelectedActivity(activity); // Set selected activity for booking
+    setIsConfirmModalOpen(true); // Open confirmation modal
+  };
+
+  const confirmBooking = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found. Please login again.");
@@ -125,11 +132,12 @@ const ActivitiesCard = ({
 
       const respone = await axios.post(
         "http://localhost:3000/tourists/bookActivity",
-        { activityId: activity },
+        { activityId: selectedActivity._id },
         config
       );
 
       console.log(respone);
+      setIsConfirmModalOpen(false); // Close the modal after booking
     } catch (error) {
       console.error("Error booking activity:", error);
     }
@@ -150,6 +158,10 @@ const ActivitiesCard = ({
             >
               <div className="flex flex-col h-full space-y-4 text-left">
                 <ul className="list-disc list-inside space-y-2">
+                  <li className="text-gray-700">
+                    <span className="font-semibold">Advertiser Name: </span>
+                    {activity.advertiserId?.name || "N/A"}
+                  </li>
                   <li className="text-gray-700">
                     <span className="font-semibold">Date: </span>
                     {new Date(activity.date).toLocaleDateString()}
@@ -190,7 +202,7 @@ const ActivitiesCard = ({
 
                 {/* Book and Share Buttons */}
                 <button
-                  onClick={() => handleBookActivity(activity._id)}
+                  onClick={() => handleBookActivity(activity)}
                   className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 mt-4"
                 >
                   Book A Ticket
@@ -236,6 +248,30 @@ const ActivitiesCard = ({
           categories={categories}
           tags={tags}
         />
+      )}
+
+      {/* Confirmation Modal for Booking */}
+      {isConfirmModalOpen && selectedActivity && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h3 className="text-lg font-semibold">Confirm Booking</h3>
+            <p>Price: ${selectedActivity.price}</p>
+            <div className="flex space-x-4 mt-4">
+              <button
+                onClick={confirmBooking}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Confirm
+              </button>
+              <button
+                onClick={() => setIsConfirmModalOpen(false)}
+                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
