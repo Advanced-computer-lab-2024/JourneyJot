@@ -51,10 +51,23 @@ const touristSchema = new mongoose.Schema(
         default: 0, // Default balance set to 0
       },
       currency: {
-        type: String,
-        default: "USD", // Default currency set to USD
-      },
-    },
+				type: String,
+				default: 'USD',
+			},
+		},
+		// new fields
+		totalPoints: {
+			type: Number,
+			default: 0,
+		},
+		redeemablePoints: {
+			type: Number,
+			default: 0,
+		},
+		level: {
+			type: Number,
+			default: 1,
+		},
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -8,6 +8,8 @@ const {
   updateTouristProfile,
   getTouristID,
   buyProduct,
+  getTouristPointsAndLevel,
+  redeemPoints, // Import redeemPoints function here
   getTouristProductHistory,
   TouristReviewProduct,
   TouristBookActivity,
@@ -22,8 +24,9 @@ const touristRouter = Router();
 
 touristRouter.post('/signup', signUp);
 touristRouter.post('/login', login);
-touristRouter.get('/profile', auth_check, getTouristProfile);
+touristRouter.get('/profile', auth_check, getTouristProfile,getTouristPointsAndLevel);
 touristRouter.put('/profile', auth_check, updateTouristProfile);
-touristRouter.post('/changePassword', auth_check, changePassword);
+touristRouter.post('/changePassword', auth_check, changePassword,redeemPoints);
+
 
 module.exports = touristRouter;
