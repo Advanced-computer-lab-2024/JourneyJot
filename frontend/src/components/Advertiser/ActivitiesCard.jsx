@@ -48,6 +48,8 @@ const ActivitiesCard = ({
   isAdvertiser = false,
   onDelete,
   fetchActivities,
+  currency,
+  conversionRate = 1
 }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentActivity, setCurrentActivity] = useState(null);
@@ -172,7 +174,7 @@ const ActivitiesCard = ({
                   </li>
                   <li className="text-gray-700">
                     <span className="font-semibold">Price: </span>
-                    {activity.price || "N/A"}
+                    {(activity.price * conversionRate).toFixed(1)}   {currency}
                   </li>
                   <li className="text-gray-700">
                     <span className="font-semibold">Category: </span>

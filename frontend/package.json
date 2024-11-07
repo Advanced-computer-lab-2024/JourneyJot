@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-google-maps/api": "^2.19.3",
     "axios": "^1.7.7",
+    "currency-converter-lt": "^2.0.1",
     "jwt-decode": "^4.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",

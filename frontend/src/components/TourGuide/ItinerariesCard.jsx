@@ -41,7 +41,10 @@ const StarRating = ({ rating }) => {
   );
 };
 
-const ItinerariesCard = ({ itineraries = [] }) => {
+const ItinerariesCard = ({ itineraries = [],
+  currency,
+  conversionRate
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItinerary, setSelectedItinerary] = useState(null);
 
@@ -127,8 +130,8 @@ const ItinerariesCard = ({ itineraries = [] }) => {
 
                 {/* Price */}
                 <li>
-                  <span className="font-semibold">Price: </span>$
-                  {itinerary.price}
+                  <span className="font-semibold">Price: </span>
+                  {(itinerary.price * conversionRate).toFixed(1)} {currency}
                 </li>
 
                 {/* Available Dates */}

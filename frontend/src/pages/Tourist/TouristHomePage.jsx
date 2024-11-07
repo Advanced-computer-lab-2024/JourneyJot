@@ -27,6 +27,26 @@ const TouristGuest = () => {
   const [language, setLanguage] = useState("");
 
   const [activeTab, setActiveTab] = useState("Activities");
+  const [rates, setRates] = useState({});
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
+  const [conversionRate, setConversionRate] = useState(1);
+
+  useEffect(() => {
+    // Fetch exchange rates
+    axios.get('https://v6.exchangerate-api.com/v6/96d68d4689bfcab5166205e1/latest/USD')
+      .then(response => {
+        setRates(response.data.conversion_rates);
+      })
+      .catch(error => {
+        console.error("Error fetching exchange rates:", error);
+      });
+  }, []);
+
+  const handleCurrencyChange = (event) => {
+    const currency = event.target.value;
+    setSelectedCurrency(currency);
+    setConversionRate(rates[currency] || 1);
+  };
 
   // Fetch Activities, Itineraries, Attractions, Categories, and Tags
   useEffect(() => {
@@ -170,11 +190,27 @@ const TouristGuest = () => {
       case "Activities":
         return (
           <div className="text-center">
+
+            <div>
+            </div>
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-3xl font-extrabold text-blue-900">
                 Activities
               </h1>
               <div className="flex space-x-2">
+                <label htmlFor="currency-select">Select Currency:</label>
+                <select
+                  id="currency-select"
+                  value={selectedCurrency}
+                  onChange={handleCurrencyChange}
+                >
+                  {Object.keys(rates).map((currency) => (
+                    <option key={currency} value={currency}>
+                      {currency}
+                    </option>
+                  ))}
+                </select>
+
                 <button
                   onClick={filterActivities}
                   className="bg-blue-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -196,7 +232,12 @@ const TouristGuest = () => {
               </div>
             </div>
             <div className="flex justify-center">
-              <ActivitiesCard activities={activities} />
+              <ActivitiesCard
+                activities={activities}
+                currency={selectedCurrency}
+                conversionRate={conversionRate}
+              />
+
             </div>
           </div>
         );
@@ -208,6 +249,19 @@ const TouristGuest = () => {
                 Itineraries
               </h1>
               <div className="flex space-x-2">
+                <label htmlFor="currency-select">Select Currency:</label>
+                <select
+                  id="currency-select"
+                  value={selectedCurrency}
+                  onChange={handleCurrencyChange}
+                >
+                  {Object.keys(rates).map((currency) => (
+                    <option key={currency} value={currency}>
+                      {currency}
+                    </option>
+                  ))}
+                </select>
+
                 <button
                   onClick={filterItineraries}
                   className="bg-blue-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -229,13 +283,32 @@ const TouristGuest = () => {
               </div>
             </div>
             <div className="flex justify-center">
-              <ItinerariesCard itineraries={itineraries} />
+              <ItinerariesCard itineraries={itineraries}
+                currency={selectedCurrency}
+                conversionRate={conversionRate}
+              />
             </div>
           </div>
         );
       case "Attractions":
         return (
           <div className="text-center">
+            <label htmlFor="currency-select">Select Currency:</label>
+            <select
+              id="currency-select"
+              value={selectedCurrency}
+              onChange={handleCurrencyChange}
+            >
+              {Object.keys(rates).map((currency) => (
+                <option key={currency} value={currency}>
+                  {currency}
+                </option>
+              ))}
+            </select>
+
+            <div>
+            </div>
+
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-3xl font-extrabold text-blue-900">
                 Attractions
@@ -248,7 +321,10 @@ const TouristGuest = () => {
               </button>
             </div>
             <div className="flex justify-center">
-              <AttractionsCard attractions={attractions} />
+              <AttractionsCard attractions={attractions}
+                currency={selectedCurrency}
+                conversionRate={conversionRate}
+              />
             </div>
           </div>
         );
@@ -264,6 +340,18 @@ const TouristGuest = () => {
           Tourist Home Page
         </h1>
         <div className="flex space-x-4">
+          <button
+            onClick={() => navigate("/tourist/homePage/points")}
+            className="btn btn-primary"
+          >
+            Points
+          </button>
+          <button
+            onClick={() => navigate("/tourist/homePage/wallet")}
+            className="btn btn-primary"
+          >
+            Wallet
+          </button>
           <button className="btn btn-primary">Book Hotel</button>
           <button className="btn btn-primary">Book Flight</button>
           <button
@@ -302,31 +390,28 @@ const TouristGuest = () => {
         {/* Tabs for Activities, Itineraries, and Attractions */}
         <div className="tabs mb-6 flex justify-center space-x-6">
           <button
-            className={`tab-btn ${
-              activeTab === "Activities"
-                ? "bg-blue-500 text-white"
-                : "text-blue-500"
-            } hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
+            className={`tab-btn ${activeTab === "Activities"
+              ? "bg-blue-500 text-white"
+              : "text-blue-500"
+              } hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
             onClick={() => setActiveTab("Activities")}
           >
             Activities
           </button>
           <button
-            className={`tab-btn ${
-              activeTab === "Itineraries"
-                ? "bg-blue-500 text-white"
-                : "text-blue-500"
-            } hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
+            className={`tab-btn ${activeTab === "Itineraries"
+              ? "bg-blue-500 text-white"
+              : "text-blue-500"
+              } hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
             onClick={() => setActiveTab("Itineraries")}
           >
             Itineraries
           </button>
           <button
-            className={`tab-btn ${
-              activeTab === "Attractions"
-                ? "bg-blue-500 text-white"
-                : "text-blue-500"
-            } hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
+            className={`tab-btn ${activeTab === "Attractions"
+              ? "bg-blue-500 text-white"
+              : "text-blue-500"
+              } hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
             onClick={() => setActiveTab("Attractions")}
           >
             Attractions

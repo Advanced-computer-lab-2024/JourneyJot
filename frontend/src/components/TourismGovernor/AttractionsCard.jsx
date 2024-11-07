@@ -3,7 +3,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const AttractionsCard = () => {
+const AttractionsCard = ({
+  currency,
+  conversionRate = 1, // Default conversion rate is 1
+}) => {
   const [attractions, setAttractions] = useState([]);
   const [tags, setTags] = useState([]);
   const [selectedTag, setSelectedTag] = useState("");
@@ -34,8 +37,8 @@ const AttractionsCard = () => {
   // Filter the attractions based on the selected tag
   const filteredAttractions = selectedTag
     ? attractions.filter(
-        (attraction) => attraction.tags && attraction.tags.includes(selectedTag)
-      )
+      (attraction) => attraction.tags && attraction.tags.includes(selectedTag)
+    )
     : attractions;
 
   // Handle the booking logic
@@ -153,16 +156,16 @@ const AttractionsCard = () => {
                       {attraction.ticketPrices ? (
                         <>
                           <li>
-                            <span className="font-semibold">Natives: </span>$
-                            {attraction.ticketPrices.native || "N/A"}
+                            <span className="font-semibold">Natives: </span>
+                            {(attraction.ticketPrices.native * conversionRate).toFixed(1) || "N/A"} {currency}
                           </li>
                           <li>
-                            <span className="font-semibold">Foreigners: </span>$
-                            {attraction.ticketPrices.foreigner || "N/A"}
+                            <span className="font-semibold">Foreigners: </span>
+                            {(attraction.ticketPrices.foreigner * conversionRate).toFixed(1) || "N/A"} {currency}
                           </li>
                           <li>
-                            <span className="font-semibold">Students: </span>$
-                            {attraction.ticketPrices.student || "N/A"}
+                            <span className="font-semibold">Students: </span>
+                            {(attraction.ticketPrices.student * conversionRate).toFixed(1) || "N/A"} {currency}
                           </li>
                         </>
                       ) : (
@@ -243,25 +246,24 @@ const AttractionsCard = () => {
               <div>
                 <p className="font-semibold">Price: </p>
                 <p>
-                  $
-                  {selectedAttraction.ticketPrices[selectedTicketType] || "N/A"}
+                  {currency}{" "}
+                  {(selectedAttraction.ticketPrices[selectedTicketType] * conversionRate).toFixed(2) ||
+                    "N/A"}
                 </p>
+                <button
+                  className="mt-4 py-2 px-4 bg-green-600 text-white rounded-md"
+                  onClick={confirmBooking}
+                >
+                  Confirm Booking
+                </button>
               </div>
             )}
-            <div className="flex space-x-4 mt-4">
-              <button
-                onClick={confirmBooking}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-              >
-                Confirm
-              </button>
-              <button
-                onClick={() => setIsConfirmModalOpen(false)}
-                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
-              >
-                Cancel
-              </button>
-            </div>
+            <button
+              className="mt-4 py-2 px-4 bg-red-600 text-white rounded-md"
+              onClick={() => setIsConfirmModalOpen(false)}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
