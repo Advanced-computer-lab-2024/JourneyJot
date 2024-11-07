@@ -24,9 +24,11 @@ const touristRouter = Router();
 
 touristRouter.post('/signup', signUp);
 touristRouter.post('/login', login);
-touristRouter.get('/profile', auth_check, getTouristProfile,getTouristPointsAndLevel);
+touristRouter.get('/profile', auth_check, getTouristProfile, getTouristPointsAndLevel);
 touristRouter.put('/profile', auth_check, updateTouristProfile);
-touristRouter.post('/changePassword', auth_check, changePassword,redeemPoints);
+touristRouter.post('/changePassword', auth_check, changePassword);
 
+// Route to redeem points
+touristRouter.post('/redeemPoints', auth_check, redeemPoints);
 
 module.exports = touristRouter;

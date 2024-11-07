@@ -46,54 +46,43 @@ const touristSchema = new mongoose.Schema(
       required: [true, "Occupation is required"],
     },
     wallet: {
-      balance: {
-        type: Number,
-        default: 0, // Default balance set to 0
-      },
-      currency: {
-				type: String,
-				default: 'USD',
-			},
-		},
-		// new fields
-		totalPoints: {
-			type: Number,
-			default: 0,
-		},
-		redeemablePoints: {
-			type: Number,
-			default: 0,
-		},
-		level: {
-			type: Number,
-			default: 1,
-		},
-    products: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product", // Reference to the Product model
-      },
-    ],
-    itineraries: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Itinerary", // Reference to the Itinerary model
-      },
-    ],
-    activities: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Activity", // Reference to the Activity model
-      },
-    ],
-    attractions: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Attraction", // Reference to the Attraction model
-      },
-    ],
+      balance: { type: Number, default: 0 },
+      currency: { type: String, default: 'EGP' }, // Updated to EGP
+    },
+    totalPoints: {
+      type: Number,
+      default: 0,
+    },
+    redeemablePoints: {
+      type: Number,
+      default: 0,
+    },
+    level: {
+      type: Number,
+      default: 1,
+    },
+    products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    itineraries: [{ type: mongoose.Schema.Types.ObjectId, ref: "Itinerary" }],
+    activities: [{ type: mongoose.Schema.Types.ObjectId, ref: "Activity" }],
+    attractions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Attraction" }],
   },
   { timestamps: true }
 );
+
+// Method to redeem points and add cash to the wallet
+touristSchema.methods.redeemPoints = function () {
+  const conversionRate = 100; // 10,000 points = 100 EGP
+  const pointsPerUnitCash = 10000;
+
+  // Calculate the amount to add to wallet balance based on redeemable points
+  const redeemableCash = Math.floor(this.redeemablePoints / pointsPerUnitCash) * conversionRate;
+
+  if (redeemableCash > 0) {
+    this.wallet.balance += redeemableCash;
+    this.redeemablePoints -= Math.floor(this.redeemablePoints / pointsPerUnitCash) * pointsPerUnitCash;
+  }
+
+  return this.save();
+};
 
 module.exports = mongoose.model("Tourist", touristSchema);

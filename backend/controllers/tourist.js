@@ -448,3 +448,57 @@ exports.redeemPoints = async (req, res) => {
   }
 };
 
+function calculatePointsAndLevel(tourist, paymentAmount) {
+	const levelMultipliers = {
+		1: 0.5,
+		2: 1.0,
+		3: 1.5,
+	};
+
+	const pointsEarned = paymentAmount * (levelMultipliers[tourist.level] || 0.5);
+	tourist.totalPoints += pointsEarned;
+	tourist.redeemablePoints += pointsEarned;
+
+	if (tourist.totalPoints >= 500000) {
+		tourist.level = 3;
+	} else if (tourist.totalPoints >= 100000) {
+		tourist.level = 2;
+	} else {
+		tourist.level = 1;
+	}
+}
+
+// Function to redeem points to cash
+exports.redeemPoints = async (req, res) => {
+	try {
+		const { touristId, pointsToRedeem } = req.body;
+		const tourist = await Tourist.findById(touristId);
+
+		if (!tourist) {
+			return res.status(404).json({ message: "Tourist not found" });
+		}
+
+		// Check if tourist has enough redeemable points
+		if (tourist.redeemablePoints < pointsToRedeem) {
+			return res.status(400).json({ message: "Insufficient points" });
+		}
+
+		// Conversion rate: 10,000 points = 100 EGP
+		const cashEquivalent = (pointsToRedeem / 10000) * 100;
+
+		// Deduct redeemable points and add cash to wallet
+		tourist.redeemablePoints -= pointsToRedeem;
+		tourist.wallet.balance += cashEquivalent;
+
+		await tourist.save();
+
+		res.status(200).json({
+			message: "Points redeemed successfully",
+			balance: tourist.wallet.balance,
+			redeemablePoints: tourist.redeemablePoints,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Failed to redeem points" });
+	}
+};

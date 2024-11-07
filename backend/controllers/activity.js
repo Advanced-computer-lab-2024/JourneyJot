@@ -5,25 +5,43 @@
 const Activity = require('../models/Activity');
 const Category = require('../models/Category');
 const PreferenceTag = require('../models/preferenceTag');
+
+
+function calculatePointsAndLevel(tourist, paymentAmount) {
+    const levelMultipliers = { 1: 0.5, 2: 1.0, 3: 1.5 };
+    const pointsEarned = paymentAmount * (levelMultipliers[tourist.level] || 0.5);
+    tourist.totalPoints += pointsEarned;
+    tourist.redeemablePoints += pointsEarned;
+
+    if (tourist.totalPoints >= 500000) tourist.level = 3;
+    else if (tourist.totalPoints >= 100000) tourist.level = 2;
+    else tourist.level = 1;
+}
+
+
 // Create a new activity
 exports.createActivity = async (req, res) => {
-	try {
-		const formattedDate = new Date(req.body.date).toISOString().split('T')[0];
-		const activity = new Activity({
-			advertiserId: req.user._id,
-			...req.body, // Spread the body data into the new activity
-		});
-		await activity.save();
-		return res
-			.status(201)
-			.json({ message: 'Activity created successfully', activity });
-	} catch (error) {
-		console.log(error); // Better logging of the error, not req.user
-		return res.status(500).json({ message: 'Error creating activity', error });
-	}
+    try {
+        const { paymentAmount, touristId } = req.body;
+
+        const tourist = await Tourist.findById(touristId);
+        if (!tourist) {
+            return res.status(404).json({ message: "Tourist not found" });
+        }
+
+        calculatePointsAndLevel(tourist, paymentAmount);
+        await tourist.save();
+
+        const activity = new Activity({ advertiserId: req.user._id, ...req.body });
+        await activity.save();
+
+        res.status(201).json({ message: 'Activity created successfully', activity });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error creating activity', error });
+    }
 };
 
-// Get all activities
 // Get all activities
 exports.getActivities = async (req, res) => {
 	try {
