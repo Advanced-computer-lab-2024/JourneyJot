@@ -5,8 +5,8 @@ import DeleteActivityButton from "./DeleteActivity";
 
 // StarRating Component to display stars
 const StarRating = ({ rating }) => {
-  const fullStars = Math.floor(rating); // Full stars (whole numbers)
-  const emptyStars = 5 - fullStars; // Remaining empty stars
+  const fullStars = Math.floor(rating);
+  const emptyStars = 5 - fullStars;
 
   return (
     <div className="flex space-x-1">
@@ -86,33 +86,21 @@ const ActivitiesCard = ({
   const handleUpdateActivity = async (updatedActivity) => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found. Please login again.");
-      }
+      if (!token) throw new Error("No token found. Please login again.");
 
       const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       };
 
       const category = categories.find(
         (cat) => cat.name === updatedActivity.category
       );
-      if (category) {
-        updatedActivity.category = category._id;
-      } else {
-        throw new Error("Category not found");
-      }
-
       const preferenceTag = tags.find(
         (tag) => tag.name === updatedActivity.preferenceTag
       );
-      if (preferenceTag) {
-        updatedActivity.preferenceTag = preferenceTag._id;
-      } else {
-        throw new Error("Preference Tag not found");
-      }
+
+      if (category) updatedActivity.category = category._id;
+      if (preferenceTag) updatedActivity.preferenceTag = preferenceTag._id;
 
       await axios.put(
         `http://localhost:3000/activities/${updatedActivity._id}`,
@@ -124,6 +112,31 @@ const ActivitiesCard = ({
     } catch (error) {
       console.error("Error updating activity:", error);
     }
+  };
+
+  const handleBookActivity = async (activity) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found. Please login again.");
+
+      const config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
+
+      const respone = await axios.post(
+        "http://localhost:3000/tourists/bookActivity",
+        { activityId: activity },
+        config
+      );
+
+      console.log(respone);
+    } catch (error) {
+      console.error("Error booking activity:", error);
+    }
+  };
+
+  const handleShareActivity = (activity) => {
+    alert(`Share link for activity: ${activity.name}`);
   };
 
   return (
@@ -175,7 +188,21 @@ const ActivitiesCard = ({
                   </li>
                 </ul>
 
-                {/* Delete and Edit Buttons for Advertiser */}
+                {/* Book and Share Buttons */}
+                <button
+                  onClick={() => handleBookActivity(activity._id)}
+                  className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 mt-4"
+                >
+                  Book A Ticket
+                </button>
+                <button
+                  onClick={() => handleShareActivity(activity)}
+                  className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 mt-2"
+                >
+                  Share
+                </button>
+
+                {/* Edit and Delete for Advertisers */}
                 {isAdvertiser && (
                   <div className="flex space-x-2 mt-4">
                     <button

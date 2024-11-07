@@ -39,6 +39,7 @@ import UserList from "./components/Admin/UserList.jsx";
 import Flag from "./components/Admin/Flag.jsx";
 import FullProductPage from "./pages/Products/FullProductPage.jsx";
 import PurchaseHistory from "./pages/Tourist/PurchaseHistory.jsx";
+import TouristReservations from "./pages/Tourist/TouristReservations.jsx";
 
 const App = () => {
   return (
@@ -59,6 +60,10 @@ const App = () => {
       <Route
         path="/tourist/homePage/complaints"
         element={<TouristComplaintsPage />}
+      />
+      <Route
+        path="/tourist/homePage/reservations"
+        element={<TouristReservations />}
       />
       <Route path="/products" element={<ShowProducts />} />
       <Route path="/products/addProduct" element={<AddProduct />} />

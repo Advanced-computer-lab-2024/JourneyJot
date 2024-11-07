@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 // StarRating Component to display stars
 const StarRating = ({ rating }) => {
@@ -46,9 +47,25 @@ const ItinerariesCard = ({ itineraries = [] }) => {
     // Implement actual sharing logic here
   };
 
-  const handleBookItinerary = (itinerary) => {
-    alert(`Book ${itinerary.name}`);
-    // Implement actual booking logic here
+  const handleBookTicket = async (itinerary) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found. Please login again.");
+
+      const config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
+
+      const respone = await axios.post(
+        "http://localhost:3000/tourists/bookItinerary",
+        { itineraryId: itinerary },
+        config
+      );
+
+      console.log(respone);
+    } catch (error) {
+      console.error("Error booking itinerary:", error);
+    }
   };
 
   return (
@@ -138,7 +155,7 @@ const ItinerariesCard = ({ itineraries = [] }) => {
                 )}
               </ul>
               <button
-                onClick={() => handleBookItinerary(itinerary)}
+                onClick={() => handleBookTicket(itinerary._id)}
                 className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
               >
                 Book A Ticket

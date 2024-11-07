@@ -2,6 +2,9 @@
 const Tourist = require("../models/Tourist");
 const Product = require("../models/Product");
 const Review = require("../models/Review");
+const Activity = require("../models/Activity");
+const Itinerary = require("../models/Itinerary");
+const Attraction = require("../models/Attraction");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -144,7 +147,9 @@ exports.updateTouristProfile = async (req, res) => {
 exports.getTouristID = async (req, res) => {
   try {
     const userId = req.user._id;
-    const tourist = await Tourist.findById(userId);
+    const tourist = await Tourist.findById(userId).populate(
+      "activities attractions itineraries"
+    );
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
     }
@@ -266,5 +271,140 @@ exports.TouristReviewProduct = async (req, res) => {
         .status(500)
         .json({ message: "Internal server error", details: error.message });
     }
+  }
+};
+
+exports.TouristBookActivity = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const activityId = req.body.activityId;
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Find the activity by ID to get the price
+    const activity = await Activity.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    // Check if wallet has enough balance
+    // if (tourist.wallet.balance < activity.price) {
+    //   return res.status(400).json({
+    //     message: "Insufficient wallet balance to book this activity",
+    //     requiredAmount: activity.price - tourist.wallet.balance,
+    //   });
+    // }
+
+    // // Deduct the price from wallet balance
+    // tourist.wallet.balance -= activity.price;
+    tourist.activities.push(activityId);
+
+    // Save the updated tourist data
+    await tourist.save();
+    console.log(activity);
+    console.log(tourist);
+    res.status(200).json({ message: "Activity booked successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.TouristBookAttraction = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const attractionId = req.body.attractionId;
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Find the attraction by ID to get the price
+    const attraction = await Attraction.findById(attractionId);
+    if (!attraction) {
+      return res.status(404).json({ message: "Attraction not found" });
+    }
+
+    // // Check if wallet has enough balance
+    // if (tourist.wallet.balance < attraction.price) {
+    //   return res.status(400).json({
+    //     message: "Insufficient wallet balance to book this attraction",
+    //     requiredAmount: attraction.price - tourist.wallet.balance,
+    //   });
+    // }
+
+    // // Deduct the price from wallet balance
+    // tourist.wallet.balance -= attraction.price;
+
+    // Add the attraction to the tourist's list
+    tourist.attractions.push(attractionId);
+
+    // Save the updated tourist data
+    await tourist.save();
+
+    res.status(200).json({ message: "Attraction booked successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.TouristBookItinerary = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const itineraryId = req.body.itineraryId;
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Find the itinerary by ID to get the price
+    const itinerary = await Itinerary.findById(itineraryId);
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+
+    // Check if wallet has enough balance
+    // if (tourist.wallet.balance < itinerary.price) {
+    //   return res.status(400).json({
+    //     message: "Insufficient wallet balance to book this itinerary",
+    //     requiredAmount: itinerary.price - tourist.wallet.balance,
+    //   });
+    // }
+
+    // // Deduct the price from wallet balance
+    // tourist.wallet.balance -= itinerary.price;
+
+    // Add the itinerary to the tourist's list
+    tourist.itineraries.push(itineraryId);
+
+    // Save the updated tourist data
+    await tourist.save();
+
+    res.status(200).json({ message: "Itinerary booked successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+exports.getTouristData = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const tourist = await Tourist.findById(userId).populate(
+      "activities attractions itineraries"
+    );
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+    console.log(tourist);
+    res.status(200).json({ tourist });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

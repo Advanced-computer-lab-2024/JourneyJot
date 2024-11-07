@@ -10,6 +10,10 @@ const {
   buyProduct,
   getTouristProductHistory,
   TouristReviewProduct,
+  TouristBookActivity,
+  TouristBookAttraction,
+  TouristBookItinerary,
+  getTouristData,
 } = require("../controllers/tourist");
 const auth_check = require("../middleware/auth-check");
 const { changePassword } = require("../helper/tourist-change-password");
@@ -25,5 +29,9 @@ touristRouter.get("/getTouristID", auth_check, getTouristID);
 touristRouter.post("/buyProduct", auth_check, buyProduct);
 touristRouter.get("/productHistory", auth_check, getTouristProductHistory);
 touristRouter.post("/review", auth_check, TouristReviewProduct);
+touristRouter.post("/bookActivity", auth_check, TouristBookActivity);
+touristRouter.post("/bookAttraction", auth_check, TouristBookAttraction);
+touristRouter.post("/bookItinerary", auth_check, TouristBookItinerary);
+touristRouter.get("/getTourist", auth_check, getTouristData);
 
 module.exports = touristRouter;

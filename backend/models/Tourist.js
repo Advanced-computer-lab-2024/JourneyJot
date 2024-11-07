@@ -61,6 +61,24 @@ const touristSchema = new mongoose.Schema(
         ref: "Product", // Reference to the Product model
       },
     ],
+    itineraries: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Itinerary", // Reference to the Itinerary model
+      },
+    ],
+    activities: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Activity", // Reference to the Activity model
+      },
+    ],
+    attractions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Attraction", // Reference to the Attraction model
+      },
+    ],
   },
   { timestamps: true }
 );
