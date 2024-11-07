@@ -29,6 +29,11 @@ const SellerDashBoard = () => {
 							className='text-blue-600 hover:text-blue-800'>
 							Change Password
 						</Link>
+						<Link
+							to='/products/archive'
+							className='text-blue-600 hover:text-blue-800'>
+							Products Archive
+						</Link>
 					</div>
 				</div>
 			</nav>

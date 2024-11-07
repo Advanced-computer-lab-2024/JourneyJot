@@ -3,6 +3,7 @@
 const multer = require('multer');
 const path = require('path');
 const User = require('../models/User');
+const Product = require('../models/Product');
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -18,6 +19,7 @@ const upload = multer({ storage });
 const uploadImages = async (req, res, next) => {
 	try {
 		const user = await User.findById(req.user._id);
+		//const product = await Product.findById(req.product._id);
 		if (!user) return res.status(404).json({ message: 'User not found' });
 		if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
@@ -25,9 +27,10 @@ const uploadImages = async (req, res, next) => {
 		if (user.role === 'tour_guide') {
 			user.tourGuideProfile.image = req.file.filename;
 		} else if (user.role === 'advertiser') {
-			user.advertiserProfile.image = req.file.filename; // Adjust according to your advertiser profile structure
+			user.advertiserProfile.image = req.file.filename;
 		} else if (user.role === 'seller') {
-			user.sellerProfile.image = req.file.filename; // Adjust according to your advertiser profile structure
+			user.sellerProfile.image = req.file.filename;
+			//product.image = req.file.filename;
 		} else {
 			return res
 				.status(403)

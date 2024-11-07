@@ -27,6 +27,7 @@ const AdminDashboard = () => {
 							'/admins/admin-account-review',
 							'/admins/view-users',
 							'/admins/flag-events',
+							'/products/archive',
 						].map((path, index) => (
 							<Link
 								key={index}

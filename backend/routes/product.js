@@ -1,28 +1,40 @@
-const express = require("express");
+/** @format */
+
+const express = require('express');
 const productRouter = express.Router();
 
 const {
-  getSorted,
-  searchByName,
-  filterByPrice,
-  addProduct,
-  editProductByID,
-  getProductByID,
-  getProducts,
-} = require("../controllers/product");
+	getSorted,
+	searchByName,
+	filterByPrice,
+	addProduct,
+	editProductByID,
+	getProductByID,
+	getProducts,
+} = require('../controllers/product');
+const {
+	archiveProduct,
+	unarchiveProduct,
+} = require('../controllers/archieve-product');
+const authCheck = require('../middleware/auth-check');
+const adminSeller = require('../middleware/admin-seller');
 
-productRouter.get("/sortProducts", getSorted);
+productRouter.get('/sortProducts', getSorted);
 
-productRouter.get("/searchProductByName", searchByName);
+productRouter.get('/searchProductByName', searchByName);
 
-productRouter.get("/filterProductsByPrice", filterByPrice);
+productRouter.get('/filterProductsByPrice', filterByPrice);
 
-productRouter.post("/addProduct", addProduct);
+productRouter.post('/addProduct', addProduct);
 
-productRouter.get("/", getProducts);
+productRouter.get('/', getProducts);
 
-productRouter.put("/:id", editProductByID);
+productRouter.put('/:id', editProductByID);
 
-productRouter.get("/:id", getProductByID);
+productRouter.get('/:id', getProductByID);
+
+productRouter.put('/archive/:id', archiveProduct);
+
+productRouter.put('/unarchive/:id', unarchiveProduct);
 
 module.exports = productRouter;
