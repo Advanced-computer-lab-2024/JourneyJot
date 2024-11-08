@@ -396,13 +396,28 @@ exports.TouristBookItinerary = async (req, res) => {
 exports.getTouristData = async (req, res) => {
 	try {
 		const userId = req.user._id;
-		const tourist = await Tourist.findById(userId).populate(
-			'activities attractions itineraries'
-		);
+
+		// Populate the related documents including advertiserId, tourGuideId, governorId, etc.
+		const tourist = await Tourist.findById(userId)
+			// Populate activities with the entire document (including advertiserId)
+			.populate({
+				path: 'activities', // Populating activities with advertiserId inside activity document
+				populate: { path: 'advertiserId' },
+			})
+			.populate({
+				path: 'attractions', // Populating attractions with governorId inside attraction document
+				populate: { path: 'governorId' },
+			})
+			.populate({
+				path: 'itineraries', // Populating attractions with governorId inside attraction document
+				populate: { path: 'tourGuideId' },
+			});
+
 		if (!tourist) {
 			return res.status(404).json({ message: 'Tourist not found' });
 		}
-		console.log(tourist);
+
+		console.log(tourist); // Optional, for debugging
 		res.status(200).json({ tourist });
 	} catch (error) {
 		res.status(500).json({ message: 'Server error', error: error.message });
