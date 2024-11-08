@@ -17,7 +17,12 @@ const ShowProducts = () => {
 	const fetchProducts = async () => {
 		setLoading(true);
 		try {
-			const response = await axios.get('http://localhost:3000/products');
+			const token = localStorage.getItem('token'); // or however you're storing the token
+			const response = await axios.get('http://localhost:3000/products', {
+				headers: {
+					Authorization: `Bearer ${token}`, // Add the token in the request headers
+				},
+			});
 			setProducts(response.data.products);
 			console.log('Fetched products:', response.data);
 		} catch (error) {

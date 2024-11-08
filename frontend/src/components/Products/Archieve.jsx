@@ -8,16 +8,24 @@ const ProductList = () => {
 	const [error, setError] = useState(null);
 
 	useEffect(() => {
-		axios
-			.get('http://localhost:3000/products') // Get all products (both archived and unarchived)
-			.then((response) => {
-				setProducts(response.data.products); // Store all products
-			})
-			.catch((err) => {
+		const fetchProducts = async () => {
+			try {
+				const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+				const response = await axios.get('http://localhost:3000/products', {
+					headers: {
+						Authorization: `Bearer ${token}`, // Add the token to request headers
+					},
+				});
+				setProducts(response.data.products); // Store products in state
+			} catch (err) {
 				setError(
 					err.response ? err.response.data.message : 'Error fetching products'
 				);
-			});
+				console.error('Error fetching data:', err);
+			}
+		};
+
+		fetchProducts(); // Call the function
 	}, []);
 
 	const handleArchive = async (id) => {
