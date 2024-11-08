@@ -19,29 +19,18 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const response = await login(formData);
-      const { token, role } = response.data; // Extract the token and role from the response
-      console.log("Received token:", token);
-      console.log("User role:", role);
-
-      // Save the token in localStorage
+      const { token, role } = response.data;
       localStorage.setItem("token", token);
-      console.log(
-        "Token stored in localStorage:",
-        localStorage.getItem("token")
-      );
-      console.log(role);
-
-      // Navigate based on user role
       if (role === "admin") {
         navigate("/admins");
       } else if (role === "tour_guide") {
-        navigate("/tour-guide-dashboard"); // Replace with the actual path for the tour guide dashboard
+        navigate("/tour-guide-dashboard");
       } else if (role === "advertiser") {
         navigate("/advertiser-dashboard");
       } else if (role === "governor") {
         navigate("/tourism-governor");
       } else if (role === "seller") {
-        navigate("/seller-dashboard"); // Replace with the actual path for the advertiser dashboard
+        navigate("/seller-dashboard");
       } else {
         console.error("Unknown role:", role);
       }
@@ -51,56 +40,58 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-8 shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-        Login
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-            placeholder="Username"
-            className="w-full px-4 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-gray-50"
-          />
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-teal-400 to-blue-500">
+      <div className="max-w-md w-full bg-white p-8 shadow-xl rounded-lg">
+        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
+          Welcome Back
+        </h2>
+        <p className="text-center text-gray-600 mb-8">
+          Please log in to your account
+        </p>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              placeholder="Username"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+            />
+          </div>
+          <div>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Login
+          </button>
+        </form>
+        <div className="mt-6 text-center text-gray-600">
+          <Link to="/signup">
+            <span className="underline text-blue-500 hover:text-blue-600 transition-all duration-200">
+              Don't have an account? Sign Up
+            </span>
+          </Link>
         </div>
-        <div>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            placeholder="Password"
-            className="w-full px-4 py-2 border border-gray-400 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-gray-50"
-          />
+        <div className="mt-4 text-center text-gray-600">
+          <Link to="/tourist-Login">
+            <span className="underline text-blue-500 hover:text-blue-600 transition-all duration-200">
+              Sign in as a tourist
+            </span>
+          </Link>
         </div>
-        <button
-          type="submit"
-          className="w-full bg-teal-500 text-white py-2 rounded-md shadow-md hover:bg-teal-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
-        >
-          Login
-        </button>
-      </form>
-      {/* Don't have an account? Sign Up Link */}
-      <div className="mt-4 text-center">
-        <Link to="/signup">
-          <h1 className="underline text-teal-500 hover:text-teal-600 transition-all duration-200">
-            Don't have an account? Sign Up
-          </h1>
-        </Link>
-      </div>
-
-      {/* Sign in as a tourist Link */}
-      <div className="mt-4 text-center">
-        <Link to="/tourist-Login">
-          <h1 className="underline text-teal-500 hover:text-teal-600 transition-all duration-200">
-            Sign in as a tourist
-          </h1>
-        </Link>
       </div>
     </div>
   );
