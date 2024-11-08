@@ -9,11 +9,9 @@ exports.signUp = async (req, res) => {
 
 		// Check if terms and conditions are accepted
 		if (!acceptedTerms) {
-			return res
-				.status(400)
-				.json({
-					message: 'You must accept the terms and conditions to register',
-				});
+			return res.status(400).json({
+				message: 'You must accept the terms and conditions to register',
+			});
 		}
 
 		// Hash the password with bcrypt

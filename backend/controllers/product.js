@@ -65,7 +65,29 @@ exports.addProduct = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
 	try {
-		const products = await Product.find({ archived: false });
+		const user = req.user; // Assuming req.user is populated by authentication middleware
+
+		// Check if the user has an admin role
+		let products;
+		if ((user && user.role === 'admin') || user.role === 'seller') {
+			// If the user is an admin, fetch all products (archived and non-archived)
+			products = await Product.find();
+		} else if (!user) {
+			// If the user is not an admin, fetch only non-archived products
+			products = await Product.find({ archived: false });
+		}
+
+		res.status(200).json({ products });
+	} catch (err) {
+		res.status(400).json({ message: err.message });
+	}
+};
+
+exports.getTouristProducts = async (req, res) => {
+	try {
+		// If the user is not an admin, fetch only non-archived products
+		products = await Product.find({ archived: false });
+
 		res.status(200).json({ products });
 	} catch (err) {
 		res.status(400).json({ message: err.message });

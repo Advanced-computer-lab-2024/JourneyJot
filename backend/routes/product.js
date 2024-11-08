@@ -11,6 +11,7 @@ const {
 	editProductByID,
 	getProductByID,
 	getProducts,
+	getTouristProducts,
 } = require('../controllers/product');
 const {
 	archiveProduct,
@@ -27,7 +28,9 @@ productRouter.get('/filterProductsByPrice', filterByPrice);
 
 productRouter.post('/addProduct', addProduct);
 
-productRouter.get('/', getProducts);
+productRouter.get('/', authCheck, getProducts);
+
+productRouter.get('/show', getTouristProducts);
 
 productRouter.put('/:id', editProductByID);
 
