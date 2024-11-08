@@ -43,6 +43,8 @@ import TouristReservations from './pages/Tourist/TouristReservations.jsx';
 import TouristWallet from './pages/Tourist/TouristWallet.jsx';
 import TouristPoints from './pages/Tourist/TouristPoints.jsx';
 import ProductList from './components/Products/Archieve.jsx';
+import AdminComplain from './components/Admin/AdminComplain.jsx';
+
 const App = () => {
 	return (
 		<Routes>
@@ -179,6 +181,10 @@ const App = () => {
 			<Route
 				path='/admins/flag-events'
 				element={<Flag />}
+			/>
+			<Route
+				path='/admins/complaints'
+				element={<AdminComplain />}
 			/>
 
 			<Route
