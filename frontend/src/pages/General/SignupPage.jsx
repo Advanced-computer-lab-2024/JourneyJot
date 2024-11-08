@@ -1,184 +1,185 @@
 /** @format */
 
-import { useState } from 'react';
-import { signup } from '../../api';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { signup } from "../../api";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
-	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		username: '',
-		email: '',
-		password: '',
-		role: '',
-		idFile: null, // For ID file upload
-		additionalFiles: [], // For additional role-specific files
-		acceptedTerms: false, // Track if terms are accepted
-	});
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    role: "",
+    idFile: null,
+    additionalFiles: [],
+    acceptedTerms: false,
+  });
 
-	const handleChange = (e) => {
-		const { name, value, files, type, checked } = e.target;
+  const handleChange = (e) => {
+    const { name, value, files, type, checked } = e.target;
+    if (name === "idFile") {
+      setFormData({ ...formData, idFile: files[0] });
+    } else if (name === "additionalFiles") {
+      setFormData({ ...formData, additionalFiles: files });
+    } else if (type === "checkbox") {
+      setFormData({ ...formData, [name]: checked });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
 
-		if (name === 'idFile') {
-			setFormData({ ...formData, idFile: files[0] });
-		} else if (name === 'additionalFiles') {
-			setFormData({ ...formData, additionalFiles: files });
-		} else if (type === 'checkbox') {
-			setFormData({ ...formData, [name]: checked });
-		} else {
-			setFormData({ ...formData, [name]: value });
-		}
-	};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+    if (!formData.acceptedTerms) {
+      alert("You must accept the terms and conditions to sign up.");
+      return;
+    }
 
-		// Check if terms and conditions are accepted
-		if (!formData.acceptedTerms) {
-			alert('You must accept the terms and conditions to sign up.');
-			return;
-		}
+    const data = new FormData();
+    data.append("username", formData.username);
+    data.append("email", formData.email);
+    data.append("password", formData.password);
+    data.append("role", formData.role);
+    data.append("idFile", formData.idFile);
+    data.append("acceptedTerms", formData.acceptedTerms);
 
-		const data = new FormData();
-		data.append('username', formData.username);
-		data.append('email', formData.email);
-		data.append('password', formData.password);
-		data.append('role', formData.role);
-		data.append('idFile', formData.idFile);
-		data.append('acceptedTerms', formData.acceptedTerms);
+    Array.from(formData.additionalFiles).forEach((file) => {
+      data.append("additionalFiles", file);
+    });
 
-		Array.from(formData.additionalFiles).forEach((file) => {
-			data.append('additionalFiles', file);
-		});
+    try {
+      const response = await signup(data);
+      navigate("/login");
+    } catch (error) {
+      console.error("Signup failed", error.response.data);
+    }
+  };
 
-		try {
-			const response = await signup(data);
-			console.log('Signup successful', response.data);
-			navigate('/login');
-		} catch (error) {
-			console.error('Signup failed', error.response.data);
-		}
-	};
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-teal-400 to-blue-500">
+      <div className="max-w-lg w-full bg-white p-8 shadow-xl rounded-lg">
+        <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
+          Create an Account
+        </h2>
+        <p className="text-center text-gray-600 mb-8">
+          Join us today for an amazing experience!
+        </p>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6"
+          encType="multipart/form-data"
+        >
+          <input
+            placeholder="Username"
+            type="text"
+            name="username"
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+          />
+          <input
+            placeholder="Email"
+            type="email"
+            name="email"
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+          />
+          <input
+            placeholder="Password"
+            type="password"
+            name="password"
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
+          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Role
+            </label>
+            <select
+              name="role"
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            >
+              <option value="">Select Role</option>
+              <option value="seller">Seller</option>
+              <option value="tour_guide">Tour Guide</option>
+              <option value="advertiser">Advertiser</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Upload ID Document
+            </label>
+            <input
+              type="file"
+              name="idFile"
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
+            />
+          </div>
 
-	return (
-		<div className='max-w-lg mx-auto bg-white p-8 shadow-lg rounded-lg'>
-			<h2 className='text-2xl font-bold text-gray-800 mb-6 text-center'>
-				Sign Up
-			</h2>
-			<form
-				onSubmit={handleSubmit}
-				className='space-y-6'
-				encType='multipart/form-data'>
-				<input
-					placeholder='Username'
-					type='text'
-					name='username'
-					onChange={handleChange}
-					required
-					className='w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500'
-				/>
-				<input
-					placeholder='Email'
-					type='email'
-					name='email'
-					value={formData.email}
-					onChange={handleChange}
-					required
-					className='w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500'
-				/>
-				<input
-					placeholder='Password'
-					type='password'
-					name='password'
-					value={formData.password}
-					onChange={handleChange}
-					required
-					className='w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500'
-				/>
-				<div>
-					<label className='block text-sm font-medium text-gray-700 mb-2'>
-						Role
-					</label>
-					<select
-						name='role'
-						value={formData.role}
-						onChange={handleChange}
-						required
-						className='w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white'>
-						<option value=''>Select Role</option>
-						<option value='seller'>Seller</option>
-						<option value='tour_guide'>Tour Guide</option>
-						<option value='advertiser'>Advertiser</option>
-					</select>
-				</div>
+          {formData.role && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Upload Additional Documents
+              </label>
+              <input
+                type="file"
+                name="additionalFiles"
+                onChange={handleChange}
+                multiple
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
+              />
+            </div>
+          )}
 
-				<div>
-					<label className='block text-sm font-medium text-gray-700 mb-2'>
-						Upload ID Document
-					</label>
-					<input
-						type='file'
-						name='idFile'
-						onChange={handleChange}
-						required
-						className='w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm'
-					/>
-				</div>
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              name="acceptedTerms"
+              checked={formData.acceptedTerms}
+              onChange={handleChange}
+              className="mr-2"
+            />
+            <span className="text-gray-700">
+              I accept the{" "}
+              <Link to="/terms" className="text-blue-500 underline">
+                terms and conditions
+              </Link>
+            </span>
+          </label>
 
-				{formData.role && (
-					<div>
-						<label className='block text-sm font-medium text-gray-700 mb-2'>
-							Upload Additional Documents (if required)
-						</label>
-						<input
-							type='file'
-							name='additionalFiles'
-							onChange={handleChange}
-							multiple
-							className='w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm'
-						/>
-					</div>
-				)}
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Sign Up
+          </button>
+        </form>
 
-				<label className='flex items-center'>
-					<input
-						type='checkbox'
-						name='acceptedTerms'
-						checked={formData.acceptedTerms}
-						onChange={handleChange}
-						className='mr-2'
-					/>
-					<span className='text-gray-700'>
-						I accept the{' '}
-						<Link
-							to='/terms'
-							className='text-teal-500 underline'>
-							terms and conditions
-						</Link>
-					</span>
-				</label>
-
-				<button
-					type='submit'
-					className='w-full bg-teal-500 text-white py-2 rounded-md shadow-md hover:bg-teal-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500'>
-					Sign Up
-				</button>
-				<Link to='/Tourist-Signup'>
-					<h1 className='text-center underline text-teal-500 hover:text-teal-600 transition-all duration-200'>
-						Sign up as a tourist
-					</h1>
-				</Link>
-			</form>
-
-			<div className='mt-4 text-center'>
-				<Link to='/login'>
-					<h1 className='underline text-teal-500 hover:text-teal-600 transition-all duration-200'>
-						Already have an account? Log In
-					</h1>
-				</Link>
-			</div>
-		</div>
-	);
+        <div className="mt-6 text-center text-gray-600">
+          <Link to="/Tourist-Signup">
+            <span className="underline text-blue-500 hover:text-blue-600 transition-all duration-200">
+              Sign up as a tourist
+            </span>
+          </Link>
+        </div>
+        <div className="mt-4 text-center text-gray-600">
+          <Link to="/login">
+            <span className="underline text-blue-500 hover:text-blue-600 transition-all duration-200">
+              Already have an account? Log In
+            </span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default SignupPage;
