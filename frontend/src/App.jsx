@@ -156,7 +156,7 @@ const App = () => {
 				element={<AdminDeleteUser />}
 			/>
 			<Route
-				path='/admins/category-management'
+				path='	'
 				element={<CategoryManagement />}
 			/>
 			<Route
