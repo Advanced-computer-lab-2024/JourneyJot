@@ -41,22 +41,25 @@ exports.filterByPrice = async (req, res) => {
 		res.status(400).json({ error: error.message });
 	}
 };
-
 exports.addProduct = async (req, res) => {
 	try {
+		// Create a new product from the request body
 		const product = new Product({
 			name: req.body.name,
-			picture: req.body.picture,
+			picture: req.body.picture, // Assuming the image is handled elsewhere
 			details: req.body.details,
 			price: req.body.price,
 			quantity: req.body.quantity,
 			rating: req.body.rating,
 		});
 
+		// Save the product to the database
 		await product.save();
+
+		// Return only the product ID after saving
 		res.status(201).json({
 			message: 'Product created successfully',
-			product,
+			_id: product._id, // Send back the product's _id
 		});
 	} catch (err) {
 		res.status(400).json({ message: err.message });

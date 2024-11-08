@@ -18,7 +18,8 @@ const {
 	unarchiveProduct,
 } = require('../controllers/archieve-product');
 const authCheck = require('../middleware/auth-check');
-const adminSeller = require('../middleware/admin-seller');
+const { uploadProductImage } = require('../controllers/products-img');
+const upload = require('../middleware/imgs');
 
 productRouter.get('/sortProducts', getSorted);
 
@@ -39,5 +40,12 @@ productRouter.get('/:id', getProductByID);
 productRouter.put('/archive/:id', archiveProduct);
 
 productRouter.put('/unarchive/:id', unarchiveProduct);
+
+productRouter.post(
+	'/:productId/upload',
+	upload.single('picture'),
+	uploadProductImage
+);
+// Serve a specific image by filename
 
 module.exports = productRouter;

@@ -30,7 +30,6 @@ const uploadImages = async (req, res, next) => {
 			user.advertiserProfile.image = req.file.filename;
 		} else if (user.role === 'seller') {
 			user.sellerProfile.image = req.file.filename;
-			//product.image = req.file.filename;
 		} else {
 			return res
 				.status(403)
