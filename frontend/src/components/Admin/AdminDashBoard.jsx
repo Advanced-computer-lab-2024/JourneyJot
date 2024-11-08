@@ -27,6 +27,7 @@ const AdminDashboard = () => {
 							'/admins/admin-account-review',
 							'/admins/view-users',
 							'/admins/flag-events',
+							'/admins/view-complaints', // New Link for Viewing Complaints
 						].map((path, index) => (
 							<Link
 								key={index}
@@ -103,6 +104,11 @@ const AdminDashboard = () => {
 								path: '/admins/flag-events',
 								label: 'Flag Event',
 								color: 'bg-indigo-400',
+							},
+							{
+								path: '/admins/view-complaints', // New Button for Viewing Complaints
+								label: 'View Complaints',
+								color: 'bg-purple-500',
 							},
 						].map(({ path, label, color }, index) => (
 							<Link

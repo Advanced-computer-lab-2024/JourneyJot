@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const SubmittedComplaints = () => {
   const [complaints, setComplaints] = useState([]);
@@ -8,8 +9,17 @@ const SubmittedComplaints = () => {
     // Fetch complaints from the backend when the component mounts
     const fetchComplaints = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/complaints");
-        setComplaints(response.data); // Assumes response.data contains the array of complaints
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No token found, user may not be logged in');
+          return;
+        }
+        const response = await axios.get("http://localhost:3000/complaints", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setComplaints(response.data);
       } catch (error) {
         console.error("Error fetching complaints:", error);
       }
@@ -25,28 +35,28 @@ const SubmittedComplaints = () => {
         <p className="text-gray-700">No complaints submitted yet.</p>
       ) : (
         <div className="max-h-64 overflow-auto">
-          {" "}
-          {/* Add these classes for scroll */}
           <ul>
             {complaints.map((complaint) => (
               <li
                 key={complaint._id}
                 className="mb-4 p-4 border border-gray-300 rounded-md"
               >
-                <h3 className="text-lg font-semibold">{complaint.title}</h3>
-                <h4 className="text-gray-600 mb-2">{complaint.body}</h4>
-                <h6 className="text-gray-600 mb-2">{complaint.date}</h6>
-                <span
-                  className={`px-2 py-1 rounded-full text-white ${
-                    complaint.status === "Pending"
-                      ? "bg-yellow-500"
-                      : complaint.status === "In Progress"
-                      ? "bg-blue-500"
-                      : "bg-green-500"
-                  }`}
-                >
-                  {complaint.status}
-                </span>
+                <Link to={`/tourist/complaints/${complaint._id}`} className="text-blue-600 hover:underline">
+                  <h3 className="text-lg font-semibold">{complaint.title}</h3>
+                  <h4 className="text-gray-600 mb-2">{complaint.body}</h4>
+                  <h6 className="text-gray-600 mb-2">{new Date(complaint.date).toLocaleString()}</h6>
+                  <span
+                    className={`px-2 py-1 rounded-full text-white ${
+                      complaint.status === "Pending"
+                        ? "bg-yellow-500"
+                        : complaint.status === "Resolved"
+                        ? "bg-green-500"
+                        : "bg-blue-500"
+                    }`}
+                  >
+                    {complaint.status}
+                  </span>
+                </Link>
               </li>
             ))}
           </ul>

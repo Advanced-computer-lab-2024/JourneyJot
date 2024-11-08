@@ -10,12 +10,25 @@ const ComplaintsForm = () => {
     e.preventDefault();
 
     try {
+      // Retrieve the token from localStorage or another storage mechanism
+      const token = localStorage.getItem('token'); // Ensure 'token' is the correct key
+
+      if (!token) {
+        console.error('No token found, user may not be logged in');
+        // Optionally, you can redirect to the login page or display an error message
+        return;
+      }
+
       // Send a POST request to the backend to create a new complaint
-      const response = await axios.post("http://localhost:3000/complaints", {
-        title,
-        body,
-        status,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/complaints",
+        { title, body, status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       console.log("Complaint posted:", response.data);
       // Optionally reset the form fields
@@ -23,7 +36,12 @@ const ComplaintsForm = () => {
       setBody("");
       setStatus("Pending");
     } catch (error) {
-      console.error("Error posting complaint:", error);
+      if (error.response && error.response.status === 401) {
+        console.error('Unauthorized: Invalid or expired token');
+        // Optionally, handle token expiration (e.g., redirect to login)
+      } else {
+        console.error("Error posting complaint:", error);
+      }
     }
   };
 

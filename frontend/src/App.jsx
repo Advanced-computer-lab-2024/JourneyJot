@@ -40,6 +40,11 @@ import Flag from "./components/Admin/Flag.jsx";
 import FullProductPage from "./pages/Products/FullProductPage.jsx";
 import PurchaseHistory from "./pages/Tourist/PurchaseHistory.jsx";
 import TouristReservations from "./pages/Tourist/TouristReservations.jsx";
+import AdminComplaintsPage from "./pages/Admin/ComplaintsPage.jsx";
+import ComplaintDetails from "./pages/Admin/ComplaintDetails.jsx";
+import TouristComplaintDetails from "./pages/Tourist/ComplaintsDetails.jsx";
+
+
 
 const App = () => {
   return (
@@ -61,6 +66,7 @@ const App = () => {
         path="/tourist/homePage/complaints"
         element={<TouristComplaintsPage />}
       />
+      <Route path="/tourist/complaints/:id" element={<TouristComplaintDetails />} />
       <Route
         path="/tourist/homePage/reservations"
         element={<TouristReservations />}
@@ -111,6 +117,9 @@ const App = () => {
       <Route path="/admins/view-users" element={<UserList />} />
 
       <Route path="/admins/flag-events" element={<Flag />} />
+      <Route path="/admins/view-complaints" element={<AdminComplaintsPage />} />
+      <Route path="/admins/view-complaint/:id" element={<ComplaintDetails />} />
+
 
       <Route path="/tourism-governor" element={<TourismGovernor />} />
       <Route path="/advertiser-dashboard" element={<AdvertiserDashBoard />} />
