@@ -1,8 +1,12 @@
 /** @format */
 
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const ProductCard = ({ products = [] }) => {
+	const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+	const [selectedImage, setSelectedImage] = useState(''); // State for the selected image URL
+
 	// Function to render stars based on rating
 	const renderStars = (rating) => {
 		const totalStars = 5;
@@ -29,6 +33,17 @@ const ProductCard = ({ products = [] }) => {
 		return price.toLocaleString(); // Format the price with commas
 	};
 
+	// Function to open the modal with the selected image
+	const openImageModal = (imageURL) => {
+		setSelectedImage(imageURL); // Set the selected image URL
+		setIsModalOpen(true); // Open the modal
+	};
+
+	// Function to close the modal
+	const closeModal = () => {
+		setIsModalOpen(false); // Close the modal
+	};
+
 	return (
 		<div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
 			{products.length > 0 ? (
@@ -37,12 +52,30 @@ const ProductCard = ({ products = [] }) => {
 						key={product._id}
 						className='border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-lg transition duration-300 ease-in-out'>
 						<div className='flex flex-col justify-between h-full'>
+							{/* Image and clickable link */}
 							{product.picture ? (
 								<>
+									{console.log(product.picture)} {/* Log the image URL */}
 									<img
-										src={product.picture}
-										className='w-full h-full object-cover rounded-t-lg'
+										src={`http://localhost:3000/photos/${product.picture}`}
+										alt={product.name}
+										className='w-full h-full object-cover rounded-t-lg cursor-pointer'
+										onClick={() =>
+											openImageModal(
+												`http://localhost:3000/photos/${product.picture}`
+											)
+										}
 									/>
+									{/* Link to view the image */}
+									<p
+										className='text-teal-500 text-sm mt-2 cursor-pointer'
+										onClick={() =>
+											openImageModal(
+												`http://localhost:3000/photos/${product.picture}`
+											)
+										}>
+										Click here to see product image
+									</p>
 								</>
 							) : (
 								<div className='w-full h-full bg-gray-300 flex justify-center items-center rounded-t-lg'>
@@ -77,6 +110,24 @@ const ProductCard = ({ products = [] }) => {
 				<p className='col-span-full text-center text-gray-500'>
 					No products available
 				</p>
+			)}
+
+			{/* Modal to view the product image */}
+			{isModalOpen && (
+				<div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
+					<div className='bg-white p-4 rounded-lg shadow-lg relative'>
+						<button
+							className='absolute top-0 right-0 p-2 text-gray-500'
+							onClick={closeModal}>
+							&times;
+						</button>
+						<img
+							src={selectedImage}
+							alt='Selected Product'
+							className='max-w-full max-h-[80vh] object-contain'
+						/>
+					</div>
+				</div>
 			)}
 		</div>
 	);

@@ -24,7 +24,7 @@ const ShowProducts = () => {
 				},
 			});
 			setProducts(response.data.products);
-			console.log('Fetched products:', response.data);
+			console.log('Fetched products:', response.data); // Check the product data, including image paths
 		} catch (error) {
 			console.error('Error fetching data: ', error);
 		} finally {
@@ -41,7 +41,7 @@ const ShowProducts = () => {
 				.get('http://localhost:3000/products/sortProducts')
 				.then((response) => {
 					setProducts(response.data.products);
-					console.log('Fetched sorted products:', response.data);
+					console.log('Fetched sorted products:', response.data); // Check sorted product data
 				})
 				.catch((error) => {
 					console.error('Error fetching sorted products: ', error);
@@ -58,7 +58,7 @@ const ShowProducts = () => {
 			})
 			.then((response) => {
 				setProducts(response.data.products);
-				console.log('Filtered products by price:', response.data);
+				console.log('Filtered products by price:', response.data); // Check filtered products
 			})
 			.catch((error) => {
 				console.error('Error filtering data: ', error);
@@ -76,7 +76,7 @@ const ShowProducts = () => {
 				})
 				.then((response) => {
 					setProducts(response.data.products);
-					console.log('Fetched searched products:', response.data);
+					console.log('Fetched searched products:', response.data); // Check searched products
 				})
 				.catch((error) => {
 					console.error('Error fetching searched products: ', error);
