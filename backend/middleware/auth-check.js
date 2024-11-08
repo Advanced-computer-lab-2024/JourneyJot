@@ -21,3 +21,17 @@ module.exports = (req, res, next) => {
 		next();
 	});
 };
+const User = require('../models/User');
+
+module.exports = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id).populate('completedItineraries');
+        if (!user) {
+            return res.status(401).json({ error: 'User not found' });
+        }
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+};

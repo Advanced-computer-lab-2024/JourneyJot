@@ -27,6 +27,21 @@ const tourGuideProfileSchema = new mongoose.Schema({
 		type: String, // File is stored as a string URL in MongoDB
 		default: null, // Default file is null if no file is provided
 	},
+	totalRating: { type: Number, default: 0 },       // Total sum of all ratings
+    ratingCount: { type: Number, default: 0 },       // Number of ratings received
+    averageRating: {                                 // Average rating
+        type: Number,
+        default: 0,
+        min: 1,
+        max: 5
+    },
+	comments: [
+        {
+            text: { type: String, required: true },
+            tourist: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            createdAt: { type: Date, default: Date.now }
+        }
+    ]
 });
 const TourGuideProfile = mongoose.model(
 	'TourGuideProfile',

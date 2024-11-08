@@ -423,3 +423,207 @@ exports.getTouristData = async (req, res) => {
 		res.status(500).json({ message: 'Server error', error: error.message });
 	}
 };
+
+// controllers/touristController.js
+
+const Activity = require('../models/Activity');
+
+exports.rateActivity = async (req, res) => {
+    const { rating, activityId } = req.body;
+    const touristId = req.user.id; // Assuming tourist ID is obtained from auth middleware
+
+    try {
+        // Find the activity
+        const activity = await Activity.findById(activityId);
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+
+        // Check if the tourist attended the activity
+        const hasAttended = activity.attendees.includes(touristId);
+        if (!hasAttended) {
+            return res.status(400).json({ error: 'Only attendees can rate this activity' });
+        }
+
+        // Add the rating to the activity
+        activity.ratings.push({ rating, tourist: touristId });
+        activity.ratingCount += 1;
+        activity.averageRating = (activity.averageRating * (activity.ratingCount - 1) + rating) / activity.ratingCount;
+
+        await activity.save();
+        res.json({ message: 'Rating submitted successfully', activity });
+    } catch (error) {
+        console.error('Error rating activity:', error);
+        res.status(500).json({ error: 'Server error while rating activity' });
+    }
+};
+
+
+exports.commentOnActivity = async (req, res) => {
+  const { text, activityId } = req.body;
+  const touristId = req.user.id; // Assuming tourist ID is obtained from auth middleware
+
+  try {
+      // Find the activity
+      const activity = await Activity.findById(activityId);
+      if (!activity) {
+          return res.status(404).json({ error: 'Activity not found' });
+      }
+
+      // Check if the tourist attended the activity
+      const hasAttended = activity.attendees.includes(touristId);
+      if (!hasAttended) {
+          return res.status(400).json({ error: 'Only attendees can comment on this activity' });
+      }
+
+      // Add the comment to the activity
+      const comment = { text, tourist: touristId };
+      activity.comments.push(comment);
+
+      await activity.save();
+      res.json({ message: 'Comment added successfully', comment });
+  } catch (error) {
+      console.error('Error adding comment:', error);
+      res.status(500).json({ error: 'Server error while adding comment' });
+  }
+};
+
+const TourGuideProfile = require('../models/Tour-Guide');
+
+exports.rateTourGuide = async (req, res) => {
+    const { rating, guideId } = req.body;
+    const touristId = req.user.id; // Assuming tourist ID is obtained from auth middleware
+
+    try {
+        // Find the tour guide
+        const tourGuide = await TourGuideProfile.findById(guideId);
+        if (!tourGuide) {
+            return res.status(404).json({ error: 'Tour guide not found' });
+        }
+
+        // Check if the tourist completed a tour with the guide
+        // Assuming a `completedTours` array exists for each tourist, containing the IDs of guides they completed tours with
+        const hasCompletedTour = req.user.completedTours.includes(guideId);
+        if (!hasCompletedTour) {
+            return res.status(400).json({ error: 'Only tourists who completed a tour with this guide can rate them' });
+        }
+
+        // Add the rating to the tour guide
+        tourGuide.ratings.push({ rating, tourist: touristId });
+        tourGuide.ratingCount += 1;
+        tourGuide.averageRating = (tourGuide.averageRating * (tourGuide.ratingCount - 1) + rating) / tourGuide.ratingCount;
+
+        await tourGuide.save();
+        res.json({ message: 'Rating submitted successfully', tourGuide });
+    } catch (error) {
+        console.error('Error rating tour guide:', error);
+        res.status(500).json({ error: 'Server error while rating tour guide' });
+    }
+  };
+
+exports.commentOnTourGuide = async (req, res) => {
+    const { text, guideId } = req.body;
+    const touristId = req.user.id; // Assuming tourist ID is obtained from auth middleware
+
+    try {
+        // Find the tour guide
+        const tourGuide = await TourGuideProfile.findById(guideId);
+        if (!tourGuide) {
+            return res.status(404).json({ error: 'Tour guide not found' });
+        }
+
+        // Check if the tourist completed a tour with this guide
+        const hasCompletedTour = req.user.completedTours.includes(guideId);
+        if (!hasCompletedTour) {
+            return res.status(400).json({ error: 'Only tourists who completed a tour with this guide can comment' });
+        }
+
+        // Add the comment
+        const comment = { text, tourist: touristId };
+        tourGuide.comments.push(comment);
+
+        await tourGuide.save();
+        res.json({ message: 'Comment added successfully', comment });
+    } catch (error) {
+        console.error('Error adding comment:', error);
+        res.status(500).json({ error: 'Server error while adding comment' });
+    }
+};
+
+
+
+const Itinerary = require('../models/Itinerary');
+const User = require('../models/User');
+
+// Function for rating an itinerary
+exports.rateItinerary = async (req, res) => {
+    const { itineraryId, rating } = req.body;
+    const touristId = req.user.id; // Assuming the tourist ID is available from the auth middleware
+
+    try {
+        // Find the itinerary
+        const itinerary = await Itinerary.findById(itineraryId);
+
+        if (!itinerary) {
+            return res.status(404).json({ error: 'Itinerary not found' });
+        }
+
+        // Check if the tourist has completed the tour with the guide
+        const hasCompletedTour = req.user.completedItineraries.includes(itineraryId);
+
+        if (!hasCompletedTour) {
+            return res.status(400).json({ error: 'Only tourists who completed this tour can rate' });
+        }
+
+        // Check that the rating is between 1 and 5
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+        }
+
+        // Add the rating to the itinerary
+        itinerary.ratings.push({ tourist: touristId, rating });
+
+        // Save the itinerary with the new rating
+        await itinerary.save();
+
+        res.json({ message: 'Rating added successfully', itinerary });
+    } catch (error) {
+        console.error('Error rating itinerary:', error);
+        res.status(500).json({ error: 'Server error while adding rating' });
+    }
+};
+
+// Function for commenting on an itinerary
+exports.commentOnItinerary = async (req, res) => {
+    const { itineraryId, comment } = req.body;
+    const touristId = req.user.id; // Assuming the tourist ID is available from the auth middleware
+
+    try {
+        // Find the itinerary
+        const itinerary = await Itinerary.findById(itineraryId);
+
+        if (!itinerary) {
+            return res.status(404).json({ error: 'Itinerary not found' });
+        }
+
+        // Check if the tourist has completed the tour with the guide
+        const hasCompletedTour = req.user.completedItineraries.includes(itineraryId);
+
+        if (!hasCompletedTour) {
+            return res.status(400).json({ error: 'Only tourists who completed this tour can comment' });
+        }
+
+        // Add the comment to the itinerary
+        itinerary.comments.push({ tourist: touristId, comment });
+
+        // Save the itinerary with the new comment
+        await itinerary.save();
+
+        res.json({ message: 'Comment added successfully', itinerary });
+    } catch (error) {
+        console.error('Error commenting on itinerary:', error);
+        res.status(500).json({ error: 'Server error while adding comment' });
+    }
+};
+
+
