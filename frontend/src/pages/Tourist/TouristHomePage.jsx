@@ -6,6 +6,8 @@ import axios from 'axios';
 import ActivitiesCard from '../../components/Advertiser/ActivitiesCard';
 import ItinerariesCard from '../../components/TourGuide/ItinerariesCard';
 import AttractionsCard from '../../components/TourismGovernor/AttractionsCard';
+import Header from './Header';
+import CurrencySelect from './CurrencySelect';
 
 const TouristGuest = () => {
 	const navigate = useNavigate();
@@ -197,19 +199,11 @@ const TouristGuest = () => {
 								Activities
 							</h1>
 							<div className='flex space-x-2'>
-								<label htmlFor='currency-select'>Select Currency:</label>
-								<select
-									id='currency-select'
-									value={selectedCurrency}
-									onChange={handleCurrencyChange}>
-									{Object.keys(rates).map((currency) => (
-										<option
-											key={currency}
-											value={currency}>
-											{currency}
-										</option>
-									))}
-								</select>
+								<CurrencySelect
+									selectedCurrency={selectedCurrency}
+									rates={rates}
+									handleCurrencyChange={handleCurrencyChange}
+								/>
 
 								<button
 									onClick={filterActivities}
@@ -245,19 +239,11 @@ const TouristGuest = () => {
 								Itineraries
 							</h1>
 							<div className='flex space-x-2'>
-								<label htmlFor='currency-select'>Select Currency:</label>
-								<select
-									id='currency-select'
-									value={selectedCurrency}
-									onChange={handleCurrencyChange}>
-									{Object.keys(rates).map((currency) => (
-										<option
-											key={currency}
-											value={currency}>
-											{currency}
-										</option>
-									))}
-								</select>
+								<CurrencySelect
+									selectedCurrency={selectedCurrency}
+									rates={rates}
+									handleCurrencyChange={handleCurrencyChange}
+								/>
 
 								<button
 									onClick={filterItineraries}
@@ -288,19 +274,11 @@ const TouristGuest = () => {
 			case 'Attractions':
 				return (
 					<div className='text-center'>
-						<label htmlFor='currency-select'>Select Currency:</label>
-						<select
-							id='currency-select'
-							value={selectedCurrency}
-							onChange={handleCurrencyChange}>
-							{Object.keys(rates).map((currency) => (
-								<option
-									key={currency}
-									value={currency}>
-									{currency}
-								</option>
-							))}
-						</select>
+						<CurrencySelect
+							selectedCurrency={selectedCurrency}
+							rates={rates}
+							handleCurrencyChange={handleCurrencyChange}
+						/>
 
 						<div></div>
 
@@ -330,50 +308,7 @@ const TouristGuest = () => {
 
 	return (
 		<div className='bg-gray-100 min-h-screen'>
-			<header className='flex justify-between items-center p-4 bg-white shadow-md'>
-				<h1 className='text-xl font-semibold text-gray-800'>
-					Tourist Home Page
-				</h1>
-				<div className='flex space-x-4'>
-					<button
-						onClick={() => navigate('/tourist/homePage/points')}
-						className='btn btn-primary'>
-						Points
-					</button>
-					<button
-						onClick={() => navigate('/tourist/homePage/wallet')}
-						className='btn btn-primary'>
-						Wallet
-					</button>
-					<button className='btn btn-primary'>Book Hotel</button>
-					<button className='btn btn-primary'>Book Flight</button>
-					<button
-						onClick={() => navigate('/tourist/homePage/products')}
-						className='btn btn-primary'>
-						Products
-					</button>
-					<button
-						onClick={() => navigate('/tourist/homePage/reservations')}
-						className='btn btn-primary'>
-						Reservations
-					</button>
-					<button
-						onClick={() => navigate('/tourist/homePage/complaints')}
-						className='btn btn-primary'>
-						Complaints
-					</button>
-					<button
-						onClick={() => navigate('/tourist/homePage/change-password')}
-						className='btn btn-primary'>
-						Change Password
-					</button>
-					<button
-						onClick={() => navigate('/tourist/homePage/profile')}
-						className='btn btn-primary'>
-						My Profile
-					</button>
-				</div>
-			</header>
+			<Header />
 			<div className='container mx-auto mt-8'>
 				{/* Tabs for Activities, Itineraries, and Attractions */}
 				<div className='tabs mb-6 flex justify-center space-x-6'>
@@ -522,6 +457,8 @@ const TouristGuest = () => {
 								<option value='German'>German</option>
 								<option value='Spanish'>Spanish</option>
 								<option value='France'>France</option>
+								<option value='Chinese'>Chinese</option>
+								<option value='Greek'>Greek</option>
 							</select>
 						</div>
 					</div>
