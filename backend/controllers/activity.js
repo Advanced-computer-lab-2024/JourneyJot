@@ -243,38 +243,26 @@ exports.getCompletedActivities = async (req, res) => {
 exports.addRatingAndComment = async (req, res) => {
 	try {
 		const { activityId, rating, comment } = req.body;
-		const userId = req.user._id; // Assuming user is authenticated
+		const userId = req.user._id; // Assuming user is authenticated and `req.user` is populated
 
 		// Find the activity and add the rating and comment
 		const activity = await Activity.findById(activityId);
+
+		// Add the new rating to the ratings array
 		activity.ratings.push({ userId, rating, comment });
 		await activity.save();
 
-		res.status(200).json({ message: 'Rating and comment added successfully!' });
-	} catch (error) {
-		console.error('Error adding rating and comment:', error.message);
-		res.status(400).json({ error: error.message });
-	}
-};
-
-// Fetch Activity with Ratings and Comments
-exports.getActivityWithRatings = async (req, res) => {
-	try {
-		const { activityId } = req.params;
-
-		const activity = await Activity.findById(activityId)
-			.populate({
-				path: 'ratings.userId', // Populate userId inside each rating
-				select: 'username', // Only select the username field from the Tourist model
-			})
+		// Re-fetch the updated activity with populated `ratings.userId`
+		const updatedActivity = await Activity.findById(activityId)
+			.populate('ratings.userId', 'username') // Only populate `username` field from the `Tourist` model
 			.exec();
 
-		// Debugging: Log the activity object to see if userId is populated
-		console.log(activity); // Check if the `ratings.userId` is populated correctly
-
-		res.status(200).json({ activity });
+		res.status(200).json({
+			message: 'Rating and comment added successfully!',
+			activity: updatedActivity,
+		});
 	} catch (error) {
-		console.error('Error fetching activity:', error.message);
+		console.error('Error adding rating and comment:', error.message);
 		res.status(400).json({ error: error.message });
 	}
 };

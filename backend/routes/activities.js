@@ -13,7 +13,6 @@ const {
 	sortByPriceOrRating,
 	getCompletedActivities,
 	addRatingAndComment,
-	getActivityWithRatings,
 } = require('../controllers/activity');
 const authenticate = require('../middleware/auth-check'); // Assuming you have an auth middleware
 const advertiserCheck = require('../middleware/advertiser-check');
@@ -27,7 +26,6 @@ activityRouter.get('/filter', getFilteredActivities); // Filter activities
 activityRouter.get('/sort', sortByPriceOrRating); // Sort activities
 activityRouter.get('/complete', authenticate, getCompletedActivities); // Get single activity by id
 activityRouter.post('/add/rate/comment', authenticate, addRatingAndComment);
-activityRouter.get('rating/:id', authenticate, getActivityWithRatings); // Get single activity by id
 activityRouter.get('/:id', getActivity); // Get single activity by id
 
 module.exports = activityRouter;
