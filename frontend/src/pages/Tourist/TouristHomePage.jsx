@@ -7,7 +7,6 @@ import ActivitiesCard from '../../components/Advertiser/ActivitiesCard';
 import ItinerariesCard from '../../components/TourGuide/ItinerariesCard';
 import AttractionsCard from '../../components/TourismGovernor/AttractionsCard';
 import Header from './Header';
-import CurrencySelect from './CurrencySelect';
 
 const TouristGuest = () => {
 	const navigate = useNavigate();
@@ -18,12 +17,14 @@ const TouristGuest = () => {
 
 	const [categories, setCategories] = useState([]);
 	const [category, setCategory] = useState('');
+
 	const [preferences, setPreferences] = useState([]);
 	const [preferenceTag, setPreferenceTag] = useState('');
 
 	const [budget, setBudget] = useState('');
 	const [date, setDate] = useState('');
 	const [ratings, setRatings] = useState('');
+
 	const [language, setLanguage] = useState('');
 
 	const [activeTab, setActiveTab] = useState('Activities');
@@ -199,11 +200,19 @@ const TouristGuest = () => {
 								Activities
 							</h1>
 							<div className='flex space-x-2'>
-								<CurrencySelect
-									selectedCurrency={selectedCurrency}
-									rates={rates}
-									handleCurrencyChange={handleCurrencyChange}
-								/>
+								<label htmlFor='currency-select'>Select Currency:</label>
+								<select
+									id='currency-select'
+									value={selectedCurrency}
+									onChange={handleCurrencyChange}>
+									{Object.keys(rates).map((currency) => (
+										<option
+											key={currency}
+											value={currency}>
+											{currency}
+										</option>
+									))}
+								</select>
 
 								<button
 									onClick={filterActivities}
@@ -239,11 +248,19 @@ const TouristGuest = () => {
 								Itineraries
 							</h1>
 							<div className='flex space-x-2'>
-								<CurrencySelect
-									selectedCurrency={selectedCurrency}
-									rates={rates}
-									handleCurrencyChange={handleCurrencyChange}
-								/>
+								<label htmlFor='currency-select'>Select Currency:</label>
+								<select
+									id='currency-select'
+									value={selectedCurrency}
+									onChange={handleCurrencyChange}>
+									{Object.keys(rates).map((currency) => (
+										<option
+											key={currency}
+											value={currency}>
+											{currency}
+										</option>
+									))}
+								</select>
 
 								<button
 									onClick={filterItineraries}
@@ -274,11 +291,19 @@ const TouristGuest = () => {
 			case 'Attractions':
 				return (
 					<div className='text-center'>
-						<CurrencySelect
-							selectedCurrency={selectedCurrency}
-							rates={rates}
-							handleCurrencyChange={handleCurrencyChange}
-						/>
+						<label htmlFor='currency-select'>Select Currency:</label>
+						<select
+							id='currency-select'
+							value={selectedCurrency}
+							onChange={handleCurrencyChange}>
+							{Object.keys(rates).map((currency) => (
+								<option
+									key={currency}
+									value={currency}>
+									{currency}
+								</option>
+							))}
+						</select>
 
 						<div></div>
 
@@ -307,55 +332,55 @@ const TouristGuest = () => {
 	};
 
 	return (
-		<div className='bg-gray-100 min-h-screen'>
+		<div className='bg-gradient-to-br from-indigo-100 via-teal-200 to-blue-300 min-h-screen text-gray-800'>
 			<Header />
-			<div className='container mx-auto mt-8'>
+			<div className='container mx-auto mt-8 px-4'>
 				{/* Tabs for Activities, Itineraries, and Attractions */}
 				<div className='tabs mb-6 flex justify-center space-x-6'>
 					<button
 						className={`tab-btn ${
 							activeTab === 'Activities'
-								? 'bg-blue-500 text-white'
-								: 'text-blue-500'
-						} hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
+								? 'bg-teal-600 text-white'
+								: 'text-teal-600'
+						} hover:bg-teal-600 hover:text-white py-2 px-6 rounded-lg shadow-md transition duration-300`}
 						onClick={() => setActiveTab('Activities')}>
 						Activities
 					</button>
 					<button
 						className={`tab-btn ${
 							activeTab === 'Itineraries'
-								? 'bg-blue-500 text-white'
-								: 'text-blue-500'
-						} hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
+								? 'bg-teal-600 text-white'
+								: 'text-teal-600'
+						} hover:bg-teal-600 hover:text-white py-2 px-6 rounded-lg shadow-md transition duration-300`}
 						onClick={() => setActiveTab('Itineraries')}>
 						Itineraries
 					</button>
 					<button
 						className={`tab-btn ${
 							activeTab === 'Attractions'
-								? 'bg-blue-500 text-white'
-								: 'text-blue-500'
-						} hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
+								? 'bg-teal-600 text-white'
+								: 'text-teal-600'
+						} hover:bg-teal-600 hover:text-white py-2 px-6 rounded-lg shadow-md transition duration-300`}
 						onClick={() => setActiveTab('Attractions')}>
 						Attractions
 					</button>
 				</div>
 
 				{/* Filters */}
-				<div className='filters mb-6 p-6 bg-white rounded-lg shadow-lg'>
-					<h2 className='text-xl font-bold mb-4'>Filters</h2>
-					<div className='grid grid-cols-2 gap-4'>
+				<div className='filters mb-6 p-8 bg-gradient-to-br from-gray-100 via-teal-100 to-white rounded-lg shadow-xl'>
+					<h2 className='text-2xl font-semibold mb-6 text-teal-500'>Filters</h2>
+					<div className='grid grid-cols-2 gap-6'>
 						<div className='filter-item'>
 							<label
 								htmlFor='category'
-								className='block text-sm font-medium'>
+								className='block text-sm font-medium text-gray-700'>
 								Category
 							</label>
 							<select
 								id='category'
 								value={category}
 								onChange={(e) => setCategory(e.target.value)}
-								className='form-select w-full mt-1'>
+								className='form-select w-full mt-2 bg-white text-gray-800 rounded-lg shadow-sm'>
 								<option value=''>All Categories</option>
 								{categories.map((cat) => (
 									<option
@@ -370,14 +395,14 @@ const TouristGuest = () => {
 						<div className='filter-item'>
 							<label
 								htmlFor='preferenceTag'
-								className='block text-sm font-medium'>
+								className='block text-sm font-medium text-gray-700'>
 								Tags (Preferences)
 							</label>
 							<select
 								id='preferenceTag'
 								value={preferenceTag}
 								onChange={(e) => setPreferenceTag(e.target.value)}
-								className='form-select w-full mt-1'>
+								className='form-select w-full mt-2 bg-white text-gray-800 rounded-lg shadow-sm'>
 								<option value=''>All Preferences</option>
 								{preferences.map((pref) => (
 									<option
@@ -392,7 +417,7 @@ const TouristGuest = () => {
 						<div className='filter-item'>
 							<label
 								htmlFor='budget'
-								className='block text-sm font-medium'>
+								className='block text-sm font-medium text-gray-700'>
 								Budget
 							</label>
 							<input
@@ -401,14 +426,14 @@ const TouristGuest = () => {
 								value={budget}
 								onChange={(e) => setBudget(e.target.value)}
 								placeholder='Enter your budget'
-								className='form-input w-full mt-1'
+								className='form-input w-full mt-2 bg-white text-gray-800 rounded-lg shadow-sm'
 							/>
 						</div>
 
 						<div className='filter-item'>
 							<label
 								htmlFor='date'
-								className='block text-sm font-medium'>
+								className='block text-sm font-medium text-gray-700'>
 								Date
 							</label>
 							<input
@@ -416,21 +441,21 @@ const TouristGuest = () => {
 								type='date'
 								value={date}
 								onChange={(e) => setDate(e.target.value)}
-								className='form-input w-full mt-1'
+								className='form-input w-full mt-2 bg-white text-gray-800 rounded-lg shadow-sm'
 							/>
 						</div>
 
 						<div className='filter-item'>
 							<label
 								htmlFor='ratings'
-								className='block text-sm font-medium'>
+								className='block text-sm font-medium text-gray-700'>
 								Ratings
 							</label>
 							<select
 								id='ratings'
 								value={ratings}
 								onChange={(e) => setRatings(e.target.value)}
-								className='form-select w-full mt-1'>
+								className='form-select w-full mt-2 bg-white text-gray-800 rounded-lg shadow-sm'>
 								<option value=''>All Ratings</option>
 								<option value='1'>1 Star</option>
 								<option value='2'>2 Stars</option>
@@ -443,22 +468,20 @@ const TouristGuest = () => {
 						<div className='filter-item'>
 							<label
 								htmlFor='language'
-								className='block text-sm font-medium'>
+								className='block text-sm font-medium text-gray-700'>
 								Language
 							</label>
 							<select
 								id='language'
 								value={language}
 								onChange={(e) => setLanguage(e.target.value)}
-								className='form-select w-full mt-1'>
+								className='form-select w-full mt-2 bg-white text-gray-800 rounded-lg shadow-sm'>
 								<option value=''>All Languages</option>
 								<option value='English'>English</option>
 								<option value='Arabic'>Arabic</option>
 								<option value='German'>German</option>
 								<option value='Spanish'>Spanish</option>
-								<option value='France'>France</option>
-								<option value='Chinese'>Chinese</option>
-								<option value='Greek'>Greek</option>
+								<option value='French'>French</option>
 							</select>
 						</div>
 					</div>
@@ -470,5 +493,4 @@ const TouristGuest = () => {
 		</div>
 	);
 };
-
 export default TouristGuest;

@@ -93,7 +93,7 @@ const ActivityList = () => {
 
 	return (
 		<div className='container mx-auto px-4 py-8'>
-			<h1 className='text-3xl font-bold text-center mb-6'>
+			<h1 className='text-3xl font-bold text-center mb-6 text-gray-800'>
 				Completed Activities
 			</h1>
 			{error && <p className='text-red-500 text-center'>{error}</p>}
@@ -105,8 +105,10 @@ const ActivityList = () => {
 						return (
 							<div
 								key={activity._id}
-								className='bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300'>
-								<h3 className='text-xl font-semibold mb-2'>{activity.name}</h3>
+								className='bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:scale-105'>
+								<h3 className='text-xl font-semibold mb-2 text-gray-900'>
+									{activity.name}
+								</h3>
 								<p className='text-gray-600'>
 									Advertiser: {activity.advertiserId?.username || 'N/A'}
 								</p>
@@ -115,7 +117,9 @@ const ActivityList = () => {
 								</p>
 
 								<div className='mt-4'>
-									<h4 className='font-semibold'>Rate & Comment:</h4>
+									<h4 className='font-semibold text-gray-700'>
+										Rate & Comment:
+									</h4>
 									<input
 										type='number'
 										min='1'
@@ -124,7 +128,7 @@ const ActivityList = () => {
 										onChange={(e) =>
 											handleInputChange(activity._id, 'rating', e.target.value)
 										}
-										className='border p-2 w-24 mt-2'
+										className='border p-2 w-24 mt-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
 										placeholder='Rating (1-5)'
 									/>
 									<textarea
@@ -132,29 +136,34 @@ const ActivityList = () => {
 										onChange={(e) =>
 											handleInputChange(activity._id, 'comment', e.target.value)
 										}
-										className='border p-2 mt-2 w-full'
+										className='border p-2 mt-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
 										placeholder='Leave a comment'
 									/>
 									<button
 										onClick={() => handleSubmitRating(activity._id)}
-										className='bg-blue-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-blue-600 transition-colors duration-200'>
+										className='bg-blue-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-blue-600 transition-colors duration-200 w-full'>
 										Submit
 									</button>
 								</div>
 
 								{activity.ratings?.length > 0 && (
 									<div className='mt-4'>
-										<h4 className='font-semibold'>Comments & Ratings:</h4>
+										<h4 className='font-semibold text-gray-700'>
+											Comments & Ratings:
+										</h4>
 										{activity.ratings.map((ratingData, index) => (
 											<div
 												key={index}
 												className='mb-2'>
-												<p className='font-medium'>
+												<p className='font-medium text-gray-800'>
 													{ratingData.userId || 'Anonymous'}
-													{/* Display username or 'Anonymous' if no username */}
 												</p>
-												<p>{ratingData.rating} Stars</p>
-												<p className='italic'>{ratingData.comment}</p>
+												<p className='text-gray-600'>
+													{ratingData.rating} Stars
+												</p>
+												<p className='italic text-gray-500'>
+													{ratingData.comment}
+												</p>
 											</div>
 										))}
 									</div>

@@ -27,11 +27,6 @@ const AdvertiserDashBoard = () => {
 							className='text-blue-600 hover:text-blue-800 transition duration-300'>
 							Change Password
 						</Link>
-						<Link
-							to='/completed'
-							className='text-blue-600 hover:text-blue-800 transition duration-300'>
-							completed
-						</Link>
 					</div>
 				</div>
 			</nav>
