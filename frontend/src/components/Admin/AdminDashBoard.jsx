@@ -33,7 +33,7 @@ const AdminDashboard = () => {
 		{
 			path: '/admins/category-management',
 			label: 'Category Management',
-			color: 'bg-amber-500',
+			color: 'bg-amber-400',
 		},
 		{
 			path: '/admins/preference-tag-management',
@@ -57,7 +57,7 @@ const AdminDashboard = () => {
 			color: 'bg-violet-500',
 		},
 		{
-			path: '/admins/complaints', // New complaint management item
+			path: '/admins/complaints',
 			label: 'Manage Complaints',
 			color: 'bg-red-500',
 		},
@@ -71,17 +71,18 @@ const AdminDashboard = () => {
 			.replace(/\b\w/g, (char) => char.toUpperCase());
 
 	return (
-		<div className='min-h-screen bg-slate-400'>
+		<div className='min-h-screen bg-gray-100'>
 			{/* Navbar */}
 			<nav className='bg-white shadow-md border-b border-gray-200'>
 				<div className='max-w-7xl mx-auto px-6 py-4 flex justify-between items-center'>
 					<div className='flex items-center space-x-2'>
-						<FaUserCircle className='text-3xl text-gray-700' />{' '}
-						<h1 className='text-2 font-bold text-gray-800'>Admin Dashboard</h1>
-						<span className='text-lg font-semibold text-gray-700'>Profile</span>
+						<FaUserCircle className='text-3xl text-gray-700' />
+						<h4 className='text-2xl font-bold text-gray-800'>
+							Admin Dashboard
+						</h4>
 					</div>
 
-					<div className='flex items-center space-x-10'>
+					<div className='flex items-center space-x-6'>
 						{navLinks.map((path, index) => (
 							<Link
 								key={index}
@@ -108,17 +109,16 @@ const AdminDashboard = () => {
 					<p className='text-gray-600 mb-6'>
 						Manage platform users, add new admins, and more.
 					</p>
+					{/* Grid for dashboard items */}
 					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
 						{dashboardItems.map(({ path, label, color }, index) => (
 							<Link
 								key={index}
 								to={path}
-								className={`${color} text-white text-center py-4 rounded-lg shadow-md 
-                            hover:${color.replace(
-															'500',
-															'600'
-														)} transform hover:scale-105 
-                            transition-all duration-300`}>
+								className={`${color} text-white text-center py-6 rounded-lg shadow-lg hover:${color.replace(
+									'500',
+									'600'
+								)} transform hover:scale-105 transition-all duration-300`}>
 								{label}
 							</Link>
 						))}
