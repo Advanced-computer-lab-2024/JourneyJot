@@ -1,5 +1,3 @@
-/** @format */
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -140,7 +138,7 @@ const TouristReservations = () => {
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-8 max-w-5xl mx-auto bg-gradient-to-r from-teal-50 to-teal-100 min-h-screen">
       <div className="flex justify-center space-x-6 mb-10">
         <button
           className={`px-6 py-3 rounded-full font-semibold text-lg transition-all duration-200 ${
