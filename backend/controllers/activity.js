@@ -245,21 +245,26 @@ exports.addRatingAndComment = async (req, res) => {
 		const { activityId, rating, comment } = req.body;
 		const userId = req.user._id; // Assuming user is authenticated and `req.user` is populated
 
-		// Find the activity and add the rating and comment
+		// Find the activity and populate `userId` within `ratings`
 		const activity = await Activity.findById(activityId);
+
+		if (!activity) {
+			return res.status(404).json({ message: 'Activity not found.' });
+		}
 
 		// Add the new rating to the ratings array
 		activity.ratings.push({ userId, rating, comment });
 		await activity.save();
 
-		// Re-fetch the updated activity with populated `ratings.userId`
-		const updatedActivity = await Activity.findById(activityId)
-			.populate('ratings.userId', 'username') // Only populate `username` field from the `Tourist` model
-			.exec();
+		// Populate `userId` field after saving (populate can be done here on-the-fly)
+		await activity.populate({
+			path: 'ratings.userId',
+			select: 'email username',
+		});
 
 		res.status(200).json({
 			message: 'Rating and comment added successfully!',
-			activity: updatedActivity,
+			activity,
 		});
 	} catch (error) {
 		console.error('Error adding rating and comment:', error.message);
