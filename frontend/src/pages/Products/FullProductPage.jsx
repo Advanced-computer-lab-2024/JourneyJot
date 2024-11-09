@@ -96,8 +96,8 @@ const FullProductPage = () => {
 		}
 	};
 
-	if (loading) return <div>Loading...</div>;
-	if (error) return <div>{error}</div>;
+	if (loading) return <div className='text-center py-6'>Loading...</div>;
+	if (error) return <div className='text-center py-6'>{error}</div>;
 
 	return (
 		<div className='max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md'>
@@ -108,7 +108,7 @@ const FullProductPage = () => {
 						{product.picture && (
 							<div className='md:w-1/2 mb-4 md:mb-0 md:mr-4'>
 								<img
-									src={product.picture}
+									src={`http://localhost:3000/photos/${product.picture}`}
 									alt={product.name}
 									className='w-full h-80 object-cover rounded-lg'
 								/>
