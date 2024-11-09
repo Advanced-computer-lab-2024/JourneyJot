@@ -23,7 +23,7 @@ activityRouter.put("/:id", authenticate, advertiserCheck, updateActivity); // Up
 activityRouter.delete("/:id", authenticate, advertiserCheck, deleteActivity); // Delete activity
 activityRouter.get("/filter", getFilteredActivities); // Filter activities
 activityRouter.get("/sort", sortByPriceOrRating); // Sort activities
+activityRouter.get("/complete", getCompletedActivities); // Get single activity by id
 activityRouter.get("/:id", getActivity); // Get single activity by id
-activityRouter.get("/kr/:id", getCompletedActivities);
 
 module.exports = activityRouter;

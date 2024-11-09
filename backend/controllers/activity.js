@@ -205,9 +205,41 @@ exports.sortByPriceOrRating = async (req, res) => {
 
 exports.getCompletedActivities = async (req, res) => {
   try {
-    const activity = await Activity.find({
-      date: { $lt: Date.now() },
-    }).populate("advertiserId category preferenceTag");
+    const { category, preferenceTag } = req.query;
+
+    // Prepare the query object
+    const query = {
+      date: { $lt: new Date() }, // Filter for completed activities
+    };
+
+    // Add category and preferenceTag to the query if they are provided
+    if (category) {
+      query.category = category; // category should be an ObjectId or string (depends on your model)
+    }
+
+    if (preferenceTag) {
+      query.preferenceTag = preferenceTag; // preferenceTag should be an ObjectId or string (depends on your model)
+    }
+
+    // Fetch the completed activities from the database
+    const activities = await Activity.find(query)
+      .populate("category preferenceTag") // Populate category and preferenceTag if they are ObjectIds
+      .populate({
+        path: "advertiserId",
+        match: { status: "active" }, // Only include active advertisers
+      })
+      .exec();
+
+    // Filter out activities where advertiserId is null (i.e., advertiser is not active)
+    const activeActivities = activities.filter(
+      (activity) => activity.advertiserId
+    );
+
+    // Log the active activities for debugging
+    console.log("Active Activities:", activeActivities);
+
+    // Return the active activities as a JSON response
+    res.status(200).json({ activities: activeActivities });
   } catch (error) {
     // Log the error message for debugging
     console.error("Error fetching activities:", error.message);
