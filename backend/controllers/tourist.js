@@ -186,13 +186,6 @@ exports.buyProduct = async (req, res) => {
 			return res.status(400).json({ message: 'Insufficient quantity' });
 		}
 
-		// Assuming you have a Wallet model
-		// if (tourist.wallet.balance < product.price * quantity) {
-		//   return res.status(400).json({ message: "Insufficient funds" });
-		// }
-
-		// // Deduct the amount from the wallet
-		// tourist.wallet.balance -= product.price * quantity;
 		tourist.products.push(productId); // Add the product to the tourist's list of products
 		await tourist.save();
 
@@ -291,16 +284,6 @@ exports.TouristBookActivity = async (req, res) => {
 			return res.status(404).json({ message: 'Activity not found' });
 		}
 
-		// Check if wallet has enough balance
-		// if (tourist.wallet.balance < activity.price) {
-		//   return res.status(400).json({
-		//     message: "Insufficient wallet balance to book this activity",
-		//     requiredAmount: activity.price - tourist.wallet.balance,
-		//   });
-		// }
-
-		// // Deduct the price from wallet balance
-		// tourist.wallet.balance -= activity.price;
 		tourist.activities.push(activityId);
 
 		// Save the updated tourist data
@@ -329,19 +312,6 @@ exports.TouristBookAttraction = async (req, res) => {
 		if (!attraction) {
 			return res.status(404).json({ message: 'Attraction not found' });
 		}
-
-		// // Check if wallet has enough balance
-		// if (tourist.wallet.balance < attraction.price) {
-		//   return res.status(400).json({
-		//     message: "Insufficient wallet balance to book this attraction",
-		//     requiredAmount: attraction.price - tourist.wallet.balance,
-		//   });
-		// }
-
-		// // Deduct the price from wallet balance
-		// tourist.wallet.balance -= attraction.price;
-
-		// Add the attraction to the tourist's list
 		tourist.attractions.push(attractionId);
 
 		// Save the updated tourist data
@@ -370,18 +340,6 @@ exports.TouristBookItinerary = async (req, res) => {
 			return res.status(404).json({ message: 'Itinerary not found' });
 		}
 
-		// Check if wallet has enough balance
-		// if (tourist.wallet.balance < itinerary.price) {
-		//   return res.status(400).json({
-		//     message: "Insufficient wallet balance to book this itinerary",
-		//     requiredAmount: itinerary.price - tourist.wallet.balance,
-		//   });
-		// }
-
-		// // Deduct the price from wallet balance
-		// tourist.wallet.balance -= itinerary.price;
-
-		// Add the itinerary to the tourist's list
 		tourist.itineraries.push(itineraryId);
 
 		// Save the updated tourist data
@@ -402,7 +360,7 @@ exports.getTouristData = async (req, res) => {
 			// Populate activities with the entire document (including advertiserId)
 			.populate({
 				path: 'activities', // Populating activities with advertiserId inside activity document
-				populate: { path: 'advertiserId' },
+				populate: { path: 'advertiserId category preferenceTag' },
 			})
 			.populate({
 				path: 'attractions', // Populating attractions with governorId inside attraction document
