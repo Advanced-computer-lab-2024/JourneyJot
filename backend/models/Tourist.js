@@ -1,5 +1,3 @@
-/** @format */
-
 const mongoose = require("mongoose");
 const helperMethods = require("../helper/methods");
 
@@ -48,42 +46,46 @@ const touristSchema = new mongoose.Schema(
     wallet: {
       balance: {
         type: Number,
-        default: 0, // Default balance set to 0
+        default: 0,
       },
       currency: {
         type: String,
-        default: "USD", // Default currency set to USD
+        default: "USD",
       },
     },
     products: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product", // Reference to the Product model
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+        },
+        quantity: {
+          type: Number,
+        },
       },
     ],
     itineraries: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Itinerary", // Reference to the Itinerary model
+        ref: "Itinerary",
       },
     ],
     activities: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Activity", // Reference to the Activity model
+        ref: "Activity",
       },
     ],
     attractions: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Attraction", // Reference to the Attraction model
+        ref: "Attraction",
       },
     ],
     points: {
       type: Number,
-      default: 0, // Default balance set to 0
-
-    }
+      default: 0,
+    },
   },
   { timestamps: true }
 );

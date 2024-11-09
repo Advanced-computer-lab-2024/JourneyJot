@@ -49,7 +49,7 @@ const ActivitiesCard = ({
 	onDelete,
 	fetchActivities,
 	currency,
-	conversionRate,
+	conversionRate = 1
 }) => {
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [currentActivity, setCurrentActivity] = useState(null);
@@ -57,7 +57,6 @@ const ActivitiesCard = ({
 	const [tags, setTags] = useState([]);
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Modal state
 	const [selectedActivity, setSelectedActivity] = useState(null); // Store selected activity
-	const [error, setError] = useState(null); // State to handle errors
 
 	useEffect(() => {
 		// Fetch categories and tags
@@ -126,26 +125,40 @@ const ActivitiesCard = ({
 
 	const confirmBooking = async () => {
 		try {
-			const token = localStorage.getItem('token');
-			if (!token) throw new Error('No token found. Please login again.');
+			const token = localStorage.getItem("token");
+			if (!token) throw new Error("No token found. Please login again.");
 
 			const config = {
 				headers: { Authorization: `Bearer ${token}` },
 			};
 
-			const respone = await axios.post(
-				'http://localhost:3000/tourists/bookActivity',
+			// Make booking request to backend
+			const response = await axios.post(
+				"http://localhost:3000/tourists/bookActivity",
 				{ activityId: selectedActivity._id },
 				config
 			);
 
-			console.log(respone);
+			const {
+				message,
+				updatedWalletBalance,
+				pointsEarned,
+				totalPoints,
+			} = response.data;
+
+			// Display a success message with wallet and points details
+			alert(
+				`${message}. You earned ${pointsEarned} points! Your total points are now ${totalPoints}. Wallet balance: $${updatedWalletBalance}.`
+			);
+
 			setIsConfirmModalOpen(false); // Close the modal after booking
 		} catch (error) {
-			setError(error.response?.data?.message || 'An error occurred.'); // Set the error message in state
-			console.error('Error booking activity:', error);
+			console.error("Error booking activity:", error);
+			alert("An error occurred while booking the activity. Please try again.");
+			setIsConfirmModalOpen(false);
 		}
 	};
+
 
 	const handleShareActivity = (activity) => {
 		alert(`Share link for activity: ${activity.name}`);
@@ -153,52 +166,53 @@ const ActivitiesCard = ({
 
 	return (
 		<div>
-			<div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4'>
+			<div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
 				{activities.length > 0 ? (
 					activities.map((activity) => (
 						<div
 							key={activity._id}
-							className='border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-2xl transition-shadow duration-300'>
-							<div className='flex flex-col h-full space-y-4 text-left'>
-								<ul className='list-disc list-inside space-y-2'>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Advertiser Name: </span>
-										{activity.advertiserId?.username || 'N/A'}
+							className="border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-2xl transition-shadow duration-300"
+						>
+							<div className="flex flex-col h-full space-y-4 text-left">
+								<ul className="list-disc list-inside space-y-2">
+									<li className="text-gray-700">
+										<span className="font-semibold">Advertiser Name: </span>
+										{activity.advertiserId?.name || "N/A"}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Date: </span>
+									<li className="text-gray-700">
+										<span className="font-semibold">Date: </span>
 										{new Date(activity.date).toLocaleDateString()}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Time: </span>
+									<li className="text-gray-700">
+										<span className="font-semibold">Time: </span>
 										{activity.time}
 									</li>
-									<li>
-										<span className='font-semibold'>Price: </span>
-										{(activity.price * conversionRate).toFixed(1)} {currency}
+									<li className="text-gray-700">
+										<span className="font-semibold">Price: </span>
+										{(activity.price * conversionRate).toFixed(1)}   {currency}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Category: </span>
-										{activity.category?.name || 'N/A'}
+									<li className="text-gray-700">
+										<span className="font-semibold">Category: </span>
+										{activity.category?.name || "N/A"}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Tag: </span>
-										{activity.preferenceTag?.name || 'N/A'}
+									<li className="text-gray-700">
+										<span className="font-semibold">Tag: </span>
+										{activity.preferenceTag?.name || "N/A"}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Special Discounts: </span>
-										{activity.specialDiscounts || 'N/A'}
+									<li className="text-gray-700">
+										<span className="font-semibold">Special Discounts: </span>
+										{activity.specialDiscounts || "N/A"}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Booking Status: </span>
-										{activity.bookingOpen ? 'Open' : 'Closed'}
+									<li className="text-gray-700">
+										<span className="font-semibold">Booking Status: </span>
+										{activity.bookingOpen ? "Open" : "Closed"}
 									</li>
-									<li className='text-gray-700 flex items-center'>
-										<span className='font-semibold mr-2'>Rating: </span>
+									<li className="text-gray-700 flex items-center">
+										<span className="font-semibold mr-2">Rating: </span>
 										{activity.rating ? (
 											<StarRating rating={activity.rating} />
 										) : (
-											'N/A'
+											"N/A"
 										)}
 									</li>
 								</ul>
@@ -238,20 +252,6 @@ const ActivitiesCard = ({
 					</p>
 				)}
 			</div>
-
-			{error && (
-				<div className='fixed bottom-5 right-5 bg-red-600 text-white py-3 px-6 rounded-md shadow-lg z-50 transition-opacity duration-500 opacity-100'>
-					<div className='flex items-center justify-between space-x-4'>
-						<p className='font-semibold'>{error}</p>
-						<button
-							className='text-white font-bold'
-							onClick={() => setError(null)} // Close error message when clicked
-						>
-							X
-						</button>
-					</div>
-				</div>
-			)}
 
 			{/* Edit Modal */}
 			{isEditModalOpen && currentActivity && (

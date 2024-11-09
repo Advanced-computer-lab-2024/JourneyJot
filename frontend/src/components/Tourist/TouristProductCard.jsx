@@ -2,8 +2,8 @@
 
 import { Link } from 'react-router-dom';
 
-const ProductCard = ({ products = [] }) => {
-	// Render star ratings based on product rating
+
+const ProductCard = ({ products = [], currency, conversionRate = 1 }) => {	// Render star ratings based on product rating
 	const renderStars = (rating) => {
 		const totalStars = 5;
 		return (
@@ -11,9 +11,8 @@ const ProductCard = ({ products = [] }) => {
 				{Array.from({ length: totalStars }, (_, index) => (
 					<svg
 						key={index}
-						className={`w-5 h-5 ${
-							index < rating ? 'text-yellow-500' : 'text-gray-300'
-						}`}
+						className={`w-5 h-5 ${index < rating ? 'text-yellow-500' : 'text-gray-300'
+							}`}
 						fill='currentColor'
 						viewBox='0 0 20 20'
 						xmlns='http://www.w3.org/2000/svg'>
@@ -52,7 +51,7 @@ const ProductCard = ({ products = [] }) => {
 							</h2>
 							<p className='text-gray-600 text-sm mb-2'>{product.details}</p>
 							<p className='text-gray-800 font-medium mb-2'>
-								Price: ${product.price}
+								Price:  {(product.price * conversionRate).toFixed(2)} {currency}
 							</p>
 							<p className='text-gray-800 font-medium mb-2'>
 								Quantity: {product.quantity}
