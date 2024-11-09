@@ -202,3 +202,47 @@ exports.sortByPriceOrRating = async (req, res) => {
 		return res.status(500).json({ message: 'Error sorting activities', error });
 	}
 };
+
+exports.getCompletedActivities = async (req, res) => {
+	try {
+		const { category, preferenceTag } = req.query;
+
+		// Prepare the query object
+		const query = {
+			date: { $lt: new Date() }, // Only include activities that are completed (past date)
+		};
+
+		// Add category and preferenceTag to the query if they are provided
+		if (category) {
+			query.category = category; // Ensure that category is properly handled
+		}
+
+		if (preferenceTag) {
+			query.preferenceTag = preferenceTag; // Ensure that preferenceTag is properly handled
+		}
+
+		// Fetch activities with population (only if they are referenced as ObjectIds)
+		const activities = await Activity.find(query)
+			.populate('category preferenceTag') // Populate category and preferenceTag (if they are ObjectIds)
+			.populate({
+				path: 'advertiserId',
+				match: { status: 'active' }, // Only include activities for active advertisers
+			})
+			.exec();
+
+		// Filter out activities where advertiserId is null (i.e., advertiser is not active)
+		const activeActivities = activities.filter(
+			(activity) => activity.advertiserId
+		);
+
+		// Log the active activities for debugging
+		console.log('Active Activities:', activeActivities);
+
+		// Return the active activities
+		res.status(200).json({ activities: activeActivities });
+	} catch (error) {
+		// Log the error message for debugging
+		console.error('Error fetching activities:', error.message);
+		res.status(400).json({ error: error.message });
+	}
+};

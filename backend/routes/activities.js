@@ -11,6 +11,7 @@ const {
 	getActivity,
 	getFilteredActivities,
 	sortByPriceOrRating,
+	getCompletedActivities,
 } = require('../controllers/activity');
 const authenticate = require('../middleware/auth-check'); // Assuming you have an auth middleware
 const advertiserCheck = require('../middleware/advertiser-check');
@@ -23,5 +24,6 @@ activityRouter.delete('/:id', authenticate, advertiserCheck, deleteActivity); //
 activityRouter.get('/filter', getFilteredActivities); // Filter activities
 activityRouter.get('/sort', sortByPriceOrRating); // Sort activities
 activityRouter.get('/:id', getActivity); // Get single activity by id
+activityRouter.get('/complete', getCompletedActivities);
 
 module.exports = activityRouter;
