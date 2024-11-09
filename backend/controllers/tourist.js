@@ -278,18 +278,22 @@ exports.TouristBookActivity = async (req, res) => {
 			return res.status(404).json({ message: 'Tourist not found' });
 		}
 
-		// Find the activity by ID to get the price
+		// Find the activity by ID
 		const activity = await Activity.findById(activityId);
 		if (!activity) {
 			return res.status(404).json({ message: 'Activity not found' });
 		}
 
+		// Check if the activity is already booked
+		if (tourist.activities.includes(activityId)) {
+			return res.status(400).json({ message: 'Activity already booked' });
+		}
+
+		// Add the activity ID to the list
 		tourist.activities.push(activityId);
 
 		// Save the updated tourist data
 		await tourist.save();
-		console.log(activity);
-		console.log(tourist);
 		res.status(200).json({ message: 'Activity booked successfully' });
 	} catch (error) {
 		res.status(500).json({ message: 'Server error', error: error.message });
@@ -307,16 +311,22 @@ exports.TouristBookAttraction = async (req, res) => {
 			return res.status(404).json({ message: 'Tourist not found' });
 		}
 
-		// Find the attraction by ID to get the price
+		// Find the attraction by ID
 		const attraction = await Attraction.findById(attractionId);
 		if (!attraction) {
 			return res.status(404).json({ message: 'Attraction not found' });
 		}
+
+		// Check if the attraction is already booked
+		if (tourist.attractions.includes(attractionId)) {
+			return res.status(400).json({ message: 'Attraction already booked' });
+		}
+
+		// Add the attraction ID to the list
 		tourist.attractions.push(attractionId);
 
 		// Save the updated tourist data
 		await tourist.save();
-
 		res.status(200).json({ message: 'Attraction booked successfully' });
 	} catch (error) {
 		res.status(500).json({ message: 'Server error', error: error.message });
@@ -334,12 +344,18 @@ exports.TouristBookItinerary = async (req, res) => {
 			return res.status(404).json({ message: 'Tourist not found' });
 		}
 
-		// Find the itinerary by ID to get the price
+		// Find the itinerary by ID
 		const itinerary = await Itinerary.findById(itineraryId);
 		if (!itinerary) {
 			return res.status(404).json({ message: 'Itinerary not found' });
 		}
 
+		// Check if the itinerary is already booked
+		if (tourist.itineraries.includes(itineraryId)) {
+			return res.status(400).json({ message: 'Itinerary already booked' });
+		}
+
+		// Add the itinerary ID to the list
 		tourist.itineraries.push(itineraryId);
 
 		// Save the updated tourist data
