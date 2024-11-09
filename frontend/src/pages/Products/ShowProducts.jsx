@@ -17,14 +17,14 @@ const ShowProducts = () => {
 	const fetchProducts = async () => {
 		setLoading(true);
 		try {
-			const token = localStorage.getItem('token'); // or however you're storing the token
-			const response = await axios.get('http://localhost:3000/products', {
+			const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+			const response = await axios.get('http://localhost:3000/products/', {
 				headers: {
-					Authorization: `Bearer ${token}`, // Add the token in the request headers
+					Authorization: `Bearer ${token}`, // Send the token in the request header
 				},
 			});
 			setProducts(response.data.products);
-			console.log('Fetched products:', response.data);
+			console.log('Fetched products:', response.data); // Check the product data, including image paths
 		} catch (error) {
 			console.error('Error fetching data: ', error);
 		} finally {
@@ -33,8 +33,7 @@ const ShowProducts = () => {
 	};
 
 	useEffect(() => {
-		// sort and unsort products
-		setLoading(true);
+		// Fetch products when the component mounts or when sort changes
 		if (!sort) {
 			fetchProducts();
 		} else {
@@ -42,10 +41,10 @@ const ShowProducts = () => {
 				.get('http://localhost:3000/products/sortProducts')
 				.then((response) => {
 					setProducts(response.data.products);
-					console.log('Fetched sorted products:', response.data);
+					console.log('Fetched sorted products:', response.data); // Check sorted product data
 				})
 				.catch((error) => {
-					console.error('Error fetching data: ', error);
+					console.error('Error fetching sorted products: ', error);
 				})
 				.finally(() => setLoading(false));
 		}
@@ -59,7 +58,7 @@ const ShowProducts = () => {
 			})
 			.then((response) => {
 				setProducts(response.data.products);
-				console.log('Filtered products by price:', response.data);
+				console.log('Filtered products by price:', response.data); // Check filtered products
 			})
 			.catch((error) => {
 				console.error('Error filtering data: ', error);
@@ -68,7 +67,7 @@ const ShowProducts = () => {
 	};
 
 	useEffect(() => {
-		// handle if user is searching for something
+		// Handle searching products by name
 		if (searchedProduct.trim()) {
 			setLoading(true);
 			axios
@@ -77,10 +76,10 @@ const ShowProducts = () => {
 				})
 				.then((response) => {
 					setProducts(response.data.products);
-					console.log('Fetched searched products:', response.data);
+					console.log('Fetched searched products:', response.data); // Check searched products
 				})
 				.catch((error) => {
-					console.error('Error fetching data: ', error);
+					console.error('Error fetching searched products: ', error);
 				})
 				.finally(() => setLoading(false));
 		} else {
@@ -94,12 +93,13 @@ const ShowProducts = () => {
 				{/* Header and search bar */}
 				<h1 className='text-3xl font-bold text-teal-600'>Products</h1>
 				<div className='flex space-x-4 items-center justify-end w-3/4'>
-					{/* Sort by Rating button */}
+					{/* Add Product button */}
 					<Link to={'addProduct'}>
 						<button className='bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200'>
 							Add Product
 						</button>
 					</Link>
+					{/* Sort By Rating button */}
 					<button
 						className='bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200'
 						onClick={() => setSort((prevState) => !prevState)}>
@@ -140,6 +140,7 @@ const ShowProducts = () => {
 			</div>
 
 			<div className='mb-4'>
+				{/* Display loading spinner or products */}
 				{loading ? <Spinner /> : <ProductCard products={products} />}
 			</div>
 		</div>

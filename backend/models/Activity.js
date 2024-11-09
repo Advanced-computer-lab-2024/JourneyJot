@@ -61,6 +61,13 @@ const activitySchema = new mongoose.Schema(
 			min: 1,
 			max: 5,
 		},
+		ratings: [
+			{
+				userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Tourist' },
+				rating: { type: Number, required: true },
+				comment: { type: String },
+			},
+		],
 		flagged: { type: Boolean, default: false },
 	},
 	{ timestamps: true }

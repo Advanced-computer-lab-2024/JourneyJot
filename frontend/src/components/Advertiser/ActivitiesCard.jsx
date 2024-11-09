@@ -48,6 +48,8 @@ const ActivitiesCard = ({
 	isAdvertiser = false,
 	onDelete,
 	fetchActivities,
+	currency,
+	conversionRate,
 }) => {
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [currentActivity, setCurrentActivity] = useState(null);
@@ -55,6 +57,7 @@ const ActivitiesCard = ({
 	const [tags, setTags] = useState([]);
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Modal state
 	const [selectedActivity, setSelectedActivity] = useState(null); // Store selected activity
+	const [error, setError] = useState(null); // State to handle errors
 
 	useEffect(() => {
 		// Fetch categories and tags
@@ -139,6 +142,7 @@ const ActivitiesCard = ({
 			console.log(respone);
 			setIsConfirmModalOpen(false); // Close the modal after booking
 		} catch (error) {
+			setError(error.response?.data?.message || 'An error occurred.'); // Set the error message in state
 			console.error('Error booking activity:', error);
 		}
 	};
@@ -169,9 +173,9 @@ const ActivitiesCard = ({
 										<span className='font-semibold'>Time: </span>
 										{activity.time}
 									</li>
-									<li className='text-gray-700'>
+									<li>
 										<span className='font-semibold'>Price: </span>
-										{activity.price || 'N/A'}
+										{(activity.price * conversionRate).toFixed(1)} {currency}
 									</li>
 									<li className='text-gray-700'>
 										<span className='font-semibold'>Category: </span>
@@ -234,6 +238,20 @@ const ActivitiesCard = ({
 					</p>
 				)}
 			</div>
+
+			{error && (
+				<div className='fixed bottom-5 right-5 bg-red-600 text-white py-3 px-6 rounded-md shadow-lg z-50 transition-opacity duration-500 opacity-100'>
+					<div className='flex items-center justify-between space-x-4'>
+						<p className='font-semibold'>{error}</p>
+						<button
+							className='text-white font-bold'
+							onClick={() => setError(null)} // Close error message when clicked
+						>
+							X
+						</button>
+					</div>
+				</div>
+			)}
 
 			{/* Edit Modal */}
 			{isEditModalOpen && currentActivity && (

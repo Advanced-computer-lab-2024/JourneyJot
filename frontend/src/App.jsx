@@ -43,6 +43,9 @@ import TouristReservations from './pages/Tourist/TouristReservations.jsx';
 import TouristWallet from './pages/Tourist/TouristWallet.jsx';
 import TouristPoints from './pages/Tourist/TouristPoints.jsx';
 import ProductList from './components/Products/Archieve.jsx';
+import AdminComplain from './components/Admin/AdminComplain.jsx';
+import ActivityList from './components/Advertiser/ActivityList.jsx';
+
 const App = () => {
 	return (
 		<Routes>
@@ -156,7 +159,7 @@ const App = () => {
 				element={<AdminDeleteUser />}
 			/>
 			<Route
-				path='	'
+				path='/admins/category-management'
 				element={<CategoryManagement />}
 			/>
 			<Route
@@ -179,6 +182,14 @@ const App = () => {
 			<Route
 				path='/admins/flag-events'
 				element={<Flag />}
+			/>
+			<Route
+				path='/completed'
+				element={<ActivityList />}
+			/>
+			<Route
+				path='/admins/complaints'
+				element={<AdminComplain />}
 			/>
 
 			<Route

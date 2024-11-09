@@ -83,7 +83,7 @@ const Flag = () => {
 						key={itinerary._id}
 						className='flex justify-between items-center bg-gray-100 p-3 rounded shadow'>
 						<span className='text-lg'>
-							{itinerary.timeline || 'No timeline available'}
+							{itinerary.accessibility || 'No timeline available'}
 						</span>
 						<button
 							onClick={() => toggleItineraryFlag(itinerary._id)}

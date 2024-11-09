@@ -202,3 +202,79 @@ exports.sortByPriceOrRating = async (req, res) => {
 		return res.status(500).json({ message: 'Error sorting activities', error });
 	}
 };
+
+exports.getCompletedActivities = async (req, res) => {
+	try {
+		const { category, preferenceTag } = req.query;
+
+		const query = {
+			date: { $lt: new Date() }, // Filter for completed activities
+		};
+
+		if (category) {
+			query.category = category; // category should be an ObjectId or string (depends on your model)
+		}
+
+		if (preferenceTag) {
+			query.preferenceTag = preferenceTag; // preferenceTag should be an ObjectId or string (depends on your model)
+		}
+
+		const activities = await Activity.find(query)
+			.populate('category preferenceTag') // Populate category and preferenceTag if they are ObjectIds
+			.populate({
+				path: 'advertiserId',
+				match: { status: 'active' }, // Only include active advertisers
+			})
+			.exec();
+
+		const activeActivities = activities.filter(
+			(activity) => activity.advertiserId
+		);
+
+		console.log('Active Activities:', activeActivities);
+
+		res.status(200).json({ activities: activeActivities });
+	} catch (error) {
+		console.error('Error fetching activities:', error.message);
+		res.status(400).json({ error: error.message });
+	}
+};
+// Add Rating and Comment
+exports.addRatingAndComment = async (req, res) => {
+	try {
+		const { activityId, rating, comment } = req.body;
+		const userId = req.user._id; // Assuming user is authenticated
+
+		// Find the activity and add the rating and comment
+		const activity = await Activity.findById(activityId);
+		activity.ratings.push({ userId, rating, comment });
+		await activity.save();
+
+		res.status(200).json({ message: 'Rating and comment added successfully!' });
+	} catch (error) {
+		console.error('Error adding rating and comment:', error.message);
+		res.status(400).json({ error: error.message });
+	}
+};
+
+// Fetch Activity with Ratings and Comments
+exports.getActivityWithRatings = async (req, res) => {
+	try {
+		const { activityId } = req.params;
+
+		const activity = await Activity.findById(activityId)
+			.populate({
+				path: 'ratings.userId', // Populate userId inside each rating
+				select: 'username', // Only select the username field from the Tourist model
+			})
+			.exec();
+
+		// Debugging: Log the activity object to see if userId is populated
+		console.log(activity); // Check if the `ratings.userId` is populated correctly
+
+		res.status(200).json({ activity });
+	} catch (error) {
+		console.error('Error fetching activity:', error.message);
+		res.status(400).json({ error: error.message });
+	}
+};

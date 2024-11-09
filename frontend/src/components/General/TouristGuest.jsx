@@ -21,7 +21,6 @@ const TouristGuest = () => {
 	const [budget, setBudget] = useState('');
 	const [date, setDate] = useState('');
 	const [ratings, setRatings] = useState('');
-
 	const [language, setLanguage] = useState('');
 
 	const [activeTab, setActiveTab] = useState('Activities');
