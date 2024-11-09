@@ -209,24 +209,24 @@ exports.getCompletedActivities = async (req, res) => {
 
 		// Prepare the query object
 		const query = {
-			date: { $lt: new Date() }, // Only include activities that are completed (past date)
+			date: { $lt: new Date() }, // Filter for completed activities
 		};
 
 		// Add category and preferenceTag to the query if they are provided
 		if (category) {
-			query.category = category; // Ensure that category is properly handled
+			query.category = category; // category should be an ObjectId or string (depends on your model)
 		}
 
 		if (preferenceTag) {
-			query.preferenceTag = preferenceTag; // Ensure that preferenceTag is properly handled
+			query.preferenceTag = preferenceTag; // preferenceTag should be an ObjectId or string (depends on your model)
 		}
 
-		// Fetch activities with population (only if they are referenced as ObjectIds)
+		// Fetch the completed activities from the database
 		const activities = await Activity.find(query)
-			.populate('category preferenceTag') // Populate category and preferenceTag (if they are ObjectIds)
+			.populate('category preferenceTag') // Populate category and preferenceTag if they are ObjectIds
 			.populate({
 				path: 'advertiserId',
-				match: { status: 'active' }, // Only include activities for active advertisers
+				match: { status: 'active' }, // Only include active advertisers
 			})
 			.exec();
 
@@ -238,7 +238,7 @@ exports.getCompletedActivities = async (req, res) => {
 		// Log the active activities for debugging
 		console.log('Active Activities:', activeActivities);
 
-		// Return the active activities
+		// Return the active activities as a JSON response
 		res.status(200).json({ activities: activeActivities });
 	} catch (error) {
 		// Log the error message for debugging

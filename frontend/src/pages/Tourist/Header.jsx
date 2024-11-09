@@ -44,6 +44,11 @@ const Header = () => {
 					Change Password
 				</button>
 				<button
+					onClick={() => navigate('/completed')}
+					className='btn btn-primary'>
+					Completed Activities
+				</button>
+				<button
 					onClick={() => navigate('/tourist/homePage/profile')}
 					className='btn btn-primary'>
 					My Profile
