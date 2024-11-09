@@ -225,6 +225,10 @@ exports.getCompletedActivities = async (req, res) => {
 				path: 'advertiserId',
 				match: { status: 'active' }, // Only include active advertisers
 			})
+			.populate({
+				path: 'ratings.userId',
+				select: 'email username',
+			})
 			.exec();
 
 		const activeActivities = activities.filter(
