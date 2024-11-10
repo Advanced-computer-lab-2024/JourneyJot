@@ -81,6 +81,9 @@ const ItinerariesCard = ({ itineraries = [], currency, conversionRate }) => {
 			setIsModalOpen(false);
 		}
 	};
+	const handleShareItinerary = (activity) => {
+		alert(`Share link for activity: ${activity.name}`);
+	};
 
 	return (
 		<div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4'>
@@ -146,6 +149,11 @@ const ItinerariesCard = ({ itineraries = [], currency, conversionRate }) => {
 								onClick={() => handleBookItinerary(itinerary)}
 								className='bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-green-700'>
 								Book Itinerary
+							</button>
+							<button
+								onClick={() => handleShareItinerary(itinerary)}
+								className='bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 mt-2'>
+								Share
 							</button>
 						</div>
 					</div>

@@ -331,7 +331,7 @@ const TouristGuest = () => {
 	};
 
 	return (
-		<div className='bg-gradient-to-br from-indigo-100 via-teal-200 to-blue-300 min-h-screen text-gray-800'>
+		<div className='bg-gradient-to-br from-indigo-100 via-teal-100 to-blue-200 min-h-screen text-gray-800'>
 			<header className='flex justify-between items-center p-6 bg-opacity-90 backdrop-blur-lg shadow-md rounded-lg'>
 				<h1 className='text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500'>
 					Tourist PORTAL
