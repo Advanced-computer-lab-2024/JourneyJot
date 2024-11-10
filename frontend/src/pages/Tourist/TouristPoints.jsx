@@ -111,8 +111,9 @@ const TouristPoints = () => {
 							Your Level: <span className='text-blue-600'>Level {level}</span>
 						</p>
 						<p className='text-lg font-semibold'>
-							Badge: <span className='text-yellow-600'>{getBadge(level)}</span>
+							: <span className='text-yellow-600'>{getBadge(level)}</span>
 						</p>
+						Badge
 					</>
 				)}
 			</div>
