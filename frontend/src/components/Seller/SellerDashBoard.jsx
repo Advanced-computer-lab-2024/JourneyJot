@@ -13,7 +13,7 @@ const SellerDashBoard = () => {
 					</h1>
 					<div className='flex space-x-6'>
 						<Link
-							to='/change-password'
+							to='/seller-dashboard/change-password'
 							className='text-blue-600 hover:text-blue-800 transition duration-300'>
 							Change Password
 						</Link>
