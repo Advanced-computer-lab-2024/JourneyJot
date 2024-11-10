@@ -12,18 +12,20 @@ const FullProductPage = () => {
 	const [quantity, setQuantity] = useState(1); // Initial quantity set to 1
 	const [showReviews, setShowReviews] = useState(false); // State for showing reviews
 	const [rates, setRates] = useState({});
-	const [selectedCurrency, setSelectedCurrency] = useState("USD");
+	const [selectedCurrency, setSelectedCurrency] = useState('USD');
 	const [conversionRate, setConversionRate] = useState(1);
 
 	useEffect(() => {
 		// Fetch exchange rates
 		axios
-			.get("https://v6.exchangerate-api.com/v6/96d68d4689bfcab5166205e1/latest/USD")
-			.then(response => {
+			.get(
+				'https://v6.exchangerate-api.com/v6/96d68d4689bfcab5166205e1/latest/USD'
+			)
+			.then((response) => {
 				setRates(response.data.conversion_rates);
 			})
-			.catch(error => {
-				console.error("Error fetching exchange rates:", error);
+			.catch((error) => {
+				console.error('Error fetching exchange rates:', error);
 			});
 	}, []);
 
@@ -36,11 +38,13 @@ const FullProductPage = () => {
 	useEffect(() => {
 		const fetchProduct = async () => {
 			try {
-				const response = await axios.get(`http://localhost:3000/products/${id}`);
+				const response = await axios.get(
+					`http://localhost:3000/products/${id}`
+				);
 				setProduct(response.data.product);
 				setQuantity(1);
 			} catch (err) {
-				setError("Failed to fetch product data.");
+				setError('Failed to fetch product data.');
 			} finally {
 				setLoading(false);
 			}
@@ -73,8 +77,9 @@ const FullProductPage = () => {
 				{Array.from({ length: totalStars }, (_, index) => (
 					<svg
 						key={index}
-						className={`w-6 h-6 ${index < rating ? 'text-yellow-500' : 'text-gray-300'
-							}`}
+						className={`w-6 h-6 ${
+							index < rating ? 'text-yellow-500' : 'text-gray-300'
+						}`}
 						fill='currentColor'
 						viewBox='0 0 20 20'
 						xmlns='http://www.w3.org/2000/svg'>
@@ -125,15 +130,16 @@ const FullProductPage = () => {
 			// Display transaction details in the alert
 			alert(
 				`Transaction Details:\n` +
-				`- Total Cost: $${transactionDetails.totalCost}\n` +
-				`- Updated Wallet Balance: $${transactionDetails.updatedWalletBalance}\n` +
-				`- Points Earned: ${transactionDetails.pointsEarned}\n` +
-				`- Total Points: ${transactionDetails.totalPoints}`
+					`- Total Cost: $${transactionDetails.totalCost}\n` +
+					`- Updated Wallet Balance: $${transactionDetails.updatedWalletBalance}\n` +
+					`- Points Earned: ${transactionDetails.pointsEarned}\n` +
+					`- Total Points: ${transactionDetails.totalPoints}`
 			);
 		} catch (err) {
 			console.error('Error adding product to cart:', err); // Log the error
 			alert(
-				`Failed to add product to cart: ${err.response?.data?.message || err.message
+				`Failed to add product to cart: ${
+					err.response?.data?.message || err.message
 				}`
 			);
 		}
@@ -141,13 +147,19 @@ const FullProductPage = () => {
 
 	if (loading) return <div className='text-center py-6'>Loading...</div>;
 	if (error) return <div className='text-center py-6'>{error}</div>;
+	console.log(product);
 
 	return (
 		<div className='max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md'>
-			<label htmlFor="currency-select">Select Currency:</label>
-			<select id="currency-select" value={selectedCurrency} onChange={handleCurrencyChange}>
+			<label htmlFor='currency-select'>Select Currency:</label>
+			<select
+				id='currency-select'
+				value={selectedCurrency}
+				onChange={handleCurrencyChange}>
 				{Object.keys(rates).map((currency) => (
-					<option key={currency} value={currency}>
+					<option
+						key={currency}
+						value={currency}>
 						{currency}
 					</option>
 				))}
@@ -173,7 +185,9 @@ const FullProductPage = () => {
 								<h1 className='text-3xl font-bold mb-2'>{product.name}</h1>
 								<p className='text-gray-700 mb-4'>{product.details}</p>
 								<p className='text-gray-700 mb-2 text-xl font-semibold'>
-									Price: {(product.price * conversionRate * quantity).toFixed(2)} {selectedCurrency}
+									Price:{' '}
+									{(product.price * conversionRate * quantity).toFixed(2)}{' '}
+									{selectedCurrency}
 								</p>
 								<p className='text-gray-700 mb-4'>
 									Available Quantity: {product.quantity}

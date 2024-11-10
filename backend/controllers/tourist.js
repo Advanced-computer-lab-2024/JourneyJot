@@ -262,11 +262,13 @@ exports.getTouristProductHistory = async (req, res) => {
 	const user = req.user._id;
 
 	try {
-		const tourist = await Tourist.findById(user).populate({
-			path: 'products.productId',
-			model: 'Product', // Explicitly specify the model
-			select: 'name details', // Select the fields you need
-		});
+		const tourist = await Tourist.findById(user).populate('products');
+		// const tourist = await Tourist.findById(user).populate({
+		// 	path: 'products._id', // Specify the path to populate
+		// 	model: 'Product',
+		// 	select: 'name',
+		// });
+		// const tourist = await Tourist.findById(user).populate('products');
 
 		if (!tourist) {
 			return res.status(404).json({ message: 'Tourist not found' });
@@ -349,6 +351,13 @@ exports.TouristBookActivity = async (req, res) => {
 		if (!activity)
 			return res.status(404).json({ message: 'Activity not found' });
 
+		// Check if activity is already booked by the tourist
+		if (tourist.activities.includes(activityId)) {
+			return res
+				.status(400)
+				.json({ message: 'Activity has already been booked' });
+		}
+
 		// Check balance and deduct price
 		if (tourist.wallet.balance < activity.price) {
 			return res.status(400).json({ message: 'Insufficient wallet balance' });
@@ -392,6 +401,11 @@ exports.TouristBookAttraction = async (req, res) => {
 		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
 		if (!attraction)
 			return res.status(404).json({ message: 'Attraction not found' });
+		if (tourist.attractions.includes(attractionId)) {
+			return res
+				.status(400)
+				.json({ message: 'Attraction has already been booked' });
+		}
 
 		// Validate the ticket type and get the appropriate price
 		const ticketPrice = attraction.ticketPrices[ticketType];
@@ -445,6 +459,11 @@ exports.TouristBookItinerary = async (req, res) => {
 		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
 		if (!itinerary)
 			return res.status(404).json({ message: 'Itinerary not found' });
+		if (tourist.itineraries.includes(itineraryId)) {
+			return res
+				.status(400)
+				.json({ message: 'Itinerary has already been booked' });
+		}
 
 		// Check balance and deduct price
 		if (tourist.wallet.balance < itinerary.price) {

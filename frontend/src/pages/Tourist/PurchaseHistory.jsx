@@ -108,6 +108,8 @@ const PurchaseHistory = () => {
 		}
 	};
 
+	console.log(products);
+
 	return (
 		<div className='container mx-auto p-4'>
 			<h1 className='text-3xl font-semibold mb-6'>Purchase History</h1>
@@ -129,9 +131,11 @@ const PurchaseHistory = () => {
 							className='flex items-center justify-between'>
 							<div className='flex-1'>
 								<h2 className='text-xl font-semibold text-teal-600'>
-									{product._id}
+									{product.name}
 								</h2>
-								<p className='text-gray-700 mt-2'>{product._id}</p>
+								<span className='text-xl font-semibold text-teal-600'>
+									{product.details}
+								</span>
 							</div>
 							<button
 								onClick={() => openModal(product._id)}

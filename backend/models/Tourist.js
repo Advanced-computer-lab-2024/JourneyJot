@@ -56,13 +56,9 @@ const touristSchema = new mongoose.Schema(
 			},
 		},
 		products: [
-			{
-				productId: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: 'Product', // Reference to the Product model
-				},
-			},
+			{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }, // Reference to the Product model
 		],
+
 		itineraries: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
