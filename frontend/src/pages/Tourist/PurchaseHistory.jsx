@@ -3,12 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// StarRating Component for handling the star-based rating
 const StarRating = ({ rating, onChange }) => {
 	const stars = [1, 2, 3, 4, 5];
 
 	const handleStarClick = (star) => {
-		// Update the rating in the parent component when a star is clicked
 		onChange(star);
 	};
 
@@ -58,11 +56,9 @@ const PurchaseHistory = () => {
 					'http://localhost:3000/tourists/productHistory',
 					config
 				);
-				console.log(response.data); // Check the response data here
 				setProducts(response.data.products);
 			} catch (error) {
 				setError('Error fetching purchase history. Please try again.');
-				console.error('Error fetching purchase history', error);
 			} finally {
 				setLoading(false);
 			}
@@ -101,20 +97,16 @@ const PurchaseHistory = () => {
 				config
 			);
 
-			console.log('Review submitted successfully:', response.data);
-			closeModal(); // Close the modal after submission
+			closeModal();
 		} catch (error) {
 			console.error('Error submitting review:', error);
 		}
 	};
 
-	console.log(products);
-
 	return (
 		<div className='container mx-auto p-4'>
 			<h1 className='text-3xl font-semibold mb-6'>Purchase History</h1>
 
-			{/* Loading, Error, and Product List Rendering */}
 			{loading ? (
 				<div className='flex justify-center items-center'>
 					<div className='w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin'></div>
@@ -124,30 +116,30 @@ const PurchaseHistory = () => {
 			) : products.length === 0 ? (
 				<p>No products purchased.</p>
 			) : (
-				<ul className='space-y-6'>
-					{products.map((product, index) => (
-						<li
-							key={`${product._id}-${index}`}
-							className='flex items-center justify-between'>
-							<div className='flex-1'>
-								<h2 className='text-xl font-semibold text-teal-600'>
-									{product.name}
-								</h2>
-								<span className='text-xl font-semibold text-teal-600'>
-									{product.details}
-								</span>
-							</div>
+				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+					{products.map((product) => (
+						<div
+							key={product._id}
+							className='bg-white shadow-lg rounded-lg p-4'>
+							<img
+								src={`http://localhost:3000/photos/${product.picture}`}
+								alt={product.name}
+								className='w-full h-48 object-cover rounded-md mb-4'
+							/>
+							<h2 className='text-xl font-semibold text-teal-600 mb-2'>
+								{product.name}
+							</h2>
+							<p className='text-gray-600 mb-4'>{product.details}</p>
 							<button
 								onClick={() => openModal(product._id)}
 								className='bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-800 transition duration-200'>
 								Add Review
 							</button>
-						</li>
+						</div>
 					))}
-				</ul>
+				</div>
 			)}
 
-			{/* Modal for Adding Review */}
 			{modalOpen && (
 				<div className='fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50'>
 					<div className='bg-white p-6 rounded-lg shadow-lg w-96'>
