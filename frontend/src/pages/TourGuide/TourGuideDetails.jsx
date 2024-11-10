@@ -78,7 +78,7 @@ const TourGuideDetails = () => {
 			<div className='flex justify-center'>
 				{tourGuideProfile.image ? (
 					<img
-						src={tourGuideProfile.image}
+						src={`http://localhost:3000/images/${tourGuideProfile.image}`}
 						alt='Tour Guide'
 						className='w-32 h-32 rounded-full object-cover shadow-lg'
 					/>

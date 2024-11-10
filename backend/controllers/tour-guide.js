@@ -54,7 +54,7 @@ exports.getTourGuideProfile = async (req, res) => {
 	}
 };
 
-exports.getTourGuideProfile = async (req, res) => {
+exports.getTourGuideProfileById = async (req, res) => {
 	try {
 		const tourGuideId = req.params.id; // Assuming the tour guide ID is passed in the route parameters
 
