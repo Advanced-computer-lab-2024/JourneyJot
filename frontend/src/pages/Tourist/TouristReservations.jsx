@@ -219,7 +219,11 @@ const TouristReservations = () => {
 									<strong>Available Dates:</strong>{' '}
 									{itinerary.availableDates.join(', ')}
 								</p>
-								{renderCancelButton('Itinerary', itinerary._id, itinerary.date)}
+								{renderCancelButton(
+									'Itinerary',
+									itinerary._id,
+									itinerary.availableDates
+								)}
 							</div>
 						))}
 					</div>
