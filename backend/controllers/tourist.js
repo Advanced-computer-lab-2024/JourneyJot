@@ -5,6 +5,7 @@ const Review = require('../models/Review');
 const Activity = require('../models/Activity');
 const Itinerary = require('../models/Itinerary');
 const Attraction = require('../models/Attraction');
+const TourGuide = require('../models/Tour-Guide');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -522,6 +523,101 @@ exports.getTouristData = async (req, res) => {
 		res.status(200).json({ tourist });
 	} catch (error) {
 		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+};
+
+exports.getCompletedItineraries = async (req, res) => {
+	try {
+		const userId = req.user._id;
+
+		// Find the tourist by ID and populate itineraries with tourGuideId
+		const tourist = await Tourist.findById(userId).populate({
+			path: 'itineraries',
+			populate: {
+				path: 'tourGuideId', // Populate the tourGuideId within each itinerary
+				model: 'User', // Ensure this matches your actual model name for Tour Guides
+			},
+		});
+
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
+
+		// Get the current date
+		const currentDate = new Date();
+
+		// Filter out completed itineraries where all available dates are in the past
+		const completedItineraries = tourist.itineraries.filter((itinerary) =>
+			itinerary.availableDates.every((date) => new Date(date) < currentDate)
+		);
+
+		res.status(200).json({ completedItineraries });
+	} catch (error) {
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+};
+
+exports.getCompletedActivities = async (req, res) => {
+	try {
+		const userId = req.user._id;
+
+		// Find the tourist by ID and populate activities with advertiserId
+		const tourist = await Tourist.findById(userId).populate({
+			path: 'activities',
+			populate: {
+				path: 'advertiserId', // Populate the advertiserId within each activity
+				model: 'User', // Ensure this matches your actual model name for Advertisers
+			},
+		});
+
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
+
+		// Get the current date
+		const currentDate = new Date();
+
+		// Filter out completed activities where the activity date is in the past
+		const completedActivities = tourist.activities.filter(
+			(activity) => new Date(activity.date) < currentDate
+		);
+
+		res.status(200).json({ completedActivities });
+	} catch (error) {
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+};
+
+exports.reviewTourGuide = async (req, res) => {
+	try {
+		const { rating, comment } = req.body;
+		const tourGuideId = req.params.id; // Assuming the tour guide ID is passed in the route parameters
+		const userId = req.user._id; // Assuming user is authenticated and `req.user` is populated
+
+		// Find the TourGuideProfile and populate `userId` within `ratings`
+		const currGuide = await TourGuide.findById(tourGuideId);
+
+		if (!currGuide) {
+			return res.status(404).json({ message: 'Tour Guide not found.' });
+		}
+
+		// Add the new rating to the ratings array
+		currGuide.ratings.push({ userId, rating, comment });
+		await currGuide.save();
+
+		// Populate `userId` field after saving (populate can be done here on-the-fly)
+		await currGuide.populate({
+			path: 'ratings.userId',
+			select: 'email username', // Fetching the email and username of the user who left the rating
+		});
+
+		res.status(200).json({
+			message: 'Rating and comment added successfully!',
+			currGuide,
+		});
+	} catch (error) {
+		console.error('Error adding rating and comment:', error.message);
+		res.status(400).json({ error: error.message });
 	}
 };
 

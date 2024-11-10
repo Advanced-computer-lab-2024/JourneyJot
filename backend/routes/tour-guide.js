@@ -7,6 +7,8 @@ const express = require('express');
 const {
 	createTourGuideProfile,
 	getTourGuideProfile,
+	addRatingAndComment,
+	getTourGuideProfileById,
 } = require('../controllers/tour-guide');
 const auth_check = require('../middleware/auth-check');
 const tourGuideCheck = require('../middleware/tour-guide-check');
@@ -41,5 +43,9 @@ tourGuideRouter.post(
 	uploadFile.single('file'),
 	uploadFiles
 );
+
+tourGuideRouter.post('/review/:id', auth_check, addRatingAndComment);
+
+tourGuideRouter.get('/profile/:id', getTourGuideProfile);
 
 module.exports = tourGuideRouter;
