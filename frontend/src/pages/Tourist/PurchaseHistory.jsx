@@ -58,6 +58,7 @@ const PurchaseHistory = () => {
 					'http://localhost:3000/tourists/productHistory',
 					config
 				);
+				console.log(response.data); // Check the response data here
 				setProducts(response.data.products);
 			} catch (error) {
 				setError('Error fetching purchase history. Please try again.');
@@ -125,12 +126,12 @@ const PurchaseHistory = () => {
 					{products.map((product, index) => (
 						<li
 							key={`${product._id}-${index}`}
-							className='flex items-center justify-between bg-white p-4 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300'>
+							className='flex items-center justify-between'>
 							<div className='flex-1'>
 								<h2 className='text-xl font-semibold text-teal-600'>
-									{product.name}
+									{product._id}
 								</h2>
-								<p className='text-gray-700 mt-2'>{product.details}</p>
+								<p className='text-gray-700 mt-2'>{product._id}</p>
 							</div>
 							<button
 								onClick={() => openModal(product._id)}

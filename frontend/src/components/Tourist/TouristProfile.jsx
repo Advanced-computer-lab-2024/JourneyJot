@@ -98,6 +98,36 @@ const TouristProfile = () => {
 			console.error('Failed to update profile:', error);
 		}
 	};
+	const handleDeleteAccount = async () => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				throw new Error('No token found. Please login again.');
+			}
+
+			const config = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+
+			// Use POST instead of DELETE
+			const response = await axios.post(
+				'http://localhost:3000/tourists/deleteAccount',
+				{}, // Pass an empty object as data since it's a POST request
+				config
+			);
+
+			alert(response.data.message); // Display success message
+			console.log('Account deletion response:', response.data);
+		} catch (error) {
+			const errorMessage =
+				error.response?.data?.message || 'Failed to delete account.';
+			setError(errorMessage);
+			console.error('Error deleting account:', error);
+		}
+	};
+
 
 	return (
 		<div className='max-w-lg mx-auto p-6 bg-gray-100 rounded-lg shadow-lg'>
@@ -156,17 +186,22 @@ const TouristProfile = () => {
 					</div>
 					<button
 						className='mt-4 w-full bg-blue-600 text-white py-2 rounded-md shadow hover:bg-blue-700 transition duration-200'
-						onClick={() => setIsEditing(true)}>
+						onClick={() => setIsEditing(true)}
+					>
 						Edit Profile
 					</button>
-					<button className='mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200'>
+					<button
+						className='mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200'
+						onClick={handleDeleteAccount}
+					>
 						Request to Delete My Profile
 					</button>
 				</div>
 			) : (
 				<form
 					className='bg-white p-6 rounded-lg shadow'
-					onSubmit={handleSubmit}>
+					onSubmit={handleSubmit}
+				>
 					<h2 className='text-xl font-semibold mb-4'>Edit Profile</h2>
 					<label className='block mb-4'>
 						<span className='font-medium'>Username:</span>
@@ -240,7 +275,8 @@ const TouristProfile = () => {
 							value={profileData.occupation}
 							onChange={handleChange}
 							required
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'>
+							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
+						>
 							<option value='Job'>Job</option>
 							<option value='Student'>Student</option>
 						</select>
@@ -251,19 +287,18 @@ const TouristProfile = () => {
 							type='number'
 							name='wallet.balance'
 							value={profileData.wallet.balance}
-							onChange={handleChange} // Make sure onChange is called for updates
+							onChange={handleChange}
 							required
 							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
 						/>
 					</label>
-
 					<label className='block mb-4'>
 						<span className='font-medium'>Currency:</span>
 						<input
 							type='text'
 							name='wallet.currency'
 							value={profileData.wallet.currency}
-							onChange={handleChange} // Ensure this field is editable too
+							onChange={handleChange}
 							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
 						/>
 					</label>
@@ -271,13 +306,14 @@ const TouristProfile = () => {
 						<button
 							className='bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200'
 							type='submit'
-							onClick={() => setIsEditing(false)}>
+						>
 							Update Profile
 						</button>
 						<button
 							className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition duration-200'
 							type='button'
-							onClick={() => setIsEditing(false)}>
+							onClick={() => setIsEditing(false)}
+						>
 							Cancel
 						</button>
 					</div>
