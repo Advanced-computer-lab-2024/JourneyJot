@@ -127,7 +127,31 @@ const TouristProfile = () => {
 			console.error('Error deleting account:', error);
 		}
 	};
+	const requestDeletion = async () => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				throw new Error('No token found. Please login again.');
+			}
 
+			const config = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+
+			// Fix: Add an empty object {} as the second parameter for the request body
+			const response = await axios.put(
+				'http://localhost:3000/tourists/deleteAccount',
+				{}, // empty request body
+				config
+			);
+
+			console.log('Account deletion requested successfully', response.data);
+		} catch (error) {
+			console.error('Failed to delete account:', error);
+		}
+	};
 
 	return (
 		<div className='max-w-lg mx-auto p-6 bg-gray-100 rounded-lg shadow-lg'>
@@ -186,22 +210,19 @@ const TouristProfile = () => {
 					</div>
 					<button
 						className='mt-4 w-full bg-blue-600 text-white py-2 rounded-md shadow hover:bg-blue-700 transition duration-200'
-						onClick={() => setIsEditing(true)}
-					>
+						onClick={() => setIsEditing(true)}>
 						Edit Profile
 					</button>
 					<button
-						className='mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200'
-						onClick={handleDeleteAccount}
-					>
+						onClick={requestDeletion}
+						className='mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200'>
 						Request to Delete My Profile
 					</button>
 				</div>
 			) : (
 				<form
 					className='bg-white p-6 rounded-lg shadow'
-					onSubmit={handleSubmit}
-				>
+					onSubmit={handleSubmit}>
 					<h2 className='text-xl font-semibold mb-4'>Edit Profile</h2>
 					<label className='block mb-4'>
 						<span className='font-medium'>Username:</span>
@@ -275,8 +296,7 @@ const TouristProfile = () => {
 							value={profileData.occupation}
 							onChange={handleChange}
 							required
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
-						>
+							className='mt-1 block w-full border border-gray-300 rounded-md p-2'>
 							<option value='Job'>Job</option>
 							<option value='Student'>Student</option>
 						</select>
@@ -305,15 +325,13 @@ const TouristProfile = () => {
 					<div className='flex justify-between mt-4'>
 						<button
 							className='bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200'
-							type='submit'
-						>
+							type='submit'>
 							Update Profile
 						</button>
 						<button
 							className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition duration-200'
 							type='button'
-							onClick={() => setIsEditing(false)}
-						>
+							onClick={() => setIsEditing(false)}>
 							Cancel
 						</button>
 					</div>

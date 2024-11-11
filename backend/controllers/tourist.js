@@ -64,14 +64,19 @@ exports.login = (req, res, next) => {
 			if (tourist.length < 1) {
 				return res
 					.status(401)
-					.json({ message: 'Auth failed username does not exist' });
+					.json({ message: 'Auth failed: username does not exist' });
 			}
 			bcrypt.compare(req.body.password, tourist[0].password, (err, result) => {
 				if (err) {
 					return res.status(401).json({ message: 'Auth failed' });
 				} else if (result) {
+					// Add role to the JWT payload
 					jwt.sign(
-						{ username: tourist[0].username, _id: tourist[0]._id },
+						{
+							username: tourist[0].username,
+							_id: tourist[0]._id,
+							role: tourist[0].role, // Add the role here
+						},
 						'cr7',
 						{
 							expiresIn: '12h',
@@ -89,7 +94,7 @@ exports.login = (req, res, next) => {
 				} else {
 					return res
 						.status(401)
-						.json({ message: 'Auth failed incorrect password' });
+						.json({ message: 'Auth failed: incorrect password' });
 				}
 			});
 		})
@@ -789,10 +794,10 @@ exports.requestAccountDeletion = async (req, res) => {
 		}
 
 		// If all arrays are empty, proceed
-		await Tourist.findByIdAndUpdate(touristId);
+		await Tourist.findByIdAndUpdate(touristId, { status: 'pending_deletion' });
 
 		res.status(200).json({
-			message: 'Request Logic !!',
+			message: 'Request Logic !! Account will be deleted',
 		});
 	} catch (error) {
 		console.error('Error deleting account:', error);

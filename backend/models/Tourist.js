@@ -81,6 +81,12 @@ const touristSchema = new mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		status: {
+			type: String,
+			enum: ['active', 'pending_deletion', 'deleted'],
+			default: 'active',
+		},
+		role: { type: String, enum: ['tourist'] },
 	},
 	{ timestamps: true }
 );

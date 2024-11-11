@@ -33,6 +33,7 @@ const {
 	addReview,
 	getReviewsByTourGuide,
 } = require('../controllers/review-event');
+const { deleteRequest } = require('../controllers/deletion-request');
 
 const touristRouter = Router();
 
@@ -59,7 +60,7 @@ touristRouter.get('/points', auth_check, getTouristPoints); // New route for vie
 touristRouter.get('/wallet', auth_check, getWalletBalance);
 touristRouter.post('/wallet/addFunds', auth_check, addFundsToWallet);
 touristRouter.post('/redeemPoints', auth_check, redeemPointsToWallet);
-touristRouter.post('/deleteAccount', auth_check, requestAccountDeletion);
+touristRouter.put('/deleteAccount', auth_check, requestAccountDeletion);
 touristRouter.post('/cancelActivity/:activityId', auth_check, cancelActivity);
 touristRouter.post(
 	'/cancelItinerary/:itineraryId',

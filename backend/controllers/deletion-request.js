@@ -1,6 +1,7 @@
 /** @format */
 
 const User = require('../models/User');
+const Tourist = require('../models/Tourist');
 const Activity = require('../models/Activity');
 const Itinerary = require('../models/Itinerary');
 
@@ -15,6 +16,16 @@ exports.deleteRequest = async (req, res) => {
 	console.log('User Role:', req.user ? req.user.role : 'No role defined');
 
 	try {
+		// Check for Seller or Tourist without restrictions for deletion
+		if (req.user.role === 'seller') {
+			// Sellers can request deletion without checking activities or itineraries
+			await User.findByIdAndUpdate(userId, { status: 'pending_deletion' });
+			return res.status(200).json({
+				message:
+					'Account marked for deletion. Your Seller profile will be hidden.',
+			});
+		}
+
 		// Check for upcoming activities or itineraries based on user role
 		if (req.user.role === 'advertiser') {
 			upcomingActivities = await Activity.find({
@@ -31,18 +42,19 @@ exports.deleteRequest = async (req, res) => {
 			console.log('Upcoming Itineraries:', upcomingItineraries.length);
 		}
 
-		// Check if there are any upcoming activities or itineraries
+		// Check if there are any upcoming activities or itineraries for advertiser or tour guide
 		if (upcomingActivities.length > 0 || upcomingItineraries.length > 0) {
 			return res.status(400).json({
 				message: 'Cannot delete account with upcoming events or activities.',
 			});
 		}
 
-		// Mark account for deletion
+		// Mark account for deletion for other roles
 		await User.findByIdAndUpdate(userId, { status: 'pending_deletion' });
 
 		res.status(200).json({
-			message: 'Account marked for deletion. Your profile will be hidden.',
+			message:
+				'Account marked for deletion. YourAdvertiser or TourGuide profile will be hidden.',
 		});
 	} catch (error) {
 		console.error('Error:', error.message); // Log the error for debugging

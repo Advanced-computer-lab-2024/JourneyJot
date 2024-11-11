@@ -15,6 +15,7 @@ const tourGuideCheck = require('../middleware/tour-guide-check');
 const { uploadImages, upload } = require('../controllers/upload');
 const { changePassword } = require('../helper/change-password');
 const { uploadFiles, uploadFile } = require('../controllers/file');
+const { deleteRequest } = require('../controllers/deletion-request');
 const tourGuideRouter = express.Router();
 // Update tour guide profile
 tourGuideRouter.put(
@@ -29,6 +30,7 @@ tourGuideRouter.get(
 	tourGuideCheck,
 	getTourGuideProfile
 );
+tourGuideRouter.put('/account', auth_check, deleteRequest);
 
 tourGuideRouter.post(
 	'/profileUpload',
