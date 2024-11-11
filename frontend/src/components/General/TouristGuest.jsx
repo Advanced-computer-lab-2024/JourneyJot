@@ -393,7 +393,6 @@ const TouristGuest = () => {
 								onChange={(e) => setLanguage(e.target.value)}
 								className='form-select w-full mt-1'>
 								<option value=''>All Languages</option>
-								<option value=''>All Languages</option>
 								<option value='English'>English</option>
 								<option value='Arabic'>Arabic</option>
 								<option value='German'>German</option>
