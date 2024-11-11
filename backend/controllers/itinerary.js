@@ -44,7 +44,6 @@ exports.getAllItineraries = async (req, res) => {
 		const itineraries = await Itinerary.find({}) // Exclude flagged itineraries
 			.populate({
 				path: 'tourGuideId',
-				match: { status: 'active' }, // Only include itineraries for active tour guides
 			})
 			.exec();
 

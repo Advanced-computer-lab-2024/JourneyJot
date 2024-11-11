@@ -76,7 +76,6 @@ exports.getAllActivities = async (req, res) => {
 			.populate('category preferenceTag') // Populate category and preferenceTag
 			.populate({
 				path: 'advertiserId',
-				match: { status: 'active' }, // Only include activities for active advertisers
 			})
 			.exec();
 
