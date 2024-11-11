@@ -62,7 +62,12 @@ exports.getAllItineraries = async (req, res) => {
 exports.getItinerary = async (req, res) => {
 	const { id } = req.params;
 	try {
-		const itineraries = await Itinerary.findById(id);
+		const itineraries = await Itinerary.findById(id)
+			.populate('tourGuideId') // Populate category and preferenceTag
+			.populate({
+				path: 'ratings.userId', // Populate the user details of the ratings
+				select: 'username email', // Specify the fields you want to include from the Tourist model
+			});
 		res.status(200).json(itineraries);
 	} catch (error) {
 		res.status(500).json({ message: 'Error fetching itineraries', error });

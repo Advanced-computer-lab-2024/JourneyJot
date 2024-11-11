@@ -221,7 +221,7 @@ const AttractionsCard = ({
 								{/* Book and Share Buttons */}
 								<div className='flex flex-col space-y-2 mt-4'>
 									<button
-										className='py-2 px-4 bg-green-600 text-white rounded-md'
+										className='py-2 px-4 bg-blue-600 text-white rounded-md'
 										onClick={() => handleBookTicket(attraction)}>
 										Book Ticket
 									</button>

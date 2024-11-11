@@ -78,8 +78,8 @@ const CompletedItineraryInfo = () => {
 			{/* Itinerary Details */}
 			<div className='space-y-6'>
 				<div className='flex justify-between items-center'>
-					<span className='font-bold text-gray-700'>Tour Guide:</span>
-					<span>{itinerary.tourGuideId?.username}</span>
+					<span className='font-bold text-gray-700'>Tour Guide Name:</span>
+					<span>{itinerary.tourGuideId.username}</span>
 				</div>
 				<div className='flex justify-between items-center'>
 					<span className='font-bold text-gray-700'>Language:</span>
