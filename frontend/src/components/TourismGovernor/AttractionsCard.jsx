@@ -14,6 +14,7 @@ const AttractionsCard = ({
 	const [selectedAttraction, setSelectedAttraction] = useState(null); // Selected attraction
 	const [selectedTicketType, setSelectedTicketType] = useState(''); // Selected ticket type
 	const [error, setError] = useState(null); // State to handle errors
+	const [shareOptionsVisible, setShareOptionsVisible] = useState(false); // Toggle for share options
 
 	// Fetch data from the API using axios
 	useEffect(() => {
@@ -81,10 +82,23 @@ const AttractionsCard = ({
 		}
 	};
 
-	const handleShareAttraction = (attraction) => {
-		alert(`Share link for attraction: ${attraction.name}`);
+	const handleCopyLink = (attraction) => {
+		const link = `http://localhost:5173/attractions/${attraction._id}`;
+		navigator.clipboard.writeText(link);
+		alert('Link copied to clipboard!');
 	};
 
+	const handleShareViaEmail = (attraction) => {
+		const subject = encodeURIComponent(`Check out this activity`);
+		const body = encodeURIComponent(
+			`Here is a link to the activity: http://localhost:5173/attractions/${attraction._id}`
+		);
+		window.location.href = `mailto:?subject=${subject}&body=${body}`;
+	};
+
+	const toggleShareOptions = () => {
+		setShareOptionsVisible(!shareOptionsVisible);
+	};
 	return (
 		<div>
 			{/* Filter Section */}
@@ -211,11 +225,27 @@ const AttractionsCard = ({
 										onClick={() => handleBookTicket(attraction)}>
 										Book Ticket
 									</button>
-									<button
-										className='py-2 px-4 bg-blue-600 text-white rounded-md'
-										onClick={() => handleShareAttraction(attraction)}>
-										Share
-									</button>
+									<div className='relative'>
+										<button
+											onClick={toggleShareOptions}
+											className='bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 mt-2'>
+											Share
+										</button>
+										{shareOptionsVisible && (
+											<div className='absolute bg-white border rounded shadow-md p-2 mt-1'>
+												<button
+													onClick={() => handleCopyLink(attraction)}
+													className='text-blue-600 hover:underline block'>
+													Copy Link
+												</button>
+												<button
+													onClick={() => handleShareViaEmail(attraction)}
+													className='text-blue-600 hover:underline block'>
+													Share via Email
+												</button>
+											</div>
+										)}
+									</div>
 								</div>
 							</div>
 						</div>

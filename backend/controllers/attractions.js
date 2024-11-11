@@ -48,7 +48,7 @@ exports.getAttraction = async (req, res) => {
 		// Fetch the specific attraction by ID and populate governorId
 		const attraction = await Attraction.findById(id).populate(
 			'governorId',
-			'name email'
+			'username '
 		);
 
 		// Check if the attraction was found

@@ -4,44 +4,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EditActivityModal from './EditActivity';
 import DeleteActivityButton from './DeleteActivity';
-
-// StarRating Component to display stars
-const StarRating = ({ rating }) => {
-	const fullStars = Math.floor(rating);
-	const emptyStars = 5 - fullStars;
-
-	return (
-		<div className='flex space-x-1'>
-			{[...Array(fullStars)].map((_, index) => (
-				<svg
-					key={`full-${index}`}
-					xmlns='http://www.w3.org/2000/svg'
-					className='w-5 h-5 text-yellow-500'
-					fill='currentColor'
-					viewBox='0 0 20 20'>
-					<path d='M10 15.27l4.18 2.73-1.64-5.09L18 9.24l-5.19-.42L10 3 7.19 8.82 2 9.24l3.46 3.67-1.64 5.09L10 15.27z' />
-				</svg>
-			))}
-			{[...Array(emptyStars)].map((_, index) => (
-				<svg
-					key={`empty-${index}`}
-					xmlns='http://www.w3.org/2000/svg'
-					className='w-5 h-5 text-gray-300'
-					fill='none'
-					stroke='currentColor'
-					viewBox='0 0 24 24'>
-					<path
-						fill='none'
-						strokeWidth='2'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-						d='M12 17.75l4.18 2.73-1.64-5.09L18 9.24l-5.19-.42L12 3l-2.81 5.82-5.19.42L7.46 15.42 3 18.15 12 17.75z'
-					/>
-				</svg>
-			))}
-		</div>
-	);
-};
+import StarRating from '../Helper/StarRating';
 
 const ActivitiesCard = ({
 	activities = [],
@@ -58,6 +21,7 @@ const ActivitiesCard = ({
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Modal state
 	const [selectedActivity, setSelectedActivity] = useState(null); // Store selected activity
 	const [error, setError] = useState(null); // State to handle errors
+	const [shareOptionsVisible, setShareOptionsVisible] = useState(false); // Toggle for share options
 
 	useEffect(() => {
 		// Fetch categories and tags
@@ -156,8 +120,22 @@ const ActivitiesCard = ({
 		}
 	};
 
-	const handleShareActivity = (activity) => {
-		alert(`Share link for activity: ${activity.name}`);
+	const handleCopyLink = (activity) => {
+		const link = `http://localhost:5173/activities/${activity._id}`;
+		navigator.clipboard.writeText(link);
+		alert('Link copied to clipboard!');
+	};
+
+	const handleShareViaEmail = (activity) => {
+		const subject = encodeURIComponent(`Check out this activity`);
+		const body = encodeURIComponent(
+			`Here is a link to the activity: http://localhost:5173/activities/${activity._id}`
+		);
+		window.location.href = `mailto:?subject=${subject}&body=${body}`;
+	};
+
+	const toggleShareOptions = () => {
+		setShareOptionsVisible(!shareOptionsVisible);
 	};
 
 	return (
@@ -218,11 +196,27 @@ const ActivitiesCard = ({
 									className='bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 mt-4'>
 									Book A Ticket
 								</button>
-								<button
-									onClick={() => handleShareActivity(activity)}
-									className='bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 mt-2'>
-									Share
-								</button>
+								<div className='relative'>
+									<button
+										onClick={toggleShareOptions}
+										className='bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 mt-2'>
+										Share
+									</button>
+									{shareOptionsVisible && (
+										<div className='absolute bg-white border rounded shadow-md p-2 mt-1'>
+											<button
+												onClick={() => handleCopyLink(activity)}
+												className='text-blue-600 hover:underline block'>
+												Copy Link
+											</button>
+											<button
+												onClick={() => handleShareViaEmail(activity)}
+												className='text-blue-600 hover:underline block'>
+												Share via Email
+											</button>
+										</div>
+									)}
+								</div>
 
 								{/* Edit and Delete for Advertisers */}
 								{isAdvertiser && (
