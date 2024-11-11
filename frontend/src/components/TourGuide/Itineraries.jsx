@@ -39,7 +39,7 @@ const ItinerariesComponent = () => {
 				};
 
 				const response = await axios.get(
-					'http://localhost:3000/itineraries/',
+					'http://localhost:3000/itineraries/all',
 					config
 				);
 				setItineraries(response.data);

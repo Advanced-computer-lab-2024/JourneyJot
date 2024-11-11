@@ -9,7 +9,7 @@ const ActivitiesPage = () => {
 
 	const fetchActivities = async () => {
 		try {
-			const response = await axios.get('http://localhost:3000/activities');
+			const response = await axios.get('http://localhost:3000/activities/all');
 			console.log(response.data.activities);
 			setActivities(response.data.activities);
 		} catch (error) {
