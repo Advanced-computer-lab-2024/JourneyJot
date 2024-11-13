@@ -19,48 +19,47 @@ const TouristProfile = () => {
 	});
 	const [error, setError] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
-
 	useEffect(() => {
-		const fetchProfile = async () => {
-			try {
-				const token = localStorage.getItem('token');
-				if (!token) {
-					throw new Error('No token found. Please login again.');
-				}
-
-				const config = {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				};
-
-				const response = await axios.get(
-					'http://localhost:3000/tourists/profile',
-					config
-				);
-				console.log('Profile data response:', response.data);
-
-				setProfileData({
-					email: response.data.profile.email || '',
-					username: response.data.profile.username || '',
-					password: '', // Keep password field empty by default
-					mobileNumber: response.data.profile.mobileNumber || '',
-					nationality: response.data.profile.nationality || '',
-					dob: response.data.profile.dob || '',
-					occupation: response.data.profile.occupation || '',
-					wallet: {
-						balance: response.data.profile.wallet?.balance || 0,
-						currency: response.data.profile.wallet?.currency || 'USD',
-					},
-				});
-			} catch (error) {
-				setError('Failed to fetch profile');
-				console.error('Failed to fetch profile:', error);
-			}
-		};
-
 		fetchProfile();
 	}, []);
+
+	const fetchProfile = async () => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				throw new Error('No token found. Please login again.');
+			}
+
+			const config = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+
+			const response = await axios.get(
+				'http://localhost:3000/tourists/profile',
+				config
+			);
+			console.log('Profile data response:', response.data);
+
+			setProfileData({
+				email: response.data.profile.email || '',
+				username: response.data.profile.username || '',
+				password: '', // Keep password field empty by default
+				mobileNumber: response.data.profile.mobileNumber || '',
+				nationality: response.data.profile.nationality || '',
+				dob: response.data.profile.dob || '',
+				occupation: response.data.profile.occupation || '',
+				wallet: {
+					balance: response.data.profile.wallet?.balance || 0,
+					currency: response.data.profile.wallet?.currency || 'USD',
+				},
+			});
+		} catch (error) {
+			setError('Failed to fetch profile');
+			console.error('Failed to fetch profile:', error);
+		}
+	};
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -90,7 +89,10 @@ const TouristProfile = () => {
 				profileData,
 				config
 			);
-			setProfileData(response.data);
+
+			// Directly re-fetching the updated profile data to ensure consistency
+			await fetchProfile();
+
 			setIsEditing(false);
 			console.log('Profile updated successfully', response.data);
 		} catch (error) {
@@ -98,35 +100,7 @@ const TouristProfile = () => {
 			console.error('Failed to update profile:', error);
 		}
 	};
-	const handleDeleteAccount = async () => {
-		try {
-			const token = localStorage.getItem('token');
-			if (!token) {
-				throw new Error('No token found. Please login again.');
-			}
 
-			const config = {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			};
-
-			// Use POST instead of DELETE
-			const response = await axios.post(
-				'http://localhost:3000/tourists/deleteAccount',
-				{}, // Pass an empty object as data since it's a POST request
-				config
-			);
-
-			alert(response.data.message); // Display success message
-			console.log('Account deletion response:', response.data);
-		} catch (error) {
-			const errorMessage =
-				error.response?.data?.message || 'Failed to delete account.';
-			setError(errorMessage);
-			console.error('Error deleting account:', error);
-		}
-	};
 	const requestDeletion = async () => {
 		try {
 			const token = localStorage.getItem('token');
@@ -152,6 +126,21 @@ const TouristProfile = () => {
 			console.error('Failed to delete account:', error);
 		}
 	};
+	function calculateAge(dob) {
+		const birthDate = new Date(dob);
+		const today = new Date();
+		let age = today.getFullYear() - birthDate.getFullYear();
+
+		const monthDifference = today.getMonth() - birthDate.getMonth();
+		const dayDifference = today.getDate() - birthDate.getDate();
+
+		// Adjust age if the birthdate hasn’t occurred yet this year
+		if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+			age--;
+		}
+
+		return age;
+	}
 
 	return (
 		<div className='max-w-lg mx-auto p-6 bg-gray-100 rounded-lg shadow-lg'>
@@ -186,9 +175,14 @@ const TouristProfile = () => {
 							</span>
 						</p>
 						<p className='mb-2'>
-							<strong>Date of Birth:</strong>{' '}
-							<span className='text-gray-700'>{profileData.dob || 'N/A'}</span>
+							<strong>Age:</strong>
+							<span className='text-gray-700'>
+								{profileData.dob
+									? ` ${calculateAge(profileData.dob)} years old`
+									: 'N/A'}
+							</span>
 						</p>
+
 						<p className='mb-2'>
 							<strong>Occupation:</strong>{' '}
 							<span className='text-gray-700'>
@@ -198,13 +192,13 @@ const TouristProfile = () => {
 						<p className='mb-2'>
 							<strong>Wallet Balance:</strong>{' '}
 							<span className='text-gray-700'>
-								${profileData.wallet.balance || 0}
+								${profileData.wallet?.balance || 0}
 							</span>
 						</p>
 						<p className='mb-2'>
 							<strong>Currency:</strong>{' '}
 							<span className='text-gray-700'>
-								{profileData.wallet.currency || 'USD'}
+								{profileData.wallet?.currency || 'USD'}
 							</span>
 						</p>
 					</div>
@@ -251,7 +245,6 @@ const TouristProfile = () => {
 							type='password'
 							name='password'
 							value={profileData.password}
-							onChange={handleChange}
 							disabled
 							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
 						/>
@@ -273,18 +266,16 @@ const TouristProfile = () => {
 							type='text'
 							name='nationality'
 							value={profileData.nationality}
-							onChange={handleChange}
-							required
+							disabled
 							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
 						/>
 					</label>
 					<label className='block mb-4'>
 						<span className='font-medium'>Date of Birth:</span>
 						<input
-							type='date'
+							type='text'
 							name='dob'
 							value={profileData.dob}
-							onChange={handleChange}
 							disabled
 							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
 						/>
@@ -294,8 +285,7 @@ const TouristProfile = () => {
 						<select
 							name='occupation'
 							value={profileData.occupation}
-							onChange={handleChange}
-							required
+							disabled
 							className='mt-1 block w-full border border-gray-300 rounded-md p-2'>
 							<option value='Job'>Job</option>
 							<option value='Student'>Student</option>
@@ -307,8 +297,7 @@ const TouristProfile = () => {
 							type='number'
 							name='wallet.balance'
 							value={profileData.wallet.balance}
-							onChange={handleChange}
-							required
+							disabled
 							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
 						/>
 					</label>
@@ -318,7 +307,7 @@ const TouristProfile = () => {
 							type='text'
 							name='wallet.currency'
 							value={profileData.wallet.currency}
-							onChange={handleChange}
+							disabled
 							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
 						/>
 					</label>

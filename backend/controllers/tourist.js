@@ -126,9 +126,7 @@ exports.updateTouristProfile = async (req, res) => {
 
 	try {
 		const userId = req.user._id;
-		const tourist = await Tourist.findById(userId).populate(
-			'category preferenceTag'
-		);
+		const tourist = await Tourist.findById(userId).populate();
 
 		if (!tourist) {
 			return res.status(404).json({ message: 'Tourist not found' });

@@ -19,7 +19,7 @@ const FullProductPage = () => {
 		// Fetch exchange rates
 		axios
 			.get(
-				'https://v6.exchangerate-api.com/v6/96d68d4689bfcab5166205e1/latest/USD'
+				'https://v6.exchangerate-api.com/v6/14c4008744f504c874fd1f25/latest/USD'
 			)
 			.then((response) => {
 				setRates(response.data.conversion_rates);
@@ -147,7 +147,7 @@ const FullProductPage = () => {
 
 	if (loading) return <div className='text-center py-6'>Loading...</div>;
 	if (error) return <div className='text-center py-6'>{error}</div>;
-	console.log(product);
+	//console.log(product);
 
 	return (
 		<div className='max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md'>

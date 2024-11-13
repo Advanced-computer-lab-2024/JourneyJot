@@ -3,6 +3,11 @@
 const mongoose = require('mongoose');
 
 const complaintSchema = new mongoose.Schema({
+	author: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Tourist',
+	},
+
 	title: {
 		type: String,
 		required: true,

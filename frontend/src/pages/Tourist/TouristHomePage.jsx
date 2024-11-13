@@ -35,7 +35,7 @@ const TouristGuest = () => {
 		// Fetch exchange rates
 		axios
 			.get(
-				'https://v6.exchangerate-api.com/v6/96d68d4689bfcab5166205e1/latest/USD'
+				'https://v6.exchangerate-api.com/v6/14c4008744f504c874fd1f25/latest/USD'
 			)
 			.then((response) => {
 				setRates(response.data.conversion_rates);
