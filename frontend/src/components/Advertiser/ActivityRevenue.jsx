@@ -124,7 +124,7 @@ const ActivityRevenue = () => {
 									marginBottom: '10px',
 								}}>
 								<h5 style={{ color: '#007bff', fontSize: '1.1rem' }}>
-									{activity.name}
+									{activity.name?.username}
 								</h5>
 								<div
 									style={{

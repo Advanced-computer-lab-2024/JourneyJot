@@ -124,7 +124,7 @@ const ItineraryRevenue = () => {
 									marginBottom: '10px',
 								}}>
 								<h5 style={{ color: '#007bff', fontSize: '1.1rem' }}>
-									{itinerary.name}
+									{itinerary.name?.username}
 								</h5>
 								<div
 									style={{

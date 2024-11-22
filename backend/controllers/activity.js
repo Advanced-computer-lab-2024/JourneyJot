@@ -319,7 +319,7 @@ exports.addRatingAndComment = async (req, res) => {
 exports.calculateActivityRevenue = async (req, res) => {
 	try {
 		// Fetch all activities
-		const activities = await Activity.find();
+		const activities = await Activity.find().populate('category advertiserId');
 
 		if (activities.length === 0) {
 			return res.status(404).json({ message: 'No activities found' });
@@ -329,7 +329,7 @@ exports.calculateActivityRevenue = async (req, res) => {
 		const activitiesWithRevenue = activities.map((activity) => {
 			return {
 				id: activity._id,
-				name: activity.name, // Assuming you have a 'name' field
+				name: activity.advertiserId, // Assuming you have a 'name' field
 				price: activity.price,
 				isBooked: activity.isBooked,
 				revenue: activity.isBooked ? activity.price : 0, // Revenue is price only if booked

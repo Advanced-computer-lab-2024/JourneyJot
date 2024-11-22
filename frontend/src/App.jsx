@@ -59,6 +59,7 @@ import GovernorDashBoard from './components/TourismGovernor/GovernorDashboard.js
 import ActivityRevenue from './components/Advertiser/ActivityRevenue.jsx';
 import ItineraryRevenue from './components/TourGuide/ItineraryRevenue.jsx';
 import AttractionRevenue from './components/TourismGovernor/AttractionRevenue.jsx';
+import Revenue from './components/Admin/Revenue.jsx';
 
 const App = () => {
 	return (
@@ -301,6 +302,10 @@ const App = () => {
 			<Route
 				path='/attraction-revenue'
 				element={<AttractionRevenue />}
+			/>
+			<Route
+				path='/select-revenue'
+				element={<Revenue />}
 			/>
 		</Routes>
 	);

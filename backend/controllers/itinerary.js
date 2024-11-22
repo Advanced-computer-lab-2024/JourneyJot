@@ -190,7 +190,7 @@ exports.addRatingAndComment = async (req, res) => {
 exports.calculateItineraryRevenue = async (req, res) => {
 	try {
 		// Fetch all activities
-		const itineraries = await Itinerary.find();
+		const itineraries = await Itinerary.find().populate('tourGuideId');
 
 		if (itineraries.length === 0) {
 			return res.status(404).json({ message: 'No Itinerary found' });
@@ -199,7 +199,7 @@ exports.calculateItineraryRevenue = async (req, res) => {
 		const itinerariesWithRevenue = itineraries.map((itinerary) => {
 			return {
 				id: itinerary._id,
-				name: itinerary.name, // Assuming you have a 'name' field
+				name: itinerary.tourGuideId, // Assuming you have a 'name' field
 				price: itinerary.price,
 				isBooked: itinerary.isBooked,
 				revenue: itinerary.isBooked ? itinerary.price : 0, // Revenue is price only if booked

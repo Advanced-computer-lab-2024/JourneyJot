@@ -1,23 +1,9 @@
 /** @format */
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 
 const AdminDashboard = () => {
-	const navigate = useNavigate();
-
-	const navLinks = [
-		'/admins/deleteUser',
-		'/admins/addAdmin',
-		'/admins/addGovernor',
-		'/admins/change-password',
-		'/admins/admin-account-review',
-		'/admins/view-users',
-		'/admins/flag-events',
-		'/products/archive',
-		'/admins/complaints', // New route added here
-	];
-
 	const dashboardItems = [
 		{
 			path: '/admins/deleteUser',
@@ -29,6 +15,16 @@ const AdminDashboard = () => {
 			path: '/admins/addGovernor',
 			label: 'Add Tour Guide',
 			color: 'bg-purple-500',
+		},
+		{
+			path: '/products',
+			label: 'View Products',
+			color: 'bg-purple-300',
+		},
+		{
+			path: '/products/archive',
+			label: 'Archive Products',
+			color: 'bg-purple-800',
 		},
 		{
 			path: '/admins/category-management',
@@ -64,66 +60,41 @@ const AdminDashboard = () => {
 		{
 			path: '/forgot-password',
 			label: 'Forget Password',
-			color: 'bg-red-500',
+			color: 'bg-gray-500',
 		},
+		{ path: '/select-revenue', label: 'Select Revenue', color: 'bg-green-500' },
 	];
 
-	const formatLinkText = (path) =>
-		path
-			.split('/')
-			.pop()
-			.replace('-', ' ')
-			.replace(/\b\w/g, (char) => char.toUpperCase());
-
 	return (
-		<div className='min-h-screen bg-gray-100'>
+		<div className='min-h-screen bg-gray-50'>
 			{/* Navbar */}
-			<nav className='bg-white shadow-md border-b border-gray-200'>
+			<nav className='bg-white shadow-sm border-b'>
 				<div className='max-w-7xl mx-auto px-6 py-4 flex justify-between items-center'>
-					<div className='flex items-center space-x-2'>
-						<FaUserCircle className='text-3xl text-gray-700' />
-						<h4 className='text-2xl font-bold text-gray-800'>
+					<div className='flex items-center space-x-3'>
+						<FaUserCircle className='text-4xl text-gray-700' />
+						<h1 className='text-2xl font-extrabold text-gray-800 tracking-tight'>
 							Admin Dashboard
-						</h4>
-					</div>
-
-					<div className='flex items-center space-x-6'>
-						{navLinks.map((path, index) => (
-							<Link
-								key={index}
-								to={path}
-								className='text-gray-700 hover:text-teal-600 transition-colors duration-200 font-medium'>
-								{formatLinkText(path)}
-							</Link>
-						))}
-						<button
-							onClick={() => navigate('/products')}
-							className='text-gray-700 hover:text-teal-600 transition-colors duration-200 font-medium'>
-							Products
-						</button>
+						</h1>
 					</div>
 				</div>
 			</nav>
 
 			{/* Dashboard Content */}
 			<main className='max-w-7xl mx-auto px-6 py-10'>
-				<div className='bg-white shadow-lg rounded-lg p-8'>
-					<h2 className='text-2xl font-semibold text-gray-800 mb-4'>
+				<div className='bg-white rounded-xl shadow-lg p-8'>
+					<h2 className='text-3xl font-bold text-gray-900 mb-6'>
 						Welcome, Admin
 					</h2>
-					<p className='text-gray-600 mb-6'>
-						Manage platform users, add new admins, and more.
+					<p className='text-gray-600 mb-8'>
+						Efficiently manage users, categories, and more using the tools
+						below.
 					</p>
-					{/* Grid for dashboard items */}
-					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
 						{dashboardItems.map(({ path, label, color }, index) => (
 							<Link
 								key={index}
 								to={path}
-								className={`${color} text-white text-center py-6 rounded-lg shadow-lg hover:${color.replace(
-									'500',
-									'600'
-								)} transform hover:scale-105 transition-all duration-300`}>
+								className={`flex items-center justify-center text-lg font-medium text-white py-6 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:scale-105 ${color}`}>
 								{label}
 							</Link>
 						))}
