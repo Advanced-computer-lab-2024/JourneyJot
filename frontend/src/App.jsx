@@ -56,6 +56,9 @@ import VerifyOTP from './components/ForgetPassword/VerifyOTP.jsx';
 import ResetPassword from './components/ForgetPassword/ResetPassword.jsx';
 import RequestOTP from './components/ForgetPassword/RequestOTP.jsx';
 import GovernorDashBoard from './components/TourismGovernor/GovernorDashboard.jsx';
+import ActivityRevenue from './components/Advertiser/ActivityRevenue.jsx';
+import ItineraryRevenue from './components/TourGuide/ItineraryRevenue.jsx';
+import AttractionRevenue from './components/TourismGovernor/AttractionRevenue.jsx';
 
 const App = () => {
 	return (
@@ -286,6 +289,18 @@ const App = () => {
 			<Route
 				path='/Governor'
 				element={<GovernorDashBoard />}
+			/>
+			<Route
+				path='/activity-revenue'
+				element={<ActivityRevenue />}
+			/>
+			<Route
+				path='/itinerary-revenue'
+				element={<ItineraryRevenue />}
+			/>
+			<Route
+				path='/attraction-revenue'
+				element={<AttractionRevenue />}
 			/>
 		</Routes>
 	);

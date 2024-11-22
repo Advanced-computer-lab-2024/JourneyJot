@@ -22,6 +22,11 @@ const GovernorDashBoard = () => {
 							className='text-blue-600 hover:text-blue-800 transition duration-300'>
 							forgot Password?
 						</Link>
+						<Link
+							to='/attraction-revenue'
+							className='text-blue-600 hover:text-blue-800 transition duration-300'>
+							Attraction Revenue
+						</Link>
 					</div>
 				</div>
 			</nav>

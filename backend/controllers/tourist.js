@@ -348,7 +348,7 @@ exports.TouristBookActivity = async (req, res) => {
 		// Find the tourist and activity
 		const tourist = await Tourist.findById(userId);
 		const activity = await Activity.findById(activityId).populate(
-			'category preferenceTag'
+			'category preferenceTag isBooked' // Include isBooked in the populated fields
 		);
 
 		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
@@ -376,6 +376,10 @@ exports.TouristBookActivity = async (req, res) => {
 
 		// Add activity to tourist's bookings
 		tourist.activities.push(activityId);
+
+		// Update the isBooked attribute of the activity
+		activity.isBooked = true;
+		await activity.save();
 		await tourist.save();
 
 		// Send response
@@ -400,7 +404,9 @@ exports.TouristBookAttraction = async (req, res) => {
 
 		// Find the tourist and attraction
 		const tourist = await Tourist.findById(userId);
-		const attraction = await Attraction.findById(attractionId);
+		const attraction = await Attraction.findById(attractionId).populate(
+			'isBooked'
+		);
 
 		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
 		if (!attraction)
@@ -433,6 +439,8 @@ exports.TouristBookAttraction = async (req, res) => {
 
 		// Add attraction to tourist's bookings
 		tourist.attractions.push(attractionId);
+		attraction.isBooked = true;
+		await attraction.save(); // Save the updated attraction object
 		await tourist.save();
 
 		// Send response
@@ -458,7 +466,9 @@ exports.TouristBookItinerary = async (req, res) => {
 
 		// Find the tourist and itinerary
 		const tourist = await Tourist.findById(userId);
-		const itinerary = await Itinerary.findById(itineraryId);
+		const itinerary = await Itinerary.findById(itineraryId).populate(
+			'isBooked'
+		);
 
 		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
 		if (!itinerary)
@@ -483,6 +493,8 @@ exports.TouristBookItinerary = async (req, res) => {
 
 		// Add itinerary to tourist's bookings
 		tourist.itineraries.push(itineraryId);
+		itinerary.isBooked = true;
+		await itinerary.save(); // Save the updated itinerary object
 		await tourist.save();
 
 		// Send response

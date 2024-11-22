@@ -186,3 +186,42 @@ exports.addRatingAndComment = async (req, res) => {
 		res.status(400).json({ error: error.message });
 	}
 };
+
+exports.calculateItineraryRevenue = async (req, res) => {
+	try {
+		// Fetch all activities
+		const itineraries = await Itinerary.find();
+
+		if (itineraries.length === 0) {
+			return res.status(404).json({ message: 'No Itinerary found' });
+		}
+
+		const itinerariesWithRevenue = itineraries.map((itinerary) => {
+			return {
+				id: itinerary._id,
+				name: itinerary.name, // Assuming you have a 'name' field
+				price: itinerary.price,
+				isBooked: itinerary.isBooked,
+				revenue: itinerary.isBooked ? itinerary.price : 0, // Revenue is price only if booked
+			};
+		});
+
+		// Calculate the total revenue for all booked activities
+		const totalRevenue = itinerariesWithRevenue.reduce(
+			(sum, itinerary) => sum + itinerary.revenue,
+			0
+		);
+
+		return res.status(200).json({
+			message: 'Itineraries and revenue calculated successfully',
+			totalRevenue: totalRevenue.toFixed(2),
+			itineraries: itinerariesWithRevenue,
+		});
+	} catch (error) {
+		console.error('Error calculating activity revenue:', error);
+		return res.status(500).json({
+			message: 'An error occurred while calculating activity revenue',
+			error: error.message,
+		});
+	}
+};

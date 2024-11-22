@@ -316,3 +316,42 @@ exports.addRatingAndComment = async (req, res) => {
 		res.status(400).json({ error: error.message });
 	}
 };
+exports.calculateActivityRevenue = async (req, res) => {
+	try {
+		// Fetch all activities
+		const activities = await Activity.find();
+
+		if (activities.length === 0) {
+			return res.status(404).json({ message: 'No activities found' });
+		}
+
+		// Map through activities to include revenue only for booked ones
+		const activitiesWithRevenue = activities.map((activity) => {
+			return {
+				id: activity._id,
+				name: activity.name, // Assuming you have a 'name' field
+				price: activity.price,
+				isBooked: activity.isBooked,
+				revenue: activity.isBooked ? activity.price : 0, // Revenue is price only if booked
+			};
+		});
+
+		// Calculate the total revenue for all booked activities
+		const totalRevenue = activitiesWithRevenue.reduce(
+			(sum, activity) => sum + activity.revenue,
+			0
+		);
+
+		return res.status(200).json({
+			message: 'Activities and revenue calculated successfully',
+			totalRevenue: totalRevenue.toFixed(2),
+			activities: activitiesWithRevenue,
+		});
+	} catch (error) {
+		console.error('Error calculating activity revenue:', error);
+		return res.status(500).json({
+			message: 'An error occurred while calculating activity revenue',
+			error: error.message,
+		});
+	}
+};
