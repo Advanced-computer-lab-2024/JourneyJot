@@ -54,11 +54,18 @@ const Header = () => {
 					className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 					view completed activities
 				</button>
+
 				<button
 					onClick={() => navigate('/tourist/homePage/profile')}
 					className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 					My Profile
 				</button>
+				<button
+					onClick={() => navigate('/forget-password')}
+					className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+					Forget password?
+				</button>
+				{/* Link to the Forgot Password page */}
 			</div>
 		</header>
 	);

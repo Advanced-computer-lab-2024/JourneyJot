@@ -77,6 +77,7 @@ exports.login = (req, res, next) => {
 							username: user.username,
 							_id: user._id,
 							role: user.role,
+							email: user.email,
 						},
 						'cr7', // JWT secret key (consider using environment variable)
 						{

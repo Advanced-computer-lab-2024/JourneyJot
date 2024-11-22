@@ -1,5 +1,5 @@
 /** @format */
-
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const AdvertiserDashBoard = () => {
@@ -27,6 +27,12 @@ const AdvertiserDashBoard = () => {
 							className='text-blue-600 hover:text-blue-800 transition duration-300'>
 							Change Password
 						</Link>
+						{/* Link to the Forgot Password page */}
+						<Link
+							to='/forgot-password'
+							className='text-blue-600 hover:text-blue-800 transition duration-300'>
+							Forgot Password?
+						</Link>
 					</div>
 				</div>
 			</nav>
@@ -34,6 +40,7 @@ const AdvertiserDashBoard = () => {
 			{/* Main Content */}
 			<div className='max-w-7xl mx-auto px-6 py-8'>
 				{/* Add content for the dashboard here */}
+				<h2 className='text-xl'>Welcome to the Advertiser Dashboard!</h2>
 			</div>
 		</div>
 	);

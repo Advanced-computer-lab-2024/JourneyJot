@@ -61,6 +61,11 @@ const AdminDashboard = () => {
 			label: 'Manage Complaints',
 			color: 'bg-red-500',
 		},
+		{
+			path: '/forgot-password',
+			label: 'Forget Password',
+			color: 'bg-red-500',
+		},
 	];
 
 	const formatLinkText = (path) =>

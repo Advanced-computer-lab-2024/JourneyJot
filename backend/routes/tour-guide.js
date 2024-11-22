@@ -47,7 +47,6 @@ tourGuideRouter.post(
 );
 
 tourGuideRouter.post('/review/:id', auth_check, addRatingAndComment);
-
 tourGuideRouter.get('/profile/:id', getTourGuideProfileById);
 
 module.exports = tourGuideRouter;

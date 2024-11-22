@@ -1,5 +1,5 @@
 /** @format */
-
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -22,6 +22,7 @@ const initialAdmin = require('./controllers/admin');
 const uploadRouter = require('./routes/upload');
 const complaintRouter = require('./routes/Complaints');
 const reviewRouter = require('./routes/reviews');
+const forget = require('./routes/forgetpassword');
 const cors = require('cors');
 app.use(
 	cors({
@@ -56,5 +57,6 @@ app.use('/products', productRouter);
 app.use('/upload', uploadRouter);
 app.use('/complaints', complaintRouter);
 app.use('/reviews', reviewRouter);
+app.use('/forget', forget);
 
 module.exports = app;

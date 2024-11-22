@@ -52,6 +52,10 @@ import ActivitiesCard from './components/Advertiser/ActivitiesCard.jsx';
 import SharedActivityPage from './pages/Advertiser/SharedActivity.jsx';
 import SharedItineraryPage from './pages/TourGuide/SharedItinerary.jsx';
 import SharedAttractionPage from './pages/TourismGoverner/SharedAttraction.jsx';
+import VerifyOTP from './components/ForgetPassword/VerifyOTP.jsx';
+import ResetPassword from './components/ForgetPassword/ResetPassword.jsx';
+import RequestOTP from './components/ForgetPassword/RequestOTP.jsx';
+import GovernorDashBoard from './components/TourismGovernor/GovernorDashboard.jsx';
 
 const App = () => {
 	return (
@@ -266,6 +270,22 @@ const App = () => {
 			<Route
 				path='/attractions/:id'
 				element={<SharedAttractionPage />}
+			/>
+			<Route
+				path='/forgot-password'
+				element={<RequestOTP />}
+			/>
+			<Route
+				path='/verify-otp'
+				element={<VerifyOTP />}
+			/>
+			<Route
+				path='/reset-password'
+				element={<ResetPassword />}
+			/>
+			<Route
+				path='/Governor'
+				element={<GovernorDashBoard />}
 			/>
 		</Routes>
 	);

@@ -28,7 +28,7 @@ const LoginPage = () => {
 			} else if (role === 'advertiser') {
 				navigate('/advertiser-dashboard');
 			} else if (role === 'governor') {
-				navigate('/tourism-governor');
+				navigate('/Governor');
 			} else if (role === 'seller') {
 				navigate('/seller-dashboard');
 			} else {

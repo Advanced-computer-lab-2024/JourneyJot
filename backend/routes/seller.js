@@ -23,4 +23,5 @@ sellerRouter.post(
 );
 sellerRouter.post('/changePassword', auth_check, changePassword);
 sellerRouter.put('/account', auth_check, deleteRequest);
+
 module.exports = sellerRouter;

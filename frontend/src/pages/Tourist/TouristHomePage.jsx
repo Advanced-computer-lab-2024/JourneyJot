@@ -383,6 +383,11 @@ const TouristGuest = () => {
 						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 						My Profile
 					</button>
+					<button
+						onClick={() => navigate('/forgot-password')}
+						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+						Forget password?
+					</button>
 				</div>
 			</header>
 			<div className='container mx-auto mt-8 px-4'>
