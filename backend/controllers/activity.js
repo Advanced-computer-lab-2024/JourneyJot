@@ -325,9 +325,7 @@ exports.calculateActivityRevenue = async (req, res) => {
 			console.log('Date filter:', query.date);
 		}
 
-		const activities = await Activity.find(query).populate(
-			'category advertiserId'
-		);
+		const activities = await Activity.find(query).populate('advertiserId');
 
 		if (activities.length === 0) {
 			return res.status(404).json({ message: 'No activities found' });
@@ -338,6 +336,7 @@ exports.calculateActivityRevenue = async (req, res) => {
 			return {
 				id: activity._id,
 				name: activity.advertiserId, // Assuming you have a 'name' field
+				tourist: activity.ratings.userId, // Assuming
 				price: activity.price,
 				date: activity.date,
 				isBooked: activity.isBooked,
@@ -351,10 +350,16 @@ exports.calculateActivityRevenue = async (req, res) => {
 			0
 		);
 
+		const uniqueTouristIds = new Set(
+			activitiesWithRevenue.map((activity) => activity.tourist)
+		);
+		const touristCount = uniqueTouristIds.size;
+
 		return res.status(200).json({
 			message: 'Activities and revenue calculated successfully',
 			totalRevenue: totalRevenue.toFixed(2),
 			activities: activitiesWithRevenue,
+			totalTourists: touristCount, // Include the count of unique tourists
 		});
 	} catch (error) {
 		console.error('Error calculating activity revenue:', error);
