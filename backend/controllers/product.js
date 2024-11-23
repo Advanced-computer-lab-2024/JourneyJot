@@ -152,7 +152,7 @@ exports.calculateProductsRevenue = async (req, res) => {
 		const productsWithRevenue = products.map((product) => {
 			return {
 				id: product._id,
-				name: product.title, // Assuming you have a 'name' field
+				name: product.name, // Assuming you have a 'name' field
 				price: product.price,
 				isBooked: product.isBooked,
 				revenue: product.isBooked ? product.price : 0, // Revenue is price only if booked

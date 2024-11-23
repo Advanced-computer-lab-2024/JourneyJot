@@ -30,48 +30,21 @@ const ProductRevenue = () => {
 	};
 
 	return (
-		<div
-			style={{
-				padding: '20px',
-				maxWidth: '800px',
-				margin: 'auto',
-				backgroundColor: '#f9f9f9',
-				borderRadius: '8px',
-				boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-			}}>
-			<h2
-				style={{
-					textAlign: 'center',
-					color: '#333',
-					fontSize: '2rem',
-					marginBottom: '20px',
-				}}>
+		<div className='p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg'>
+			<h2 className='text-2xl font-semibold text-center text-gray-800 mb-6'>
 				Seller Revenue Dashboard
 			</h2>
 
 			{/* Show loading state */}
 			{loading && (
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						height: '100px',
-					}}>
-					<p style={{ fontSize: '1.2rem', color: '#007bff' }}>Loading...</p>
+				<div className='flex justify-center items-center h-24'>
+					<p className='text-lg text-blue-600'>Loading...</p>
 				</div>
 			)}
 
 			{/* Show error message */}
 			{error && (
-				<div
-					style={{
-						padding: '10px',
-						backgroundColor: '#f8d7da',
-						color: '#721c24',
-						borderRadius: '4px',
-						marginBottom: '20px',
-					}}>
+				<div className='bg-red-100 text-red-700 border border-red-400 p-4 rounded-md mb-6'>
 					<p>{error}</p>
 				</div>
 			)}
@@ -80,72 +53,42 @@ const ProductRevenue = () => {
 			{revenue && (
 				<div>
 					{/* Display total revenue */}
-					<div
-						style={{
-							padding: '20px',
-							backgroundColor: '#e9f7fd',
-							borderRadius: '8px',
-							boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-							marginBottom: '30px',
-						}}>
-						<h3 style={{ textAlign: 'center', color: '#0056b3' }}>
+					<div className='p-6 bg-blue-50 rounded-lg shadow-md mb-8'>
+						<h3 className='text-xl text-blue-700 text-center mb-4'>
 							Total Revenue
 						</h3>
-						<p style={{ fontSize: '1.5rem', textAlign: 'center' }}>
-							<strong>${revenue.totalRevenue}</strong>
+						<p className='text-2xl font-bold text-center'>
+							${revenue.totalRevenue}
 						</p>
 					</div>
 
 					{/* Display activity details */}
-					<h4
-						style={{
-							color: '#333',
-							marginBottom: '10px',
-							fontSize: '1.3rem',
-							textAlign: 'center',
-						}}>
+					<h4 className='text-lg text-gray-800 mb-4 text-center'>
 						Seller Overview
 					</h4>
-					<ul
-						style={{
-							listStyleType: 'none',
-							padding: 0,
-							margin: 0,
-							borderTop: '1px solid #ddd',
-						}}>
+					<ul className='divide-y divide-gray-300'>
 						{revenue.products.map((product) => (
 							<li
 								key={product.id}
-								style={{
-									padding: '15px',
-									borderBottom: '1px solid #ddd',
-									backgroundColor: '#fff',
-									borderRadius: '4px',
-									marginBottom: '10px',
-								}}>
-								<h5 style={{ color: '#007bff', fontSize: '1.1rem' }}>
-									{product.title}
+								className='p-4 bg-white rounded-lg shadow-sm mb-4'>
+								<h5 className='text-lg font-semibold text-blue-600'>
+									{product.name}
 								</h5>
-								<div
-									style={{
-										display: 'flex',
-										justifyContent: 'space-between',
-										marginTop: '10px',
-									}}>
+								<div className='flex justify-between mt-2'>
 									<p>
 										<strong>Price:</strong> ${product.price}
 									</p>
 									<p>
 										<strong>Status:</strong>{' '}
 										<span
-											style={{
-												color: product.isBooked ? '#28a745' : '#dc3545',
-											}}>
+											className={`${
+												product.isBooked ? 'text-green-500' : 'text-red-500'
+											}`}>
 											{product.isBooked ? 'Booked' : 'Not Booked'}
 										</span>
 									</p>
 								</div>
-								<p>
+								<p className='mt-2'>
 									<strong>Revenue:</strong> ${product.revenue}
 								</p>
 							</li>
@@ -155,18 +98,12 @@ const ProductRevenue = () => {
 			)}
 
 			{/* Button to manually refresh data */}
-			<div style={{ textAlign: 'center', marginTop: '20px' }}>
+			<div className='text-center mt-6'>
 				<button
 					onClick={fetchRevenue}
-					style={{
-						padding: '10px 20px',
-						backgroundColor: '#007bff',
-						color: 'white',
-						border: 'none',
-						borderRadius: '5px',
-						cursor: 'pointer',
-						fontSize: '1rem',
-					}}
+					className={`px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+						loading ? 'cursor-not-allowed opacity-50' : ''
+					}`}
 					disabled={loading}>
 					{loading ? 'Fetching...' : 'Refresh Revenue Data'}
 				</button>

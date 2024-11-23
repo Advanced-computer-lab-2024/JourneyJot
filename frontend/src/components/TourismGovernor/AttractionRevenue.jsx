@@ -30,48 +30,21 @@ const AttractionRevenue = () => {
 	};
 
 	return (
-		<div
-			style={{
-				padding: '20px',
-				maxWidth: '800px',
-				margin: 'auto',
-				backgroundColor: '#f9f9f9',
-				borderRadius: '8px',
-				boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-			}}>
-			<h2
-				style={{
-					textAlign: 'center',
-					color: '#333',
-					fontSize: '2rem',
-					marginBottom: '20px',
-				}}>
+		<div className='p-6 max-w-4xl mx-auto bg-gray-100 rounded-lg shadow-lg'>
+			<h2 className='text-center text-gray-800 text-3xl mb-8'>
 				Attraction Revenue Dashboard
 			</h2>
 
 			{/* Show loading state */}
 			{loading && (
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						height: '100px',
-					}}>
-					<p style={{ fontSize: '1.2rem', color: '#007bff' }}>Loading...</p>
+				<div className='flex justify-center items-center h-24'>
+					<p className='text-xl text-blue-500'>Loading...</p>
 				</div>
 			)}
 
 			{/* Show error message */}
 			{error && (
-				<div
-					style={{
-						padding: '10px',
-						backgroundColor: '#f8d7da',
-						color: '#721c24',
-						borderRadius: '4px',
-						marginBottom: '20px',
-					}}>
+				<div className='p-4 bg-red-100 text-red-700 rounded-lg mb-6'>
 					<p>{error}</p>
 				</div>
 			)}
@@ -80,58 +53,26 @@ const AttractionRevenue = () => {
 			{revenue && (
 				<div>
 					{/* Display total revenue */}
-					<div
-						style={{
-							padding: '20px',
-							backgroundColor: '#e9f7fd',
-							borderRadius: '8px',
-							boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-							marginBottom: '30px',
-						}}>
-						<h3 style={{ textAlign: 'center', color: '#0056b3' }}>
+					<div className='p-6 bg-blue-50 rounded-lg shadow-md mb-8'>
+						<h3 className='text-center text-blue-700 text-2xl'>
 							Total Revenue
 						</h3>
-						<p style={{ fontSize: '1.5rem', textAlign: 'center' }}>
+						<p className='text-center text-2xl'>
 							<strong>${revenue.totalRevenue}</strong>
 						</p>
 					</div>
 
 					{/* Display attractions with revenue */}
-					<h4
-						style={{
-							color: '#333',
-							marginBottom: '10px',
-							fontSize: '1.3rem',
-							textAlign: 'center',
-						}}>
+					<h4 className='text-center text-gray-800 text-xl mb-4'>
 						Attractions Overview
 					</h4>
-					<ul
-						style={{
-							listStyleType: 'none',
-							padding: 0,
-							margin: 0,
-							borderTop: '1px solid #ddd',
-						}}>
+					<ul className='list-none p-0 m-0 border-t border-gray-300'>
 						{revenue.attractions.map((attraction) => (
 							<li
 								key={attraction.id}
-								style={{
-									padding: '15px',
-									borderBottom: '1px solid #ddd',
-									backgroundColor: '#fff',
-									borderRadius: '4px',
-									marginBottom: '10px',
-								}}>
-								<h5 style={{ color: '#007bff', fontSize: '1.1rem' }}>
-									{attraction.name}
-								</h5>
-								<div
-									style={{
-										display: 'flex',
-										justifyContent: 'space-between',
-										marginTop: '10px',
-									}}>
+								className='p-4 border-b border-gray-300 bg-white rounded-md mb-4'>
+								<h5 className='text-blue-600 text-lg'>{attraction.name}</h5>
+								<div className='flex justify-between mt-4'>
 									<p>
 										<strong>Price (Native):</strong> $
 										{attraction.ticketPrices.native}
@@ -148,9 +89,9 @@ const AttractionRevenue = () => {
 								<p>
 									<strong>Status:</strong>{' '}
 									<span
-										style={{
-											color: attraction.isBooked ? '#28a745' : '#dc3545',
-										}}>
+										className={
+											attraction.isBooked ? 'text-green-500' : 'text-red-500'
+										}>
 										{attraction.isBooked ? 'Booked' : 'Not Booked'}
 									</span>
 								</p>
@@ -164,18 +105,12 @@ const AttractionRevenue = () => {
 			)}
 
 			{/* Button to manually refresh data */}
-			<div style={{ textAlign: 'center', marginTop: '20px' }}>
+			<div className='text-center mt-8'>
 				<button
 					onClick={fetchRevenue}
-					style={{
-						padding: '10px 20px',
-						backgroundColor: '#007bff',
-						color: 'white',
-						border: 'none',
-						borderRadius: '5px',
-						cursor: 'pointer',
-						fontSize: '1rem',
-					}}
+					className={`px-6 py-3 bg-blue-500 text-white rounded-lg text-lg cursor-pointer ${
+						loading ? 'opacity-50' : 'hover:bg-blue-600'
+					}`}
 					disabled={loading}>
 					{loading ? 'Fetching...' : 'Refresh Revenue Data'}
 				</button>
