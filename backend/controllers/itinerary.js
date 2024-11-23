@@ -201,6 +201,7 @@ exports.calculateItineraryRevenue = async (req, res) => {
 				id: itinerary._id,
 				name: itinerary.tourGuideId, // Assuming you have a 'name' field
 				price: itinerary.price,
+				date: itinerary.availableDates,
 				isBooked: itinerary.isBooked,
 				revenue: itinerary.isBooked ? itinerary.price : 0, // Revenue is price only if booked
 			};

@@ -140,3 +140,41 @@ exports.getProductByID = async (req, res) => {
 		res.status(400).json({ message: err.message });
 	}
 };
+exports.calculateProductsRevenue = async (req, res) => {
+	try {
+		// Fetch all activities
+		const products = await Product.find();
+
+		if (products.length === 0) {
+			return res.status(404).json({ message: 'No Product found' });
+		}
+
+		const productsWithRevenue = products.map((product) => {
+			return {
+				id: product._id,
+				name: product.title, // Assuming you have a 'name' field
+				price: product.price,
+				isBooked: product.isBooked,
+				revenue: product.isBooked ? product.price : 0, // Revenue is price only if booked
+			};
+		});
+
+		// Calculate the total revenue for all booked activities
+		const totalRevenue = productsWithRevenue.reduce(
+			(sum, product) => sum + product.revenue,
+			0
+		);
+
+		return res.status(200).json({
+			message: 'Itineraries and revenue calculated successfully',
+			totalRevenue: totalRevenue.toFixed(2),
+			products: productsWithRevenue,
+		});
+	} catch (error) {
+		console.error('Error calculating Product revenue:', error);
+		return res.status(500).json({
+			message: 'An error occurred while calculating product revenue',
+			error: error.message,
+		});
+	}
+};

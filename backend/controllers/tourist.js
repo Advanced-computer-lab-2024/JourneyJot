@@ -183,7 +183,7 @@ exports.buyProduct = async (req, res) => {
 		}
 
 		// Find the product by ID
-		const product = await Product.findById(productId);
+		const product = await Product.findById(productId).populate('isBooked');
 		if (!product) {
 			return res.status(404).json({ message: 'Product not found' });
 		}
@@ -215,6 +215,8 @@ exports.buyProduct = async (req, res) => {
 		tourist.products.push(productId);
 
 		// Save changes to the tourist
+		product.isBooked = true;
+		await product.save();
 		await tourist.save();
 
 		// Update the product quantity

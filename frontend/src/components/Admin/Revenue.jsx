@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import ActivityRevenue from '../Advertiser/ActivityRevenue';
 import ItineraryRevenue from '../TourGuide/ItineraryRevenue';
 import AttractionRevenue from '../TourismGovernor/AttractionRevenue';
+import ProductRevenue from '../Seller/ProductRevenue';
 
 const Revenue = () => {
 	const [selectedRevenue, setSelectedRevenue] = useState('select'); // Default to 'select'
@@ -28,6 +29,8 @@ const Revenue = () => {
 				return <ItineraryRevenue />;
 			case 'attraction':
 				return <AttractionRevenue />;
+			case 'product':
+				return <ProductRevenue />;
 			default:
 				return (
 					<p className='text-red-500 text-center'>
@@ -60,6 +63,7 @@ const Revenue = () => {
 						<option value='activity'>Activity Revenue</option>
 						<option value='itinerary'>Itinerary Revenue</option>
 						<option value='attraction'>Attraction Revenue</option>
+						<option value='product'>Product Revenue</option>
 					</select>
 				</div>
 

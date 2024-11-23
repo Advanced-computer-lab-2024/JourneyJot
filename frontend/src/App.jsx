@@ -60,6 +60,7 @@ import ActivityRevenue from './components/Advertiser/ActivityRevenue.jsx';
 import ItineraryRevenue from './components/TourGuide/ItineraryRevenue.jsx';
 import AttractionRevenue from './components/TourismGovernor/AttractionRevenue.jsx';
 import Revenue from './components/Admin/Revenue.jsx';
+import ProductRevenue from './components/Seller/ProductRevenue.jsx';
 
 const App = () => {
 	return (
@@ -302,6 +303,10 @@ const App = () => {
 			<Route
 				path='/attraction-revenue'
 				element={<AttractionRevenue />}
+			/>
+			<Route
+				path='/product-revenue'
+				element={<ProductRevenue />}
 			/>
 			<Route
 				path='/select-revenue'

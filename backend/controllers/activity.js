@@ -331,6 +331,7 @@ exports.calculateActivityRevenue = async (req, res) => {
 				id: activity._id,
 				name: activity.advertiserId, // Assuming you have a 'name' field
 				price: activity.price,
+				date: activity.date,
 				isBooked: activity.isBooked,
 				revenue: activity.isBooked ? activity.price : 0, // Revenue is price only if booked
 			};
