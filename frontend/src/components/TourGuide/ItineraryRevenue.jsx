@@ -7,6 +7,7 @@ const ItineraryRevenue = () => {
 	const [revenue, setRevenue] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+	const [date, setDate] = useState('');
 
 	// Fetch revenue data when the component mounts
 	useEffect(() => {
@@ -20,7 +21,9 @@ const ItineraryRevenue = () => {
 
 		try {
 			const endpoint = 'http://localhost:3000/itineraries/revenue';
-			const response = await axios.get(endpoint);
+			const response = await axios.get(endpoint, {
+				params: { date },
+			});
 			setRevenue(response.data); // Assuming response.data contains the revenue data
 		} catch (err) {
 			setError(err.response?.data?.message || 'Failed to fetch revenue');
@@ -30,122 +33,88 @@ const ItineraryRevenue = () => {
 	};
 
 	return (
-		<div
-			style={{
-				padding: '20px',
-				maxWidth: '800px',
-				margin: 'auto',
-				backgroundColor: '#f9f9f9',
-				borderRadius: '8px',
-				boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-			}}>
-			<h2
-				style={{
-					textAlign: 'center',
-					color: '#333',
-					fontSize: '2rem',
-					marginBottom: '20px',
-				}}>
+		<div className='p-6 max-w-4xl mx-auto bg-gray-100 rounded-lg shadow-lg'>
+			<h2 className='text-center text-2xl font-bold text-gray-800 mb-6'>
 				Itinerary Revenue Dashboard
 			</h2>
 
-			{/* Show loading state */}
+			{/* Loading state */}
 			{loading && (
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						height: '100px',
-					}}>
-					<p style={{ fontSize: '1.2rem', color: '#007bff' }}>Loading...</p>
+				<div className='flex justify-center items-center h-24'>
+					<p className='text-lg text-blue-500'>Loading...</p>
 				</div>
 			)}
 
-			{/* Show error message */}
+			{/* Error message */}
 			{error && (
-				<div
-					style={{
-						padding: '10px',
-						backgroundColor: '#f8d7da',
-						color: '#721c24',
-						borderRadius: '4px',
-						marginBottom: '20px',
-					}}>
+				<div className='p-4 bg-red-100 text-red-700 rounded-md mb-4'>
 					<p>{error}</p>
 				</div>
 			)}
 
-			{/* Show total revenue and activity details */}
+			{/* Date input and filter button */}
+			<div className='flex items-center space-x-4 mb-6'>
+				<div className='flex-1'>
+					<label
+						htmlFor='date'
+						className='block text-sm font-medium text-gray-700'>
+						Date
+					</label>
+					<input
+						id='date'
+						type='date'
+						value={date}
+						onChange={(e) => setDate(e.target.value)}
+						className='w-full mt-2 p-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none'
+					/>
+				</div>
+				<button
+					onClick={fetchRevenue}
+					className='bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 focus:ring focus:ring-blue-300'>
+					Filter
+				</button>
+			</div>
+
+			{/* Revenue details */}
 			{revenue && (
 				<div>
-					{/* Display total revenue */}
-					<div
-						style={{
-							padding: '20px',
-							backgroundColor: '#e9f7fd',
-							borderRadius: '8px',
-							boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-							marginBottom: '30px',
-						}}>
-						<h3 style={{ textAlign: 'center', color: '#0056b3' }}>
+					{/* Total revenue */}
+					<div className='p-4 bg-blue-50 rounded-lg shadow-md mb-6'>
+						<h3 className='text-center text-xl font-semibold text-blue-700'>
 							Total Revenue
 						</h3>
-						<p style={{ fontSize: '1.5rem', textAlign: 'center' }}>
-							<strong>${revenue.totalRevenue}</strong>
+						<p className='text-center text-2xl font-bold mt-2'>
+							${revenue.totalRevenue}
 						</p>
 					</div>
 
-					{/* Display activity details */}
-					<h4
-						style={{
-							color: '#333',
-							marginBottom: '10px',
-							fontSize: '1.3rem',
-							textAlign: 'center',
-						}}>
+					{/* Itinerary details */}
+					<h4 className='text-lg font-semibold text-gray-800 mb-4 text-center'>
 						Itinerary Revenue Overview
 					</h4>
-					<ul
-						style={{
-							listStyleType: 'none',
-							padding: 0,
-							margin: 0,
-							borderTop: '1px solid #ddd',
-						}}>
+					<ul className='space-y-4'>
 						{revenue.itineraries.map((itinerary) => (
 							<li
 								key={itinerary.id}
-								style={{
-									padding: '15px',
-									borderBottom: '1px solid #ddd',
-									backgroundColor: '#fff',
-									borderRadius: '4px',
-									marginBottom: '10px',
-								}}>
-								<h5 style={{ color: '#007bff', fontSize: '1.1rem' }}>
+								className='p-4 bg-white rounded-lg shadow-md border border-gray-200'>
+								<h5 className='text-lg font-semibold text-blue-600'>
 									{itinerary.name?.username}
 								</h5>
-								<div
-									style={{
-										display: 'flex',
-										justifyContent: 'space-between',
-										marginTop: '10px',
-									}}>
+								<div className='flex justify-between mt-2 text-sm text-gray-700'>
 									<p>
 										<strong>Price:</strong> ${itinerary.price}
 									</p>
 									<p>
 										<strong>Status:</strong>{' '}
 										<span
-											style={{
-												color: itinerary.isBooked ? '#28a745' : '#dc3545',
-											}}>
+											className={`font-bold ${
+												itinerary.isBooked ? 'text-green-600' : 'text-red-600'
+											}`}>
 											{itinerary.isBooked ? 'Booked' : 'Not Booked'}
 										</span>
 									</p>
 								</div>
-								<p>
+								<p className='mt-2 text-sm text-gray-700'>
 									<strong>Revenue:</strong> ${itinerary.revenue}
 								</p>
 							</li>
@@ -154,19 +123,11 @@ const ItineraryRevenue = () => {
 				</div>
 			)}
 
-			{/* Button to manually refresh data */}
-			<div style={{ textAlign: 'center', marginTop: '20px' }}>
+			{/* Refresh button */}
+			<div className='text-center mt-6'>
 				<button
 					onClick={fetchRevenue}
-					style={{
-						padding: '10px 20px',
-						backgroundColor: '#007bff',
-						color: 'white',
-						border: 'none',
-						borderRadius: '5px',
-						cursor: 'pointer',
-						fontSize: '1rem',
-					}}
+					className='px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 focus:ring focus:ring-blue-300'
 					disabled={loading}>
 					{loading ? 'Fetching...' : 'Refresh Revenue Data'}
 				</button>

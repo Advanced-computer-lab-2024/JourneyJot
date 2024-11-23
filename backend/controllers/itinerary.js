@@ -189,8 +189,14 @@ exports.addRatingAndComment = async (req, res) => {
 
 exports.calculateItineraryRevenue = async (req, res) => {
 	try {
+		const { date } = req.query;
+		let filter = { flagged: false };
+
+		if (date) {
+			filter.availableDates = { $gte: new Date(date) }; // Filter for itineraries on or after the specified date
+		}
 		// Fetch all activities
-		const itineraries = await Itinerary.find().populate('tourGuideId');
+		const itineraries = await Itinerary.find(filter).populate('tourGuideId');
 
 		if (itineraries.length === 0) {
 			return res.status(404).json({ message: 'No Itinerary found' });

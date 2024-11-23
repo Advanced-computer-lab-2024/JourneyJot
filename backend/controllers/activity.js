@@ -319,7 +319,15 @@ exports.addRatingAndComment = async (req, res) => {
 exports.calculateActivityRevenue = async (req, res) => {
 	try {
 		// Fetch all activities
-		const activities = await Activity.find().populate('category advertiserId');
+		const query = { flagged: false };
+		if (req.query.date) {
+			query.date = { $gte: new Date(req.query.date) }; // Filter by date on or after the specified date
+			console.log('Date filter:', query.date);
+		}
+
+		const activities = await Activity.find(query).populate(
+			'category advertiserId'
+		);
 
 		if (activities.length === 0) {
 			return res.status(404).json({ message: 'No activities found' });
