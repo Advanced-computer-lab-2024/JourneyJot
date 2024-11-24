@@ -26,6 +26,9 @@ const {
 	cancelItinerary,
 	cancelActivity,
 	cancelAttraction,
+	bookTransportation,
+	getBookedTransportations,
+	cancelBooking,
 } = require('../controllers/tourist');
 const auth_check = require('../middleware/auth-check');
 const { changePassword } = require('../helper/tourist-change-password');
@@ -72,5 +75,14 @@ touristRouter.post(
 	auth_check,
 	cancelAttraction
 );
+touristRouter.post('/bookTransportation/:id', auth_check, bookTransportation);
+touristRouter.get(
+	'/bookedTransportations',
+	auth_check,
+	getBookedTransportations
+);
+
+// Route to cancel a booking for a specific transportation ID
+touristRouter.delete('/cancelBooking/:id', auth_check, cancelBooking);
 
 module.exports = touristRouter;

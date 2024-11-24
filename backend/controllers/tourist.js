@@ -8,6 +8,7 @@ const Attraction = require('../models/Attraction');
 const TourGuide = require('../models/Tour-Guide');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Transportation = require('../models/Transportation');
 
 exports.signUp = async (req, res, next) => {
 	const {
@@ -350,7 +351,7 @@ exports.TouristBookActivity = async (req, res) => {
 		// Find the tourist and activity
 		const tourist = await Tourist.findById(userId);
 		const activity = await Activity.findById(activityId).populate(
-			'category preferenceTag isBooked' // Include isBooked in the populated fields
+			'category preferenceTag isBooked ratings.userId' // Include isBooked in the populated fields
 		);
 
 		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
@@ -895,5 +896,126 @@ exports.cancelAttraction = async (req, res) => {
 	} catch (error) {
 		console.error('Error canceling attraction:', error);
 		res.status(500).json({ message: 'Server error' });
+	}
+};
+exports.bookTransportation = async (req, res) => {
+	try {
+		const userId = req.user._id;
+		const transportationId = req.params.id;
+		const seatsToBook = req.body.seats || 1; // Default to 1 seat if not provided
+
+		console.log('User ID:', userId);
+		console.log('Transportation ID:', transportationId);
+		console.log('Seats to Book:', seatsToBook);
+
+		const tourist = await Tourist.findById(userId);
+		const transportation = await Transportation.findById(transportationId);
+
+		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
+		if (!transportation || transportation.isArchived)
+			return res.status(404).json({ message: 'Transportation not available' });
+
+		// Check if the transportation is already booked
+		if (tourist.transportations.includes(transportationId)) {
+			return res
+				.status(400)
+				.json({ message: 'Transportation has already been booked' });
+		}
+
+		// Check if there are enough available seats
+		if (seatsToBook > transportation.availableSeats) {
+			return res
+				.status(400)
+				.json({ message: 'Selected seats exceed available seats' });
+		}
+
+		// Calculate total price based on the number of seats
+		const pricePerSeat = transportation.pricePerSeat;
+		const totalPrice = seatsToBook * pricePerSeat;
+		const currentBalance = tourist.wallet.balance || 0;
+
+		// Check if the tourist has enough balance
+		if (currentBalance < totalPrice) {
+			return res.status(400).json({ message: 'Insufficient wallet balance' });
+		}
+
+		// Deduct price from the tourist's wallet
+		tourist.wallet.balance -= totalPrice;
+
+		// Deduct the booked seats from available seats
+		transportation.availableSeats -= seatsToBook;
+
+		// Calculate and add points
+		const pointsMultiplier =
+			tourist.points >= 500000 ? 1.5 : tourist.points >= 100000 ? 1 : 0.5;
+		const pointsEarned = totalPrice * pointsMultiplier;
+		tourist.points += pointsEarned;
+
+		// Add the transportation booking to the tourist's record
+		tourist.transportations.push(transportationId);
+
+		// Save the updated data
+		await tourist.save();
+		await transportation.save();
+
+		// Send response
+		res.status(200).json({
+			message: 'Transportation booked successfully',
+			transportation: {
+				...transportation.toObject(),
+				bookedSeats: seatsToBook,
+			},
+			updatedWalletBalance: tourist.wallet.balance.toFixed(2),
+			pointsEarned: Math.floor(pointsEarned),
+			totalPoints: Math.floor(tourist.points),
+		});
+	} catch (error) {
+		console.error('Error booking transportation:', error);
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+};
+exports.getBookedTransportations = async (req, res) => {
+	try {
+		const userId = req.user._id;
+
+		// Find the tourist and populate the transportations field
+		const tourist = await Tourist.findById(userId).populate('transportations');
+
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
+
+		res.status(200).json(tourist.transportations);
+	} catch (error) {
+		console.error('Error fetching booked transportations:', error);
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+};
+
+// Cancel a specific booked transportation for the logged-in user
+exports.cancelBooking = async (req, res) => {
+	try {
+		const userId = req.user._id;
+		const transportationId = req.params.id;
+
+		// Find the tourist
+		const tourist = await Tourist.findById(userId);
+		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
+
+		// Check if the transportation is in the user's bookings
+		const transportationIndex =
+			tourist.transportations.indexOf(transportationId);
+		if (transportationIndex === -1) {
+			return res.status(400).json({ message: 'Booking not found' });
+		}
+
+		// Remove the transportation from the user's bookings
+		tourist.transportations.splice(transportationIndex, 1);
+		await tourist.save();
+
+		res.status(200).json({ message: 'Booking canceled successfully' });
+	} catch (error) {
+		console.error('Error canceling booking:', error);
+		res.status(500).json({ message: 'Server error', error: error.message });
 	}
 };

@@ -347,10 +347,17 @@ const TouristGuest = () => {
 						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 						Wallet
 					</button>
+					<button
+						onClick={() => navigate('/tourist/homePage/transportation')}
+						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+						Book Transportation
+					</button>
 					<button className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 						Book Hotel
 					</button>
-					<button className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+					<button
+						onClick={() => navigate('/tourist/homepage/flights')}
+						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 						Book Flight
 					</button>
 					<button

@@ -61,6 +61,11 @@ import ItineraryRevenue from './components/TourGuide/ItineraryRevenue.jsx';
 import AttractionRevenue from './components/TourismGovernor/AttractionRevenue.jsx';
 import Revenue from './components/Admin/Revenue.jsx';
 import ProductRevenue from './components/Seller/ProductRevenue.jsx';
+import CreateTransportation from './components/Advertiser/TransportationAdvertiser.jsx';
+import FlightOffers from './pages/Tourist/FlightOffers.jsx';
+import BookedFlights from './pages/Tourist/BookedFlights.jsx';
+import Transportation from './pages/Tourist/Transportations.jsx';
+import FlightSearch from './pages/Tourist/FlightSearch.jsx';
 
 const App = () => {
 	return (
@@ -311,6 +316,22 @@ const App = () => {
 			<Route
 				path='/select-revenue'
 				element={<Revenue />}
+			/>
+			<Route
+				path='tourist/homePage/transportation'
+				element={<Transportation />}
+			/>
+			<Route
+				path='/advertiser-dashboard/transportation'
+				element={<CreateTransportation />}
+			/>
+			<Route
+				path='tourist/homePage/flights'
+				element={<FlightSearch />}
+			/>
+			<Route
+				path='/booked-flights'
+				element={<BookedFlights />}
 			/>
 		</Routes>
 	);

@@ -24,6 +24,9 @@ const complaintRouter = require('./routes/Complaints');
 const reviewRouter = require('./routes/reviews');
 const forget = require('./routes/forgetpassword');
 const cors = require('cors');
+const transportationRouter = require('./routes/transportation');
+const amadeusRoutes = require('./routes/amadueus');
+const flightRouter = require('./routes/flight');
 app.use(
 	cors({
 		origin: 'http://localhost:5173', // Your frontend's origin
@@ -58,5 +61,10 @@ app.use('/upload', uploadRouter);
 app.use('/complaints', complaintRouter);
 app.use('/reviews', reviewRouter);
 app.use('/forget', forget);
+app.use('/transportation', transportationRouter);
+
+// Add the Amadeus routes
+app.use('/amadeus', amadeusRoutes);
+app.use('/flights', flightRouter);
 
 module.exports = app;

@@ -87,7 +87,12 @@ const touristSchema = new mongoose.Schema(
 			default: 'active',
 		},
 		role: { type: String, enum: ['tourist'] },
+		transportations: [
+			{ type: mongoose.Schema.Types.ObjectId, ref: 'Transportation' },
+		],
+		flights: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Flight' }],
 	},
+
 	{ timestamps: true }
 );
 

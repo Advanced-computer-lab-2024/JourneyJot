@@ -18,6 +18,11 @@ const AdvertiserDashBoard = () => {
 							Profile
 						</Link>
 						<Link
+							to='/advertiser-dashboard/transportation'
+							className='text-blue-600 hover:text-blue-800 transition duration-300'>
+							Transportation
+						</Link>
+						<Link
 							to='/advertiser-dashboard/activities'
 							className='text-blue-600 hover:text-blue-800 transition duration-300'>
 							Activities
