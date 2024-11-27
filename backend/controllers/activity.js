@@ -399,39 +399,28 @@ exports.flagActivity = async (req, res) => {
 		res.status(500).json({ message: 'Error flagging activity', error });
 	}
 };
-exports.getNotifications = async (req, res) => {
-	const { userId } = req.params;
+exports.checkAllActivitiesForFlags = async (req, res) => {
 	try {
-		const notifications = await Notification.find({ userId }).sort({
-			timestamp: -1,
-		});
-		res.status(200).json({ notifications });
-	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving notifications', error });
-	}
-};
+		const activities = await Activity.find();
 
-exports.markAsRead = async (req, res) => {
-	const { userId } = req.params;
-
-	try {
-		// Find and update the notification by its ID
-		const notification = await Notification.findByIdAndUpdate(
-			userId,
-			{ read: true }, // Update the 'read' status to true
-			{ new: true }
-		);
-
-		if (!notification) {
-			return res.status(404).json({ message: 'Notification not found' });
+		if (!activities || !Array.isArray(activities) || activities.length === 0) {
+			return res.status(404).json({ message: 'No activities found' });
 		}
 
-		res
-			.status(200)
-			.json({ message: 'Notification marked as read', notification });
+		const flaggedActivities = activities.filter((activity) => activity.flagged);
+
+		res.status(200).json({
+			activities,
+			flagged: flaggedActivities.length > 0,
+			flaggedActivities,
+		});
 	} catch (error) {
+		console.error('Error checking activities for flags:', error.message);
 		res
 			.status(500)
-			.json({ message: 'Error marking notification as read', error });
+			.json({
+				message: 'Error checking activities for flags',
+				error: error.message,
+			});
 	}
 };

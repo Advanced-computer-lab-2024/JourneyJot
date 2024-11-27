@@ -1087,3 +1087,55 @@ exports.cancelBooking = async (req, res) => {
 		res.status(500).json({ message: 'Server error', error: error.message });
 	}
 };
+exports.getTouristCountByMonthForActivity = async (req, res) => {
+	try {
+		const userId = req.user._id; // The logged-in advertiser's user ID
+
+		// Get the current date and extract the month/year to filter by
+		const currentDate = new Date();
+
+		// Find all tourists and populate their activities
+		const tourists = await Tourist.find().populate({
+			path: 'activities',
+			populate: {
+				path: 'advertiserId', // Populate the advertiserId within each activity
+				model: 'User', // Ensure this matches your actual model name for Advertisers
+			},
+		});
+
+		if (!tourists || tourists.length === 0) {
+			return res.status(404).json({ message: 'No tourists found' });
+		}
+
+		// Map to hold the count of tourists by month
+		const touristCountByMonth = {};
+
+		// Loop through all tourists and their activities
+		tourists.forEach((tourist) => {
+			tourist.activities.forEach((activity) => {
+				// Check if the advertiser ID matches
+				if (activity.advertiserId._id.toString() === userId) {
+					const activityDate = new Date(activity.date);
+					const monthYear = `${
+						activityDate.getMonth() + 1
+					}-${activityDate.getFullYear()}`;
+
+					// Initialize the count if not already set
+					if (!touristCountByMonth[monthYear]) {
+						touristCountByMonth[monthYear] = 0;
+					}
+
+					// Increment the count for that month
+					touristCountByMonth[monthYear]++;
+				}
+			});
+		});
+
+		// Return the count of tourists by month
+		res.status(200).json({
+			touristCountByMonth,
+		});
+	} catch (error) {
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+};

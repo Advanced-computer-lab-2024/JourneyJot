@@ -68,6 +68,8 @@ import Transportation from './pages/Tourist/Transportations.jsx';
 import FlightSearch from './pages/Tourist/FlightSearch.jsx';
 import CompletedActivities from './components/Advertiser/CompletedActivities.jsx';
 import CompletedItineraries from './components/TourGuide/CompletedItineraries.jsx';
+import DisplayNotification from './components/Advertiser/DisplayNotification.jsx';
+import DisplayNotificationItinerary from './components/TourGuide/DisplayNotification.jsx';
 
 const App = () => {
 	return (
@@ -342,6 +344,14 @@ const App = () => {
 			<Route
 				path='/count-tourists-itineraries'
 				element={<CompletedItineraries />}
+			/>
+			<Route
+				path='/display-notification-activity'
+				element={<DisplayNotification />}
+			/>
+			<Route
+				path='/display-notification-itinerary'
+				element={<DisplayNotificationItinerary />}
 			/>
 		</Routes>
 	);
