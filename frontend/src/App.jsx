@@ -70,6 +70,7 @@ import CompletedActivities from './components/Advertiser/CompletedActivities.jsx
 import CompletedItineraries from './components/TourGuide/CompletedItineraries.jsx';
 import DisplayNotification from './components/Advertiser/DisplayNotification.jsx';
 import DisplayNotificationItinerary from './components/TourGuide/DisplayNotification.jsx';
+import SendEmailToAdvertiser from './components/Admin/SendEmailToAdvertiser.jsx';
 
 const App = () => {
 	return (
@@ -352,6 +353,10 @@ const App = () => {
 			<Route
 				path='/display-notification-itinerary'
 				element={<DisplayNotificationItinerary />}
+			/>
+			<Route
+				path='/mail-advertiser'
+				element={<SendEmailToAdvertiser />}
 			/>
 		</Routes>
 	);

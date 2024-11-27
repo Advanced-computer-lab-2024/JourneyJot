@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { AiOutlineWarning } from 'react-icons/ai'; // Using a warning icon
 
 const DisplayNotification = () => {
 	const [activities, setActivities] = useState([]);
@@ -11,6 +12,7 @@ const DisplayNotification = () => {
 
 	const API_URL = 'http://localhost:3000/advertisers/notifications';
 
+	// Fetch activities and notifications
 	const fetchActivities = async () => {
 		setLoading(true);
 		try {
@@ -32,6 +34,7 @@ const DisplayNotification = () => {
 		}
 	};
 
+	// Trigger the fetch on component mount
 	useEffect(() => {
 		fetchActivities();
 	}, []);
@@ -43,25 +46,33 @@ const DisplayNotification = () => {
 					Activity Report
 				</h1>
 
+				{/* Loading and error handling */}
 				{loading ? (
 					<p className='text-center text-blue-500'>Loading...</p>
 				) : error ? (
 					<p className='text-center text-red-500'>{error}</p>
 				) : (
 					<>
+						{/* Flagged Activities Notification */}
 						{flaggedActivities.length > 0 && (
-							<div className='bg-red-100 text-red-700 p-4 mb-6 rounded'>
-								<p className='font-semibold'>
-									Alert: Some activities are flagged!
-								</p>
-								<ul className='list-disc list-inside'>
-									{flaggedActivities.map((activity) => (
-										<li key={activity._id}>{activity.name} - Flagged</li>
-									))}
-								</ul>
+							<div className='notification-banner animate__animated animate__fadeIn mb-6'>
+								<div className='bg-red-500 text-white p-4 rounded-lg shadow-lg flex items-center space-x-4'>
+									<AiOutlineWarning className='text-xl' />
+									<div>
+										<p className='font-semibold'>
+											Alert: Some activities are flagged!
+										</p>
+										<ul className='list-disc list-inside'>
+											{flaggedActivities.map((activity) => (
+												<li key={activity._id}>{activity.name} - Flagged</li>
+											))}
+										</ul>
+									</div>
+								</div>
 							</div>
 						)}
 
+						{/* All Activities List */}
 						<h2 className='text-xl font-semibold text-gray-700 mb-4'>
 							All Activities
 						</h2>

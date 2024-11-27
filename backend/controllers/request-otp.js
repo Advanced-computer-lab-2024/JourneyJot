@@ -9,15 +9,22 @@ function generateOTP() {
 	return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
 }
 
-// Request OTP Route
 exports.requestOTP = async (req, res) => {
-	const { email } = req.body;
+	const { email, role } = req.body; // Ensure role is included from frontend
 
 	try {
 		// Find the user
 		const user = await User.findOne({ email });
 		if (!user) {
 			return res.status(404).send('User not found');
+		}
+
+		if (role === 'admin' || role === 'governor') {
+			if (!user.email) {
+				// Only update email if it's null or empty
+				user.email = email;
+				await user.save();
+			}
 		}
 
 		// Generate OTP and expiry
@@ -90,4 +97,59 @@ exports.resetPassword = async (req, res) => {
 	await user.save();
 
 	res.send('Password reset successfully');
+};
+
+exports.sendEmailToAdvertiser = async (req, res) => {
+	const { advertiserUsername, subject, message } = req.body;
+
+	// Validate required fields
+	if (!advertiserUsername || !subject || !message) {
+		return res
+			.status(400)
+			.send('All fields are required: advertiserUsername, subject, message');
+	}
+
+	try {
+		// Log the advertiserUsername to ensure it's being passed correctly
+		console.log('Advertiser Username:', advertiserUsername);
+
+		// Find the advertiser by username
+		const advertiser = await User.findOne({ username: advertiserUsername });
+		if (!advertiser) {
+			return res.status(404).send('Advertiser not found');
+		}
+
+		// Create a transporter using Gmail's SMTP service
+		const transporter = nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: process.env.USER_EMAIL,
+				pass: process.env.USER_PASS,
+			},
+		});
+
+		// Set up email options
+		const mailOptions = {
+			from: process.env.USER_EMAIL,
+			to: advertiser.email,
+			subject: subject,
+			text: message,
+		};
+
+		// Send the email
+		await transporter.sendMail(mailOptions);
+
+		// Respond with success
+		res.status(200).send('Email sent to the advertiser successfully');
+	} catch (error) {
+		console.error('Error sending email:', error);
+
+		if (error.responseCode === 550) {
+			return res
+				.status(400)
+				.send('Invalid email address or unable to send email');
+		} else {
+			res.status(500).send('Internal Server Error');
+		}
+	}
 };

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { AiOutlineWarning } from 'react-icons/ai'; // Using a warning icon
 
 const DisplayNotificationItinerary = () => {
 	const [itineraries, setItineraries] = useState([]);
@@ -11,6 +12,7 @@ const DisplayNotificationItinerary = () => {
 
 	const API_URL = 'http://localhost:3000/tour-guides/notifications';
 
+	// Fetch itineraries and notifications
 	const fetchItineraries = async () => {
 		setLoading(true);
 		try {
@@ -32,6 +34,7 @@ const DisplayNotificationItinerary = () => {
 		}
 	};
 
+	// Trigger the fetch on component mount
 	useEffect(() => {
 		fetchItineraries();
 	}, []);
@@ -43,25 +46,33 @@ const DisplayNotificationItinerary = () => {
 					Itinerary Report
 				</h1>
 
+				{/* Loading and error handling */}
 				{loading ? (
 					<p className='text-center text-blue-500'>Loading...</p>
 				) : error ? (
 					<p className='text-center text-red-500'>{error}</p>
 				) : (
 					<>
+						{/* Flagged Itineraries Notification */}
 						{flaggedItineraries.length > 0 && (
-							<div className='bg-red-100 text-red-700 p-4 mb-6 rounded'>
-								<p className='font-semibold'>
-									Alert: Some itineraries are flagged!
-								</p>
-								<ul className='list-disc list-inside'>
-									{flaggedItineraries.map((itinerary) => (
-										<li key={itinerary._id}>{itinerary.name} - Flagged</li>
-									))}
-								</ul>
+							<div className='notification-banner animate__animated animate__fadeIn mb-6'>
+								<div className='bg-red-500 text-white p-4 rounded-lg shadow-lg flex items-center space-x-4'>
+									<AiOutlineWarning className='text-xl' />
+									<div>
+										<p className='font-semibold'>
+											Alert: Some itineraries are flagged!
+										</p>
+										<ul className='list-disc list-inside'>
+											{flaggedItineraries.map((itinerary) => (
+												<li key={itinerary._id}>{itinerary.name} - Flagged</li>
+											))}
+										</ul>
+									</div>
+								</div>
 							</div>
 						)}
 
+						{/* All Itineraries List */}
 						<h2 className='text-xl font-semibold text-gray-700 mb-4'>
 							All Itineraries
 						</h2>
