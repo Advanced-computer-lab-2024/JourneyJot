@@ -16,7 +16,10 @@ const {
 } = require('../controllers/admin');
 const { changePassword } = require('../helper/change-password');
 const { flagItinerary, flagActivity } = require('../controllers/flag-events');
-const { sendEmailToAdvertiser } = require('../controllers/request-otp');
+const {
+	sendEmailToAdvertiser,
+	sendEmailToTourGuide,
+} = require('../controllers/request-otp');
 adminRouter.delete(
 	'/delete-account/:username',
 	authMiddleware,
@@ -60,6 +63,7 @@ adminRouter.put(
 	adminMiddleware,
 	flagActivity
 );
-adminRouter.post('/send-email', sendEmailToAdvertiser);
+adminRouter.post('/send-email-advertiser', sendEmailToAdvertiser);
+adminRouter.post('/send-email-tour-guide', sendEmailToTourGuide);
 
 module.exports = adminRouter;

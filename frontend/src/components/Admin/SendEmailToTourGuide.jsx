@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const SendEmailToAdvertiser = () => {
-	const [advertiserUsername, setAdvertiserUsername] = useState('');
+const SendEmailToTourGuide = () => {
+	const [tourGuideUsername, setTourGuideUsername] = useState('');
 	const [subject, setSubject] = useState('');
 	const [message, setMessage] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -19,38 +19,41 @@ const SendEmailToAdvertiser = () => {
 
 		try {
 			const response = await axios.post(
-				'http://localhost:3000/admins/send-email-advertiser',
+				'http://localhost:3000/admins/send-email-tour-guide',
 				{
-					advertiserUsername,
+					tourGuideUsername,
 					subject,
 					message,
 				}
 			);
-			setSuccess(response.data);
+			setSuccess(response.data.message || 'Email sent successfully!');
 			setLoading(false);
 		} catch (err) {
 			setLoading(false);
-			setError(err.response ? err.response.data : 'An error occurred');
+			setError(
+				err.response?.data?.error ||
+					'An error occurred while sending the email.'
+			);
 		}
 	};
 
 	return (
 		<div className='max-w-xl mx-auto p-6 bg-white rounded-lg shadow-lg'>
-			<h2 className='text-2xl font-bold mb-4'>Send Email to Advertiser</h2>
+			<h2 className='text-2xl font-bold mb-4'>Send Email to Tour Guide</h2>
 
 			<form onSubmit={handleSubmit}>
-				{/* Advertiser Username */}
+				{/* Tour Guide Username */}
 				<div className='mb-4'>
 					<label
-						htmlFor='advertiserUsername'
+						htmlFor='tourGuideUsername'
 						className='block text-sm font-medium text-gray-700'>
-						Advertiser Username
+						Tour Guide Username
 					</label>
 					<input
-						id='advertiserUsername'
+						id='tourGuideUsername'
 						type='text'
-						value={advertiserUsername}
-						onChange={(e) => setAdvertiserUsername(e.target.value)}
+						value={tourGuideUsername}
+						onChange={(e) => setTourGuideUsername(e.target.value)}
 						className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md'
 						required
 					/>
@@ -106,4 +109,4 @@ const SendEmailToAdvertiser = () => {
 	);
 };
 
-export default SendEmailToAdvertiser;
+export default SendEmailToTourGuide;

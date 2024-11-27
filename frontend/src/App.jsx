@@ -71,6 +71,7 @@ import CompletedItineraries from './components/TourGuide/CompletedItineraries.js
 import DisplayNotification from './components/Advertiser/DisplayNotification.jsx';
 import DisplayNotificationItinerary from './components/TourGuide/DisplayNotification.jsx';
 import SendEmailToAdvertiser from './components/Admin/SendEmailToAdvertiser.jsx';
+import SendEmailToTourGuide from './components/Admin/sendEmailToTourGuide.jsx';
 
 const App = () => {
 	return (
@@ -357,6 +358,10 @@ const App = () => {
 			<Route
 				path='/mail-advertiser'
 				element={<SendEmailToAdvertiser />}
+			/>
+			<Route
+				path='/mail-tour-guide'
+				element={<SendEmailToTourGuide />}
 			/>
 		</Routes>
 	);

@@ -153,3 +153,54 @@ exports.sendEmailToAdvertiser = async (req, res) => {
 		}
 	}
 };
+exports.sendEmailToTourGuide = async (req, res) => {
+	const { tourGuideUsername, subject, message } = req.body;
+
+	// Validate required fields
+	if (!tourGuideUsername || !subject || !message) {
+		return res
+			.status(400)
+			.send('All fields are required: tourGuideUsername, subject, message');
+	}
+
+	try {
+		console.log('tourGuide Username:', tourGuideUsername);
+		const tourGuide = await User.findOne({ username: tourGuideUsername });
+		if (!tourGuide) {
+			return res.status(404).send('tourGuide not found');
+		}
+
+		// Create a transporter using Gmail's SMTP service
+		const transporter = nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: process.env.USER_EMAIL,
+				pass: process.env.USER_PASS,
+			},
+		});
+
+		// Set up email options
+		const mailOptions = {
+			from: process.env.USER_EMAIL,
+			to: tourGuide.email,
+			subject: subject,
+			text: message,
+		};
+
+		// Send the email
+		await transporter.sendMail(mailOptions);
+
+		// Respond with success
+		res.status(200).send('Email sent to the tourGuide successfully');
+	} catch (error) {
+		console.error('Error sending email:', error);
+
+		if (error.responseCode === 550) {
+			return res
+				.status(400)
+				.send('Invalid email address or unable to send email');
+		} else {
+			res.status(500).send('Internal Server Error');
+		}
+	}
+};
