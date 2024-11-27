@@ -66,6 +66,8 @@ import FlightOffers from './pages/Tourist/FlightOffers.jsx';
 import BookedFlights from './pages/Tourist/BookedFlights.jsx';
 import Transportation from './pages/Tourist/Transportations.jsx';
 import FlightSearch from './pages/Tourist/FlightSearch.jsx';
+import CompletedActivities from './components/Advertiser/CompletedActivities.jsx';
+import CompletedItineraries from './components/TourGuide/CompletedItineraries.jsx';
 
 const App = () => {
 	return (
@@ -332,6 +334,14 @@ const App = () => {
 			<Route
 				path='/booked-flights'
 				element={<BookedFlights />}
+			/>
+			<Route
+				path='/count-tourists-activities'
+				element={<CompletedActivities />}
+			/>
+			<Route
+				path='/count-tourists-itineraries'
+				element={<CompletedItineraries />}
 			/>
 		</Routes>
 	);

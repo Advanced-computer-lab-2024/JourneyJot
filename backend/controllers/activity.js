@@ -4,6 +4,7 @@
 
 const Activity = require('../models/Activity');
 const Category = require('../models/Category');
+const Notification = require('../models/Notification');
 const PreferenceTag = require('../models/preferenceTag');
 // Create a new activity
 exports.createActivity = async (req, res) => {
@@ -366,5 +367,71 @@ exports.calculateActivityRevenue = async (req, res) => {
 			message: 'An error occurred while calculating activity revenue',
 			error: error.message,
 		});
+	}
+};
+
+exports.flagActivity = async (req, res) => {
+	const { id } = req.params;
+	try {
+		// Flag the activity
+		const activity = await Activity.findByIdAndUpdate(
+			id,
+			{ flagged: true },
+			{ new: true }
+		);
+
+		if (!activity) {
+			return res.status(404).json({ message: 'Activity not found' });
+		}
+
+		// Create a notification for the advertiser
+		const notificationMessage = `Your activity "${activity.title}" has been flagged as inappropriate by the Admin.`;
+		await Notification.create({
+			userId: activity.createdBy, // Assuming `createdBy` is the advertiser's ID
+			message: notificationMessage,
+		});
+
+		res.status(200).json({
+			message: 'Activity flagged successfully, and advertiser notified.',
+			activity,
+		});
+	} catch (error) {
+		res.status(500).json({ message: 'Error flagging activity', error });
+	}
+};
+exports.getNotifications = async (req, res) => {
+	const { userId } = req.params;
+	try {
+		const notifications = await Notification.find({ userId }).sort({
+			timestamp: -1,
+		});
+		res.status(200).json({ notifications });
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving notifications', error });
+	}
+};
+
+exports.markAsRead = async (req, res) => {
+	const { userId } = req.params;
+
+	try {
+		// Find and update the notification by its ID
+		const notification = await Notification.findByIdAndUpdate(
+			userId,
+			{ read: true }, // Update the 'read' status to true
+			{ new: true }
+		);
+
+		if (!notification) {
+			return res.status(404).json({ message: 'Notification not found' });
+		}
+
+		res
+			.status(200)
+			.json({ message: 'Notification marked as read', notification });
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: 'Error marking notification as read', error });
 	}
 };

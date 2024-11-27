@@ -16,6 +16,7 @@ const {
 	verifyOTP,
 	resetPassword,
 } = require('../controllers/request-otp');
+const { getNotifications, markAsRead } = require('../controllers/activity');
 const advertiserRouter = express.Router();
 // Update tour guide profile
 advertiserRouter.put('/profile', auth_check, createAdvertiserProfile);
@@ -28,5 +29,7 @@ advertiserRouter.post(
 );
 advertiserRouter.post('/changePassword', auth_check, changePassword);
 advertiserRouter.put('/account', auth_check, deleteRequest);
+advertiserRouter.get('/notifications/:id', getNotifications);
+advertiserRouter.put('/notifications/:id', markAsRead);
 
 module.exports = advertiserRouter;

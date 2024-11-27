@@ -43,6 +43,11 @@ const AdvertiserDashBoard = () => {
 							className='text-blue-600 hover:text-blue-800 transition duration-300'>
 							Activity Revenue
 						</Link>
+						<Link
+							to='/count-tourists-activities'
+							className='text-blue-600 hover:text-blue-800 transition duration-300'>
+							Tourists Count
+						</Link>
 					</div>
 				</div>
 			</nav>

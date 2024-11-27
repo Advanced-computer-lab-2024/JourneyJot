@@ -350,9 +350,14 @@ exports.TouristBookActivity = async (req, res) => {
 
 		// Find the tourist and activity
 		const tourist = await Tourist.findById(userId);
-		const activity = await Activity.findById(activityId).populate(
-			'category preferenceTag isBooked ratings.userId' // Include isBooked in the populated fields
-		);
+		const activity = await Activity.findById(activityId)
+			.populate(
+				'category preferenceTag isBooked ratings.userId' // Include isBooked in the populated fields
+			)
+			.populate({
+				path: 'tourists',
+				select: 'username', // Fetching the email and username of the user who left the rating
+			});
 
 		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
 		if (!activity)
@@ -443,6 +448,7 @@ exports.TouristBookAttraction = async (req, res) => {
 		// Add attraction to tourist's bookings
 		tourist.attractions.push(attractionId);
 		attraction.isBooked = true;
+
 		await attraction.save(); // Save the updated attraction object
 		await tourist.save();
 
@@ -546,10 +552,11 @@ exports.getTouristData = async (req, res) => {
 
 exports.getCompletedItineraries = async (req, res) => {
 	try {
-		const userId = req.user._id;
+		// Get the current date
+		const currentDate = new Date();
 
-		// Find the tourist by ID and populate itineraries with tourGuideId
-		const tourist = await Tourist.findById(userId).populate({
+		// Find all tourists and populate their itineraries
+		const tourists = await Tourist.find().populate({
 			path: 'itineraries',
 			populate: {
 				path: 'tourGuideId', // Populate the tourGuideId within each itinerary
@@ -557,19 +564,49 @@ exports.getCompletedItineraries = async (req, res) => {
 			},
 		});
 
-		if (!tourist) {
-			return res.status(404).json({ message: 'Tourist not found' });
+		if (!tourists || tourists.length === 0) {
+			return res.status(404).json({ message: 'No tourists found' });
 		}
 
-		// Get the current date
-		const currentDate = new Date();
+		// Create a set to track unique tourists with completed itineraries
+		const uniqueTouristDetails = new Map(); // Use a Map to store both ID and username
 
-		// Filter out completed itineraries where all available dates are in the past
-		const completedItineraries = tourist.itineraries.filter((itinerary) =>
-			itinerary.availableDates.every((date) => new Date(date) < currentDate)
+		// Array to collect all completed itineraries
+		const allCompletedItineraries = [];
+
+		// Iterate through all tourists and their itineraries
+		tourists.forEach((tourist) => {
+			const completedItineraries = tourist.itineraries.filter((itinerary) =>
+				itinerary.availableDates.every((date) => new Date(date) < currentDate)
+			);
+
+			// If the tourist has completed itineraries, add their ID and username to the map
+			if (completedItineraries.length > 0) {
+				uniqueTouristDetails.set(tourist._id.toString(), tourist.username);
+			}
+
+			// Add the completed itineraries to the main array
+			allCompletedItineraries.push(...completedItineraries);
+		});
+
+		// Count the number of unique tourists
+		const distinctTouristCount = uniqueTouristDetails.size;
+
+		// Convert the Map to an array for easier processing
+		const distinctTourists = Array.from(
+			uniqueTouristDetails,
+			([id, username]) => ({
+				id,
+				username,
+			})
 		);
 
-		res.status(200).json({ completedItineraries });
+		// Return both the count, the usernames, and the list of completed itineraries
+		res.status(200).json({
+			distinctTouristCount,
+			distinctTourists,
+			completedItineraries: allCompletedItineraries,
+		});
 	} catch (error) {
 		res.status(500).json({ message: 'Server error', error: error.message });
 	}
@@ -577,10 +614,11 @@ exports.getCompletedItineraries = async (req, res) => {
 
 exports.getCompletedActivities = async (req, res) => {
 	try {
-		const userId = req.user._id;
+		// Get the current date
+		const currentDate = new Date();
 
-		// Find the tourist by ID and populate activities with advertiserId
-		const tourist = await Tourist.findById(userId).populate({
+		// Find all tourists and populate their activities
+		const tourists = await Tourist.find().populate({
 			path: 'activities',
 			populate: {
 				path: 'advertiserId', // Populate the advertiserId within each activity
@@ -588,19 +626,49 @@ exports.getCompletedActivities = async (req, res) => {
 			},
 		});
 
-		if (!tourist) {
-			return res.status(404).json({ message: 'Tourist not found' });
+		if (!tourists || tourists.length === 0) {
+			return res.status(404).json({ message: 'No tourists found' });
 		}
 
-		// Get the current date
-		const currentDate = new Date();
+		// Create a set to track unique tourists with completed activities
+		const uniqueTouristDetails = new Map(); // Use a Map to store both ID and username
 
-		// Filter out completed activities where the activity date is in the past
-		const completedActivities = tourist.activities.filter(
-			(activity) => new Date(activity.date) < currentDate
+		// Array to collect all completed activities
+		const allCompletedActivities = [];
+
+		// Iterate through all tourists and their activities
+		tourists.forEach((tourist) => {
+			const completedActivities = tourist.activities.filter(
+				(activity) => new Date(activity.date) < currentDate
+			);
+
+			// If the tourist has completed activities, add their ID and username to the map
+			if (completedActivities.length > 0) {
+				uniqueTouristDetails.set(tourist._id.toString(), tourist.username);
+			}
+
+			// Add the completed activities to the main array
+			allCompletedActivities.push(...completedActivities);
+		});
+
+		// Count the number of unique tourists
+		const distinctTouristCount = uniqueTouristDetails.size;
+
+		// Convert the Map to an array for easier processing
+		const distinctTourists = Array.from(
+			uniqueTouristDetails,
+			([id, username]) => ({
+				id,
+				username,
+			})
 		);
 
-		res.status(200).json({ completedActivities });
+		// Return both the count, the usernames, and the list of completed activities
+		res.status(200).json({
+			distinctTouristCount,
+			distinctTourists,
+			completedActivities: allCompletedActivities,
+		});
 	} catch (error) {
 		res.status(500).json({ message: 'Server error', error: error.message });
 	}

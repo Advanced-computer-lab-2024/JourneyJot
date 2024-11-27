@@ -35,6 +35,11 @@ const Dashboard = () => {
 							className='text-blue-600 hover:text-blue-800 transition duration-300'>
 							Itinerary Revenue
 						</Link>
+						<Link
+							to='/count-tourists-itineraries'
+							className='text-blue-600 hover:text-blue-800 transition duration-300'>
+							Tourists Count
+						</Link>
 					</div>
 				</div>
 			</nav>
