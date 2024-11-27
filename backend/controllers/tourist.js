@@ -549,7 +549,6 @@ exports.getTouristData = async (req, res) => {
 		res.status(500).json({ message: 'Server error', error: error.message });
 	}
 };
-
 exports.getCompletedItineraries = async (req, res) => {
 	try {
 		// Get the current date
@@ -612,6 +611,95 @@ exports.getCompletedItineraries = async (req, res) => {
 	}
 };
 
+exports.getCompletedItinerariesAndTourists = async (req, res) => {
+	try {
+		// Get query parameters for month and year
+		const { month, year } = req.query;
+
+		// Parse month and year
+		const filterMonth = parseInt(month, 10);
+		const filterYear = parseInt(year, 10);
+
+		// Validate inputs
+		if (
+			isNaN(filterMonth) ||
+			isNaN(filterYear) ||
+			filterMonth < 1 ||
+			filterMonth > 12
+		) {
+			return res
+				.status(400)
+				.json({ message: 'Invalid month or year provided' });
+		}
+
+		// Create date range for the specified month and year
+		const startDate = new Date(filterYear, filterMonth - 1, 1); // Start of the month
+		const endDate = new Date(filterYear, filterMonth, 0, 23, 59, 59); // End of the month
+
+		// Find all tourists and populate their itineraries
+		const tourists = await Tourist.find().populate({
+			path: 'itineraries',
+			populate: {
+				path: 'tourGuideId', // Populate the tourGuideId within each itinerary
+				model: 'User', // Ensure this matches your actual model name for Tour Guides
+			},
+		});
+
+		if (!tourists || tourists.length === 0) {
+			return res.status(404).json({ message: 'No tourists found' });
+		}
+
+		// Create a set to track unique tourists with completed itineraries
+		const uniqueTouristDetails = new Map(); // Use a Map to store both ID and username
+
+		// Array to collect all completed itineraries
+		const filteredCompletedItineraries = [];
+
+		// Iterate through all tourists and their itineraries
+		tourists.forEach((tourist) => {
+			// Filter completed itineraries within the specified date range
+			const completedItineraries = tourist.itineraries.filter((itinerary) =>
+				itinerary.availableDates.every((date) => {
+					const itineraryDate = new Date(date);
+					return (
+						itineraryDate < new Date() && // Completed
+						itineraryDate >= startDate && // After start of month
+						itineraryDate <= endDate // Before end of month
+					);
+				})
+			);
+
+			// If the tourist has completed itineraries, add their ID and username to the map
+			if (completedItineraries.length > 0) {
+				uniqueTouristDetails.set(tourist._id.toString(), tourist.username);
+			}
+
+			// Add the filtered itineraries to the main array
+			filteredCompletedItineraries.push(...completedItineraries);
+		});
+
+		// Count the number of unique tourists
+		const distinctTouristCount = uniqueTouristDetails.size;
+
+		// Convert the Map to an array for easier processing
+		const distinctTourists = Array.from(
+			uniqueTouristDetails,
+			([id, username]) => ({
+				id,
+				username,
+			})
+		);
+
+		// Return both the count, the usernames, and the list of completed itineraries
+		res.status(200).json({
+			distinctTouristCount,
+			distinctTourists,
+			completedItineraries: filteredCompletedItineraries,
+		});
+	} catch (error) {
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+};
 exports.getCompletedActivities = async (req, res) => {
 	try {
 		// Get the current date
@@ -641,6 +729,84 @@ exports.getCompletedActivities = async (req, res) => {
 			const completedActivities = tourist.activities.filter(
 				(activity) => new Date(activity.date) < currentDate
 			);
+
+			// If the tourist has completed activities, add their ID and username to the map
+			if (completedActivities.length > 0) {
+				uniqueTouristDetails.set(tourist._id.toString(), tourist.username);
+			}
+
+			// Add the completed activities to the main array
+			allCompletedActivities.push(...completedActivities);
+		});
+
+		// Count the number of unique tourists
+		const distinctTouristCount = uniqueTouristDetails.size;
+
+		// Convert the Map to an array for easier processing
+		const distinctTourists = Array.from(
+			uniqueTouristDetails,
+			([id, username]) => ({
+				id,
+				username,
+			})
+		);
+
+		// Return both the count, the usernames, and the list of completed activities
+		res.status(200).json({
+			distinctTouristCount,
+			distinctTourists,
+			completedActivities: allCompletedActivities,
+		});
+	} catch (error) {
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+};
+
+exports.getCompletedActivitiesAndTourists = async (req, res) => {
+	try {
+		// Get the current date
+		const currentDate = new Date();
+
+		// Extract the month and year from the request (e.g., { month: 11, year: 2024 })
+		const { month, year } = req.query;
+
+		if (!month || !year) {
+			return res
+				.status(400)
+				.json({ message: 'Month and year are required for filtering' });
+		}
+
+		// Find all tourists and populate their activities
+		const tourists = await Tourist.find().populate({
+			path: 'activities',
+			populate: {
+				path: 'advertiserId', // Populate the advertiserId within each activity
+				model: 'User', // Ensure this matches your actual model name for Advertisers
+			},
+		});
+
+		if (!tourists || tourists.length === 0) {
+			return res.status(404).json({ message: 'No tourists found' });
+		}
+
+		// Create a set to track unique tourists with completed activities
+		const uniqueTouristDetails = new Map(); // Use a Map to store both ID and username
+
+		// Array to collect all completed activities
+		const allCompletedActivities = [];
+
+		// Iterate through all tourists and their activities
+		tourists.forEach((tourist) => {
+			const completedActivities = tourist.activities.filter((activity) => {
+				const activityDate = new Date(activity.date);
+
+				// Filter by completed activities and the given month and year
+				return (
+					activityDate < currentDate &&
+					activityDate.getMonth() + 1 === parseInt(month) && // Month is 0-indexed
+					activityDate.getFullYear() === parseInt(year)
+				);
+			});
 
 			// If the tourist has completed activities, add their ID and username to the map
 			if (completedActivities.length > 0) {
