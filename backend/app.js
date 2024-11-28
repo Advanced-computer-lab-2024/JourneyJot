@@ -27,6 +27,7 @@ const cors = require('cors');
 const transportationRouter = require('./routes/transportation');
 const amadeusRoutes = require('./routes/amadueus');
 const flightRouter = require('./routes/flight');
+
 app.use(
 	cors({
 		origin: 'http://localhost:5173', // Your frontend's origin

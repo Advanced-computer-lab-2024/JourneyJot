@@ -31,6 +31,7 @@ const {
 	cancelBooking,
 	getCompletedItinerariesAndTourists,
 	getCompletedActivitiesAndTourists,
+	payStripe,
 } = require('../controllers/tourist');
 const auth_check = require('../middleware/auth-check');
 const { changePassword } = require('../helper/tourist-change-password');
@@ -93,6 +94,7 @@ touristRouter.get(
 	auth_check,
 	getBookedTransportations
 );
+touristRouter.post('/pay-stripe', payStripe);
 
 // Route to cancel a booking for a specific transportation ID
 touristRouter.delete('/cancelBooking/:id', auth_check, cancelBooking);

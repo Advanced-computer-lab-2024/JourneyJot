@@ -1,4 +1,5 @@
 /** @format */
+require('dotenv').config();
 const Tourist = require('../models/Tourist');
 const Product = require('../models/Product');
 const Review = require('../models/Review');
@@ -9,6 +10,7 @@ const TourGuide = require('../models/Tour-Guide');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Transportation = require('../models/Transportation');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.signUp = async (req, res, next) => {
 	const {
@@ -1303,5 +1305,68 @@ exports.getTouristCountByMonthForActivity = async (req, res) => {
 		});
 	} catch (error) {
 		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+};
+
+exports.createSetupIntent = async (req, res) => {
+	const { userId } = req.body;
+
+	try {
+		// Create a SetupIntent to save the payment method for later use
+		const setupIntent = await stripe.setupIntents.create({
+			payment_method_types: ['card'], // Specify card as payment method
+		});
+
+		// Send the client secret to the frontend to complete the setup
+		return res.status(200).json({
+			clientSecret: setupIntent.client_secret,
+		});
+	} catch (error) {
+		console.error('Error creating setup intent:', error);
+		return res
+			.status(400)
+			.json({ message: error.message || 'Something went wrong' });
+	}
+};
+
+exports.payStripe = async (req, res) => {
+	const { amount, currency, paymentMethodId, walletAmount } = req.body;
+
+	try {
+		// Log incoming request data for debugging
+		console.log('Request Body:', req.body);
+
+		// Check if the wallet balance is sufficient
+		if (walletAmount >= amount) {
+			return res
+				.status(200)
+				.json({ message: 'Payment successful from wallet!' });
+		}
+
+		// Create a PaymentIntent with the paymentMethodId
+		const paymentIntent = await stripe.paymentIntents.create({
+			amount: amount * 100, // Convert amount to cents
+			currency: currency || 'usd', // Default to 'usd' if no currency is provided
+			payment_method: paymentMethodId,
+			confirm: true, // Automatically confirms the payment
+			automatic_payment_methods: {
+				enabled: true,
+			},
+		});
+
+		// Log the payment intent response for debugging
+		console.log('Payment Intent:', paymentIntent);
+
+		return res.status(200).json({
+			message: 'Payment successful!',
+			paymentIntentId: paymentIntent.id, // Optionally send the payment intent ID back to the frontend
+		});
+	} catch (error) {
+		// Log the error to the console
+		console.error('Payment processing error:', error);
+		return res.status(400).json({
+			message: error.message || 'Something went wrong',
+			error: error, // Log full error details to help debugging
+		});
 	}
 };

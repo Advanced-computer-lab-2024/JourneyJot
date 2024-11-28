@@ -72,7 +72,14 @@ import DisplayNotification from './components/Advertiser/DisplayNotification.jsx
 import DisplayNotificationItinerary from './components/TourGuide/DisplayNotification.jsx';
 import SendEmailToAdvertiser from './components/Admin/SendEmailToAdvertiser.jsx';
 import SendEmailToTourGuide from './components/Admin/sendEmailToTourGuide.jsx';
+import PayWithStripe from './components/Tourist/PayStripe.jsx';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
+// Load Stripe with your public key
+const stripePromise = loadStripe(
+	'pk_test_51QPr8TDbJphsuJ1azF71v68UgZJOXpe5vfeKNpfbNxM7QkVZ3CtaL8MisGPSx9btiOOMQ78G3SvmwvovSMPjx8O900SOrWEaHL'
+);
 const App = () => {
 	return (
 		<Routes>
@@ -362,6 +369,14 @@ const App = () => {
 			<Route
 				path='/mail-tour-guide'
 				element={<SendEmailToTourGuide />}
+			/>
+			<Route
+				path='/pay-stripe'
+				element={
+					<Elements stripe={stripePromise}>
+						<PayWithStripe />
+					</Elements>
+				}
 			/>
 		</Routes>
 	);
