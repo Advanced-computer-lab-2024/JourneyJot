@@ -6,7 +6,6 @@ import EditActivityModal from './EditActivity';
 import DeleteActivityButton from './DeleteActivity';
 import StarRating from '../Helper/StarRating';
 import { useNavigate } from 'react-router-dom';
-
 const ActivitiesCard = ({
 	activities = [],
 	isAdvertiser = false,
@@ -140,6 +139,17 @@ const ActivitiesCard = ({
 		setShareOptionsVisible(!shareOptionsVisible);
 	};
 
+	const handlePayViaStripe = (activity) => {
+		// Ensure no PointerEvent is passed to navigate
+		navigate('/pay-stripe', {
+			state: {
+				activity: activity, // Pass only the serializable activity data
+				currency: currency,
+				conversionRate: conversionRate,
+			},
+		});
+	};
+
 	return (
 		<div>
 			<div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4'>
@@ -199,7 +209,9 @@ const ActivitiesCard = ({
 									Book A Ticket
 								</button>
 								<button
-									onClick={() => navigate('/pay-stripe')}
+									onClick={() =>
+										handlePayViaStripe(activity, currency, conversionRate)
+									}
 									className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 									Pay via Stripe
 								</button>

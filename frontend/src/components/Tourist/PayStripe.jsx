@@ -1,176 +1,131 @@
 /** @format */
 
-import React, { useState } from 'react';
-import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
-const PaymentForm = () => {
+const PaymentPage = () => {
+	const [paymentStatus, setPaymentStatus] = useState(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const [walletAmount, setWalletAmount] = useState(0); // Optional: wallet balance if using wallet payments
+
+	// Use the location hook to get the state passed from the previous page (ActivitiesCard)
+	const location = useLocation();
+	const { activity, currency, conversionRate = 1 } = location.state || {}; // Destructure the activity, currency, and conversionRate from state
+
+	const navigate = useNavigate(); // We'll use this if we need to redirect after payment
 	const stripe = useStripe();
 	const elements = useElements();
-	const [amount, setAmount] = useState(''); // Amount entered by user (in dollars)
-	const [currency, setCurrency] = useState('usd');
-	const [walletAmount, setWalletAmount] = useState(0); // Wallet balance (in dollars)
-	const [isLoading, setIsLoading] = useState(false);
-	const [paymentSuccess, setPaymentSuccess] = useState(null);
 
-	const handleSubmit = async (event) => {
-		event.preventDefault();
+	useEffect(() => {
+		if (!activity) {
+			navigate('/'); // If activity is missing, redirect to home or another page
+		}
+	}, [activity, navigate]);
+
+	const handleFakeVisaPayment = async () => {
+		setIsLoading(true);
 
 		if (!stripe || !elements) {
-			return; // Stripe.js hasn't loaded yet, disable form submission
-		}
-
-		// Validate amount and walletAmount
-		if (amount <= 0 || isNaN(amount)) {
-			setPaymentSuccess('Please enter a valid amount.');
+			// Stripe.js or Elements is not yet loaded
 			return;
 		}
-		if (walletAmount < 0 || isNaN(walletAmount)) {
-			setPaymentSuccess('Please enter a valid wallet amount.');
-			return;
-		}
-
-		setIsLoading(true);
-		const cardElement = elements.getElement(CardElement);
-
-		// Create the payment method
-		const { paymentMethod, error } = await stripe.createPaymentMethod({
-			type: 'card',
-			card: cardElement,
-		});
-
-		if (error) {
-			setIsLoading(false);
-			console.error(error);
-			setPaymentSuccess('Error creating payment method: ' + error.message);
-			return;
-		}
-
-		// Convert the amount and walletAmount to cents
-		const amountInCents = Math.round(parseFloat(amount) * 100); // Convert amount to cents
-		const walletAmountInCents = Math.round(parseFloat(walletAmount) * 100); // Convert wallet amount to cents
 
 		try {
-			const { data } = await axios.post(
+			// Create a PaymentMethod using the Stripe CardElement
+			const { error, paymentMethod } = await stripe.createPaymentMethod({
+				type: 'card',
+				card: elements.getElement(CardElement),
+			});
+
+			if (error) {
+				setPaymentStatus(`Payment failed: ${error.message}`);
+				setIsLoading(false);
+				return;
+			}
+
+			const token = localStorage.getItem('token');
+			if (!token) throw new Error('No token found. Please login again.');
+
+			const config = {
+				headers: { Authorization: `Bearer ${token}` },
+			};
+
+			// Prepare payment data to send to the backend
+			const paymentData = {
+				amount: activity.price * conversionRate * 100, // Convert to smallest currency unit (e.g., cents)
+				currency: currency || 'usd',
+				paymentMethodId: paymentMethod.id, // PaymentMethod ID from Stripe
+				walletAmount,
+				activityId: activity._id, // Activity ID
+			};
+
+			// Send payment data to backend for processing
+			const response = await axios.post(
 				'http://localhost:3000/tourists/pay-stripe',
-				{
-					amount: amountInCents, // Amount in cents
-					currency: currency,
-					paymentMethodId: paymentMethod.id,
-					walletAmount: walletAmountInCents, // Wallet amount in cents
-				}
+				paymentData,
+				config
 			);
 
-			// Update the UI based on the response from the backend
-			setPaymentSuccess(data.message || 'Payment processed successfully!');
+			const { message, paymentIntentId } = response.data;
+			setPaymentStatus(
+				`Payment successful! Transaction ID: ${paymentIntentId}`
+			);
+			navigate('/tourist/homePage');
 		} catch (error) {
-			setPaymentSuccess('Payment failed: ' + error.message);
+			setPaymentStatus(`Payment failed: ${error.message}`);
+			console.error('Error during payment:', error);
+		} finally {
+			setIsLoading(false);
 		}
-
-		setIsLoading(false);
 	};
 
 	return (
-		<div className='max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg'>
-			<h2 className='text-xl font-bold text-center mb-4'>Pay with Stripe</h2>
-			<form onSubmit={handleSubmit}>
-				<div className='mb-4'>
-					<label
-						className='block text-sm font-semibold mb-2'
-						htmlFor='amount'>
-						Amount (USD)
-					</label>
-					<input
-						type='number'
-						id='amount'
-						name='amount'
-						value={amount}
-						onChange={(e) => setAmount(e.target.value)}
-						className='w-full p-3 border border-gray-300 rounded-lg'
-						required
-					/>
-				</div>
-				<div className='mb-4'>
-					<label
-						className='block text-sm font-semibold mb-2'
-						htmlFor='currency'>
-						Currency
-					</label>
-					<select
-						id='currency'
-						name='currency'
-						value={currency}
-						onChange={(e) => setCurrency(e.target.value)}
-						className='w-full p-3 border border-gray-300 rounded-lg'>
-						<option value='usd'>USD</option>
-						<option value='eur'>EUR</option>
-						{/* Add other currencies as needed */}
-					</select>
-				</div>
-				<div className='mb-4'>
-					<label className='block text-sm font-semibold mb-2'>
-						Card Information
-					</label>
-					<CardElement
-						className='p-3 border border-gray-300 rounded-lg'
-						options={{
-							style: {
-								base: {
-									fontSize: '16px',
-									color: '#32325d',
-									lineHeight: '24px',
-									fontFamily: 'Arial, sans-serif',
-									'::placeholder': {
-										color: '#aab7c4',
-									},
-								},
-								invalid: {
-									color: '#9e2146',
-								},
-							},
-						}}
-					/>
-				</div>
-				<div className='mb-4'>
-					<label
-						className='block text-sm font-semibold mb-2'
-						htmlFor='walletAmount'>
-						Wallet Amount (USD)
-					</label>
-					<input
-						type='number'
-						id='walletAmount'
-						name='walletAmount'
-						value={walletAmount}
-						onChange={(e) => setWalletAmount(e.target.value)}
-						className='w-full p-3 border border-gray-300 rounded-lg'
-						required
-					/>
-				</div>
-				<div className='flex items-center justify-center'>
-					<button
-						type='submit'
-						className='bg-blue-500 text-white py-2 px-4 rounded-lg'
-						disabled={!stripe || isLoading}>
-						{isLoading ? 'Processing...' : 'Pay'}
-					</button>
-				</div>
-			</form>
+		<div className='payment-container p-6 max-w-lg mx-auto bg-white shadow-lg rounded-lg'>
+			<h2 className='text-xl font-bold text-center mb-4'>Payment Page</h2>
+			<p className='text-center text-lg'>
+				You're about to pay for the activity: <strong>{activity?.name}</strong>
+			</p>
+			<p className='text-center text-md mb-4'>
+				Price: {(activity?.price * conversionRate).toFixed(2)} {currency}
+			</p>
 
-			{paymentSuccess && (
-				<div className='mt-4 text-center'>
-					<p
-						className={
-							paymentSuccess.includes('failed')
-								? 'text-red-500'
-								: 'text-green-500'
-						}>
-						{paymentSuccess}
-					</p>
-				</div>
+			{paymentStatus && (
+				<p className='text-center text-xl font-semibold text-green-600 mb-4'>
+					{paymentStatus}
+				</p>
 			)}
+
+			{/* Card Element for Stripe payment */}
+			<div className='mb-4'>
+				<CardElement className='mt-1 block w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500' />
+			</div>
+
+			{/* Optional: Display wallet balance if you want to allow the user to apply wallet credits */}
+			<div className='mb-4'>
+				<label className='block text-sm font-medium text-gray-700'>
+					Wallet Balance
+				</label>
+				<input
+					type='number'
+					className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500'
+					placeholder='Enter wallet amount'
+					value={walletAmount}
+					onChange={(e) => setWalletAmount(parseFloat(e.target.value))}
+				/>
+			</div>
+
+			<button
+				onClick={handleFakeVisaPayment}
+				className='bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-500 w-full mt-4'
+				disabled={
+					isLoading || !stripe || !elements || !walletAmount || walletAmount < 0
+				}>
+				{isLoading ? 'Processing Payment...' : 'Pay with Fake Visa'}
+			</button>
 		</div>
 	);
 };
 
-export default PaymentForm;
+export default PaymentPage;
