@@ -1,147 +1,174 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom"; // To navigate to the checkout page
+/** @format */
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom'; // To navigate to the checkout page
 
 const TouristCart = () => {
-  // State to store the cart items and total
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+	// State to store the cart items and total
+	const [cartItems, setCartItems] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState('');
 
-  // Fetch the cart from the backend
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No token found. Please login again.");
-        }
+	// Fetch the cart from the backend
+	useEffect(() => {
+		const fetchCart = async () => {
+			try {
+				const token = localStorage.getItem('token');
+				if (!token) {
+					throw new Error('No token found. Please login again.');
+				}
 
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+				const config = {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				};
 
-        // Fetch the tourist data including cart items and product details
-        const response = await axios.get(
-          "http://localhost:3000/tourists/getCart",
-          config
-        );
+				const response = await axios.get(
+					'http://localhost:3000/tourists/getCart',
+					config
+				);
 
-        // The response will already contain populated cart items
-        setCartItems(response.data); // Directly set populated cart items
-      } catch (error) {
-        console.error("Error fetching cart:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+				setCartItems(response.data || []);
+			} catch (error) {
+				setError(error.response?.data?.message || 'Error fetching cart.');
+			} finally {
+				setLoading(false);
+			}
+		};
 
-    fetchCart();
-  }, []);
+		fetchCart();
+	}, []);
 
-  // Update the quantity of a product
-  const updateQuantity = (productId, change) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.productId._id === productId
-          ? { ...item, quantity: item.quantity + change }
-          : item
-      )
-    );
-  };
+	// Update the quantity of a product
+	const updateQuantity = async (productId, newQuantity) => {
+		if (!productId) {
+			console.error('Product ID is missing!');
+			return; // Exit if productId is undefined
+		}
 
-  // Remove a product from the cart
-  const removeProduct = (productId) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item.productId._id !== productId)
-    );
-  };
+		if (newQuantity < 1) return; // Prevent negative quantities
 
-  // Calculate total price
-  const getTotalPrice = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.productId.price * item.quantity,
-      0
-    );
-  };
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				throw new Error('No token found. Please login again.');
+			}
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+			const response = await axios.put(
+				`http://localhost:3000/tourists/cart/update/${productId}`,
+				{ quantity: newQuantity },
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			);
 
-  return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold text-teal-600 mb-6">Your Cart</h1>
+			// Ensure the cartItems state is updated correctly
+			const updatedCart = response.data.cart;
+			setCartItems(updatedCart);
+		} catch (error) {
+			setError(error.response?.data?.message || 'Error updating cart item.');
+		}
+	};
 
-      {cartItems.length === 0 ? (
-        <p>Your cart is empty</p>
-      ) : (
-        <div className="space-y-6">
-          {cartItems.map((item) => (
-            <div
-              key={item.productId._id} // Use productId._id as the unique key
-              className="flex items-center justify-between border-b pb-4"
-            >
-              <div className="flex items-center space-x-4">
-                <img
-                  src={item.productId.picture} // Access the product's picture
-                  alt={item.productId.name} // Access the product's name
-                  className="w-16 h-16 object-cover"
-                />
-                <div>
-                  <h2 className="text-lg font-semibold">
-                    {item.productId.name}
-                  </h2>{" "}
-                  {/* Access the product's name */}
-                  <p className="text-gray-500">${item.productId.price}</p>{" "}
-                  {/* Access the product's price */}
-                </div>
-              </div>
+	// Remove a product from the cart
+	const removeProduct = async (productId) => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				throw new Error('No token found. Please login again.');
+			}
 
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => updateQuantity(item.productId._id, -1)}
-                  disabled={item.quantity <= 1}
-                  className="bg-teal-500 text-white p-2 rounded-md"
-                >
-                  -
-                </button>
-                <span>{item.quantity}</span>
-                <button
-                  onClick={() => updateQuantity(item.productId._id, 1)}
-                  className="bg-teal-500 text-white p-2 rounded-md"
-                >
-                  +
-                </button>
-                <button
-                  onClick={() => removeProduct(item.productId._id)}
-                  className="bg-red-500 text-white p-2 rounded-md"
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+			const response = await axios.delete(
+				`http://localhost:3000/tourists/cart/remove/${productId}`,
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			);
 
-      {/* Display total price */}
-      <div className="mt-6 text-right">
-        <p className="text-lg font-semibold">Total: ${getTotalPrice()}</p>
-      </div>
+			// Update cart after successful removal
+			setCartItems(response.data.cart);
+		} catch (error) {
+			setError(error.response?.data?.message || 'Error removing cart item.');
+		}
+	};
 
-      {/* Checkout Button */}
-      <div className="mt-6 text-center">
-        <Link
-          to="/tourist/homePage/products/checkout" // Navigate to checkout page
-          className="bg-teal-500 text-white px-8 py-3 rounded-md hover:bg-teal-600"
-        >
-          Checkout
-        </Link>
-      </div>
-    </div>
-  );
+	// Calculate total price
+	const getTotalPrice = () => {
+		return cartItems.reduce(
+			(total, item) => total + item.productId.price * item.quantity,
+			0
+		);
+	};
+
+	if (loading) {
+		return <div>Loading...</div>;
+	}
+
+	return (
+		<div className='p-6 bg-gray-50 min-h-screen'>
+			<h1 className='text-3xl font-bold text-teal-600 mb-6'>Your Cart</h1>
+
+			{error && <p className='text-red-500'>{error}</p>}
+
+			{cartItems.length === 0 ? (
+				<p>Your cart is empty</p>
+			) : (
+				<div className='space-y-6'>
+					{cartItems.map((item) => (
+						// Ensure the key is unique
+						<div
+							key={`${item.productId._id}-${item.quantity}`} // Updated key to ensure uniqueness
+							className='flex items-center justify-between border-b pb-4'>
+							<div className='flex items-center space-x-4'>
+								<img
+									src={`http://localhost:3000/photos/${item.productId.picture}`}
+									alt={item.productId.name}
+									className='w-16 h-16 object-cover'
+								/>
+								<div>
+									<h2 className='text-lg font-semibold'>
+										{item.productId.name}
+									</h2>
+									<p className='text-gray-500'>${item.productId.price}</p>
+								</div>
+							</div>
+
+							<div className='flex items-center space-x-4'>
+								<button
+									onClick={() =>
+										updateQuantity(item.productId._id, item.quantity - 1)
+									}
+									disabled={item.quantity <= 1}
+									className='bg-teal-500 text-white p-2 rounded-md'>
+									-
+								</button>
+								<span>{item.quantity}</span>
+								<button
+									onClick={() =>
+										updateQuantity(item.productId._id, item.quantity + 1)
+									}
+									className='bg-teal-500 text-white p-2 rounded-md'>
+									+
+								</button>
+								<button
+									onClick={() => removeProduct(item.productId._id)} // Pass the correct productId
+									className='bg-red-500 text-white p-2 rounded-md'>
+									Remove
+								</button>
+							</div>
+						</div>
+					))}
+				</div>
+			)}
+
+			{/* Display total price */}
+			<div className='mt-6 text-right'>
+				<p className='text-lg font-semibold'>Total: ${getTotalPrice()}</p>
+			</div>
+		</div>
+	);
 };
 
 export default TouristCart;

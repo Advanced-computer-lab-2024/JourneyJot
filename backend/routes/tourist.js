@@ -37,6 +37,8 @@ const {
 	removeProductFromWishList,
 	addProductToCart,
 	getTouristCart,
+	updateCartItemQuantity,
+	removeCartItem,
 } = require('../controllers/tourist');
 const auth_check = require('../middleware/auth-check');
 const { changePassword } = require('../helper/tourist-change-password');
@@ -122,5 +124,11 @@ touristRouter.post('/addToCart/:productId', auth_check, addProductToCart);
 
 // Route to fetch the cart of a certain Tourist
 touristRouter.get('/getCart', auth_check, getTouristCart);
+touristRouter.put(
+	'/cart/update/:productId',
+	auth_check,
+	updateCartItemQuantity
+);
+touristRouter.delete('/cart/remove/:productId', auth_check, removeCartItem);
 
 module.exports = touristRouter;

@@ -1513,6 +1513,7 @@ exports.addProductToCart = async (req, res) => {
 	}
 };
 
+// Get the tourist's cart with populated product data
 exports.getTouristCart = async (req, res) => {
 	try {
 		const touristId = req.user._id; // Assuming authentication middleware attaches user info
@@ -1524,9 +1525,86 @@ exports.getTouristCart = async (req, res) => {
 			return res.status(404).json({ message: 'Tourist not found' });
 		}
 
-		res.status(200).json(tourist.cart); // Directly return the populated cart
+		res.status(200).json(tourist.cart); // Return the populated cart
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Error retrieving cart' });
+	}
+};
+
+// Update the quantity of a product in the cart
+// Update the quantity of a product in the cart
+exports.updateCartItemQuantity = async (req, res) => {
+	try {
+		const userId = req.user._id;
+		const { productId } = req.params; // This is the productId coming from the URL
+		const { quantity } = req.body;
+
+		// Ensure quantity is valid
+		if (quantity < 1) {
+			return res.status(400).json({ message: 'Quantity must be at least 1' });
+		}
+
+		// Find the tourist and populate the cart
+		const tourist = await Tourist.findById(userId).populate('cart.productId');
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
+
+		// Find the cart item using .equals() for ObjectId comparison
+		const cartItem = tourist.cart.find(
+			(item) => item.productId._id.equals(productId) // Use .equals() for proper ObjectId comparison
+		);
+
+		if (!cartItem) {
+			return res.status(404).json({ message: 'Product not found in cart' });
+		}
+
+		// Here, you can optionally check the stock and prevent over-quantity
+		if (quantity > cartItem.productId.stock) {
+			// Assuming `stock` field is present in your product
+			return res.status(400).json({ message: 'Not enough stock available' });
+		}
+
+		// Update the cart item quantity
+		cartItem.quantity = quantity;
+		await tourist.save();
+
+		res.status(200).json({
+			message: 'Cart updated successfully',
+			cart: tourist.cart, // Return the updated cart
+		});
+	} catch (error) {
+		console.error('Error updating cart item:', error);
+		res.status(500).json({ message: 'Server error' });
+	}
+};
+
+// Remove a product from the cart
+exports.removeCartItem = async (req, res) => {
+	try {
+		const userId = req.user._id;
+		const { productId } = req.params;
+
+		// Find the tourist and populate the cart
+		const tourist = await Tourist.findById(userId);
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
+
+		// Remove the cart item by productId
+		tourist.cart = tourist.cart.filter(
+			(item) => item.productId.toString() !== productId
+		);
+
+		// Save the updated cart
+		await tourist.save();
+
+		res
+			.status(200)
+			.json({ message: 'Product removed from cart', cart: tourist.cart });
+	} catch (error) {
+		console.error('Error removing cart item:', error);
+		res.status(500).json({ message: 'Server error' });
 	}
 };
