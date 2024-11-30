@@ -11,6 +11,42 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Transportation = require('../models/Transportation');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const nodemailer = require('nodemailer');
+
+const sendReceiptEmail = async (touristEmail, bookingDetails) => {
+	const mailOptions = {
+		from: 'your-email@example.com', // Replace with your email
+		to: touristEmail,
+		subject: 'Your Payment Receipt for Booking',
+		html: `
+		<h2>Payment Receipt</h2>
+		<p>Thank you for booking with us!</p>
+		<p><strong>Booking Details:</strong></p>
+		<p>Activity: ${
+			bookingDetails.activityName ||
+			bookingDetails.itineraryName ||
+			bookingDetails.attractionName ||
+			'N/A'
+		}</p>
+		<p>Price: $${bookingDetails.price.toFixed(2)}</p>
+		<p>Points Earned: ${Math.floor(bookingDetails.pointsEarned)}</p>
+		<p>Total Points: ${Math.floor(bookingDetails.totalPoints)}</p>
+		<p>Remaining Wallet Balance: $${
+			isNaN(bookingDetails.updatedWalletBalance) ||
+			bookingDetails.updatedWalletBalance === null
+				? '0.00'
+				: Number(bookingDetails.updatedWalletBalance).toFixed(2)
+		}</p>
+		<p>We hope you enjoy your experience!</p>
+	  `,
+	};
+
+	try {
+		await transporter.sendMail(mailOptions);
+	} catch (error) {
+		console.error('Error sending email:', error);
+	}
+};
 
 exports.signUp = async (req, res, next) => {
 	const {
@@ -392,6 +428,14 @@ exports.TouristBookActivity = async (req, res) => {
 		await activity.save();
 		await tourist.save();
 
+		// Send email receipt
+		sendReceiptEmail(tourist.email, {
+			activityName: activity.name,
+			price: activity.price,
+			pointsEarned,
+			totalPoints: tourist.points,
+			updatedWalletBalance: tourist.wallet.balance.toFixed(2),
+		});
 		// Send response
 		res.status(200).json({
 			message: 'Activity booked successfully',
@@ -453,6 +497,7 @@ exports.TouristBookAttraction = async (req, res) => {
 
 		await attraction.save(); // Save the updated attraction object
 		await tourist.save();
+		// Send email receipt
 
 		// Send response
 		res.status(200).json({
@@ -507,7 +552,15 @@ exports.TouristBookItinerary = async (req, res) => {
 		itinerary.isBooked = true;
 		await itinerary.save(); // Save the updated itinerary object
 		await tourist.save();
-
+		// Send email receipt
+		sendReceiptEmail(tourist.email, {
+			itineraryName:
+				itinerary.tag || itinerary.name || itinerary.locations || 'N/A', // Ensure proper fallback
+			price: itinerary.price,
+			pointsEarned: pointsEarned,
+			totalPoints: tourist.points,
+			updatedWalletBalance: tourist.wallet.balance.toFixed(2),
+		});
 		// Send response
 		res.status(200).json({
 			message: 'Itinerary booked successfully',
@@ -1790,3 +1843,11 @@ exports.buyProductsCard = async (req, res) => {
 		res.status(500).json({ message: 'Server error during purchase' });
 	}
 };
+
+const transporter = nodemailer.createTransport({
+	service: 'gmail', // You can change this depending on your email provider
+	auth: {
+		user: 'ahmed.shawkiy123@gmail.com', // Replace with your email
+		pass: 'iari kqgb jjfg yxgg', // Replace with your email password or app-specific password
+	},
+});

@@ -3,7 +3,10 @@
 const express = require('express');
 const amadeusRoutes = express.Router();
 const amadeus = require('../models/amadeusClient');
+const axios = require('axios');
 
+const RAPIDAPI_HOST = 'travel-advisor.p.rapidapi.com';
+const RAPIDAPI_KEY = '37f7f06eb1msh27743fb8d0f59d3p140383jsnfc69126288de';
 // Fetch Airports
 
 const generateCombinations = (length) => {
@@ -23,6 +26,56 @@ const generateCombinations = (length) => {
 	combine('', length);
 	return combinations;
 };
+amadeusRoutes.get('/locations', async (req, res) => {
+	const {
+		query = 'cairo', // Default query
+		limit = 10,
+		offset = 0,
+		units = 'km',
+		location_id = 1,
+		currency = 'USD',
+		sort = 'relevance',
+		lang = 'en_US',
+	} = req.query;
+
+	try {
+		const response = await axios.get(
+			`https://${RAPIDAPI_HOST}/locations/search`,
+			{
+				params: {
+					query,
+					limit,
+					offset,
+					units,
+					location_id,
+					currency,
+					sort,
+					lang,
+				},
+				headers: {
+					'x-rapidapi-host': RAPIDAPI_HOST,
+					'x-rapidapi-key': RAPIDAPI_KEY,
+				},
+			}
+		);
+
+		if (!response.data || !response.data.data) {
+			return res
+				.status(404)
+				.json({ error: 'No locations found for the given query.' });
+		}
+
+		res.status(200).json(response.data);
+	} catch (error) {
+		console.error(
+			'Error fetching locations:',
+			error.response?.data || error.message
+		);
+		res
+			.status(500)
+			.json({ error: 'Failed to fetch locations.', details: error.message });
+	}
+});
 
 amadeusRoutes.get('/airports', async (req, res) => {
 	try {
@@ -75,43 +128,59 @@ amadeusRoutes.get('/airports', async (req, res) => {
 });
 
 // Hotel Search
+
 amadeusRoutes.get('/hotels', async (req, res) => {
-	const { cityCode, hotelName, checkInDate, checkOutDate } = req.query;
+	const {
+		location_id = '293919', // Default location_id
+		adults = 1,
+		rooms = 1,
+		nights = 2,
+		offset = 0,
+		currency = 'USD',
+		order = 'asc',
+		limit = 10,
+		sort = 'recommended',
+		lang = 'en_US',
+	} = req.query;
 
 	try {
-		// Build parameters for Amadeus API request
-		const params = {
-			cityCode, // IATA code of the city
-			checkInDate,
-			checkOutDate,
-			currency: 'USD', // Optional: Default currency set to USD
-		};
+		const response = await axios.get(`https://${RAPIDAPI_HOST}/hotels/list`, {
+			params: {
+				location_id,
+				adults,
+				rooms,
+				nights,
+				offset,
+				currency,
+				order,
+				limit,
+				sort,
+				lang,
+			},
+			headers: {
+				'x-rapidapi-host': RAPIDAPI_HOST,
+				'x-rapidapi-key': RAPIDAPI_KEY,
+			},
+		});
 
-		// Include hotel name as a keyword filter if provided
-		if (hotelName) params.keyword = hotelName;
-
-		// Call Amadeus API for hotel offers
-		const response = await amadeus.shopping.hotelOffers.get(params);
-
-		// Log response for debugging purposes
-		console.log('Amadeus Hotel API Response:', response.data);
-
-		// Return results to the client
-		res.status(200).json(response.result?.data || []);
-	} catch (error) {
-		console.error('Error fetching hotel data from Amadeus:', error.message);
-
-		// Check for specific error details and respond accordingly
-		if (error.response?.status) {
-			res.status(error.response.status).json({
-				error: error.response.data,
-			});
-		} else {
-			// Return a generic 500 error if no specific error is found
-			res.status(500).json({ error: 'Failed to fetch hotel data.' });
+		if (!response.data || !response.data.data) {
+			return res
+				.status(404)
+				.json({ error: 'No hotels found for the given criteria.' });
 		}
+
+		res.status(200).json(response.data);
+	} catch (error) {
+		console.error(
+			'Error fetching hotels:',
+			error.response?.data || error.message
+		);
+		res
+			.status(500)
+			.json({ error: 'Failed to fetch hotels.', details: error.message });
 	}
 });
+
 // Flight Offers Search
 amadeusRoutes.get('/flights', async (req, res) => {
 	const { origin, destination, departureDate } = req.query;
