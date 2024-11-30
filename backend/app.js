@@ -28,7 +28,6 @@ const transportationRouter = require('./routes/transportation');
 const amadeusRoutes = require('./routes/amadueus');
 const flightRouter = require('./routes/flight');
 const hotelRoutes = require('./routes/hotel');
-
 app.use(
 	cors({
 		origin: 'http://localhost:5173', // Your frontend's origin

@@ -66,6 +66,30 @@ import FlightOffers from './pages/Tourist/FlightOffers.jsx';
 import BookedFlights from './pages/Tourist/BookedFlights.jsx';
 import Transportation from './pages/Tourist/Transportations.jsx';
 import FlightSearch from './pages/Tourist/FlightSearch.jsx';
+<<<<<<< HEAD
+import HotelList from './pages/Tourist/HotelList.jsx';
+import BookedHotels from './pages/Tourist/BookedHotels.jsx';
+=======
+import CompletedActivities from './components/Advertiser/CompletedActivities.jsx';
+import CompletedItineraries from './components/TourGuide/CompletedItineraries.jsx';
+import DisplayNotification from './components/Advertiser/DisplayNotification.jsx';
+import DisplayNotificationItinerary from './components/TourGuide/DisplayNotification.jsx';
+import SendEmailToAdvertiser from './components/Admin/SendEmailToAdvertiser.jsx';
+import SendEmailToTourGuide from './components/Admin/sendEmailToTourGuide.jsx';
+import PayActivityWithStripe from './components/Tourist/PayStripeActivity.jsx';
+import PayItineraryWithStripe from './components/Tourist/PayStripeItinerary.jsx';
+
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import TouristWishList from './pages/Tourist/TouristWishList.jsx';
+import TouristCart from './pages/Tourist/TouristCart.jsx';
+import BuyTouristCart from './pages/Tourist/BuyProductCart.jsx';
+
+// Load Stripe with your public key
+const stripePromise = loadStripe(
+	'pk_test_51QPr8TDbJphsuJ1azF71v68UgZJOXpe5vfeKNpfbNxM7QkVZ3CtaL8MisGPSx9btiOOMQ78G3SvmwvovSMPjx8O900SOrWEaHL'
+);
+>>>>>>> main
 import HotelList from './pages/Tourist/HotelList.jsx';
 import BookedHotels from './pages/Tourist/BookedHotels.jsx';
 const App = () => {
@@ -142,6 +166,14 @@ const App = () => {
 			<Route
 				path='tourist/homePage/products/purchase-history'
 				element={<PurchaseHistory />}
+			/>
+			<Route
+				path='tourist/homePage/products/wishlist'
+				element={<TouristWishList />}
+			/>
+			<Route
+				path='tourist/homePage/products/cart'
+				element={<TouristCart />}
 			/>
 			<Route
 				path='/tour-guide/profile'
@@ -335,6 +367,7 @@ const App = () => {
 				element={<BookedFlights />}
 			/>
 			<Route
+<<<<<<< HEAD
 				path='/tourist/homePage/hotels'
 				element={<HotelList />}
 			/>
@@ -344,6 +377,66 @@ const App = () => {
 				element={<BookedHotels />}
 			/>
 
+=======
+				path='/count-tourists-activities'
+				element={<CompletedActivities />}
+			/>
+			<Route
+				path='/count-tourists-itineraries'
+				element={<CompletedItineraries />}
+			/>
+			<Route
+				path='/display-notification-activity'
+				element={<DisplayNotification />}
+			/>
+			<Route
+				path='/display-notification-itinerary'
+				element={<DisplayNotificationItinerary />}
+			/>
+			<Route
+				path='/mail-advertiser'
+				element={<SendEmailToAdvertiser />}
+			/>
+			<Route
+				path='/mail-tour-guide'
+				element={<SendEmailToTourGuide />}
+			/>
+			<Route
+				path='/pay-activity-stripe'
+				element={
+					<Elements stripe={stripePromise}>
+						<PayActivityWithStripe />
+					</Elements>
+				}
+			/>
+			<Route
+				path='/pay-itinerary-stripe'
+				element={
+					<Elements stripe={stripePromise}>
+						<PayItineraryWithStripe />
+					</Elements>
+				}
+			/>
+			<Route
+				path='/tourist-cart'
+				element={<TouristCart />}
+			/>
+			<Route
+				path='/buy-tourist-cart'
+				element={<BuyTouristCart />}
+			/>
+				<Route
+				path='/tourist/homePage/hotels'
+				element={<HotelList />}
+			/>
+
+			<Route
+				path='/booked-hotels'
+				element={<BookedHotels />}
+			/>
+
+
+>>>>>>> main
 		</Routes>
 	);
 };

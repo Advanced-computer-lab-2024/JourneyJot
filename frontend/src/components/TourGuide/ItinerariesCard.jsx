@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import StarRating from '../Helper/StarRating';
+import { useNavigate } from 'react-router-dom';
 
 const ItinerariesCard = ({ itineraries = [], currency, conversionRate }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedItinerary, setSelectedItinerary] = useState(null);
 	const [error, setError] = useState(null); // State to handle errors
 	const [shareOptionsVisible, setShareOptionsVisible] = useState(false); // Toggle for share options
+	const navigate = useNavigate(); // For navigation
 
 	const handleBookItinerary = (itinerary) => {
 		setSelectedItinerary(itinerary);
@@ -54,13 +56,23 @@ const ItinerariesCard = ({ itineraries = [], currency, conversionRate }) => {
 	const handleShareViaEmail = (itinerary) => {
 		const subject = encodeURIComponent(`Check out this activity`);
 		const body = encodeURIComponent(
-			`Here is a link to the activity: http://localhost:5173/itineraries/${itinerary._id}`
+			`Here is a link to the itinerary: http://localhost:5173/itineraries/${itinerary._id}`
 		);
 		window.location.href = `mailto:?subject=${subject}&body=${body}`;
 	};
 
 	const toggleShareOptions = () => {
 		setShareOptionsVisible(!shareOptionsVisible);
+	};
+	const handlePayItineraryViaStripe = (itinerary) => {
+		// Ensure no PointerEvent is passed to navigate
+		navigate('/pay-itinerary-stripe', {
+			state: {
+				itinerary: itinerary, // Pass only the serializable activity data
+				currency: currency,
+				conversionRate: conversionRate,
+			},
+		});
 	};
 
 	return (
@@ -127,6 +139,17 @@ const ItinerariesCard = ({ itineraries = [], currency, conversionRate }) => {
 								onClick={() => handleBookItinerary(itinerary)}
 								className='bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-green-700'>
 								Book Itinerary
+							</button>
+							<button
+								onClick={() =>
+									handlePayItineraryViaStripe(
+										itinerary,
+										currency,
+										conversionRate
+									)
+								}
+								className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+								Pay via Stripe
 							</button>
 							<div className='relative'>
 								<button

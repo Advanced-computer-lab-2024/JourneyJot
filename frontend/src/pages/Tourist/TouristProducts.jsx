@@ -5,6 +5,7 @@ import axios from 'axios';
 import Spinner from '../../components/General/Spinner';
 import TouristProductCard from '../../components/Tourist/TouristProductCard';
 import { Link } from 'react-router-dom'; // Import Link for navigation
+import { FaShoppingCart } from 'react-icons/fa'; // Import the cart icon
 
 const TouristProducts = () => {
 	const [products, setProducts] = useState([]);
@@ -140,6 +141,17 @@ const TouristProducts = () => {
 				</div>
 			</div>
 
+			{/* Cart Icon */}
+			<div className='fixed bottom-6 right-6 z-50'>
+				<Link to='/tourist/homePage/products/cart'>
+					<FaShoppingCart
+						size={30}
+						color='#2D3748'
+						className='hover:text-teal-500 transition duration-200'
+					/>
+				</Link>
+			</div>
+
 			{/* Price Filters */}
 			<div className='flex flex-col md:flex-row items-center mt-4 mb-4'>
 				<input
@@ -162,11 +174,21 @@ const TouristProducts = () => {
 			</div>
 
 			{/* Link to Purchase History */}
-			<div className='mb-4 text-center'>
+			<div className='mb-4 text-center flex flex-col gap-y-1'>
 				<Link
 					to='/tourist/homePage/products/purchase-history' // Ensure this is the correct route
 					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
 					View Purchase History
+				</Link>
+				<Link
+					to='/tourist/homePage/products/wishlist' // Ensure this is the correct route
+					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
+					View Wish List
+				</Link>
+				<Link
+					to='/tourist-cart' // Ensure this is the correct route
+					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
+					View Cart
 				</Link>
 			</div>
 

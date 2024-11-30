@@ -5,7 +5,7 @@ import axios from 'axios';
 import EditActivityModal from './EditActivity';
 import DeleteActivityButton from './DeleteActivity';
 import StarRating from '../Helper/StarRating';
-
+import { useNavigate } from 'react-router-dom';
 const ActivitiesCard = ({
 	activities = [],
 	isAdvertiser = false,
@@ -22,6 +22,7 @@ const ActivitiesCard = ({
 	const [selectedActivity, setSelectedActivity] = useState(null); // Store selected activity
 	const [error, setError] = useState(null); // State to handle errors
 	const [shareOptionsVisible, setShareOptionsVisible] = useState(false); // Toggle for share options
+	const navigate = useNavigate(); // For navigation
 
 	useEffect(() => {
 		// Fetch categories and tags
@@ -138,6 +139,17 @@ const ActivitiesCard = ({
 		setShareOptionsVisible(!shareOptionsVisible);
 	};
 
+	const handlePayActivityViaStripe = (activity) => {
+		// Ensure no PointerEvent is passed to navigate
+		navigate('/pay-activity-stripe', {
+			state: {
+				activity: activity, // Pass only the serializable activity data
+				currency: currency,
+				conversionRate: conversionRate,
+			},
+		});
+	};
+
 	return (
 		<div>
 			<div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4'>
@@ -196,6 +208,17 @@ const ActivitiesCard = ({
 									className='bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 mt-4'>
 									Book A Ticket
 								</button>
+								<button
+									onClick={() =>
+										handlePayActivityViaStripe(
+											activity,
+											currency,
+											conversionRate
+										)
+									}
+									className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+									Pay via Stripe
+								</button>
 								<div className='relative'>
 									<button
 										onClick={toggleShareOptions}
@@ -236,55 +259,46 @@ const ActivitiesCard = ({
 						</div>
 					))
 				) : (
-					<p className='text-center text-gray-500 col-span-full'>
-						No activities available.
-					</p>
+					<p className='text-center text-gray-500'>No activities found.</p>
 				)}
 			</div>
 
-			{error && (
-				<div className='fixed bottom-5 right-5 bg-red-600 text-white py-3 px-6 rounded-md shadow-lg z-50 transition-opacity duration-500 opacity-100'>
-					<div className='flex items-center justify-between space-x-4'>
-						<p className='font-semibold'>{error}</p>
-						<button
-							className='text-white font-bold'
-							onClick={() => setError(null)} // Close error message when clicked
-						>
-							X
-						</button>
-					</div>
-				</div>
-			)}
-
 			{/* Edit Modal */}
-			{isEditModalOpen && currentActivity && (
+			{isEditModalOpen && (
 				<EditActivityModal
+					isOpen={isEditModalOpen}
 					activity={currentActivity}
 					onClose={() => setIsEditModalOpen(false)}
 					onUpdate={handleUpdateActivity}
-					categories={categories}
-					tags={tags}
 				/>
 			)}
 
-			{/* Confirmation Modal for Booking */}
-			{isConfirmModalOpen && selectedActivity && (
-				<div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50'>
-					<div className='bg-white p-6 rounded-lg shadow-lg w-80'>
-						<h3 className='text-lg font-semibold'>Confirm Booking</h3>
-						<p>Price: ${selectedActivity.price}</p>
-						<div className='flex space-x-4 mt-4'>
+			{/* Confirmation Modal for booking */}
+			{isConfirmModalOpen && (
+				<div className='fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center'>
+					<div className='bg-white p-6 rounded-lg'>
+						<h2 className='text-xl mb-4'>Confirm Booking</h2>
+						<p>
+							Do you want to book this activity?{' '}
+							<strong>{selectedActivity?.name}</strong>
+						</p>
+						<div className='flex justify-between mt-4'>
 							<button
 								onClick={confirmBooking}
-								className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700'>
-								Confirm
+								className='bg-green-600 text-white px-4 py-2 rounded'>
+								Yes, Book it!
 							</button>
 							<button
 								onClick={() => setIsConfirmModalOpen(false)}
-								className='bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700'>
+								className='bg-red-600 text-white px-4 py-2 rounded'>
 								Cancel
 							</button>
 						</div>
+						{error && (
+							<div className='mt-4 text-red-500'>
+								<p>{error}</p>
+							</div>
+						)}
 					</div>
 				</div>
 			)}

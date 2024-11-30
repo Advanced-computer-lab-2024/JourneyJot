@@ -142,7 +142,12 @@ exports.getProductByID = async (req, res) => {
 };
 exports.calculateProductsRevenue = async (req, res) => {
 	try {
-		// Fetch all activities
+		// const query = {};
+		// if (req.query.date) {
+		// 	query.date = { $gte: new Date(req.query.date) }; // Filter by date on or after the specified date
+		// 	console.log('Date filter:', query.date);
+		// }
+
 		const products = await Product.find();
 
 		if (products.length === 0) {

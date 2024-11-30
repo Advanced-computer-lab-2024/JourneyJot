@@ -56,8 +56,8 @@ const touristSchema = new mongoose.Schema(
 			},
 		},
 		products: [
-			{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-		], // Reference to the Product model
+			{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }, // Reference to the Product model
+		],
 
 		itineraries: [
 			{
@@ -91,6 +91,17 @@ const touristSchema = new mongoose.Schema(
 		],
 		flights: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Flight' }],
 		hotels: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hotel' }],
+		wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+		cart: [
+			{
+				productId: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: 'Product',
+					required: true,
+				},
+				quantity: { type: Number, required: true, min: 1 },
+			},
+		],
 	},
 
 	{ timestamps: true }

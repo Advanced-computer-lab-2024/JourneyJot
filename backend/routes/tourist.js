@@ -29,6 +29,20 @@ const {
 	bookTransportation,
 	getBookedTransportations,
 	cancelBooking,
+	getCompletedItinerariesAndTourists,
+	getCompletedActivitiesAndTourists,
+	payStripe,
+	addProductToWishList,
+	getTouristWishList,
+	removeProductFromWishList,
+	addProductToCart,
+	getTouristCart,
+	updateCartItemQuantity,
+	removeCartItem,
+	payStripeActivity,
+	payStripeItinerary,
+	buyProducts,
+	buyProductsCard,
 } = require('../controllers/tourist');
 const auth_check = require('../middleware/auth-check');
 const { changePassword } = require('../helper/tourist-change-password');
@@ -57,6 +71,16 @@ touristRouter.post('/reviews', addReview);
 touristRouter.get('/reviews/:tourGuideId', getReviewsByTourGuide);
 touristRouter.get('/completedItineraries', auth_check, getCompletedItineraries);
 touristRouter.get('/completedActivities', auth_check, getCompletedActivities);
+touristRouter.get(
+	'/completedItinerariesAndTourists',
+	auth_check,
+	getCompletedItinerariesAndTourists
+);
+touristRouter.get(
+	'/completedActivitiesAndTourists',
+	auth_check,
+	getCompletedActivitiesAndTourists
+);
 touristRouter.post('/reviewTourGuide/:id', auth_check, reviewTourGuide);
 touristRouter.post('/updatePoints', auth_check, updateTouristPoints); // New route for updating points with multiplier
 touristRouter.get('/points', auth_check, getTouristPoints); // New route for viewing points and level
@@ -79,8 +103,35 @@ touristRouter.get(
 	auth_check,
 	getBookedTransportations
 );
+touristRouter.post('/pay-stripe-activity', auth_check, payStripeActivity);
+touristRouter.post('/pay-stripe-itinerary', auth_check, payStripeItinerary);
 
 // Route to cancel a booking for a specific transportation ID
 touristRouter.delete('/cancelBooking/:id', auth_check, cancelBooking);
 
+// Route to add a product to the wish list
+touristRouter.post('/addToWishList', auth_check, addProductToWishList);
+
+// Route to fetch the wishList of a certain Tourist
+touristRouter.get('/getWishList', auth_check, getTouristWishList);
+
+// Route to delete a product from the WishList
+touristRouter.delete(
+	'/removeFromWishList/:productId',
+	auth_check,
+	removeProductFromWishList
+);
+
+// Route to add a product to the cart
+touristRouter.post('/addToCart/:productId', auth_check, addProductToCart);
+
+// Route to fetch the cart of a certain Tourist
+touristRouter.get('/getCart', auth_check, getTouristCart);
+touristRouter.put(
+	'/cart/update/:productId',
+	auth_check,
+	updateCartItemQuantity
+);
+touristRouter.delete('/cart/remove/:productId', auth_check, removeCartItem);
+touristRouter.post('/buyProductCard', auth_check, buyProductsCard);
 module.exports = touristRouter;

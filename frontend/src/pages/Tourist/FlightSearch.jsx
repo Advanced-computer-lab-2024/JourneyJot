@@ -134,52 +134,74 @@ const FlightSearch = () => {
 	};
 
 	return (
-		<div className='container mx-auto p-4'>
-			<h1 className='text-2xl font-bold mb-4'>Flight Search</h1>
-			{error && <p className='text-red-500'>{error}</p>}
+		<div className='container mx-auto p-6 bg-gray-50 shadow-md rounded-lg'>
+			<h1 className='text-3xl font-bold text-gray-800 mb-6'>
+				Search and Book Flights ✈️
+			</h1>
+			{error && (
+				<div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>
+					<p>{error}</p>
+				</div>
+			)}
 			{/* Navigate to Booked Flights */}
-			<button
-				onClick={handleNavigateToBookings}
-				className='bg-blue-600 text-white px-4 py-2 rounded mb-6'>
-				My Bookings
-			</button>
+			<div className='flex justify-end mb-6'>
+				<button
+					onClick={handleNavigateToBookings}
+					className='bg-green-600 hover:bg-green-700 text-white font-medium px-5 py-2 rounded-lg shadow-md'>
+					My Bookings
+				</button>
+			</div>
 			{/* Search Fields */}
-			<div className='mb-4'>
-				<label className='block mb-2'>Select Departure Airport:</label>
-				<Select
-					options={airportOptions}
-					value={departure}
-					onChange={setDeparture}
-					placeholder='Search Departure Airport'
-				/>
+			<div className='space-y-4'>
+				<div>
+					<label className='block text-sm font-medium text-gray-700 mb-2'>
+						Select Departure Airport:
+					</label>
+					<Select
+						options={airportOptions}
+						value={departure}
+						onChange={setDeparture}
+						placeholder='Search Departure Airport'
+						className='rounded-md'
+					/>
+				</div>
+
+				<div>
+					<label className='block text-sm font-medium text-gray-700 mb-2'>
+						Select Destination Airport:
+					</label>
+					<Select
+						options={airportOptions}
+						value={destination}
+						onChange={setDestination}
+						placeholder='Search Destination Airport'
+						className='rounded-md'
+					/>
+				</div>
+
+				<div>
+					<label className='block text-sm font-medium text-gray-700 mb-2'>
+						Select Departure Date:
+					</label>
+					<input
+						type='date'
+						value={departureDate}
+						onChange={(e) => setDepartureDate(e.target.value)}
+						className='block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200'
+					/>
+				</div>
 			</div>
 
-			<div className='mb-4'>
-				<label className='block mb-2'>Select Destination Airport:</label>
-				<Select
-					options={airportOptions}
-					value={destination}
-					onChange={setDestination}
-					placeholder='Search Destination Airport'
-				/>
+			<div className='mt-6'>
+				<button
+					onClick={handleSearchFlights}
+					className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg shadow-md transition ${
+						loading ? 'opacity-50 cursor-not-allowed' : ''
+					}`}
+					disabled={loading}>
+					{loading ? 'Searching...' : 'Search Flights'}
+				</button>
 			</div>
-
-			<div className='mb-4'>
-				<label className='block mb-2'>Select Departure Date:</label>
-				<input
-					type='date'
-					value={departureDate}
-					onChange={(e) => setDepartureDate(e.target.value)}
-					className='border p-2 rounded w-full'
-				/>
-			</div>
-
-			<button
-				onClick={handleSearchFlights}
-				className='bg-blue-600 text-white px-4 py-2 rounded mb-6'
-				disabled={loading}>
-				{loading ? 'Searching...' : 'Search Flights'}
-			</button>
 
 			{/* Display Flight Offers */}
 			<FlightOffers

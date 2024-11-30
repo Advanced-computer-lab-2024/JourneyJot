@@ -62,6 +62,16 @@ const AdminDashboard = () => {
 			label: 'Forget Password',
 			color: 'bg-gray-500',
 		},
+		{
+			path: '/mail-advertiser',
+			label: 'SendEmail To Advertiser',
+			color: 'bg-gray-500',
+		},
+		{
+			path: '/mail-tour-guide',
+			label: 'SendEmail To TourGuide',
+			color: 'bg-gray-500',
+		},
 		{ path: '/select-revenue', label: 'Select Revenue', color: 'bg-green-500' },
 	];
 

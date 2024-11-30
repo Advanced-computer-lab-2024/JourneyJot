@@ -12,6 +12,7 @@ const {
 	addRatingAndComment,
 	getAllItineraries,
 	calculateItineraryRevenue,
+	checkAllItinerariesForFlags,
 } = require('../controllers/itinerary');
 const authenticate = require('../middleware/auth-check'); // Assuming you have an auth middleware
 const roleCheck = require('../middleware/tour-guide-check'); // Check if user is a tour guide

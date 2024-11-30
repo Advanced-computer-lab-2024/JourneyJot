@@ -70,6 +70,7 @@ const activitySchema = new mongoose.Schema(
 		],
 		flagged: { type: Boolean, default: false },
 		isBooked: { type: Boolean, default: false },
+		tourists: { type: mongoose.Schema.Types.ObjectId, ref: 'Tourist' },
 	},
 	{ timestamps: true }
 );

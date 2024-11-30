@@ -11,9 +11,15 @@ const {
 	getPendingUsers,
 	updateUserStatus,
 	viewUsers,
+	viewTourists,
+	viewUsersAndTourists,
 } = require('../controllers/admin');
 const { changePassword } = require('../helper/change-password');
 const { flagItinerary, flagActivity } = require('../controllers/flag-events');
+const {
+	sendEmailToAdvertiser,
+	sendEmailToTourGuide,
+} = require('../controllers/request-otp');
 adminRouter.delete(
 	'/delete-account/:username',
 	authMiddleware,
@@ -38,6 +44,13 @@ adminRouter.put(
 	updateUserStatus
 );
 adminRouter.get('/users', authMiddleware, adminMiddleware, viewUsers);
+adminRouter.get('/tourists', authMiddleware, adminMiddleware, viewTourists);
+adminRouter.get(
+	'/users-and-tourists',
+	authMiddleware,
+	adminMiddleware,
+	viewUsersAndTourists
+);
 adminRouter.put(
 	'/itineraries/:id',
 	authMiddleware,
@@ -50,5 +63,7 @@ adminRouter.put(
 	adminMiddleware,
 	flagActivity
 );
+adminRouter.post('/send-email-advertiser', sendEmailToAdvertiser);
+adminRouter.post('/send-email-tour-guide', sendEmailToTourGuide);
 
 module.exports = adminRouter;

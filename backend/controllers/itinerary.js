@@ -232,3 +232,37 @@ exports.calculateItineraryRevenue = async (req, res) => {
 		});
 	}
 };
+exports.checkAllItinerariesForFlags = async (req, res) => {
+	try {
+		// Debug the incoming request
+		console.log('Request received:', req.body, req.query, req.params);
+
+		// Fetch all itineraries
+		const itineraries = await Itinerary.find();
+		console.log('Itineraries fetched:', itineraries);
+
+		if (
+			!itineraries ||
+			!Array.isArray(itineraries) ||
+			itineraries.length === 0
+		) {
+			return res.status(404).json({ message: 'No itineraries found' });
+		}
+
+		const flaggedItineraries = itineraries.filter(
+			(itinerary) => itinerary.flagged
+		);
+
+		res.status(200).json({
+			itineraries,
+			flagged: flaggedItineraries.length > 0,
+			flaggedItineraries,
+		});
+	} catch (error) {
+		console.error('Error checking itineraries for flags:', error);
+		res.status(500).json({
+			message: 'Error checking itineraries for flags',
+			error: error.message,
+		});
+	}
+};
