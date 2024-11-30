@@ -1,5 +1,3 @@
-/** @format */
-
 import React, { useEffect, useState } from 'react';
 
 const TouristReservations = () => {
@@ -20,25 +18,56 @@ const TouristReservations = () => {
 				throw new Error('No token found. Please login again.');
 			}
 
-			const response = await fetch(
-				'http://localhost:3000/tourists/getTourist',
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+			const response = await fetch('http://localhost:3000/tourists/getTourist', {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
 
 			if (!response.ok) {
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 
 			const data = await response.json();
+			console.log(data); // Log the entire response to inspect the structure
+
 			setActivities(data.tourist.activities);
 			setItineraries(data.tourist.itineraries);
-			setAttractions(data.tourist.attractions);
+
+			const bookedAttractions = data.tourist.bookedAttractions
+				? Object.keys(data.tourist.bookedAttractions)
+				: [];
+
+			console.log(bookedAttractions); // Log the booked attractions
+
+			const attractionDetails = await Promise.all(
+				bookedAttractions.map((attractionId) => fetchAttractionDetails(attractionId))
+			);
+			setAttractions(attractionDetails);
 		} catch (err) {
 			console.error(err);
+		}
+	};
+
+	const fetchAttractionDetails = async (attractionId) => {
+		try {
+			const token = localStorage.getItem('token');
+			const response = await fetch(`http://localhost:3000/attractions/${attractionId}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			if (!response.ok) {
+				throw new Error(`Error fetching attraction details: ${response.status}`);
+			}
+
+			const attractionData = await response.json();
+			console.log(attractionData); // Log attraction data to inspect it
+			return attractionData;
+		} catch (err) {
+			console.error('Error fetching attraction details:', err);
+			return null; // Return null in case of error
 		}
 	};
 
@@ -87,7 +116,7 @@ const TouristReservations = () => {
 	const renderCancelButton = (type, id, reservationDate) => (
 		<button
 			className='mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
-			onClick={() => cancelReservation(type, id, reservationDate)}>
+			onClick={() => cancelReservation(type, id, reservationDate)} >
 			Cancel
 		</button>
 	);
@@ -110,13 +139,11 @@ const TouristReservations = () => {
 								</h3>
 								{activity.advertiserId && (
 									<p className='text-gray-800'>
-										<strong>Advertiser:</strong>{' '}
-										{activity.advertiserId.username}
+										<strong>Advertiser:</strong> {activity.advertiserId.username}
 									</p>
 								)}
 								<p className='text-gray-700'>
-									<strong>Date:</strong>{' '}
-									{new Date(activity.date).toLocaleDateString()}
+									<strong>Date:</strong> {new Date(activity.date).toLocaleDateString()}
 								</p>
 								<p className='text-gray-700'>
 									<strong>Time:</strong> {activity.time}
@@ -206,24 +233,7 @@ const TouristReservations = () => {
 										<strong>Rating:</strong> {itinerary.rating} / 5
 									</p>
 								)}
-								<p className='text-gray-700'>
-									<strong>Accessibility:</strong> {itinerary.accessibility}
-								</p>
-								<p className='text-gray-700'>
-									<strong>Pickup Location:</strong> {itinerary.pickupLocation}
-								</p>
-								<p className='text-gray-700'>
-									<strong>Dropoff Location:</strong> {itinerary.dropoffLocation}
-								</p>
-								<p className='text-gray-700'>
-									<strong>Available Dates:</strong>{' '}
-									{itinerary.availableDates.join(', ')}
-								</p>
-								{renderCancelButton(
-									'Itinerary',
-									itinerary._id,
-									itinerary.availableDates
-								)}
+								{renderCancelButton('Itinerary', itinerary._id, itinerary.date)}
 							</div>
 						))}
 					</div>
@@ -239,57 +249,18 @@ const TouristReservations = () => {
 								key={index}
 								className={`${tabClassNames} bg-gradient-to-r from-green-100 to-teal-100`}>
 								<h3 className='text-2xl font-semibold text-green-700'>
-									{attraction.name}
+									Attraction #{index + 1}
 								</h3>
-								{attraction.governorId && (
-									<p className='text-gray-800'>
-										<strong>Governor:</strong> {attraction.governorId?.username}
-									</p>
-								)}
-								{attraction.description && (
-									<p className='text-gray-800'>
-										<strong>Description:</strong> {attraction.description}
-									</p>
-								)}
-								{attraction.pictures?.length > 0 && (
-									<div className='space-y-2'>
-										<strong>Pictures:</strong>
-										<div className='flex space-x-2'>
-											{attraction.pictures.map((pic, idx) => (
-												<img
-													key={idx}
-													src={pic}
-													alt={`Attraction picture ${idx + 1}`}
-													className='w-32 h-32 object-cover rounded'
-												/>
-											))}
-										</div>
-									</div>
-								)}
+								<p className='text-gray-800'>
+									<strong>Name:</strong> {attraction.name}
+								</p>
 								<p className='text-gray-700'>
 									<strong>Location:</strong> {attraction.location}
 								</p>
 								<p className='text-gray-700'>
-									<strong>Opening Hours:</strong> {attraction.openingHours}
+									<strong>Duration:</strong> {attraction.duration}
 								</p>
-								{attraction.ticketPrices && (
-									<div className='text-gray-700'>
-										<strong>Ticket Prices:</strong>
-										<ul className='list-disc list-inside'>
-											{Object.entries(attraction.ticketPrices).map(
-												([age, price]) => (
-													<li key={age}>
-														{age}: ${price}
-													</li>
-												)
-											)}
-										</ul>
-									</div>
-								)}
-								<p className='text-gray-700'>
-									<strong>Rating:</strong> {attraction.rating} / 5
-								</p>
-								{renderCancelButton('Attraction', attraction._id)}
+								{renderCancelButton('Attraction', attraction._id, attraction.date)}
 							</div>
 						))}
 					</div>
@@ -297,32 +268,43 @@ const TouristReservations = () => {
 					<div className='text-gray-500'>No attractions available.</div>
 				);
 			default:
-				return null;
+				return <div>Please select a tab.</div>;
 		}
 	};
 
 	return (
-		<div className='p-8 max-w-6xl mx-auto bg-gray-100 rounded-lg shadow-xl'>
-			<div className='flex justify-center space-x-6 mb-10'>
-				{['activities', 'itineraries', 'attractions'].map((tab) => (
-					<button
-						key={tab}
-						className={`px-6 py-3 rounded-full font-semibold text-lg transition-all duration-200 ${
-							activeTab === tab
-								? 'bg-gradient-to-r from-blue-500 to-green-500 text-white shadow-lg'
-								: 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-						}`}
-						onClick={() => setActiveTab(tab)}>
-						{tab.charAt(0).toUpperCase() + tab.slice(1)}
-					</button>
-				))}
+		<div className='container'>
+			{/* Top Tabs / Buttons */}
+			<div className='tabs flex space-x-4 mb-6'>
+				<button
+					onClick={() => setActiveTab('activities')}
+					className={`${activeTab === 'activities' ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-700'
+						} px-6 py-2 rounded-md font-semibold transition-colors duration-300 hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50`}>
+					Activities
+				</button>
+				<button
+					onClick={() => setActiveTab('itineraries')}
+					className={`${activeTab === 'itineraries' ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-700'
+						} px-6 py-2 rounded-md font-semibold transition-colors duration-300 hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50`}>
+					Itineraries
+				</button>
+				<button
+					onClick={() => setActiveTab('attractions')}
+					className={`${activeTab === 'attractions' ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-700'
+						} px-6 py-2 rounded-md font-semibold transition-colors duration-300 hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50`}>
+					Attractions
+				</button>
 			</div>
+
+			{/* Error Message */}
 			{errorMessage && (
-				<div className='mb-6 p-4 bg-red-100 text-red-700 border border-red-400 rounded'>
-					{errorMessage}
-				</div>
+				<div className='error-message text-red-600'>{errorMessage}</div>
 			)}
-			<div>{renderTabContent()}</div>
+
+			{/* Tab Content */}
+			<div className='tab-content'>
+				{renderTabContent()}
+			</div>
 		</div>
 	);
 };

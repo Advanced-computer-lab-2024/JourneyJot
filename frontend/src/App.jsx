@@ -66,7 +66,8 @@ import FlightOffers from './pages/Tourist/FlightOffers.jsx';
 import BookedFlights from './pages/Tourist/BookedFlights.jsx';
 import Transportation from './pages/Tourist/Transportations.jsx';
 import FlightSearch from './pages/Tourist/FlightSearch.jsx';
-
+import HotelList from './pages/Tourist/HotelList.jsx';
+import BookedHotels from './pages/Tourist/BookedHotels.jsx';
 const App = () => {
 	return (
 		<Routes>
@@ -326,13 +327,23 @@ const App = () => {
 				element={<CreateTransportation />}
 			/>
 			<Route
-				path='tourist/homePage/flights'
+				path='/tourist/homePage/flights'
 				element={<FlightSearch />}
 			/>
 			<Route
 				path='/booked-flights'
 				element={<BookedFlights />}
 			/>
+			<Route
+				path='/tourist/homePage/hotels'
+				element={<HotelList />}
+			/>
+
+			<Route
+				path='/booked-hotels'
+				element={<BookedHotels />}
+			/>
+
 		</Routes>
 	);
 };

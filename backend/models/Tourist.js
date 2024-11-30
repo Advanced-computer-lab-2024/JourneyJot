@@ -56,8 +56,8 @@ const touristSchema = new mongoose.Schema(
 			},
 		},
 		products: [
-			{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }, // Reference to the Product model
-		],
+			{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+		], // Reference to the Product model
 
 		itineraries: [
 			{
@@ -71,12 +71,11 @@ const touristSchema = new mongoose.Schema(
 				ref: 'Activity',
 			},
 		],
-		attractions: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'Attraction',
-			},
-		],
+		bookedAttractions: {
+			type: Map, // A Map to store attractionId -> ticketType pairs
+			of: String, // The type of the value stored in the Map (ticketType as a string)
+			default: {}, // Initialize as an empty Map
+		},
 		points: {
 			type: Number,
 			default: 0,
@@ -91,6 +90,7 @@ const touristSchema = new mongoose.Schema(
 			{ type: mongoose.Schema.Types.ObjectId, ref: 'Transportation' },
 		],
 		flights: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Flight' }],
+		hotels: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hotel' }],
 	},
 
 	{ timestamps: true }

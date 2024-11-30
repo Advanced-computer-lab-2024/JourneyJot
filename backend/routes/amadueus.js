@@ -3,115 +3,108 @@
 const express = require('express');
 const amadeusRoutes = express.Router();
 const amadeus = require('../models/amadeusClient');
+const axios = require('axios');
 
-// Fetch Airports
 
-const generateCombinations = (length) => {
-	const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-	let combinations = [];
+// Hardcoded RapidAPI credentials
+const RAPIDAPI_HOST = "travel-advisor.p.rapidapi.com";
+const RAPIDAPI_KEY = "37f7f06eb1msh27743fb8d0f59d3p140383jsnfc69126288de";
 
-	const combine = (prefix, depth) => {
-		if (depth === 0) {
-			combinations.push(prefix);
-			return;
-		}
-		for (let i = 0; i < alphabet.length; i++) {
-			combine(prefix + alphabet[i], depth - 1);
-		}
-	};
+// Fetch hotel list
+amadeusRoutes.get("/hotels", async (req, res) => {
+	const {
+		location_id = "293919", // Default location_id
+		adults = 1,
+		rooms = 1,
+		nights = 2,
+		offset = 0,
+		currency = "USD",
+		order = "asc",
+		limit = 10,
+		sort = "recommended",
+		lang = "en_US",
+	} = req.query;
 
-	combine('', length);
-	return combinations;
-};
-
-amadeusRoutes.get('/airports', async (req, res) => {
 	try {
-		const allAirports = [];
-		const maxCombinationLength = 2; // Keyword length (e.g., "a", "aa", etc.)
-		const keywordCombinations = generateCombinations(maxCombinationLength); // Generate all keywords
-		const limit = 100; // Amadeus API limit per request
-
-		// Fetch airports for each keyword
-		for (const keyword of keywordCombinations) {
-			try {
-				let offset = 0;
-
-				while (true) {
-					const response = await amadeus.referenceData.locations.get({
-						subType: 'AIRPORT',
-						keyword,
-						limit,
-						offset,
-					});
-
-					if (response.result?.data?.length) {
-						allAirports.push(...response.result.data);
-						if (response.result.data.length < limit) break; // End if no more data
-						offset += limit;
-					} else {
-						break; // End if no data
-					}
-				}
-			} catch (error) {
-				console.error(
-					`Error fetching airports for keyword "${keyword}":`,
-					error.message
-				);
+		const response = await axios.get(
+			`https://${RAPIDAPI_HOST}/hotels/list`,
+			{
+				params: {
+					location_id,
+					adults,
+					rooms,
+					nights,
+					offset,
+					currency,
+					order,
+					limit,
+					sort,
+					lang,
+				},
+				headers: {
+					"x-rapidapi-host": RAPIDAPI_HOST,
+					"x-rapidapi-key": RAPIDAPI_KEY,
+				},
 			}
-		}
-
-		// Remove duplicates based on IATA codes
-		const uniqueAirports = Array.from(
-			new Map(
-				allAirports.map((airport) => [airport.iataCode, airport])
-			).values()
 		);
 
-		res.status(200).json(uniqueAirports);
+		if (!response.data || !response.data.data) {
+			return res.status(404).json({ error: "No hotels found for the given criteria." });
+		}
+
+		res.status(200).json(response.data);
 	} catch (error) {
-		console.error('Error fetching airports:', error.message);
-		res.status(500).json({ error: 'Failed to fetch airports.' });
+		console.error("Error fetching hotels:", error.response?.data || error.message);
+		res.status(500).json({ error: "Failed to fetch hotels.", details: error.message });
 	}
 });
 
-// Hotel Search
-amadeusRoutes.get('/hotels', async (req, res) => {
-	const { cityCode, hotelName, checkInDate, checkOutDate } = req.query;
+// Fetch location search
+amadeusRoutes.get("/locations", async (req, res) => {
+	const {
+		query = "cairo", // Default query
+		limit = 10,
+		offset = 0,
+		units = "km",
+		location_id = 1,
+		currency = "USD",
+		sort = "relevance",
+		lang = "en_US",
+	} = req.query;
 
 	try {
-		// Build parameters for Amadeus API request
-		const params = {
-			cityCode, // IATA code of the city
-			checkInDate,
-			checkOutDate,
-			currency: 'USD', // Optional: Default currency set to USD
-		};
+		const response = await axios.get(
+			`https://${RAPIDAPI_HOST}/locations/search`,
+			{
+				params: {
+					query,
+					limit,
+					offset,
+					units,
+					location_id,
+					currency,
+					sort,
+					lang,
+				},
+				headers: {
+					"x-rapidapi-host": RAPIDAPI_HOST,
+					"x-rapidapi-key": RAPIDAPI_KEY,
+				},
+			}
+		);
 
-		// Include hotel name as a keyword filter if provided
-		if (hotelName) params.keyword = hotelName;
-
-		// Call Amadeus API for hotel offers
-		const response = await amadeus.shopping.hotelOffers.get(params);
-
-		// Log response for debugging purposes
-		console.log('Amadeus Hotel API Response:', response.data);
-
-		// Return results to the client
-		res.status(200).json(response.result?.data || []);
-	} catch (error) {
-		console.error('Error fetching hotel data from Amadeus:', error.message);
-
-		// Check for specific error details and respond accordingly
-		if (error.response?.status) {
-			res.status(error.response.status).json({
-				error: error.response.data,
-			});
-		} else {
-			// Return a generic 500 error if no specific error is found
-			res.status(500).json({ error: 'Failed to fetch hotel data.' });
+		if (!response.data || !response.data.data) {
+			return res.status(404).json({ error: "No locations found for the given query." });
 		}
+
+		res.status(200).json(response.data);
+	} catch (error) {
+		console.error("Error fetching locations:", error.response?.data || error.message);
+		res.status(500).json({ error: "Failed to fetch locations.", details: error.message });
 	}
 });
+
+
 // Flight Offers Search
 amadeusRoutes.get('/flights', async (req, res) => {
 	const { origin, destination, departureDate } = req.query;
@@ -134,59 +127,4 @@ amadeusRoutes.get('/flights', async (req, res) => {
 		res.status(500).json({ error: 'Failed to fetch flight offers.' });
 	}
 });
-
-// Flight Booking
-amadeusRoutes.post('/bookFlight', async (req, res) => {
-	const { flightId } = req.body;
-
-	try {
-		const response = await amadeus.booking.flightOrders.post(
-			JSON.stringify({
-				data: {
-					type: 'flight-order',
-					flightOffers: [{ id: flightId }],
-					travelers: [
-						{
-							id: '1',
-							dateOfBirth: '1990-01-01',
-							name: { firstName: 'John', lastName: 'Doe' },
-							contact: {
-								emailAddress: 'john.doe@example.com',
-								phones: [
-									{
-										deviceType: 'MOBILE',
-										countryCallingCode: '1',
-										number: '123456789',
-									},
-								],
-							},
-							documents: [
-								{
-									documentType: 'PASSPORT',
-									birthPlace: 'CITY',
-									issuanceLocation: 'COUNTRY',
-									issuanceDate: '2015-04-14',
-									number: '000000000',
-									expiryDate: '2025-04-14',
-									issuanceCountry: 'COUNTRY',
-									nationality: 'COUNTRY',
-									holder: true,
-								},
-							],
-						},
-					],
-				},
-			})
-		);
-
-		res.status(200).json({
-			message: 'Flight booked successfully',
-			bookingDetails: response.result,
-		});
-	} catch (error) {
-		console.error('Error booking flight:', error);
-		res.status(500).json({ error: 'Failed to book flight' });
-	}
-});
-
 module.exports = amadeusRoutes;

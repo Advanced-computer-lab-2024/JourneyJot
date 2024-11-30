@@ -16,7 +16,7 @@ const Transportation = () => {
 				const response = await axios.get(
 					'http://localhost:3000/transportation'
 				);
-				setTransportationList(response.data); // Assuming the response contains a list of transportation items
+				setTransportationList(response.data);
 			} catch (err) {
 				setError('Failed to fetch transportation options');
 				console.error('Error fetching transportation:', err);
@@ -38,7 +38,7 @@ const Transportation = () => {
 					'http://localhost:3000/tourists/bookedTransportations',
 					config
 				);
-				setBookedTransportations(response.data); // Assuming response contains a list of booked transportation items
+				setBookedTransportations(response.data);
 			} catch (err) {
 				setError('Failed to fetch booked transportations');
 				console.error('Error fetching booked transportations:', err);
@@ -57,7 +57,6 @@ const Transportation = () => {
 	// Handle booking a transportation
 	const handleBookTransportation = async (id, availableSeats, pricePerSeat) => {
 		const seatsToBook = selectedSeats[id] || 1; // Default to 1 seat if no selection
-		const totalCost = seatsToBook * pricePerSeat;
 
 		// Check if selected seats exceed available seats
 		if (seatsToBook > availableSeats) {
@@ -85,13 +84,17 @@ const Transportation = () => {
 			// Refresh booked transportations after booking
 			setBookedTransportations((prev) => [
 				...prev,
-				response.data.transportation,
+				{
+					...response.data.transportation,
+					bookedSeats: seatsToBook,
+				},
 			]);
+
 			// Update the available seats in the list
 			setTransportationList((prevList) =>
 				prevList.map((item) =>
 					item._id === id
-						? { ...item, availableSeats: availableSeats - seatsToBook }
+						? { ...item, availableSeats: item.availableSeats - seatsToBook }
 						: item
 				)
 			);
@@ -124,8 +127,8 @@ const Transportation = () => {
 			alert(response.data.message || 'Booking canceled successfully!');
 
 			// Update booked transportations after cancellation
-			setBookedTransportations(
-				bookedTransportations.filter((item) => item._id !== id)
+			setBookedTransportations((prev) =>
+				prev.filter((item) => item._id !== id)
 			);
 		} catch (err) {
 			setError(

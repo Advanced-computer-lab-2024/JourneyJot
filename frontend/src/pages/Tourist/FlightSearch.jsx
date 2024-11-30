@@ -21,7 +21,7 @@ const FlightSearch = () => {
 
 	// Convert JSON data to the format suitable for react-select
 	const airportOptions = airportsData
-		.filter((airport) => airport.iata && airport.name) // Filter out invalid data
+		.filter((airport) => airport.iata && airport.name && airport.type === "airport") // Include only airports
 		.map((airport) => ({
 			value: airport.iata,
 			label: `${airport.name} (${airport.iata})`,
