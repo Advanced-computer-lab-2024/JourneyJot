@@ -1530,3 +1530,59 @@ exports.getTouristCart = async (req, res) => {
 		res.status(500).json({ message: 'Error retrieving cart' });
 	}
 };
+
+exports.updateCartItemQuantity = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { productId } = req.params;
+        const { quantity } = req.body;
+
+        if (quantity < 1) {
+            return res.status(400).json({ message: 'Quantity must be at least 1' });
+        }
+
+        const tourist = await Tourist.findById(userId);
+        if (!tourist) {
+            return res.status(404).json({ message: 'Tourist not found' });
+        }
+
+        const cartItem = tourist.cart.find(
+            (item) => item.productId.toString() === productId
+        );
+
+        if (!cartItem) {
+            return res.status(404).json({ message: 'Product not found in cart' });
+        }
+
+        cartItem.quantity = quantity;
+        await tourist.save();
+
+        res.status(200).json({ message: 'Cart updated successfully', cart: tourist.cart });
+    } catch (error) {
+        console.error('Error updating cart item:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.removeCartItem = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { productId } = req.params;
+
+        const tourist = await Tourist.findById(userId);
+        if (!tourist) {
+            return res.status(404).json({ message: 'Tourist not found' });
+        }
+
+        tourist.cart = tourist.cart.filter(
+            (item) => item.productId.toString() !== productId
+        );
+
+        await tourist.save();
+
+        res.status(200).json({ message: 'Product removed from cart', cart: tourist.cart });
+    } catch (error) {
+        console.error('Error removing cart item:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

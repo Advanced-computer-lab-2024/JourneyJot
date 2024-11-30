@@ -48,6 +48,7 @@ const { deleteRequest } = require('../controllers/deletion-request');
 
 const touristRouter = Router();
 
+
 touristRouter.post('/signup', signUp);
 touristRouter.post('/login', login);
 touristRouter.get('/profile', auth_check, getTouristProfile);
@@ -122,5 +123,14 @@ touristRouter.post('/addToCart/:productId', auth_check, addProductToCart);
 
 // Route to fetch the cart of a certain Tourist
 touristRouter.get('/getCart', auth_check, getTouristCart);
+
+const {
+    updateCartItemQuantity,
+    removeCartItem
+} = require('../controllers/tourist');
+
+touristRouter.put('/cart/update/:productId', auth_check, updateCartItemQuantity);
+touristRouter.delete('/cart/remove/:productId', auth_check, removeCartItem);
+
 
 module.exports = touristRouter;

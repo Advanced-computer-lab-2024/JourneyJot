@@ -56,3 +56,19 @@ export const fetchTourGuideProfile = async () =>
 
 export const updateTourGuideProfile = async (profile) =>
   axios.put(`${API_URL}/tour-guides/profile`, profile);
+
+export const updateCartItem = async (productId, quantity) => {
+  const token = localStorage.getItem('token');
+  const config = { headers: { Authorization: `Bearer ${token}` } };
+
+  const response = await axios.put(`${API_URL}/tourists/cart/update/${productId}`, { quantity }, config);
+  return response.data;
+};
+
+export const removeCartItem = async (productId) => {
+  const token = localStorage.getItem('token');
+  const config = { headers: { Authorization: `Bearer ${token}` } };
+
+  const response = await axios.delete(`${API_URL}/tourists/cart/remove/${productId}`, config);
+  return response.data;
+};
