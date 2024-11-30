@@ -66,10 +66,10 @@ import FlightOffers from './pages/Tourist/FlightOffers.jsx';
 import BookedFlights from './pages/Tourist/BookedFlights.jsx';
 import Transportation from './pages/Tourist/Transportations.jsx';
 import FlightSearch from './pages/Tourist/FlightSearch.jsx';
-<<<<<<< HEAD
+
 import HotelList from './pages/Tourist/HotelList.jsx';
 import BookedHotels from './pages/Tourist/BookedHotels.jsx';
-=======
+
 import CompletedActivities from './components/Advertiser/CompletedActivities.jsx';
 import CompletedItineraries from './components/TourGuide/CompletedItineraries.jsx';
 import DisplayNotification from './components/Advertiser/DisplayNotification.jsx';
@@ -89,9 +89,7 @@ import BuyTouristCart from './pages/Tourist/BuyProductCart.jsx';
 const stripePromise = loadStripe(
 	'pk_test_51QPr8TDbJphsuJ1azF71v68UgZJOXpe5vfeKNpfbNxM7QkVZ3CtaL8MisGPSx9btiOOMQ78G3SvmwvovSMPjx8O900SOrWEaHL'
 );
->>>>>>> main
-import HotelList from './pages/Tourist/HotelList.jsx';
-import BookedHotels from './pages/Tourist/BookedHotels.jsx';
+
 const App = () => {
 	return (
 		<Routes>
@@ -367,7 +365,6 @@ const App = () => {
 				element={<BookedFlights />}
 			/>
 			<Route
-<<<<<<< HEAD
 				path='/tourist/homePage/hotels'
 				element={<HotelList />}
 			/>
@@ -376,8 +373,7 @@ const App = () => {
 				path='/booked-hotels'
 				element={<BookedHotels />}
 			/>
-
-=======
+			<Route
 				path='/count-tourists-activities'
 				element={<CompletedActivities />}
 			/>
@@ -425,7 +421,7 @@ const App = () => {
 				path='/buy-tourist-cart'
 				element={<BuyTouristCart />}
 			/>
-				<Route
+			<Route
 				path='/tourist/homePage/hotels'
 				element={<HotelList />}
 			/>
@@ -434,9 +430,6 @@ const App = () => {
 				path='/booked-hotels'
 				element={<BookedHotels />}
 			/>
-
-
->>>>>>> main
 		</Routes>
 	);
 };
