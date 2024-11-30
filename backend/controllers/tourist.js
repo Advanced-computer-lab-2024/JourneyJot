@@ -1329,7 +1329,7 @@ exports.createSetupIntent = async (req, res) => {
 	}
 };
 
-exports.payStripe = async (req, res) => {
+exports.payStripeActivity = async (req, res) => {
 	const { amount, currency = 'usd', paymentMethodId, walletAmount } = req.body;
 	const activityId = req.body.activityId;
 	const userId = req.user._id;
@@ -1356,6 +1356,66 @@ exports.payStripe = async (req, res) => {
 
 		// Add activity to the tourist's list of booked activities
 		tourist.activities.push(activityId);
+		await tourist.save();
+
+		// Log incoming request data for debugging
+		console.log('Request Body:', req.body);
+
+		// Create a PaymentIntent with Stripe
+		const paymentIntent = await stripe.paymentIntents.create({
+			amount,
+			currency,
+			payment_method: paymentMethodId,
+			confirm: true, // Automatically confirm the payment
+			automatic_payment_methods: {
+				enabled: true,
+			},
+			return_url: 'https://your-site.com/payment-success', // Replace with your actual URL
+		});
+
+		// Log the payment intent response for debugging
+		console.log('Payment Intent:', paymentIntent);
+
+		return res.status(200).json({
+			message: 'Payment successful!',
+			paymentIntentId: paymentIntent.id, // Optionally send the payment intent ID back to the frontend
+		});
+	} catch (error) {
+		// Log the error to the console
+		console.error('Payment processing error:', error);
+		return res.status(400).json({
+			message: error.message || 'Something went wrong',
+			error, // Log full error details to help debugging
+		});
+	}
+};
+exports.payStripeItinerary = async (req, res) => {
+	const { amount, currency = 'usd', paymentMethodId, walletAmount } = req.body;
+	const itineraryId = req.body.itineraryId; // Assuming itineraryId is passed in the request body
+	const userId = req.user._id;
+
+	try {
+		// Find the tourist and itinerary
+		const itinerary = await Itinerary.findById(itineraryId); // Fetch itinerary from database
+		if (!itinerary)
+			return res.status(404).json({ message: 'Itinerary not found' });
+
+		const tourist = await Tourist.findById(userId);
+		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
+
+		// Check if the itinerary is already booked by the tourist
+		if (tourist.itineraries.includes(itineraryId)) {
+			return res
+				.status(400)
+				.json({ message: 'Itinerary has already been booked' });
+		}
+
+		// Update the `isBooked` attribute of the itinerary
+		itinerary.isBooked = true;
+		await itinerary.save();
+
+		// Add itinerary to the tourist's list of booked itineraries
+		tourist.itineraries.push(itineraryId);
 		await tourist.save();
 
 		// Log incoming request data for debugging
@@ -1513,6 +1573,7 @@ exports.addProductToCart = async (req, res) => {
 	}
 };
 
+// Get the tourist's cart with populated product data
 exports.getTouristCart = async (req, res) => {
 	try {
 		const touristId = req.user._id; // Assuming authentication middleware attaches user info
@@ -1524,65 +1585,186 @@ exports.getTouristCart = async (req, res) => {
 			return res.status(404).json({ message: 'Tourist not found' });
 		}
 
-		res.status(200).json(tourist.cart); // Directly return the populated cart
+		res.status(200).json(tourist.cart); // Return the populated cart
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Error retrieving cart' });
 	}
 };
 
+// Update the quantity of a product in the cart
+// Update the quantity of a product in the cart
 exports.updateCartItemQuantity = async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const { productId } = req.params;
-        const { quantity } = req.body;
+	try {
+		const userId = req.user._id;
+		const { productId } = req.params; // This is the productId coming from the URL
+		const { quantity } = req.body;
 
-        if (quantity < 1) {
-            return res.status(400).json({ message: 'Quantity must be at least 1' });
-        }
+		// Ensure quantity is valid
+		if (quantity < 1) {
+			return res.status(400).json({ message: 'Quantity must be at least 1' });
+		}
 
-        const tourist = await Tourist.findById(userId);
-        if (!tourist) {
-            return res.status(404).json({ message: 'Tourist not found' });
-        }
+		// Find the tourist and populate the cart
+		const tourist = await Tourist.findById(userId).populate('cart.productId');
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
 
-        const cartItem = tourist.cart.find(
-            (item) => item.productId.toString() === productId
-        );
+		// Find the cart item using .equals() for ObjectId comparison
+		const cartItem = tourist.cart.find(
+			(item) => item.productId._id.equals(productId) // Use .equals() for proper ObjectId comparison
+		);
 
-        if (!cartItem) {
-            return res.status(404).json({ message: 'Product not found in cart' });
-        }
+		if (!cartItem) {
+			return res.status(404).json({ message: 'Product not found in cart' });
+		}
 
-        cartItem.quantity = quantity;
-        await tourist.save();
+		// Find the product and its available stock
+		const product = cartItem.productId;
 
-        res.status(200).json({ message: 'Cart updated successfully', cart: tourist.cart });
-    } catch (error) {
-        console.error('Error updating cart item:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
+		// Calculate stock change (decrease if increasing quantity, increase if decreasing)
+		const stockChange =
+			quantity > cartItem.quantity
+				? quantity - cartItem.quantity
+				: cartItem.quantity - quantity;
+
+		// Ensure quantity does not exceed the available stock or go below 1
+		if (quantity > product.quantity) {
+			return res.status(400).json({
+				message: 'Quantity must be less than or equal to the available stock',
+			});
+		}
+
+		// Update the cart item quantity
+		cartItem.quantity = quantity;
+
+		// Save the updated tourist data with new stock and cart item quantity
+		await product.save();
+		await tourist.save();
+
+		res.status(200).json({
+			message: 'Cart updated successfully',
+			cart: tourist.cart, // Return the updated cart
+		});
+	} catch (error) {
+		console.error('Error updating cart item:', error);
+		res.status(500).json({ message: 'Server error' });
+	}
 };
 
+// Remove a product from the cart
 exports.removeCartItem = async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const { productId } = req.params;
+	try {
+		const userId = req.user._id;
+		const { productId } = req.params;
 
-        const tourist = await Tourist.findById(userId);
-        if (!tourist) {
-            return res.status(404).json({ message: 'Tourist not found' });
-        }
+		// Find the tourist and populate the cart
+		const tourist = await Tourist.findById(userId);
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
 
-        tourist.cart = tourist.cart.filter(
-            (item) => item.productId.toString() !== productId
-        );
+		// Remove the cart item by productId
+		tourist.cart = tourist.cart.filter(
+			(item) => item.productId.toString() !== productId
+		);
 
-        await tourist.save();
+		// Save the updated cart
+		await tourist.save();
 
-        res.status(200).json({ message: 'Product removed from cart', cart: tourist.cart });
-    } catch (error) {
-        console.error('Error removing cart item:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
+		res
+			.status(200)
+			.json({ message: 'Product removed from cart', cart: tourist.cart });
+	} catch (error) {
+		console.error('Error removing cart item:', error);
+		res.status(500).json({ message: 'Server error' });
+	}
+};
+// Buy products in the cart (finalize the purchase)
+exports.buyProductsCard = async (req, res) => {
+	try {
+		const userId = req.user._id; // Get the user ID from authentication
+		const tourist = await Tourist.findById(userId).populate('cart.productId'); // Populate the cart with product details
+
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
+
+		// Check if the cart is empty
+		if (tourist.cart.length === 0) {
+			return res.status(400).json({ message: 'Cart is empty' });
+		}
+
+		// Calculate the total cost of the purchase
+		let totalCost = 0;
+		let pointsEarned = 0;
+
+		// Process each item in the cart
+		for (let item of tourist.cart) {
+			const product = item.productId;
+
+			// Ensure that the quantity does not exceed the available stock
+			if (item.quantity > product.stock) {
+				return res.status(400).json({
+					message: `Not enough stock for ${product.name}. Only ${product.stock} left.`,
+				});
+			}
+
+			// Calculate the total cost for this product
+			const productCost = product.price * item.quantity;
+			totalCost += productCost;
+
+			// Calculate points earned based on product price (this can be adjusted as needed)
+			let pointsMultiplier = 0.5; // Default multiplier for level 1
+			if (tourist.points >= 100000) pointsMultiplier = 1; // Level 2
+			if (tourist.points >= 500000) pointsMultiplier = 1.5; // Level 3
+
+			pointsEarned += productCost * pointsMultiplier;
+
+			// Reduce the stock after purchase
+			product.quantity -= item.quantity; // Decrease stock based on the quantity purchased
+			await product.save();
+		}
+
+		// Check if the tourist has enough balance in their wallet to cover the total cost
+		if (tourist.wallet.balance < totalCost) {
+			return res.status(400).json({ message: 'Insufficient wallet balance' });
+		}
+
+		// Deduct the total cost from the tourist's wallet
+		tourist.wallet.balance -= totalCost;
+
+		// Add the points earned from this purchase to the tourist's total points
+		tourist.points += pointsEarned;
+
+		// Clear the cart after the purchase
+		tourist.cart = [];
+		await tourist.save();
+
+		// Log the transaction details
+		console.log({
+			message: 'Purchase successful',
+			transactionDetails: {
+				totalCost: totalCost.toFixed(2),
+				updatedWalletBalance: tourist.wallet.balance.toFixed(2),
+				pointsEarned: Math.floor(pointsEarned),
+				totalPoints: Math.floor(tourist.points),
+			},
+		});
+
+		// Respond with the purchase success message and transaction details
+		res.status(200).json({
+			message: 'Purchase successful. Your cart has been cleared.',
+			transactionDetails: {
+				totalCost: totalCost.toFixed(2),
+				updatedWalletBalance: tourist.wallet.balance.toFixed(2),
+				pointsEarned: Math.floor(pointsEarned),
+				totalPoints: Math.floor(tourist.points),
+			},
+		});
+	} catch (error) {
+		console.error('Error during purchase:', error);
+		res.status(500).json({ message: 'Server error during purchase' });
+	}
 };

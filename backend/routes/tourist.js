@@ -37,6 +37,12 @@ const {
 	removeProductFromWishList,
 	addProductToCart,
 	getTouristCart,
+	updateCartItemQuantity,
+	removeCartItem,
+	payStripeActivity,
+	payStripeItinerary,
+	buyProducts,
+	buyProductsCard,
 } = require('../controllers/tourist');
 const auth_check = require('../middleware/auth-check');
 const { changePassword } = require('../helper/tourist-change-password');
@@ -100,7 +106,8 @@ touristRouter.get(
 	auth_check,
 	getBookedTransportations
 );
-touristRouter.post('/pay-stripe', auth_check, payStripe);
+touristRouter.post('/pay-stripe-activity', auth_check, payStripeActivity);
+touristRouter.post('/pay-stripe-itinerary', auth_check, payStripeItinerary);
 
 // Route to cancel a booking for a specific transportation ID
 touristRouter.delete('/cancelBooking/:id', auth_check, cancelBooking);
@@ -123,14 +130,11 @@ touristRouter.post('/addToCart/:productId', auth_check, addProductToCart);
 
 // Route to fetch the cart of a certain Tourist
 touristRouter.get('/getCart', auth_check, getTouristCart);
-
-const {
-    updateCartItemQuantity,
-    removeCartItem
-} = require('../controllers/tourist');
-
-touristRouter.put('/cart/update/:productId', auth_check, updateCartItemQuantity);
+touristRouter.put(
+	'/cart/update/:productId',
+	auth_check,
+	updateCartItemQuantity
+);
 touristRouter.delete('/cart/remove/:productId', auth_check, removeCartItem);
-
-
+touristRouter.post('/buyProductCard', auth_check, buyProductsCard);
 module.exports = touristRouter;

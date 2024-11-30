@@ -139,9 +139,9 @@ const ActivitiesCard = ({
 		setShareOptionsVisible(!shareOptionsVisible);
 	};
 
-	const handlePayViaStripe = (activity) => {
+	const handlePayActivityViaStripe = (activity) => {
 		// Ensure no PointerEvent is passed to navigate
-		navigate('/pay-stripe', {
+		navigate('/pay-activity-stripe', {
 			state: {
 				activity: activity, // Pass only the serializable activity data
 				currency: currency,
@@ -210,7 +210,11 @@ const ActivitiesCard = ({
 								</button>
 								<button
 									onClick={() =>
-										handlePayViaStripe(activity, currency, conversionRate)
+										handlePayActivityViaStripe(
+											activity,
+											currency,
+											conversionRate
+										)
 									}
 									className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 									Pay via Stripe
