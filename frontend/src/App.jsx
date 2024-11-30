@@ -72,7 +72,9 @@ import DisplayNotification from './components/Advertiser/DisplayNotification.jsx
 import DisplayNotificationItinerary from './components/TourGuide/DisplayNotification.jsx';
 import SendEmailToAdvertiser from './components/Admin/SendEmailToAdvertiser.jsx';
 import SendEmailToTourGuide from './components/Admin/sendEmailToTourGuide.jsx';
-import PayWithStripe from './components/Tourist/PayStripe.jsx';
+import PayActivityWithStripe from './components/Tourist/PayStripeActivity.jsx';
+import PayItineraryWithStripe from './components/Tourist/PayStripeItinerary.jsx';
+
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import TouristWishList from './pages/Tourist/TouristWishList.jsx';
@@ -381,10 +383,18 @@ const App = () => {
 				element={<SendEmailToTourGuide />}
 			/>
 			<Route
-				path='/pay-stripe'
+				path='/pay-activity-stripe'
 				element={
 					<Elements stripe={stripePromise}>
-						<PayWithStripe />
+						<PayActivityWithStripe />
+					</Elements>
+				}
+			/>
+			<Route
+				path='/pay-itinerary-stripe'
+				element={
+					<Elements stripe={stripePromise}>
+						<PayItineraryWithStripe />
 					</Elements>
 				}
 			/>

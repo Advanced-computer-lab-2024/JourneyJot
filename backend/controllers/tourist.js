@@ -1329,7 +1329,7 @@ exports.createSetupIntent = async (req, res) => {
 	}
 };
 
-exports.payStripe = async (req, res) => {
+exports.payStripeActivity = async (req, res) => {
 	const { amount, currency = 'usd', paymentMethodId, walletAmount } = req.body;
 	const activityId = req.body.activityId;
 	const userId = req.user._id;
@@ -1356,6 +1356,66 @@ exports.payStripe = async (req, res) => {
 
 		// Add activity to the tourist's list of booked activities
 		tourist.activities.push(activityId);
+		await tourist.save();
+
+		// Log incoming request data for debugging
+		console.log('Request Body:', req.body);
+
+		// Create a PaymentIntent with Stripe
+		const paymentIntent = await stripe.paymentIntents.create({
+			amount,
+			currency,
+			payment_method: paymentMethodId,
+			confirm: true, // Automatically confirm the payment
+			automatic_payment_methods: {
+				enabled: true,
+			},
+			return_url: 'https://your-site.com/payment-success', // Replace with your actual URL
+		});
+
+		// Log the payment intent response for debugging
+		console.log('Payment Intent:', paymentIntent);
+
+		return res.status(200).json({
+			message: 'Payment successful!',
+			paymentIntentId: paymentIntent.id, // Optionally send the payment intent ID back to the frontend
+		});
+	} catch (error) {
+		// Log the error to the console
+		console.error('Payment processing error:', error);
+		return res.status(400).json({
+			message: error.message || 'Something went wrong',
+			error, // Log full error details to help debugging
+		});
+	}
+};
+exports.payStripeItinerary = async (req, res) => {
+	const { amount, currency = 'usd', paymentMethodId, walletAmount } = req.body;
+	const itineraryId = req.body.itineraryId; // Assuming itineraryId is passed in the request body
+	const userId = req.user._id;
+
+	try {
+		// Find the tourist and itinerary
+		const itinerary = await Itinerary.findById(itineraryId); // Fetch itinerary from database
+		if (!itinerary)
+			return res.status(404).json({ message: 'Itinerary not found' });
+
+		const tourist = await Tourist.findById(userId);
+		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
+
+		// Check if the itinerary is already booked by the tourist
+		if (tourist.itineraries.includes(itineraryId)) {
+			return res
+				.status(400)
+				.json({ message: 'Itinerary has already been booked' });
+		}
+
+		// Update the `isBooked` attribute of the itinerary
+		itinerary.isBooked = true;
+		await itinerary.save();
+
+		// Add itinerary to the tourist's list of booked itineraries
+		tourist.itineraries.push(itineraryId);
 		await tourist.save();
 
 		// Log incoming request data for debugging

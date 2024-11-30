@@ -5,24 +5,24 @@ import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
-const PaymentPage = () => {
+const ItineraryPaymentPage = () => {
 	const [paymentStatus, setPaymentStatus] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [walletAmount, setWalletAmount] = useState(0); // Optional: wallet balance if using wallet payments
 
-	// Use the location hook to get the state passed from the previous page (ActivitiesCard)
+	// Use the location hook to get the state passed from the previous page (ItineraryCard)
 	const location = useLocation();
-	const { activity, currency, conversionRate = 1 } = location.state || {}; // Destructure the activity, currency, and conversionRate from state
+	const { itinerary, currency, conversionRate = 1 } = location.state || {}; // Destructure the itinerary, currency, and conversionRate from state
 
 	const navigate = useNavigate(); // We'll use this if we need to redirect after payment
 	const stripe = useStripe();
 	const elements = useElements();
 
 	useEffect(() => {
-		if (!activity) {
-			navigate('/'); // If activity is missing, redirect to home or another page
+		if (!itinerary) {
+			navigate('/'); // If itinerary is missing, redirect to home or another page
 		}
-	}, [activity, navigate]);
+	}, [itinerary, navigate]);
 
 	const handleFakeVisaPayment = async () => {
 		setIsLoading(true);
@@ -54,16 +54,16 @@ const PaymentPage = () => {
 
 			// Prepare payment data to send to the backend
 			const paymentData = {
-				amount: activity.price * conversionRate * 100, // Convert to smallest currency unit (e.g., cents)
+				amount: itinerary.price * conversionRate * 100, // Convert to smallest currency unit (e.g., cents)
 				currency: currency || 'usd',
 				paymentMethodId: paymentMethod.id, // PaymentMethod ID from Stripe
 				walletAmount,
-				activityId: activity._id, // Activity ID
+				itineraryId: itinerary._id, // Itinerary ID
 			};
 
 			// Send payment data to backend for processing
 			const response = await axios.post(
-				'http://localhost:3000/tourists/pay-stripe',
+				'http://localhost:3000/tourists/pay-stripe-itinerary',
 				paymentData,
 				config
 			);
@@ -85,10 +85,11 @@ const PaymentPage = () => {
 		<div className='payment-container p-6 max-w-lg mx-auto bg-white shadow-lg rounded-lg'>
 			<h2 className='text-xl font-bold text-center mb-4'>Payment Page</h2>
 			<p className='text-center text-lg'>
-				You're about to pay for the activity: <strong>{activity?.name}</strong>
+				You're about to pay for the itinerary:{' '}
+				<strong>{itinerary?.name}</strong>
 			</p>
 			<p className='text-center text-md mb-4'>
-				Price: {(activity?.price * conversionRate).toFixed(2)} {currency}
+				Price: {(itinerary?.price * conversionRate).toFixed(2)} {currency}
 			</p>
 
 			{paymentStatus && (
@@ -128,4 +129,4 @@ const PaymentPage = () => {
 	);
 };
 
-export default PaymentPage;
+export default ItineraryPaymentPage;
