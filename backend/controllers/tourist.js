@@ -1060,9 +1060,11 @@ exports.cancelActivity = async (req, res) => {
 		const { activityId } = req.params;
 
 		const tourist = await Tourist.findById(userId);
-		if (!tourist) {
-			return res.status(404).json({ message: 'Tourist not found' });
-		}
+		const activity = await Activity.findById(activityId);
+
+		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
+		if (!activity)
+			return res.status(404).json({ message: 'Activity not found' });
 
 		const activityIndex = tourist.activities.indexOf(activityId);
 		if (activityIndex === -1) {
@@ -1071,13 +1073,22 @@ exports.cancelActivity = async (req, res) => {
 				.json({ message: 'Activity not found in reservations' });
 		}
 
+		// Refund activity price
+		tourist.wallet.balance += activity.price;
+
+		// Remove activity from bookings
 		tourist.activities.splice(activityIndex, 1);
+
 		await tourist.save();
 
-		res.status(200).json({ message: 'Activity cancelled successfully' });
+		res.status(200).json({
+			message: 'Activity cancelled successfully',
+			refundedAmount: activity.price.toFixed(2),
+			newBalance: tourist.wallet.balance.toFixed(2),
+		});
 	} catch (error) {
 		console.error('Error canceling activity:', error);
-		res.status(500).json({ message: 'Server error' });
+		res.status(500).json({ message: 'Server error', error: error.message });
 	}
 };
 
@@ -1087,9 +1098,11 @@ exports.cancelItinerary = async (req, res) => {
 		const { itineraryId } = req.params;
 
 		const tourist = await Tourist.findById(userId);
-		if (!tourist) {
-			return res.status(404).json({ message: 'Tourist not found' });
-		}
+		const itinerary = await Itinerary.findById(itineraryId);
+
+		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
+		if (!itinerary)
+			return res.status(404).json({ message: 'Itinerary not found' });
 
 		const itineraryIndex = tourist.itineraries.indexOf(itineraryId);
 		if (itineraryIndex === -1) {
@@ -1098,13 +1111,22 @@ exports.cancelItinerary = async (req, res) => {
 				.json({ message: 'Itinerary not found in reservations' });
 		}
 
+		// Refund itinerary price
+		tourist.wallet.balance += itinerary.price;
+
+		// Remove itinerary from bookings
 		tourist.itineraries.splice(itineraryIndex, 1);
+
 		await tourist.save();
 
-		res.status(200).json({ message: 'Itinerary cancelled successfully' });
+		res.status(200).json({
+			message: 'Itinerary cancelled successfully',
+			refundedAmount: itinerary.price.toFixed(2),
+			newBalance: tourist.wallet.balance.toFixed(2),
+		});
 	} catch (error) {
 		console.error('Error canceling itinerary:', error);
-		res.status(500).json({ message: 'Server error' });
+		res.status(500).json({ message: 'Server error', error: error.message });
 	}
 };
 
