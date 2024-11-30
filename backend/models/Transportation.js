@@ -14,6 +14,11 @@ const transportationSchema = new mongoose.Schema({
 	pricePerSeat: { type: Number, required: true },
 	location: { type: String, required: true },
 	isArchived: { type: Boolean, default: false },
+	seatsBooked: {
+		type: Map, // A Map to store userId -> bookedSeats pairs
+		of: Number,
+		default: {},
+	},
 });
 
 module.exports = mongoose.model('Transportation', transportationSchema);

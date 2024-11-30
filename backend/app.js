@@ -27,7 +27,7 @@ const cors = require('cors');
 const transportationRouter = require('./routes/transportation');
 const amadeusRoutes = require('./routes/amadueus');
 const flightRouter = require('./routes/flight');
-
+const hotelRoutes = require('./routes/hotel');
 app.use(
 	cors({
 		origin: 'http://localhost:5173', // Your frontend's origin
@@ -67,5 +67,6 @@ app.use('/transportation', transportationRouter);
 // Add the Amadeus routes
 app.use('/amadeus', amadeusRoutes);
 app.use('/flights', flightRouter);
+app.use('/hotels', hotelRoutes);
 
 module.exports = app;

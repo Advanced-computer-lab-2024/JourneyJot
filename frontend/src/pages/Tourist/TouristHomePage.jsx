@@ -352,7 +352,8 @@ const TouristGuest = () => {
 						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 						Book Transportation
 					</button>
-					<button className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+					<button onClick={() => navigate('/tourist/homepage/hotels')}
+						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 						Book Hotel
 					</button>
 					<button
@@ -401,29 +402,26 @@ const TouristGuest = () => {
 				{/* Tabs for Activities, Itineraries, and Attractions */}
 				<div className='tabs mb-6 flex justify-center space-x-6'>
 					<button
-						className={`tab-btn ${
-							activeTab === 'Activities'
-								? 'bg-teal-600 text-white'
-								: 'text-teal-600'
-						} hover:bg-teal-600 hover:text-white py-2 px-6 rounded-lg shadow-md transition duration-300`}
+						className={`tab-btn ${activeTab === 'Activities'
+							? 'bg-teal-600 text-white'
+							: 'text-teal-600'
+							} hover:bg-teal-600 hover:text-white py-2 px-6 rounded-lg shadow-md transition duration-300`}
 						onClick={() => setActiveTab('Activities')}>
 						Activities
 					</button>
 					<button
-						className={`tab-btn ${
-							activeTab === 'Itineraries'
-								? 'bg-teal-600 text-white'
-								: 'text-teal-600'
-						} hover:bg-teal-600 hover:text-white py-2 px-6 rounded-lg shadow-md transition duration-300`}
+						className={`tab-btn ${activeTab === 'Itineraries'
+							? 'bg-teal-600 text-white'
+							: 'text-teal-600'
+							} hover:bg-teal-600 hover:text-white py-2 px-6 rounded-lg shadow-md transition duration-300`}
 						onClick={() => setActiveTab('Itineraries')}>
 						Itineraries
 					</button>
 					<button
-						className={`tab-btn ${
-							activeTab === 'Attractions'
-								? 'bg-teal-600 text-white'
-								: 'text-teal-600'
-						} hover:bg-teal-600 hover:text-white py-2 px-6 rounded-lg shadow-md transition duration-300`}
+						className={`tab-btn ${activeTab === 'Attractions'
+							? 'bg-teal-600 text-white'
+							: 'text-teal-600'
+							} hover:bg-teal-600 hover:text-white py-2 px-6 rounded-lg shadow-md transition duration-300`}
 						onClick={() => setActiveTab('Attractions')}>
 						Attractions
 					</button>

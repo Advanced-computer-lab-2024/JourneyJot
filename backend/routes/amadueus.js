@@ -120,10 +120,15 @@ amadeusRoutes.get('/airports', async (req, res) => {
 			).values()
 		);
 
-		res.status(200).json(uniqueAirports);
+		res.status(200).json(response.data);
 	} catch (error) {
-		console.error('Error fetching airports:', error.message);
-		res.status(500).json({ error: 'Failed to fetch airports.' });
+		console.error(
+			'Error fetching hotels:',
+			error.response?.data || error.message
+		);
+		res
+			.status(500)
+			.json({ error: 'Failed to fetch hotels.', details: error.message });
 	}
 });
 
@@ -203,59 +208,4 @@ amadeusRoutes.get('/flights', async (req, res) => {
 		res.status(500).json({ error: 'Failed to fetch flight offers.' });
 	}
 });
-
-// Flight Booking
-amadeusRoutes.post('/bookFlight', async (req, res) => {
-	const { flightId } = req.body;
-
-	try {
-		const response = await amadeus.booking.flightOrders.post(
-			JSON.stringify({
-				data: {
-					type: 'flight-order',
-					flightOffers: [{ id: flightId }],
-					travelers: [
-						{
-							id: '1',
-							dateOfBirth: '1990-01-01',
-							name: { firstName: 'John', lastName: 'Doe' },
-							contact: {
-								emailAddress: 'john.doe@example.com',
-								phones: [
-									{
-										deviceType: 'MOBILE',
-										countryCallingCode: '1',
-										number: '123456789',
-									},
-								],
-							},
-							documents: [
-								{
-									documentType: 'PASSPORT',
-									birthPlace: 'CITY',
-									issuanceLocation: 'COUNTRY',
-									issuanceDate: '2015-04-14',
-									number: '000000000',
-									expiryDate: '2025-04-14',
-									issuanceCountry: 'COUNTRY',
-									nationality: 'COUNTRY',
-									holder: true,
-								},
-							],
-						},
-					],
-				},
-			})
-		);
-
-		res.status(200).json({
-			message: 'Flight booked successfully',
-			bookingDetails: response.result,
-		});
-	} catch (error) {
-		console.error('Error booking flight:', error);
-		res.status(500).json({ error: 'Failed to book flight' });
-	}
-});
-
 module.exports = amadeusRoutes;

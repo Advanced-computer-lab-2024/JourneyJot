@@ -497,7 +497,6 @@ exports.TouristBookAttraction = async (req, res) => {
 
 		await attraction.save(); // Save the updated attraction object
 		await tourist.save();
-		// Send email receipt
 
 		// Send response
 		res.status(200).json({

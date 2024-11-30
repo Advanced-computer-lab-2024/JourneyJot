@@ -94,11 +94,9 @@ touristRouter.post(
 	auth_check,
 	cancelItinerary
 );
-touristRouter.post(
-	'/cancelAttraction/:attractionId',
-	auth_check,
-	cancelAttraction
-);
+
+touristRouter.post('/cancelAttraction/:attractionId', auth_check, cancelAttraction);
+
 touristRouter.post('/bookTransportation/:id', auth_check, bookTransportation);
 touristRouter.get(
 	'/bookedTransportations',
