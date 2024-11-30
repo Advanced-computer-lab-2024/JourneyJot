@@ -1620,14 +1620,27 @@ exports.updateCartItemQuantity = async (req, res) => {
 			return res.status(404).json({ message: 'Product not found in cart' });
 		}
 
-		// Here, you can optionally check the stock and prevent over-quantity
-		if (quantity > cartItem.productId.stock) {
-			// Assuming `stock` field is present in your product
-			return res.status(400).json({ message: 'Not enough stock available' });
+		// Find the product and its available stock
+		const product = cartItem.productId;
+
+		// Calculate stock change (decrease if increasing quantity, increase if decreasing)
+		const stockChange =
+			quantity > cartItem.quantity
+				? quantity - cartItem.quantity
+				: cartItem.quantity - quantity;
+
+		// Ensure quantity does not exceed the available stock or go below 1
+		if (quantity > product.quantity) {
+			return res.status(400).json({
+				message: 'Quantity must be less than or equal to the available stock',
+			});
 		}
 
 		// Update the cart item quantity
 		cartItem.quantity = quantity;
+
+		// Save the updated tourist data with new stock and cart item quantity
+		await product.save();
 		await tourist.save();
 
 		res.status(200).json({
@@ -1666,5 +1679,92 @@ exports.removeCartItem = async (req, res) => {
 	} catch (error) {
 		console.error('Error removing cart item:', error);
 		res.status(500).json({ message: 'Server error' });
+	}
+};
+// Buy products in the cart (finalize the purchase)
+exports.buyProductsCard = async (req, res) => {
+	try {
+		const userId = req.user._id; // Get the user ID from authentication
+		const tourist = await Tourist.findById(userId).populate('cart.productId'); // Populate the cart with product details
+
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
+
+		// Check if the cart is empty
+		if (tourist.cart.length === 0) {
+			return res.status(400).json({ message: 'Cart is empty' });
+		}
+
+		// Calculate the total cost of the purchase
+		let totalCost = 0;
+		let pointsEarned = 0;
+
+		// Process each item in the cart
+		for (let item of tourist.cart) {
+			const product = item.productId;
+
+			// Ensure that the quantity does not exceed the available stock
+			if (item.quantity > product.stock) {
+				return res.status(400).json({
+					message: `Not enough stock for ${product.name}. Only ${product.stock} left.`,
+				});
+			}
+
+			// Calculate the total cost for this product
+			const productCost = product.price * item.quantity;
+			totalCost += productCost;
+
+			// Calculate points earned based on product price (this can be adjusted as needed)
+			let pointsMultiplier = 0.5; // Default multiplier for level 1
+			if (tourist.points >= 100000) pointsMultiplier = 1; // Level 2
+			if (tourist.points >= 500000) pointsMultiplier = 1.5; // Level 3
+
+			pointsEarned += productCost * pointsMultiplier;
+
+			// Reduce the stock after purchase
+			product.quantity -= item.quantity; // Decrease stock based on the quantity purchased
+			await product.save();
+		}
+
+		// Check if the tourist has enough balance in their wallet to cover the total cost
+		if (tourist.wallet.balance < totalCost) {
+			return res.status(400).json({ message: 'Insufficient wallet balance' });
+		}
+
+		// Deduct the total cost from the tourist's wallet
+		tourist.wallet.balance -= totalCost;
+
+		// Add the points earned from this purchase to the tourist's total points
+		tourist.points += pointsEarned;
+
+		// Clear the cart after the purchase
+		tourist.cart = [];
+		await tourist.save();
+
+		// Log the transaction details
+		console.log({
+			message: 'Purchase successful',
+			transactionDetails: {
+				totalCost: totalCost.toFixed(2),
+				updatedWalletBalance: tourist.wallet.balance.toFixed(2),
+				pointsEarned: Math.floor(pointsEarned),
+				totalPoints: Math.floor(tourist.points),
+			},
+		});
+
+		// Respond with the purchase success message and transaction details
+		res.status(200).json({
+			message: 'Purchase successful. Your cart has been cleared.',
+			transactionDetails: {
+				totalCost: totalCost.toFixed(2),
+				updatedWalletBalance: tourist.wallet.balance.toFixed(2),
+				pointsEarned: Math.floor(pointsEarned),
+				totalPoints: Math.floor(tourist.points),
+			},
+		});
+	} catch (error) {
+		console.error('Error during purchase:', error);
+		res.status(500).json({ message: 'Server error during purchase' });
 	}
 };

@@ -9,6 +9,8 @@ const TouristCart = () => {
 	const [cartItems, setCartItems] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
+	const [purchaseError, setPurchaseError] = useState('');
+	const [purchaseSuccess, setPurchaseSuccess] = useState(false);
 
 	// Fetch the cart from the backend
 	useEffect(() => {
@@ -102,6 +104,33 @@ const TouristCart = () => {
 		);
 	};
 
+	// Handle the product purchase (POST request)
+	const handlePurchase = async () => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				throw new Error('No token found. Please login again.');
+			}
+
+			const response = await axios.post(
+				'http://localhost:3000/tourists/buyProductCard',
+				{ products: cartItems }, // Sending the cart items as part of the request
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			);
+
+			setPurchaseSuccess(true);
+			setPurchaseError('');
+			setCartItems([]); // Clear the cart after purchase
+		} catch (error) {
+			setPurchaseError(
+				error.response?.data?.message || 'Error completing purchase.'
+			);
+			setPurchaseSuccess(false);
+		}
+	};
+
 	if (loading) {
 		return <div>Loading...</div>;
 	}
@@ -111,6 +140,10 @@ const TouristCart = () => {
 			<h1 className='text-3xl font-bold text-teal-600 mb-6'>Your Cart</h1>
 
 			{error && <p className='text-red-500'>{error}</p>}
+			{purchaseError && <p className='text-red-500'>{purchaseError}</p>}
+			{purchaseSuccess && (
+				<p className='text-green-500'>Purchase successful!</p>
+			)}
 
 			{cartItems.length === 0 ? (
 				<p>Your cart is empty</p>
@@ -166,6 +199,15 @@ const TouristCart = () => {
 			{/* Display total price */}
 			<div className='mt-6 text-right'>
 				<p className='text-lg font-semibold'>Total: ${getTotalPrice()}</p>
+			</div>
+
+			{/* Complete purchase button */}
+			<div className='mt-6'>
+				<button
+					onClick={handlePurchase}
+					className='bg-teal-600 text-white px-4 py-2 rounded-md'>
+					Complete Purchase
+				</button>
 			</div>
 		</div>
 	);

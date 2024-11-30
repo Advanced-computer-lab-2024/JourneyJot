@@ -41,6 +41,8 @@ const {
 	removeCartItem,
 	payStripeActivity,
 	payStripeItinerary,
+	buyProducts,
+	buyProductsCard,
 } = require('../controllers/tourist');
 const auth_check = require('../middleware/auth-check');
 const { changePassword } = require('../helper/tourist-change-password');
@@ -133,5 +135,5 @@ touristRouter.put(
 	updateCartItemQuantity
 );
 touristRouter.delete('/cart/remove/:productId', auth_check, removeCartItem);
-
+touristRouter.post('/buyProductCard', auth_check, buyProductsCard);
 module.exports = touristRouter;

@@ -79,6 +79,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import TouristWishList from './pages/Tourist/TouristWishList.jsx';
 import TouristCart from './pages/Tourist/TouristCart.jsx';
+import BuyTouristCart from './pages/Tourist/BuyProductCart.jsx';
 
 // Load Stripe with your public key
 const stripePromise = loadStripe(
@@ -401,6 +402,10 @@ const App = () => {
 			<Route
 				path='/tourist-cart'
 				element={<TouristCart />}
+			/>
+			<Route
+				path='/buy-tourist-cart'
+				element={<BuyTouristCart />}
 			/>
 		</Routes>
 	);
