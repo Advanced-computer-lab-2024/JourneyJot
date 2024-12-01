@@ -34,7 +34,7 @@ const PreviousPurchases = () => {
 	}, []);
 
 	// Cancel the order and update the state accordingly
-	const cancelOrder = async (productId) => {
+	const cancelOrder = async (productId, purchaseId) => {
 		try {
 			const token = localStorage.getItem('token');
 			const response = await axios.delete(
@@ -49,7 +49,7 @@ const PreviousPurchases = () => {
 			setPurchases((prevPurchases) =>
 				prevPurchases.map((purchase) =>
 					// Check if the productId matches and set all instances to canceled
-					purchase.productId._id === productId
+					purchase.productId._id === productId && purchase._id === purchaseId
 						? { ...purchase, status: 'canceled' } // Mark as canceled
 						: purchase
 				)
@@ -127,7 +127,9 @@ const PreviousPurchases = () => {
 						<div className='mt-4'>
 							{purchase.status === 'purchased' && (
 								<button
-									onClick={() => cancelOrder(purchase.productId._id)}
+									onClick={() =>
+										cancelOrder(purchase.productId._id, purchase._id)
+									}
 									className='bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition'>
 									Cancel Order
 								</button>
