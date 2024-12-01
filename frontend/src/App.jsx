@@ -87,6 +87,7 @@ import BuyTouristCart from './pages/Tourist/BuyProductCart.jsx';
 import AddressManagement from './pages/Tourist/Address.jsx';
 import ProductPaymentPage from './components/Tourist/PayStrpeProduct.jsx';
 import BuyProductsCardVisa from './components/Tourist/PayStrpeProduct.jsx';
+import PreviousPurchases from './pages/Tourist/Orders.jsx';
 
 // Load Stripe with your public key
 const stripePromise = loadStripe(
@@ -444,6 +445,10 @@ const App = () => {
 			<Route
 				path='/tourist-address'
 				element={<AddressManagement />}
+			/>
+			<Route
+				path='/tourist-orders'
+				element={<PreviousPurchases />}
 			/>
 		</Routes>
 	);

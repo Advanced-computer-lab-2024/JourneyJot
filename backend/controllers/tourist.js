@@ -1756,6 +1756,7 @@ exports.removeCartItem = async (req, res) => {
 	}
 };
 // Buy products in the cart (finalize the purchase)
+// Buy products in the cart (finalize the purchase)
 exports.buyProductsCard = async (req, res) => {
 	try {
 		const userId = req.user._id; // Get the user ID from authentication
@@ -1799,6 +1800,13 @@ exports.buyProductsCard = async (req, res) => {
 			// Reduce the stock after purchase
 			product.quantity -= item.quantity; // Decrease stock based on the quantity purchased
 			await product.save();
+
+			// Add the purchased item to the tourist's purchase history
+			tourist.purchased.push({
+				productId: product._id,
+				quantity: item.quantity,
+				purchaseDate: new Date(),
+			});
 		}
 
 		// Check if the tourist has enough balance in their wallet to cover the total cost
@@ -1842,6 +1850,7 @@ exports.buyProductsCard = async (req, res) => {
 		res.status(500).json({ message: 'Server error during purchase' });
 	}
 };
+
 exports.buyProductsCardVisa = async (req, res) => {
 	try {
 		const userId = req.user._id; // Get the user ID from authentication
@@ -1922,11 +1931,9 @@ exports.buyProductsCardVisa = async (req, res) => {
 			});
 		} catch (paymentError) {
 			console.error('Stripe Payment Error:', paymentError);
-			return res
-				.status(500)
-				.json({
-					message: 'Payment failed. Please check your payment details.',
-				});
+			return res.status(500).json({
+				message: 'Payment failed. Please check your payment details.',
+			});
 		}
 	} catch (error) {
 		// Handle errors gracefully
@@ -1944,3 +1951,21 @@ const transporter = nodemailer.createTransport({
 		pass: process.env.USER_PASS, // Replace with your email password or app-specific password
 	},
 });
+// Get previous purchases from the tourist's purchase history
+exports.getPreviousPurchases = async (req, res) => {
+	try {
+		const touristId = req.user._id; // Get the tourist's ID from the authenticated user
+		const tourist = await Tourist.findById(touristId).populate(
+			'purchased.productId'
+		);
+
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
+
+		res.status(200).json(tourist.purchased); // Return the previous purchases
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Error retrieving previous purchases' });
+	}
+};

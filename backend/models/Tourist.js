@@ -103,6 +103,13 @@ const touristSchema = new mongoose.Schema(
 				quantity: { type: Number, required: true, min: 1 },
 			},
 		],
+		purchased: [
+			{
+				productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+				quantity: { type: Number },
+				purchaseDate: { type: Date, default: Date.now },
+			},
+		],
 	},
 
 	{ timestamps: true }

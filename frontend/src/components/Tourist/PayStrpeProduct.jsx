@@ -98,7 +98,7 @@ const BuyProductsCardVisa = () => {
 
 			console.log('Payment successful', response.data);
 			alert('Payment was successful!');
-			navigate('/payment-success'); // Navigate to success page (optional)
+			navigate('/tourist/homePage');
 		} catch (error) {
 			console.error('Error during payment:', error);
 			alert('Payment failed!');

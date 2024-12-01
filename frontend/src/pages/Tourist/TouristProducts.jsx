@@ -190,6 +190,11 @@ const TouristProducts = () => {
 					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
 					View Cart
 				</Link>
+				<Link
+					to='/tourist-orders' // Ensure this is the correct route
+					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
+					Previous Purchases
+				</Link>
 			</div>
 
 			<div className='mb-4'>
