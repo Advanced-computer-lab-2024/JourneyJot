@@ -45,6 +45,7 @@ const {
 	buyProductsCard,
 	buyProductsCardVisa,
 	getPreviousPurchases,
+	cancelOrder,
 } = require('../controllers/tourist');
 const auth_check = require('../middleware/auth-check');
 const { changePassword } = require('../helper/tourist-change-password');
@@ -142,4 +143,5 @@ touristRouter.delete('/cart/remove/:productId', auth_check, removeCartItem);
 touristRouter.post('/buyProductCard', auth_check, buyProductsCard);
 touristRouter.post('/buyProductCardVisa', auth_check, buyProductsCardVisa);
 touristRouter.get('/orders', auth_check, getPreviousPurchases);
+touristRouter.delete('/cancel-orders/:id', auth_check, cancelOrder);
 module.exports = touristRouter;

@@ -13,6 +13,14 @@ const Transportation = require('../models/Transportation');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer');
 
+const transporter = nodemailer.createTransport({
+	service: 'gmail', // You can change this depending on your email provider
+	auth: {
+		user: process.env.USER_EMAIL, // Replace with your email
+		pass: process.env.USER_PASS, // Replace with your email password or app-specific password
+	},
+});
+
 const sendReceiptEmail = async (touristEmail, bookingDetails) => {
 	const mailOptions = {
 		from: 'your-email@example.com', // Replace with your email
@@ -308,13 +316,6 @@ exports.getTouristProductHistory = async (req, res) => {
 
 	try {
 		const tourist = await Tourist.findById(user).populate('products');
-		// const tourist = await Tourist.findById(user).populate({
-		// 	path: 'products._id', // Specify the path to populate
-		// 	model: 'Product',
-		// 	select: 'name',
-		// });
-		// const tourist = await Tourist.findById(user).populate('products');
-
 		if (!tourist) {
 			return res.status(404).json({ message: 'Tourist not found' });
 		}
@@ -1636,7 +1637,6 @@ exports.addProductToCart = async (req, res) => {
 			// If the product does not exist, add a new entry with the quantity
 			tourist.cart.push({ productId: productId, quantity: quantity });
 		}
-
 		// Save the updated tourist document
 		await tourist.save();
 
@@ -1805,7 +1805,9 @@ exports.buyProductsCard = async (req, res) => {
 			tourist.purchased.push({
 				productId: product._id,
 				quantity: item.quantity,
+				price: totalCost,
 				purchaseDate: new Date(),
+				status: 'purchased',
 			});
 		}
 
@@ -1887,6 +1889,14 @@ exports.buyProductsCardVisa = async (req, res) => {
 			// Reduce stock after purchase
 			product.stock -= item.quantity;
 			await product.save();
+			// Add the purchased item to the tourist's purchase history
+			tourist.purchased.push({
+				productId: product._id,
+				quantity: item.quantity,
+				price: totalCost,
+				purchaseDate: new Date(),
+				status: 'purchased',
+			});
 
 			// Calculate points earned based on the product price
 			let pointsMultiplier = 0.5; // Level 1 multiplier
@@ -1944,13 +1954,6 @@ exports.buyProductsCardVisa = async (req, res) => {
 	}
 };
 
-const transporter = nodemailer.createTransport({
-	service: 'gmail', // You can change this depending on your email provider
-	auth: {
-		user: process.env.USER_EMAIL, // Replace with your email
-		pass: process.env.USER_PASS, // Replace with your email password or app-specific password
-	},
-});
 // Get previous purchases from the tourist's purchase history
 exports.getPreviousPurchases = async (req, res) => {
 	try {
@@ -1967,5 +1970,61 @@ exports.getPreviousPurchases = async (req, res) => {
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Error retrieving previous purchases' });
+	}
+};
+exports.cancelOrder = async (req, res) => {
+	try {
+		const userId = req.user._id; // Get the user ID from authentication
+		const productId = req.params.productId || req.params.id;
+
+		// Find the tourist and the product in the database
+		const tourist = await Tourist.findById(userId).populate(
+			'purchased.productId'
+		);
+		const product = await Product.findById(productId); // Assuming Product is a separate collection
+
+		// Check if the tourist or product exists
+		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
+		if (!product) return res.status(404).json({ message: 'Product not found' });
+
+		// Log the tourist's purchased items to debug
+		console.log("Tourist's purchased items:", tourist.purchased);
+
+		// Find the specific product in the tourist's purchased items
+		const purchaseIndex = tourist.purchased.findIndex(
+			(p) => p.productId._id.toString() === productId.toString()
+		);
+
+		if (purchaseIndex === -1) {
+			return res
+				.status(400)
+				.json({ message: 'Product not found in purchases' });
+		}
+
+		// Find the specific order linked to the product
+		const order = tourist.purchased[purchaseIndex];
+
+		// Refund product price to wallet balance
+		tourist.wallet.balance += order.productId.price * order.quantity;
+
+		// Remove the product from the tourist's purchased list
+		tourist.purchased.splice(purchaseIndex, 1);
+
+		// Restore the stock for the product
+		product.stock += order.quantity;
+		await product.save();
+
+		// Save the updated tourist document
+		await tourist.save();
+
+		// Respond with success message
+		res.status(200).json({
+			message: 'Product cancelled successfully',
+			refundedAmount: (order.productId.price * order.quantity).toFixed(2),
+			newBalance: tourist.wallet.balance.toFixed(2),
+		});
+	} catch (error) {
+		console.error('Error cancelling product:', error);
+		res.status(500).json({ message: 'Server error', error: error.message });
 	}
 };

@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Spinner from '../../components/General/Spinner';
 import TouristProductCard from '../../components/Tourist/TouristProductCard';
-import { Link } from 'react-router-dom'; // Import Link for navigation
-import { FaShoppingCart } from 'react-icons/fa'; // Import the cart icon
+import { Link } from 'react-router-dom';
+import { FaShoppingCart } from 'react-icons/fa';
 
 const TouristProducts = () => {
 	const [products, setProducts] = useState([]);
@@ -19,7 +19,6 @@ const TouristProducts = () => {
 	const [conversionRate, setConversionRate] = useState(1);
 
 	useEffect(() => {
-		// Fetch exchange rates
 		axios
 			.get(
 				'https://v6.exchangerate-api.com/v6/14c4008744f504c874fd1f25/latest/USD'
@@ -43,7 +42,6 @@ const TouristProducts = () => {
 		try {
 			const response = await axios.get('http://localhost:3000/products/show');
 			setProducts(response.data.products);
-			console.log('Fetched products:', response.data);
 		} catch (error) {
 			console.error('Error fetching data: ', error);
 		} finally {
@@ -52,7 +50,6 @@ const TouristProducts = () => {
 	};
 
 	useEffect(() => {
-		// sort and unsort products
 		setLoading(true);
 		if (!sort) {
 			fetchProducts();
@@ -61,7 +58,6 @@ const TouristProducts = () => {
 				.get('http://localhost:3000/products/sortProducts')
 				.then((response) => {
 					setProducts(response.data.products);
-					console.log('Fetched sorted products:', response.data);
 				})
 				.catch((error) => {
 					console.error('Error fetching data: ', error);
@@ -78,7 +74,6 @@ const TouristProducts = () => {
 			})
 			.then((response) => {
 				setProducts(response.data.products);
-				console.log('Filtered products by price:', response.data);
 			})
 			.catch((error) => {
 				console.error('Error filtering data: ', error);
@@ -87,7 +82,6 @@ const TouristProducts = () => {
 	};
 
 	useEffect(() => {
-		// handle if user is searching for something
 		if (searchedProduct.trim()) {
 			setLoading(true);
 			axios
@@ -96,7 +90,6 @@ const TouristProducts = () => {
 				})
 				.then((response) => {
 					setProducts(response.data.products);
-					console.log('Fetched searched products:', response.data);
 				})
 				.catch((error) => {
 					console.error('Error fetching data: ', error);
@@ -108,35 +101,44 @@ const TouristProducts = () => {
 	}, [searchedProduct]);
 
 	return (
-		<div className='p-6 bg-gray-50 min-h-screen'>
-			<div className='flex flex-col md:flex-row justify-between items-center mb-4'>
-				<h1 className='text-3xl font-bold text-teal-600'>Products</h1>
-				<div className='flex space-x-4 w-1/2 justify-end'>
-					<label htmlFor='currency-select'>Select Currency:</label>
-					<select
-						id='currency-select'
-						value={selectedCurrency}
-						onChange={handleCurrencyChange}>
-						{Object.keys(rates).map((currency) => (
-							<option
-								key={currency}
-								value={currency}>
-								{currency}
-							</option>
-						))}
-					</select>
-
+		<div className='p-6 bg-gray-100 min-h-screen'>
+			{/* Header */}
+			<div className='flex flex-col md:flex-row justify-between items-center mb-8'>
+				<h1 className='text-4xl font-extrabold text-teal-600'>
+					Explore Products
+				</h1>
+				<div className='flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0 w-full md:w-auto'>
+					<div className='flex items-center space-x-2'>
+						<label
+							htmlFor='currency-select'
+							className='text-sm font-medium text-gray-700'>
+							Currency:
+						</label>
+						<select
+							id='currency-select'
+							value={selectedCurrency}
+							onChange={handleCurrencyChange}
+							className='rounded-lg border-gray-300 px-4 py-2 text-sm bg-white shadow-sm focus:ring-teal-400 focus:border-teal-400 transition'>
+							{Object.keys(rates).map((currency) => (
+								<option
+									key={currency}
+									value={currency}>
+									{currency}
+								</option>
+							))}
+						</select>
+					</div>
 					<button
-						className='bg-teal-500 text-white rounded-md px-6 py-2 mt-4 md:mt-0 shadow-md hover:bg-teal-600 transition duration-200'
+						className='bg-teal-500 text-white rounded-lg px-6 py-2 shadow hover:bg-teal-600 transition'
 						onClick={() => setSort((prevState) => !prevState)}>
-						Sort By Rating
+						{sort ? 'Unsort' : 'Sort by Rating'}
 					</button>
 					<input
 						type='search'
-						placeholder='Search...'
+						placeholder='Search products...'
 						value={searchedProduct}
 						onChange={(e) => setSearchedProduct(e.target.value)}
-						className='mt-4 md:mt-0 w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-teal-400'
+						className='w-full md:w-auto max-w-md rounded-lg border-gray-300 px-4 py-2 shadow focus:ring-teal-400 focus:border-teal-400 transition'
 					/>
 				</div>
 			</div>
@@ -145,59 +147,59 @@ const TouristProducts = () => {
 			<div className='fixed bottom-6 right-6 z-50'>
 				<Link to='/tourist/homePage/products/cart'>
 					<FaShoppingCart
-						size={30}
-						color='#2D3748'
-						className='hover:text-teal-500 transition duration-200'
+						size={32}
+						className='text-gray-700 hover:text-teal-500 transition duration-200'
 					/>
 				</Link>
 			</div>
 
-			{/* Price Filters */}
-			<div className='flex flex-col md:flex-row items-center mt-4 mb-4'>
+			{/* Filters */}
+			<div className='flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 mb-8'>
 				<input
 					placeholder='Min Price'
-					className='border border-gray-300 rounded-lg m-2 p-2 w-full md:w-1/4 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400'
+					className='rounded-lg border-gray-300 px-4 py-2 text-sm shadow focus:ring-teal-400 focus:border-teal-400 transition'
 					value={minPrice}
 					onChange={(e) => setMinPrice(e.target.value)}
 				/>
 				<input
 					placeholder='Max Price'
-					className='border border-gray-300 rounded-lg m-2 p-2 w-full md:w-1/4 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400'
+					className='rounded-lg border-gray-300 px-4 py-2 text-sm shadow focus:ring-teal-400 focus:border-teal-400 transition'
 					value={maxPrice}
 					onChange={(e) => setMaxPrice(e.target.value)}
 				/>
 				<button
 					onClick={filterByPrice}
-					className='bg-teal-500 text-white rounded-md px-4 py-2 mt-4 md:mt-0 shadow-md hover:bg-teal-600 transition duration-200 w-full md:w-1/4'>
+					className='bg-teal-500 text-white rounded-lg px-6 py-2 shadow hover:bg-teal-600 transition'>
 					Filter
 				</button>
 			</div>
 
-			{/* Link to Purchase History */}
-			<div className='mb-4 text-center flex flex-col gap-y-1'>
+			{/* Navigation Links */}
+			<div className='flex flex-col md:flex-row md:justify-center space-y-4 md:space-y-0 md:space-x-6 mb-8'>
 				<Link
-					to='/tourist/homePage/products/purchase-history' // Ensure this is the correct route
-					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
+					to='/tourist/homePage/products/purchase-history'
+					className='text-teal-600 font-medium hover:underline'>
 					View Purchase History
 				</Link>
 				<Link
-					to='/tourist/homePage/products/wishlist' // Ensure this is the correct route
-					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
+					to='/tourist/homePage/products/wishlist'
+					className='text-teal-600 font-medium hover:underline'>
 					View Wish List
 				</Link>
 				<Link
-					to='/tourist-cart' // Ensure this is the correct route
-					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
+					to='/tourist-cart'
+					className='text-teal-600 font-medium hover:underline'>
 					View Cart
 				</Link>
 				<Link
-					to='/tourist-orders' // Ensure this is the correct route
-					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
+					to='/tourist-orders'
+					className='text-teal-600 font-medium hover:underline'>
 					Previous Purchases
 				</Link>
 			</div>
 
-			<div className='mb-4'>
+			{/* Product List */}
+			<div>
 				{loading ? (
 					<Spinner />
 				) : (

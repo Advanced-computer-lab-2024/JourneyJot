@@ -101,6 +101,7 @@ const touristSchema = new mongoose.Schema(
 					required: true,
 				},
 				quantity: { type: Number, required: true, min: 1 },
+				price: { type: Number },
 			},
 		],
 		purchased: [
@@ -108,6 +109,12 @@ const touristSchema = new mongoose.Schema(
 				productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
 				quantity: { type: Number },
 				purchaseDate: { type: Date, default: Date.now },
+				price: { type: Number },
+				status: {
+					type: String,
+					enum: ['purchased', 'cart', 'cancelled'], // Define the allowed values
+					default: 'cart', // Default value
+				},
 			},
 		],
 	},
