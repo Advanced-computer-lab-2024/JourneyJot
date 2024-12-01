@@ -144,7 +144,15 @@ const itinerarySchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		ratings: [
+			{
+				userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Tourist' },
+				rating: { type: Number, required: true },
+				comment: { type: String },
+			},
+		],
 		flagged: { type: Boolean, default: false },
+		isBooked: { type: Boolean, default: false },
 	},
 	{ timestamps: true }
 );

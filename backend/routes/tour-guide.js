@@ -7,12 +7,16 @@ const express = require('express');
 const {
 	createTourGuideProfile,
 	getTourGuideProfile,
+	addRatingAndComment,
+	getTourGuideProfileById,
 } = require('../controllers/tour-guide');
 const auth_check = require('../middleware/auth-check');
 const tourGuideCheck = require('../middleware/tour-guide-check');
 const { uploadImages, upload } = require('../controllers/upload');
 const { changePassword } = require('../helper/change-password');
 const { uploadFiles, uploadFile } = require('../controllers/file');
+const { deleteRequest } = require('../controllers/deletion-request');
+const { checkAllItinerariesForFlags } = require('../controllers/itinerary');
 const tourGuideRouter = express.Router();
 // Update tour guide profile
 tourGuideRouter.put(
@@ -27,6 +31,7 @@ tourGuideRouter.get(
 	tourGuideCheck,
 	getTourGuideProfile
 );
+tourGuideRouter.put('/account', auth_check, deleteRequest);
 
 tourGuideRouter.post(
 	'/profileUpload',
@@ -41,5 +46,8 @@ tourGuideRouter.post(
 	uploadFile.single('file'),
 	uploadFiles
 );
+tourGuideRouter.get('/notifications', checkAllItinerariesForFlags);
+tourGuideRouter.post('/review/:id', auth_check, addRatingAndComment);
+tourGuideRouter.get('/profile/:id', getTourGuideProfileById);
 
 module.exports = tourGuideRouter;

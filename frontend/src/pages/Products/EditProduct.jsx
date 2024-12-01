@@ -15,6 +15,7 @@ const EditProduct = () => {
 	const [productPicture, setProductPicture] = useState(null); // Changed to null to handle file upload
 	const [productRating, setProductRating] = useState('');
 	const [loading, setLoading] = useState(true);
+	const [existingPicture, setExistingPicture] = useState(''); // To store the existing picture URL
 
 	useEffect(() => {
 		// Fetch the product details
@@ -30,8 +31,10 @@ const EditProduct = () => {
 				setProductDetails(product.details);
 				setProductPrice(product.price);
 				setProductQuantity(product.quantity);
-				setProductPicture(product.picture); // Maintain existing picture URL if available
 				setProductRating(product.rating);
+
+				// Check if there is an existing picture and store it
+				setExistingPicture(product.picture); // Assuming 'picture' holds the URL or path to the product picture
 			} catch (err) {
 				alert('Error, check console!');
 				console.log(err.response.data);
@@ -125,6 +128,18 @@ const EditProduct = () => {
 					onChange={(e) => setProductPicture(e.target.files[0])} // Set the file as state
 					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
 				/>
+
+				{/* If there is an existing picture, show a preview */}
+				{existingPicture && !productPicture && (
+					<div className='mt-2'>
+						<p>Current Picture:</p>
+						<img
+							src={`http://localhost:3000${existingPicture}`} // Assuming the picture path is relative
+							alt='Current Product'
+							className='w-32 h-32 object-cover'
+						/>
+					</div>
+				)}
 
 				<input
 					type='text'

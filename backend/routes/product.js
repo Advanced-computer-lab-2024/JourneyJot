@@ -12,6 +12,7 @@ const {
 	getProductByID,
 	getProducts,
 	getTouristProducts,
+	calculateProductsRevenue,
 } = require('../controllers/product');
 const {
 	archiveProduct,
@@ -32,6 +33,8 @@ productRouter.post('/addProduct', addProduct);
 productRouter.get('/', authCheck, getProducts);
 
 productRouter.get('/show', getTouristProducts);
+
+productRouter.get('/revenue', calculateProductsRevenue);
 
 productRouter.put('/:id', editProductByID);
 

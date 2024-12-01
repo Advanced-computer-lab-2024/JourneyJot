@@ -25,6 +25,12 @@ const advertiserProfileSchema = new mongoose.Schema({
 		type: String, // File is stored as a string URL in MongoDB
 		default: null, // Default file is null if no file is provided
 	},
+	activities: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Activity',
+		},
+	],
 });
 
 // Create the AdvertiserProfile model

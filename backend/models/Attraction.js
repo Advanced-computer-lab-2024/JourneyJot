@@ -52,6 +52,7 @@ const attractionSchema = new mongoose.Schema(
 			required: true, // The tag is required
 			unique: true, // The tag must be unique across the collection
 		},
+		isBooked: { type: Boolean, default: false },
 	},
 	{ timestamps: true }
 );

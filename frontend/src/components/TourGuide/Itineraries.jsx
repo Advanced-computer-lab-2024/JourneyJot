@@ -39,7 +39,7 @@ const ItinerariesComponent = () => {
 				};
 
 				const response = await axios.get(
-					'http://localhost:3000/itineraries/',
+					'http://localhost:3000/itineraries/all',
 					config
 				);
 				setItineraries(response.data);
@@ -260,9 +260,9 @@ const ItinerariesComponent = () => {
 
 				{/* Available Dates */}
 				<input
-					type='text'
+					type='date'
 					name='availableDates'
-					value={newItinerary.availableDates.join(', ')}
+					value={newItinerary.availableDates.join(',')}
 					onChange={handleInputChange}
 					className='mb-4 p-2 border border-gray-300 rounded w-full'
 					placeholder='Available Dates (comma separated)'

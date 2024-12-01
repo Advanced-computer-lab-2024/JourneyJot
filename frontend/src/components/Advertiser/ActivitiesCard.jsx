@@ -4,50 +4,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EditActivityModal from './EditActivity';
 import DeleteActivityButton from './DeleteActivity';
-
-// StarRating Component to display stars
-const StarRating = ({ rating }) => {
-	const fullStars = Math.floor(rating);
-	const emptyStars = 5 - fullStars;
-
-	return (
-		<div className='flex space-x-1'>
-			{[...Array(fullStars)].map((_, index) => (
-				<svg
-					key={`full-${index}`}
-					xmlns='http://www.w3.org/2000/svg'
-					className='w-5 h-5 text-yellow-500'
-					fill='currentColor'
-					viewBox='0 0 20 20'>
-					<path d='M10 15.27l4.18 2.73-1.64-5.09L18 9.24l-5.19-.42L10 3 7.19 8.82 2 9.24l3.46 3.67-1.64 5.09L10 15.27z' />
-				</svg>
-			))}
-			{[...Array(emptyStars)].map((_, index) => (
-				<svg
-					key={`empty-${index}`}
-					xmlns='http://www.w3.org/2000/svg'
-					className='w-5 h-5 text-gray-300'
-					fill='none'
-					stroke='currentColor'
-					viewBox='0 0 24 24'>
-					<path
-						fill='none'
-						strokeWidth='2'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-						d='M12 17.75l4.18 2.73-1.64-5.09L18 9.24l-5.19-.42L12 3l-2.81 5.82-5.19.42L7.46 15.42 3 18.15 12 17.75z'
-					/>
-				</svg>
-			))}
-		</div>
-	);
-};
-
+import StarRating from '../Helper/StarRating';
+import { useNavigate } from 'react-router-dom';
 const ActivitiesCard = ({
 	activities = [],
 	isAdvertiser = false,
 	onDelete,
 	fetchActivities,
+	currency,
+	conversionRate = 1,
 }) => {
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [currentActivity, setCurrentActivity] = useState(null);
@@ -55,6 +20,9 @@ const ActivitiesCard = ({
 	const [tags, setTags] = useState([]);
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Modal state
 	const [selectedActivity, setSelectedActivity] = useState(null); // Store selected activity
+	const [error, setError] = useState(null); // State to handle errors
+	const [shareOptionsVisible, setShareOptionsVisible] = useState(false); // Toggle for share options
+	const navigate = useNavigate(); // For navigation
 
 	useEffect(() => {
 		// Fetch categories and tags
@@ -130,21 +98,56 @@ const ActivitiesCard = ({
 				headers: { Authorization: `Bearer ${token}` },
 			};
 
-			const respone = await axios.post(
+			// Make booking request to backend
+			const response = await axios.post(
 				'http://localhost:3000/tourists/bookActivity',
 				{ activityId: selectedActivity._id },
 				config
 			);
 
-			console.log(respone);
+			const { message, updatedWalletBalance, pointsEarned, totalPoints } =
+				response.data;
+
+			// Display a success message with wallet and points details
+			alert(
+				`${message}. You earned ${pointsEarned} points! Your total points are now ${totalPoints}. Wallet balance: $${updatedWalletBalance}.`
+			);
+
 			setIsConfirmModalOpen(false); // Close the modal after booking
 		} catch (error) {
-			console.error('Error booking activity:', error);
+			setError(error.response?.data?.message || 'An error occurred.'); // Set the error message in state
+			console.error('Error booking attraction:', error);
+			setIsConfirmModalOpen(false);
 		}
 	};
 
-	const handleShareActivity = (activity) => {
-		alert(`Share link for activity: ${activity.name}`);
+	const handleCopyLink = (activity) => {
+		const link = `http://localhost:5173/activities/${activity._id}`;
+		navigator.clipboard.writeText(link);
+		alert('Link copied to clipboard!');
+	};
+
+	const handleShareViaEmail = (activity) => {
+		const subject = encodeURIComponent(`Check out this activity`);
+		const body = encodeURIComponent(
+			`Here is a link to the activity: http://localhost:5173/activities/${activity._id}`
+		);
+		window.location.href = `mailto:?subject=${subject}&body=${body}`;
+	};
+
+	const toggleShareOptions = () => {
+		setShareOptionsVisible(!shareOptionsVisible);
+	};
+
+	const handlePayActivityViaStripe = (activity) => {
+		// Ensure no PointerEvent is passed to navigate
+		navigate('/pay-activity-stripe', {
+			state: {
+				activity: activity, // Pass only the serializable activity data
+				currency: currency,
+				conversionRate: conversionRate,
+			},
+		});
 	};
 
 	return (
@@ -171,7 +174,7 @@ const ActivitiesCard = ({
 									</li>
 									<li className='text-gray-700'>
 										<span className='font-semibold'>Price: </span>
-										{activity.price || 'N/A'}
+										{(activity.price * conversionRate).toFixed(1)} {currency}
 									</li>
 									<li className='text-gray-700'>
 										<span className='font-semibold'>Category: </span>
@@ -206,10 +209,37 @@ const ActivitiesCard = ({
 									Book A Ticket
 								</button>
 								<button
-									onClick={() => handleShareActivity(activity)}
-									className='bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 mt-2'>
-									Share
+									onClick={() =>
+										handlePayActivityViaStripe(
+											activity,
+											currency,
+											conversionRate
+										)
+									}
+									className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+									Pay via Stripe
 								</button>
+								<div className='relative'>
+									<button
+										onClick={toggleShareOptions}
+										className='bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 mt-2'>
+										Share
+									</button>
+									{shareOptionsVisible && (
+										<div className='absolute bg-white border rounded shadow-md p-2 mt-1'>
+											<button
+												onClick={() => handleCopyLink(activity)}
+												className='text-blue-600 hover:underline block'>
+												Copy Link
+											</button>
+											<button
+												onClick={() => handleShareViaEmail(activity)}
+												className='text-blue-600 hover:underline block'>
+												Share via Email
+											</button>
+										</div>
+									)}
+								</div>
 
 								{/* Edit and Delete for Advertisers */}
 								{isAdvertiser && (
@@ -229,41 +259,46 @@ const ActivitiesCard = ({
 						</div>
 					))
 				) : (
-					<p className='text-center text-gray-500 col-span-full'>
-						No activities available.
-					</p>
+					<p className='text-center text-gray-500'>No activities found.</p>
 				)}
 			</div>
 
 			{/* Edit Modal */}
-			{isEditModalOpen && currentActivity && (
+			{isEditModalOpen && (
 				<EditActivityModal
+					isOpen={isEditModalOpen}
 					activity={currentActivity}
 					onClose={() => setIsEditModalOpen(false)}
 					onUpdate={handleUpdateActivity}
-					categories={categories}
-					tags={tags}
 				/>
 			)}
 
-			{/* Confirmation Modal for Booking */}
-			{isConfirmModalOpen && selectedActivity && (
-				<div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50'>
-					<div className='bg-white p-6 rounded-lg shadow-lg w-80'>
-						<h3 className='text-lg font-semibold'>Confirm Booking</h3>
-						<p>Price: ${selectedActivity.price}</p>
-						<div className='flex space-x-4 mt-4'>
+			{/* Confirmation Modal for booking */}
+			{isConfirmModalOpen && (
+				<div className='fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center'>
+					<div className='bg-white p-6 rounded-lg'>
+						<h2 className='text-xl mb-4'>Confirm Booking</h2>
+						<p>
+							Do you want to book this activity?{' '}
+							<strong>{selectedActivity?.name}</strong>
+						</p>
+						<div className='flex justify-between mt-4'>
 							<button
 								onClick={confirmBooking}
-								className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700'>
-								Confirm
+								className='bg-green-600 text-white px-4 py-2 rounded'>
+								Yes, Book it!
 							</button>
 							<button
 								onClick={() => setIsConfirmModalOpen(false)}
-								className='bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700'>
+								className='bg-red-600 text-white px-4 py-2 rounded'>
 								Cancel
 							</button>
 						</div>
+						{error && (
+							<div className='mt-4 text-red-500'>
+								<p>{error}</p>
+							</div>
+						)}
 					</div>
 				</div>
 			)}

@@ -48,7 +48,7 @@ exports.getAttraction = async (req, res) => {
 		// Fetch the specific attraction by ID and populate governorId
 		const attraction = await Attraction.findById(id).populate(
 			'governorId',
-			'name email'
+			'username '
 		);
 
 		// Check if the attraction was found
@@ -134,5 +134,54 @@ exports.filterAttractionsByTag = async (req, res) => {
 		// Log and send error response
 		console.error('Error filtering attractions:', error);
 		res.status(500).send({ message: error.message });
+	}
+};
+exports.calculateAttractionRevenue = async (req, res) => {
+	try {
+		// Fetch all attractions
+		const attractions = await Attraction.find();
+
+		if (attractions.length === 0) {
+			return res.status(404).json({ message: 'No attractions found' });
+		}
+
+		// Calculate revenue for each attraction
+		const attractionsWithRevenue = attractions.map((attraction) => {
+			let revenue = 0;
+
+			// If the attraction is booked, calculate revenue based on ticket types
+			if (attraction.isBooked) {
+				// Add revenue from all available ticket types
+				revenue += attraction.ticketPrices.native || 0; // Revenue for native
+				revenue += attraction.ticketPrices.foreigner || 0; // Revenue for foreigner
+				revenue += attraction.ticketPrices.student || 0; // Revenue for student
+			}
+
+			return {
+				id: attraction._id,
+				name: attraction.name,
+				ticketPrices: attraction.ticketPrices,
+				isBooked: attraction.isBooked,
+				revenue: revenue, // Total revenue for this attraction
+			};
+		});
+
+		// Calculate the total revenue for all attractions
+		const totalRevenue = attractionsWithRevenue.reduce(
+			(sum, attraction) => sum + attraction.revenue,
+			0
+		);
+
+		return res.status(200).json({
+			message: 'Attraction and revenue calculated successfully',
+			totalRevenue: totalRevenue.toFixed(2),
+			attractions: attractionsWithRevenue, // Send the attractions with their revenue
+		});
+	} catch (error) {
+		console.error('Error calculating attraction revenue:', error);
+		return res.status(500).json({
+			message: 'An error occurred while calculating attraction revenue',
+			error: error.message,
+		});
 	}
 };

@@ -3,6 +3,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Tourist = require('../models/Tourist');
 
 // Function to create initial admin
 exports.initialAdmin = async () => {
@@ -170,5 +171,27 @@ exports.viewUsers = async (req, res) => {
 		return res
 			.status(500)
 			.json({ message: 'Error fetching users', error: error.message });
+	}
+};
+exports.viewTourists = async (req, res) => {
+	try {
+		const tourists = await Tourist.find(); // Fetch all tourists from the database
+		return res.status(200).json(tourists);
+	} catch (error) {
+		console.error(error);
+		return res
+			.status(500)
+			.json({ message: 'Error fetching tourists', error: error.message });
+	}
+};
+exports.viewUsersAndTourists = async (req, res) => {
+	try {
+		const [users, tourists] = await Promise.all([User.find(), Tourist.find()]);
+		return res.status(200).json({ users, tourists });
+	} catch (error) {
+		console.error(error);
+		return res
+			.status(500)
+			.json({ message: 'Error fetching data', error: error.message });
 	}
 };

@@ -11,6 +11,17 @@ const {
 const { uploadImages, upload } = require('../controllers/upload');
 const { changePassword } = require('../helper/change-password');
 const { deleteRequest } = require('../controllers/deletion-request');
+const {
+	requestOTP,
+	verifyOTP,
+	resetPassword,
+} = require('../controllers/request-otp');
+const {
+	getNotifications,
+	markAsRead,
+	checkAllActivitiesForFlags,
+} = require('../controllers/activity');
+const { getTouristCountByMonthForActivity } = require('../controllers/tourist');
 const advertiserRouter = express.Router();
 // Update tour guide profile
 advertiserRouter.put('/profile', auth_check, createAdvertiserProfile);
@@ -23,4 +34,7 @@ advertiserRouter.post(
 );
 advertiserRouter.post('/changePassword', auth_check, changePassword);
 advertiserRouter.put('/account', auth_check, deleteRequest);
+advertiserRouter.get('/notifications', checkAllActivitiesForFlags);
+advertiserRouter.get('/countByMonth', getTouristCountByMonthForActivity);
+
 module.exports = advertiserRouter;

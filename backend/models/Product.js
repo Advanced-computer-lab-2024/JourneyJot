@@ -37,7 +37,9 @@ const productSchema = new Schema(
 				ref: 'Review', // Reference to the Review model
 			},
 		],
+
 		archived: { type: Boolean, default: false },
+		isBooked: { type: Boolean, default: false },
 	},
 	{ timestamps: true }
 );

@@ -5,6 +5,7 @@ import axios from 'axios';
 import Spinner from '../../components/General/Spinner';
 import TouristProductCard from '../../components/Tourist/TouristProductCard';
 import { Link } from 'react-router-dom'; // Import Link for navigation
+import { FaShoppingCart } from 'react-icons/fa'; // Import the cart icon
 
 const TouristProducts = () => {
 	const [products, setProducts] = useState([]);
@@ -13,6 +14,29 @@ const TouristProducts = () => {
 	const [maxPrice, setMaxPrice] = useState('');
 	const [sort, setSort] = useState(false);
 	const [searchedProduct, setSearchedProduct] = useState('');
+	const [rates, setRates] = useState({});
+	const [selectedCurrency, setSelectedCurrency] = useState('USD');
+	const [conversionRate, setConversionRate] = useState(1);
+
+	useEffect(() => {
+		// Fetch exchange rates
+		axios
+			.get(
+				'https://v6.exchangerate-api.com/v6/14c4008744f504c874fd1f25/latest/USD'
+			)
+			.then((response) => {
+				setRates(response.data.conversion_rates);
+			})
+			.catch((error) => {
+				console.error('Error fetching exchange rates:', error);
+			});
+	}, []);
+
+	const handleCurrencyChange = (event) => {
+		const currency = event.target.value;
+		setSelectedCurrency(currency);
+		setConversionRate(rates[currency] || 1);
+	};
 
 	const fetchProducts = async () => {
 		setLoading(true);
@@ -88,6 +112,20 @@ const TouristProducts = () => {
 			<div className='flex flex-col md:flex-row justify-between items-center mb-4'>
 				<h1 className='text-3xl font-bold text-teal-600'>Products</h1>
 				<div className='flex space-x-4 w-1/2 justify-end'>
+					<label htmlFor='currency-select'>Select Currency:</label>
+					<select
+						id='currency-select'
+						value={selectedCurrency}
+						onChange={handleCurrencyChange}>
+						{Object.keys(rates).map((currency) => (
+							<option
+								key={currency}
+								value={currency}>
+								{currency}
+							</option>
+						))}
+					</select>
+
 					<button
 						className='bg-teal-500 text-white rounded-md px-6 py-2 mt-4 md:mt-0 shadow-md hover:bg-teal-600 transition duration-200'
 						onClick={() => setSort((prevState) => !prevState)}>
@@ -101,6 +139,17 @@ const TouristProducts = () => {
 						className='mt-4 md:mt-0 w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-teal-400'
 					/>
 				</div>
+			</div>
+
+			{/* Cart Icon */}
+			<div className='fixed bottom-6 right-6 z-50'>
+				<Link to='/tourist/homePage/products/cart'>
+					<FaShoppingCart
+						size={30}
+						color='#2D3748'
+						className='hover:text-teal-500 transition duration-200'
+					/>
+				</Link>
 			</div>
 
 			{/* Price Filters */}
@@ -125,16 +174,34 @@ const TouristProducts = () => {
 			</div>
 
 			{/* Link to Purchase History */}
-			<div className='mb-4 text-center'>
+			<div className='mb-4 text-center flex flex-col gap-y-1'>
 				<Link
 					to='/tourist/homePage/products/purchase-history' // Ensure this is the correct route
 					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
 					View Purchase History
 				</Link>
+				<Link
+					to='/tourist/homePage/products/wishlist' // Ensure this is the correct route
+					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
+					View Wish List
+				</Link>
+				<Link
+					to='/tourist-cart' // Ensure this is the correct route
+					className='text-teal-600 hover:text-teal-800 font-semibold transition duration-200'>
+					View Cart
+				</Link>
 			</div>
 
 			<div className='mb-4'>
-				{loading ? <Spinner /> : <TouristProductCard products={products} />}
+				{loading ? (
+					<Spinner />
+				) : (
+					<TouristProductCard
+						products={products}
+						currency={selectedCurrency}
+						conversionRate={conversionRate}
+					/>
+				)}
 			</div>
 		</div>
 	);

@@ -54,6 +54,8 @@ const userSchema = new mongoose.Schema({
 	acceptedTerms: { type: Boolean, default: false, required: true }, // new field
 	// For admin verification
 	status: { type: String, default: 'active' },
+	otp: { type: String, default: null },
+	otpExpiresAt: { type: Date, default: null },
 });
 
 // Create the User model

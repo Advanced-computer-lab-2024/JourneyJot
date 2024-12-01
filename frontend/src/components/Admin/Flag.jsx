@@ -15,10 +15,10 @@ const Flag = () => {
 		const fetchData = async () => {
 			try {
 				const itinerariesResponse = await axios.get(
-					'http://localhost:3000/itineraries'
+					'http://localhost:3000/itineraries/all'
 				);
 				const activitiesResponse = await axios.get(
-					'http://localhost:3000/activities'
+					'http://localhost:3000/activities/all'
 				);
 				setItineraries(itinerariesResponse.data);
 				setActivities(activitiesResponse.data.activities);
@@ -83,12 +83,17 @@ const Flag = () => {
 						key={itinerary._id}
 						className='flex justify-between items-center bg-gray-100 p-3 rounded shadow'>
 						<span className='text-lg'>
-							{itinerary.timeline || 'No timeline available'}
+							{itinerary.accessibility || 'No timeline available'}
 						</span>
 						<button
 							onClick={() => toggleItineraryFlag(itinerary._id)}
-							className='bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300'>
-							Flag
+							className={`py-1 px-3 rounded focus:outline-none focus:ring ${
+								itinerary.flagged
+									? 'bg-gray-400 text-white cursor-not-allowed' // Disabled state when flagged
+									: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-300' // Normal state when not flagged
+							}`}
+							disabled={itinerary.flagged}>
+							{itinerary.flagged ? 'Flagged' : 'Flag'}
 						</button>
 					</li>
 				))}
@@ -105,8 +110,13 @@ const Flag = () => {
 						</span>
 						<button
 							onClick={() => toggleActivityFlag(activity._id)}
-							className='bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300'>
-							Flag
+							className={`py-1 px-3 rounded focus:outline-none focus:ring ${
+								activity.flagged
+									? 'bg-gray-400 text-white cursor-not-allowed' // Disabled state when flagged
+									: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-300' // Normal state when not flagged
+							}`}
+							disabled={activity.flagged}>
+							{activity.flagged ? 'Flagged' : 'Flag'}
 						</button>
 					</li>
 				))}

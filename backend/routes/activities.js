@@ -11,9 +11,14 @@ const {
 	getActivity,
 	getFilteredActivities,
 	sortByPriceOrRating,
+	getCompletedActivities,
+	addRatingAndComment,
+	getAllActivities,
+	calculateActivityRevenue,
 } = require('../controllers/activity');
 const authenticate = require('../middleware/auth-check'); // Assuming you have an auth middleware
 const advertiserCheck = require('../middleware/advertiser-check');
+const adminAdvertiser = require('../middleware/admin-advertiser');
 const activityRouter = express.Router();
 
 activityRouter.post('/', authenticate, advertiserCheck, createActivity); // Create activity
@@ -22,6 +27,10 @@ activityRouter.put('/:id', authenticate, advertiserCheck, updateActivity); // Up
 activityRouter.delete('/:id', authenticate, advertiserCheck, deleteActivity); // Delete activity
 activityRouter.get('/filter', getFilteredActivities); // Filter activities
 activityRouter.get('/sort', sortByPriceOrRating); // Sort activities
+activityRouter.get('/complete', authenticate, getCompletedActivities); // Get single activity by id
+activityRouter.post('/review/:id', authenticate, addRatingAndComment);
+activityRouter.get('/revenue', calculateActivityRevenue);
+activityRouter.get('/all', getAllActivities); // Update activity
 activityRouter.get('/:id', getActivity); // Get single activity by id
 
 module.exports = activityRouter;

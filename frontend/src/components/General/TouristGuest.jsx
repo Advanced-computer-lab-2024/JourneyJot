@@ -21,7 +21,6 @@ const TouristGuest = () => {
 	const [budget, setBudget] = useState('');
 	const [date, setDate] = useState('');
 	const [ratings, setRatings] = useState('');
-
 	const [language, setLanguage] = useState('');
 
 	const [activeTab, setActiveTab] = useState('Activities');
@@ -393,7 +392,6 @@ const TouristGuest = () => {
 								value={language}
 								onChange={(e) => setLanguage(e.target.value)}
 								className='form-select w-full mt-1'>
-								<option value=''>All Languages</option>
 								<option value=''>All Languages</option>
 								<option value='English'>English</option>
 								<option value='Arabic'>Arabic</option>
