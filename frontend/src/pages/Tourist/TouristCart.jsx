@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'; // To navigate to the checkout page
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 
 const TouristCart = () => {
-	// State to store the cart items and total
 	const [cartItems, setCartItems] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
 	const [purchaseError, setPurchaseError] = useState('');
 	const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+	const navigate = useNavigate();
 
 	// Fetch the cart from the backend
 	useEffect(() => {
@@ -18,7 +18,7 @@ const TouristCart = () => {
 			try {
 				const token = localStorage.getItem('token');
 				if (!token) {
-					throw new Error('No token found. Please login again.');
+					throw new Error('No token found. Please log in again.');
 				}
 
 				const config = {
@@ -32,7 +32,7 @@ const TouristCart = () => {
 					config
 				);
 
-				setCartItems(response.data || []);
+				setCartItems(response.data || []); // Ensure cart items are set correctly
 			} catch (error) {
 				setError(error.response?.data?.message || 'Error fetching cart.');
 			} finally {
@@ -45,17 +45,12 @@ const TouristCart = () => {
 
 	// Update the quantity of a product
 	const updateQuantity = async (productId, newQuantity) => {
-		if (!productId) {
-			console.error('Product ID is missing!');
-			return; // Exit if productId is undefined
-		}
-
-		if (newQuantity < 1) return; // Prevent negative quantities
+		if (!productId || newQuantity < 1) return;
 
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
-				throw new Error('No token found. Please login again.');
+				throw new Error('No token found. Please log in again.');
 			}
 
 			const response = await axios.put(
@@ -66,9 +61,7 @@ const TouristCart = () => {
 				}
 			);
 
-			// Ensure the cartItems state is updated correctly
-			const updatedCart = response.data.cart;
-			setCartItems(updatedCart);
+			setCartItems(response.data.cart);
 		} catch (error) {
 			setError(error.response?.data?.message || 'Error updating cart item.');
 		}
@@ -76,10 +69,12 @@ const TouristCart = () => {
 
 	// Remove a product from the cart
 	const removeProduct = async (productId) => {
+		if (!productId) return;
+
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
-				throw new Error('No token found. Please login again.');
+				throw new Error('No token found. Please log in again.');
 			}
 
 			const response = await axios.delete(
@@ -89,7 +84,6 @@ const TouristCart = () => {
 				}
 			);
 
-			// Update cart after successful removal
 			setCartItems(response.data.cart);
 		} catch (error) {
 			setError(error.response?.data?.message || 'Error removing cart item.');
@@ -98,23 +92,23 @@ const TouristCart = () => {
 
 	// Calculate total price
 	const getTotalPrice = () => {
-		return cartItems.reduce(
-			(total, item) => total + item.productId.price * item.quantity,
-			0
-		);
+		return cartItems.reduce((total, item) => {
+			const price = item.productId?.price || 0;
+			return total + price * item.quantity;
+		}, 0);
 	};
 
-	// Handle the product purchase (POST request)
+	// Handle the product purchase
 	const handlePurchase = async () => {
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
-				throw new Error('No token found. Please login again.');
+				throw new Error('No token found. Please log in again.');
 			}
 
 			const response = await axios.post(
 				'http://localhost:3000/tourists/buyProductCard',
-				{ products: cartItems }, // Sending the cart items as part of the request
+				{ products: cartItems },
 				{
 					headers: { Authorization: `Bearer ${token}` },
 				}
@@ -122,7 +116,49 @@ const TouristCart = () => {
 
 			setPurchaseSuccess(true);
 			setPurchaseError('');
-			setCartItems([]); // Clear the cart after purchase
+			setCartItems([]);
+		} catch (error) {
+			setPurchaseError(
+				error.response?.data?.message || 'Error completing purchase.'
+			);
+			setPurchaseSuccess(false);
+		}
+	};
+
+	// Navigate to Stripe payment page
+	const handlePayProductViaStripe = (product) => {
+		if (!product) {
+			console.error('Product data is missing!');
+			return;
+		}
+
+		// Pass the necessary cart data to navigate
+		navigate('/pay-product-stripe', {
+			state: {
+				cartItems, // Send the full cart
+			},
+		});
+	};
+
+	// Handle cash on delivery payment
+	const handleCashOnDelivery = async () => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				throw new Error('No token found. Please log in again.');
+			}
+
+			const response = await axios.post(
+				'http://localhost:3000/tourists/buyProductCard',
+				{ products: cartItems, paymentMethod: 'COD' },
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			);
+
+			setPurchaseSuccess(true);
+			setPurchaseError('');
+			setCartItems([]);
 		} catch (error) {
 			setPurchaseError(
 				error.response?.data?.message || 'Error completing purchase.'
@@ -150,9 +186,8 @@ const TouristCart = () => {
 			) : (
 				<div className='space-y-6'>
 					{cartItems.map((item) => (
-						// Ensure the key is unique
 						<div
-							key={`${item.productId._id}-${item.quantity}`} // Updated key to ensure uniqueness
+							key={item.productId._id}
 							className='flex items-center justify-between border-b pb-4'>
 							<div className='flex items-center space-x-4'>
 								<img
@@ -186,7 +221,7 @@ const TouristCart = () => {
 									+
 								</button>
 								<button
-									onClick={() => removeProduct(item.productId._id)} // Pass the correct productId
+									onClick={() => removeProduct(item.productId._id)}
 									className='bg-red-500 text-white p-2 rounded-md'>
 									Remove
 								</button>
@@ -196,17 +231,25 @@ const TouristCart = () => {
 				</div>
 			)}
 
-			{/* Display total price */}
 			<div className='mt-6 text-right'>
 				<p className='text-lg font-semibold'>Total: ${getTotalPrice()}</p>
 			</div>
 
-			{/* Complete purchase button */}
-			<div className='mt-6'>
+			<div className='mt-6 space-x-4'>
 				<button
 					onClick={handlePurchase}
-					className='bg-teal-600 text-white px-4 py-2 rounded-md'>
+					className='bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700'>
 					Complete Purchase
+				</button>
+				<button
+					onClick={() => handlePayProductViaStripe(cartItems)}
+					className='bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700'>
+					Pay Visa
+				</button>
+				<button
+					onClick={handleCashOnDelivery}
+					className='bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700'>
+					Cash on Delivery
 				</button>
 			</div>
 		</div>

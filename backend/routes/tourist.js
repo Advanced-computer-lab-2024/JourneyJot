@@ -43,6 +43,7 @@ const {
 	payStripeItinerary,
 	buyProducts,
 	buyProductsCard,
+	buyProductsCardVisa,
 } = require('../controllers/tourist');
 const auth_check = require('../middleware/auth-check');
 const { changePassword } = require('../helper/tourist-change-password');
@@ -95,7 +96,11 @@ touristRouter.post(
 	cancelItinerary
 );
 
-touristRouter.post('/cancelAttraction/:attractionId', auth_check, cancelAttraction);
+touristRouter.post(
+	'/cancelAttraction/:attractionId',
+	auth_check,
+	cancelAttraction
+);
 
 touristRouter.post('/bookTransportation/:id', auth_check, bookTransportation);
 touristRouter.get(
@@ -134,4 +139,5 @@ touristRouter.put(
 );
 touristRouter.delete('/cart/remove/:productId', auth_check, removeCartItem);
 touristRouter.post('/buyProductCard', auth_check, buyProductsCard);
+touristRouter.post('/buyProductCardVisa', auth_check, buyProductsCardVisa);
 module.exports = touristRouter;

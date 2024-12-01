@@ -1842,11 +1842,105 @@ exports.buyProductsCard = async (req, res) => {
 		res.status(500).json({ message: 'Server error during purchase' });
 	}
 };
+exports.buyProductsCardVisa = async (req, res) => {
+	try {
+		const userId = req.user._id; // Get the user ID from authentication
+		const { paymentMethodId, currency = 'usd' } = req.body;
+
+		// Fetch the tourist's details along with the cart
+		const tourist = await Tourist.findById(userId).populate('cart.productId');
+		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
+
+		// Check if the cart is empty
+		if (tourist.cart.length === 0) {
+			return res.status(400).json({ message: 'Cart is empty' });
+		}
+
+		// Calculate the total cost of the purchase
+		let totalCost = 0;
+		let pointsEarned = 0;
+
+		// Process each item in the cart
+		for (let item of tourist.cart) {
+			const product = item.productId;
+
+			// Ensure stock availability
+			if (item.quantity > product.stock) {
+				return res.status(400).json({
+					message: `Not enough stock for ${product.name}. Only ${product.stock} left.`,
+				});
+			}
+
+			// Calculate the total cost and reduce stock
+			const productCost = product.price * item.quantity;
+			totalCost += productCost;
+
+			// Reduce stock after purchase
+			product.stock -= item.quantity;
+			await product.save();
+
+			// Calculate points earned based on the product price
+			let pointsMultiplier = 0.5; // Level 1 multiplier
+			if (tourist.points >= 100000) pointsMultiplier = 1; // Level 2
+			if (tourist.points >= 500000) pointsMultiplier = 1.5; // Level 3
+			pointsEarned += productCost * pointsMultiplier;
+		}
+
+		// Process payment with Stripe
+		try {
+			const paymentIntent = await stripe.paymentIntents.create({
+				amount: Math.round(totalCost * 100), // Convert amount to cents
+				currency,
+				payment_method: paymentMethodId,
+				confirm: true, // Automatically confirm the payment
+				automatic_payment_methods: {
+					enabled: true, // Enable automatic payment methods
+				},
+				return_url: 'https://your-site.com/payment-success', // Replace with your actual URL
+			});
+
+			// Log the payment intent for debugging
+			console.log('Payment Intent:', paymentIntent);
+
+			if (paymentIntent.status !== 'succeeded') {
+				return res.status(400).json({ message: 'Payment failed. Try again.' });
+			}
+
+			// Update the tourist's points and clear the cart
+			tourist.points += pointsEarned;
+			tourist.cart = [];
+			await tourist.save();
+
+			// Respond with a success message
+			res.status(200).json({
+				message: 'Purchase successful. Your cart has been cleared.',
+				transactionDetails: {
+					totalCost: totalCost.toFixed(2),
+					pointsEarned: Math.floor(pointsEarned),
+					totalPoints: Math.floor(tourist.points),
+				},
+			});
+		} catch (paymentError) {
+			console.error('Stripe Payment Error:', paymentError);
+			return res
+				.status(500)
+				.json({
+					message: 'Payment failed. Please check your payment details.',
+				});
+		}
+	} catch (error) {
+		// Handle errors gracefully
+		console.error('Error during purchase:', error);
+		res
+			.status(500)
+			.json({ message: error.message || 'Server error during purchase' });
+	}
+};
 
 const transporter = nodemailer.createTransport({
 	service: 'gmail', // You can change this depending on your email provider
 	auth: {
-		user: 'ahmed.shawkiy123@gmail.com', // Replace with your email
-		pass: 'iari kqgb jjfg yxgg', // Replace with your email password or app-specific password
+		user: process.env.USER_EMAIL, // Replace with your email
+		pass: process.env.USER_PASS, // Replace with your email password or app-specific password
 	},
 });

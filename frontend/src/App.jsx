@@ -84,6 +84,9 @@ import { loadStripe } from '@stripe/stripe-js';
 import TouristWishList from './pages/Tourist/TouristWishList.jsx';
 import TouristCart from './pages/Tourist/TouristCart.jsx';
 import BuyTouristCart from './pages/Tourist/BuyProductCart.jsx';
+import AddressManagement from './pages/Tourist/Address.jsx';
+import ProductPaymentPage from './components/Tourist/PayStrpeProduct.jsx';
+import BuyProductsCardVisa from './components/Tourist/PayStrpeProduct.jsx';
 
 // Load Stripe with your public key
 const stripePromise = loadStripe(
@@ -414,6 +417,14 @@ const App = () => {
 				}
 			/>
 			<Route
+				path='/pay-product-stripe'
+				element={
+					<Elements stripe={stripePromise}>
+						<BuyProductsCardVisa />
+					</Elements>
+				}
+			/>
+			<Route
 				path='/tourist-cart'
 				element={<TouristCart />}
 			/>
@@ -429,6 +440,10 @@ const App = () => {
 			<Route
 				path='/booked-hotels'
 				element={<BookedHotels />}
+			/>
+			<Route
+				path='/tourist-address'
+				element={<AddressManagement />}
 			/>
 		</Routes>
 	);
