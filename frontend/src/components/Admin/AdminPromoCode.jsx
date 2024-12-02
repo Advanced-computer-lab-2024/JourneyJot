@@ -1,6 +1,6 @@
 /** @format */
 
-//PromoCodeForm.jsx (ADMIN comp.)
+// PromoCodeForm.jsx (ADMIN Component)
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -32,7 +32,7 @@ const PromoCodeForm = () => {
 		};
 
 		fetchPromoCodes();
-	}, [successMessage]); // Refresh list when a promo code is added or deleted
+	}, [successMessage]);
 
 	// Handle form submission
 	const handleSubmit = async (e) => {
@@ -92,60 +92,78 @@ const PromoCodeForm = () => {
 	};
 
 	return (
-		<div style={styles.container}>
-			<h3 style={styles.title}>Create a Promo Code</h3>
+		<div className='max-w-3xl mx-auto p-6 bg-gray-50 shadow-md rounded-md'>
+			<h3 className='text-2xl font-bold text-center text-gray-800 mb-6'>
+				Create a Promo Code
+			</h3>
+
+			{/* Success and Error Messages */}
 			{successMessage && (
-				<p style={{ ...styles.message, color: 'green' }}>{successMessage}</p>
+				<p className='text-center text-green-600 mb-4'>{successMessage}</p>
 			)}
 			{errorMessage && (
-				<p style={{ ...styles.message, color: 'red' }}>{errorMessage}</p>
+				<p className='text-center text-red-600 mb-4'>{errorMessage}</p>
 			)}
+
+			{/* Form */}
 			<form
 				onSubmit={handleSubmit}
-				style={styles.form}>
-				<div style={styles.field}>
-					<label style={styles.label}>Code:</label>
+				className='space-y-4'>
+				<div>
+					<label className='block text-sm font-medium text-gray-700 mb-1'>
+						Code:
+					</label>
 					<input
 						type='text'
 						value={code}
 						onChange={(e) => setCode(e.target.value)}
-						style={styles.input}
+						className='w-full border rounded-md p-2 text-gray-800 focus:outline-none focus:ring focus:ring-blue-300'
 						required
 					/>
 				</div>
-				<div style={styles.field}>
-					<label style={styles.label}>Discount (% or flat):</label>
+
+				<div>
+					<label className='block text-sm font-medium text-gray-700 mb-1'>
+						Discount (% or flat):
+					</label>
 					<input
 						type='number'
 						value={discount}
 						onChange={(e) => setDiscount(e.target.value)}
-						style={styles.input}
+						className='w-full border rounded-md p-2 text-gray-800 focus:outline-none focus:ring focus:ring-blue-300'
 						required
 					/>
 				</div>
-				<div style={styles.field}>
-					<label style={styles.label}>Expiration Date:</label>
+
+				<div>
+					<label className='block text-sm font-medium text-gray-700 mb-1'>
+						Expiration Date:
+					</label>
 					<input
 						type='date'
 						value={expirationDate}
 						onChange={(e) => setExpirationDate(e.target.value)}
-						style={styles.input}
+						className='w-full border rounded-md p-2 text-gray-800 focus:outline-none focus:ring focus:ring-blue-300'
 						required
 					/>
 				</div>
+
 				<button
 					type='submit'
-					style={styles.button}>
+					className='w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition duration-300'>
 					Create Promo Code
 				</button>
 			</form>
 
-			<h3 style={styles.title}>Existing Promo Codes</h3>
-			<ul style={styles.list}>
+			{/* Promo Code List */}
+			<h3 className='text-xl font-bold text-gray-800 mt-10 mb-4'>
+				Existing Promo Codes
+			</h3>
+			<ul className='space-y-3'>
 				{promoCodes.map((promo) => (
 					<li
 						key={promo._id}
-						style={styles.listItem}>
+						className='flex justify-between items-center bg-white p-4 border rounded-md shadow-sm'>
 						<span>
 							<strong>Code:</strong> {promo.code}, <strong>Discount:</strong>{' '}
 							{promo.discount}%, <strong>Expires:</strong>{' '}
@@ -153,7 +171,7 @@ const PromoCodeForm = () => {
 						</span>
 						<button
 							onClick={() => handleDelete(promo._id)}
-							style={styles.deleteButton}>
+							className='bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition duration-300'>
 							Cancel
 						</button>
 					</li>
@@ -161,84 +179,6 @@ const PromoCodeForm = () => {
 			</ul>
 		</div>
 	);
-};
-
-const styles = {
-	container: {
-		maxWidth: '600px',
-		margin: '20px auto',
-		padding: '20px',
-		border: '1px solid #ccc',
-		borderRadius: '8px',
-		boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-		backgroundColor: '#f9f9f9',
-	},
-	title: {
-		textAlign: 'center',
-		marginBottom: '20px',
-		color: '#333',
-		fontSize: '1.5em',
-	},
-	message: {
-		textAlign: 'center',
-		fontSize: '1em',
-		marginBottom: '10px',
-	},
-	form: {
-		display: 'flex',
-		flexDirection: 'column',
-	},
-	field: {
-		marginBottom: '15px',
-	},
-	label: {
-		display: 'block',
-		marginBottom: '5px',
-		fontSize: '1em',
-		fontWeight: 'bold',
-		color: '#333',
-	},
-	input: {
-		width: '100%',
-		padding: '8px',
-		fontSize: '1em',
-		borderRadius: '4px',
-		border: '1px solid #ccc',
-	},
-	button: {
-		padding: '10px 15px',
-		fontSize: '1em',
-		borderRadius: '4px',
-		border: 'none',
-		backgroundColor: '#4CAF50',
-		color: '#fff',
-		cursor: 'pointer',
-		transition: 'background-color 0.3s ease',
-	},
-	list: {
-		listStyleType: 'none',
-		padding: 0,
-	},
-	listItem: {
-		display: 'flex',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		marginBottom: '10px',
-		padding: '10px',
-		border: '1px solid #ccc',
-		borderRadius: '4px',
-		backgroundColor: '#fff',
-	},
-	deleteButton: {
-		padding: '5px 10px',
-		fontSize: '0.9em',
-		borderRadius: '4px',
-		border: 'none',
-		backgroundColor: '#f44336',
-		color: '#fff',
-		cursor: 'pointer',
-		transition: 'background-color 0.3s ease',
-	},
 };
 
 export default PromoCodeForm;

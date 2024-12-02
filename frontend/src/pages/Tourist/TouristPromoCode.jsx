@@ -24,7 +24,7 @@ const PromoCodesPage = () => {
 				// Define headers with the Authorization token
 				const config = {
 					headers: {
-						Authorization: `Bearer ${token}`, // Attach the token to the Authorization header
+						Authorization: `Bearer ${token}`,
 					},
 				};
 
@@ -48,28 +48,43 @@ const PromoCodesPage = () => {
 		fetchPromoCodes();
 	}, []);
 
-	if (loading) return <div>Loading promo codes...</div>;
-	if (error) return <div>{error}</div>;
+	if (loading) {
+		return (
+			<div className='flex items-center justify-center min-h-screen'>
+				<p className='text-lg font-semibold'>Loading promo codes...</p>
+			</div>
+		);
+	}
+
+	if (error) {
+		return (
+			<div className='flex items-center justify-center min-h-screen'>
+				<p className='text-lg font-semibold text-red-500'>{error}</p>
+			</div>
+		);
+	}
 
 	return (
-		<div style={styles.container}>
-			<h2>Your Promo Codes</h2>
+		<div className='max-w-4xl mx-auto mt-10 p-6 bg-white border border-gray-300 rounded-lg shadow-md'>
+			<h2 className='text-2xl font-bold mb-6 text-gray-800'>
+				Your Promo Codes
+			</h2>
 			{promoCodes.length === 0 ? (
-				<p>No promo codes available</p>
+				<p className='text-gray-600'>No promo codes available</p>
 			) : (
-				<ul style={styles.list}>
+				<ul className='space-y-4'>
 					{promoCodes.map((promo) => (
 						<li
 							key={promo._id}
-							style={styles.listItem}>
-							<div>
-								<strong>Code:</strong> {promo.code}
+							className='p-4 bg-gray-100 border border-gray-200 rounded-lg shadow-sm'>
+							<div className='mb-2'>
+								<span className='font-medium'>Code:</span> {promo.code}
+							</div>
+							<div className='mb-2'>
+								<span className='font-medium'>Discount:</span> {promo.discount}%
 							</div>
 							<div>
-								<strong>Discount:</strong> {promo.discount}%
-							</div>
-							<div>
-								<strong>Expires:</strong>{' '}
+								<span className='font-medium'>Expires:</span>{' '}
 								{new Date(promo.expirationDate).toLocaleDateString()}
 							</div>
 						</li>
@@ -78,29 +93,6 @@ const PromoCodesPage = () => {
 			)}
 		</div>
 	);
-};
-
-const styles = {
-	container: {
-		maxWidth: '600px',
-		margin: '20px auto',
-		padding: '20px',
-		border: '1px solid #ccc',
-		borderRadius: '8px',
-		backgroundColor: '#f9f9f9',
-		boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-	},
-	list: {
-		listStyleType: 'none',
-		paddingLeft: '0',
-	},
-	listItem: {
-		padding: '15px',
-		marginBottom: '10px',
-		border: '1px solid #ccc',
-		borderRadius: '4px',
-		backgroundColor: '#fff',
-	},
 };
 
 export default PromoCodesPage;

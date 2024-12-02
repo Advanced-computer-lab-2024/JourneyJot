@@ -66,7 +66,6 @@ exports.getNotifications = async (req, res) => {
 			if (product.quantity === 0 && !product.isNotified) {
 				// Create a notification if the product's quantity is 0 and it hasn't been notified yet
 				const existingNotification = await Notification.findOne({
-					userId: req.user._id,
 					productId: product._id,
 					message: { $regex: /out of stock/i },
 				});
@@ -74,7 +73,6 @@ exports.getNotifications = async (req, res) => {
 				if (!existingNotification) {
 					// Create a new notification only if one doesn't exist already
 					await Notification.create({
-						userId: req.user._id,
 						productId: product._id,
 						message: `The product "${product.name}" is out of stock.`,
 					});
@@ -88,7 +86,6 @@ exports.getNotifications = async (req, res) => {
 
 		// Step 2: Fetch notifications for the logged-in Admin/Seller related to out-of-stock products
 		const notifications = await Notification.find({
-			userId: req.user._id,
 			message: { $regex: /out of stock/i }, // Filter notifications containing 'out of stock'
 		})
 			.sort({ createdAt: -1 }) // Sort by most recent
