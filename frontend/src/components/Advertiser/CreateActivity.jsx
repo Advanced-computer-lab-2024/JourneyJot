@@ -93,6 +93,17 @@ const ActivityForm = () => {
 				<h2 className='text-2xl font-bold text-center'>Create New Activity</h2>
 				<div className='grid grid-cols-1 gap-4'>
 					<label className='flex flex-col'>
+						<span className='font-medium'>Name:</span>
+						<input
+							type='text'
+							name='Name'
+							value={formData.name}
+							onChange={handleChange}
+							required
+							className='border rounded p-2 mt-1'
+						/>
+					</label>
+					<label className='flex flex-col'>
 						<span className='font-medium'>Date:</span>
 						<input
 							type='date'

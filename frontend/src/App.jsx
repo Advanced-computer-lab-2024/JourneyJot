@@ -95,6 +95,7 @@ import TouristNotifications from './pages/Tourist/ActivityNotifications.jsx';
 import TouristItineraryNotifications from './pages/Tourist/ItineraryNotifications.jsx';
 import PromoCodesPage from './pages/Tourist/TouristPromoCode.jsx';
 import PromoCodeForm from './components/Admin/AdminPromoCode.jsx';
+import ComplaintsAdmin from './components/Admin/AdminComplain.jsx';
 
 // Load Stripe with your public key
 const stripePromise = loadStripe(
@@ -268,7 +269,7 @@ const App = () => {
 			/>
 			<Route
 				path='/admins/complaints'
-				element={<AdminComplain />}
+				element={<ComplaintsAdmin />}
 			/>
 
 			<Route

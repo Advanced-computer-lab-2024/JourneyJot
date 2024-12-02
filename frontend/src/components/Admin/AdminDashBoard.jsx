@@ -13,7 +13,6 @@ const AdminDashboard = () => {
 		{ path: '/admins/addAdmin', label: 'Add New Admin', color: 'bg-teal-500' },
 		{ path: '/notify-admin-product', label: 'Notify', color: 'bg-teal-500' },
 		{ path: '/create-promocode', label: 'PromoCodes', color: 'bg-teal-500' },
-
 		{
 			path: '/admins/addGovernor',
 			label: 'Add Tour Guide',
@@ -85,7 +84,7 @@ const AdminDashboard = () => {
 				<div className='max-w-7xl mx-auto px-6 py-4 flex justify-between items-center'>
 					<div className='flex items-center space-x-3'>
 						<FaUserCircle className='text-4xl text-gray-700' />
-						<h1 className='text-2xl font-extrabold text-gray-800 tracking-tight'>
+						<h1 className='text-2xl font-bold text-gray-800 tracking-tight'>
 							Admin Dashboard
 						</h1>
 					</div>
@@ -94,7 +93,7 @@ const AdminDashboard = () => {
 
 			{/* Dashboard Content */}
 			<main className='max-w-7xl mx-auto px-6 py-10'>
-				<div className='bg-white rounded-xl shadow-lg p-8'>
+				<div className='bg-white rounded-xl shadow-md p-8'>
 					<h2 className='text-3xl font-bold text-gray-900 mb-6'>
 						Welcome, Admin
 					</h2>
@@ -102,12 +101,12 @@ const AdminDashboard = () => {
 						Efficiently manage users, categories, and more using the tools
 						below.
 					</p>
-					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
+					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
 						{dashboardItems.map(({ path, label, color }, index) => (
 							<Link
 								key={index}
 								to={path}
-								className={`flex items-center justify-center text-lg font-medium text-white py-6 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:scale-105 ${color}`}>
+								className={`flex items-center justify-center text-lg font-semibold text-white py-5 px-4 rounded-xl shadow hover:shadow-lg transition-transform transform hover:scale-105 ${color}`}>
 								{label}
 							</Link>
 						))}

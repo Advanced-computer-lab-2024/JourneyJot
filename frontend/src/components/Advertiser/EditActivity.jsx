@@ -2,41 +2,48 @@
 
 import React, { useState, useEffect } from 'react';
 
-const EditActivity = ({ activity, onClose, onUpdate, categories, tags }) => {
+const EditActivity = ({
+	activity,
+	onClose,
+	onUpdate,
+	categories = [],
+	tags = [],
+}) => {
 	const [formData, setFormData] = useState({
-		date: activity.date,
-		time: activity.time,
-		price: activity.price,
-		priceRange: activity.priceRange || '',
-		category: activity.category?.name || '',
-		preferenceTag: activity.preferenceTag || '', // Changed to hold a single value
-		specialDiscounts: activity.specialDiscounts || '',
-		bookingOpen: activity.bookingOpen,
-		rating: activity.rating,
+		name: activity?.name || '',
+		date: activity?.date || '',
+		time: activity?.time || '',
+		price: activity?.price || '',
+		priceRange: activity?.priceRange || '',
+		category: activity?.category?.name || '',
+		preferenceTag: activity?.preferenceTag || '', // Changed to hold a single value
+		specialDiscounts: activity?.specialDiscounts || '',
+		bookingOpen: activity?.bookingOpen || false,
+		rating: activity?.rating || '',
 	});
 
 	useEffect(() => {
 		setFormData({
-			date: activity.date,
-			time: activity.time,
-			price: activity.price,
-			priceRange: activity.priceRange || '',
-			category: activity.category?.name || '',
-			preferenceTag: activity.preferenceTag || '', // Ensure preferenceTag is a single value
-			specialDiscounts: activity.specialDiscounts || '',
-			bookingOpen: activity.bookingOpen,
-			rating: activity.rating,
+			name: activity?.name || '',
+			date: activity?.date || '',
+			time: activity?.time || '',
+			price: activity?.price || '',
+			priceRange: activity?.priceRange || '',
+			category: activity?.category?.name || '',
+			preferenceTag: activity?.preferenceTag || '', // Ensure preferenceTag is a single value
+			specialDiscounts: activity?.specialDiscounts || '',
+			bookingOpen: activity?.bookingOpen || false,
+			rating: activity?.rating || '',
 		});
 	}, [activity]);
 
 	const handleChange = (e) => {
 		const { name, value, type } = e.target;
 
-		if (type === 'select-one') {
-			// For a single select dropdown (tags are no longer an array)
+		if (type === 'checkbox') {
 			setFormData((prevData) => ({
 				...prevData,
-				[name]: value, // Set the single selected tag
+				[name]: e.target.checked,
 			}));
 		} else {
 			setFormData((prevData) => ({
@@ -57,6 +64,18 @@ const EditActivity = ({ activity, onClose, onUpdate, categories, tags }) => {
 			<div className='bg-white p-6 rounded-lg shadow-lg max-w-lg w-full'>
 				<h2 className='text-lg font-bold mb-4'>Edit Activity</h2>
 				<form onSubmit={handleSubmit}>
+					{/* Name Field */}
+					<label className='block mb-2'>
+						Name:
+						<input
+							type='text'
+							name='name'
+							value={formData.name}
+							onChange={handleChange}
+							className='border rounded p-2 w-full'
+						/>
+					</label>
+
 					{/* Date Field */}
 					<label className='block mb-2'>
 						Date:
@@ -114,29 +133,18 @@ const EditActivity = ({ activity, onClose, onUpdate, categories, tags }) => {
 							onChange={handleChange}
 							className='border rounded p-2 w-full'>
 							<option value=''>Select Category</option>
-							{categories.map((category) => (
-								<option
-									key={category._id}
-									value={category.name}>
-									{category.name}
-								</option>
-							))}
+							{Array.isArray(categories) &&
+								categories.map((category) => (
+									<option
+										key={category._id}
+										value={category.name}>
+										{category.name}
+									</option>
+								))}
 						</select>
 					</label>
 
-					{/* Tags Field (Single Selection) */}
-
-					{/* Special Discounts Field */}
-					<label className='block mb-2'>
-						Special Discounts:
-						<input
-							type='text'
-							name='specialDiscounts'
-							value={formData.specialDiscounts}
-							onChange={handleChange}
-							className='border rounded p-2 w-full'
-						/>
-					</label>
+					{/* Preference Tag Field */}
 					<label className='block mb-2'>
 						Preference Tag:
 						<select
@@ -145,15 +153,17 @@ const EditActivity = ({ activity, onClose, onUpdate, categories, tags }) => {
 							onChange={handleChange}
 							className='border rounded p-2 w-full'>
 							<option value=''>Select Preference Tag</option>
-							{tags.map((tag) => (
-								<option
-									key={tag._id}
-									value={tag.name}>
-									{tag.name}
-								</option>
-							))}
+							{Array.isArray(tags) &&
+								tags.map((tag) => (
+									<option
+										key={tag._id}
+										value={tag.name}>
+										{tag.name}
+									</option>
+								))}
 						</select>
 					</label>
+
 					{/* Booking Open Field */}
 					<label className='block mb-2'>
 						Booking Open:
@@ -161,12 +171,7 @@ const EditActivity = ({ activity, onClose, onUpdate, categories, tags }) => {
 							type='checkbox'
 							name='bookingOpen'
 							checked={formData.bookingOpen}
-							onChange={(e) => {
-								setFormData((prevData) => ({
-									...prevData,
-									bookingOpen: e.target.checked,
-								}));
-							}}
+							onChange={handleChange}
 							className='border rounded p-2'
 						/>
 					</label>

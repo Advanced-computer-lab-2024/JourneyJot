@@ -124,6 +124,7 @@ exports.updateActivity = async (req, res) => {
 		const activity = await Activity.findByIdAndUpdate(id, req.body, {
 			new: true,
 		});
+
 		if (!activity) {
 			return res.status(404).json({ message: 'Activity not found' });
 		}
@@ -416,11 +417,9 @@ exports.checkAllActivitiesForFlags = async (req, res) => {
 		});
 	} catch (error) {
 		console.error('Error checking activities for flags:', error.message);
-		res
-			.status(500)
-			.json({
-				message: 'Error checking activities for flags',
-				error: error.message,
-			});
+		res.status(500).json({
+			message: 'Error checking activities for flags',
+			error: error.message,
+		});
 	}
 };
