@@ -35,7 +35,7 @@ const TouristGuest = () => {
 		// Fetch exchange rates
 		axios
 			.get(
-				'https://v6.exchangerate-api.com/v6/14c4008744f504c874fd1f25/latest/USD'
+				'https://v6.exchangerate-api.com/v6/c0f66f5d6657d5223735ba62/latest/USD'
 			)
 			.then((response) => {
 				setRates(response.data.conversion_rates);
@@ -406,6 +406,11 @@ const TouristGuest = () => {
 						onClick={() => navigate('/tourist/homepage/bookmarks')}
 						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 						BookMark Events
+					</button>
+					<button
+						onClick={() => navigate('/tourist/homePage/promo-codes')}
+						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+						Promo Codes
 					</button>
 				</div>
 			</header>

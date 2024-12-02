@@ -54,6 +54,7 @@ const {
 	getTouristNotifications,
 	getTouristItineraryNotifications,
 	getTouristActivityNotifications,
+	getPromoCodesForTourist,
 } = require('../controllers/tourist');
 const auth_check = require('../middleware/auth-check');
 const { changePassword } = require('../helper/tourist-change-password');
@@ -171,5 +172,8 @@ touristRouter.get(
 	auth_check,
 	getTouristItineraryNotifications
 );
+
+// Route to get promo codes for a specific tourist by ID
+touristRouter.get('/promoCodes', auth_check, getPromoCodesForTourist);
 
 module.exports = touristRouter;

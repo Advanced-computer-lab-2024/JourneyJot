@@ -14,6 +14,8 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer');
 const NotificationTourist = require('../models/NotificationActivityTourist');
 const NotificationItineraryTourist = require('../models/NotificationItineraryTourist');
+const PromoCode = require('../models/PromoCode'); // Assuming your PromoCode model is here
+const schedule = require('node-schedule');
 
 const transporter = nodemailer.createTransport({
 	service: 'gmail', // You can change this depending on your email provider
@@ -25,7 +27,7 @@ const transporter = nodemailer.createTransport({
 
 const sendReceiptEmail = async (touristEmail, bookingDetails) => {
 	const mailOptions = {
-		from: 'your-email@example.com', // Replace with your email
+		from: process.env.USER_EMAIL, // Replace with your email
 		to: touristEmail,
 		subject: 'Your Payment Receipt for Booking',
 		html: `
@@ -2273,5 +2275,138 @@ exports.getTouristItineraryNotifications = async (req, res) => {
 	} catch (error) {
 		console.error('Error fetching notifications:', error);
 		res.status(500).json({ error: 'Failed to fetch notifications' });
+	}
+};
+const generatePromoCode = () => {
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	const randomPart = Array.from({ length: 2 }, () =>
+		chars.charAt(Math.floor(Math.random() * chars.length))
+	).join('');
+	return `BIRTHDAY${randomPart}`;
+};
+
+const assignBirthdayPromoCodes = async () => {
+	try {
+		console.log('Assigning birthday promo codes...');
+		const today = new Date();
+		const todayUTC = new Date(
+			Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())
+		);
+
+		console.log('Checking birthdays for today:', todayUTC);
+
+		// Fetch tourists whose birthday matches today
+		let tourists = await Tourist.find({
+			$expr: {
+				$and: [
+					{ $eq: [{ $dayOfMonth: '$dob' }, todayUTC.getUTCDate()] },
+					{ $eq: [{ $month: '$dob' }, todayUTC.getUTCMonth() + 1] }, // Adjusted month comparison
+				],
+			},
+		});
+
+		// Filter out tourists without a valid promoCodes property
+		tourists = tourists.filter((tourist) => {
+			if (!tourist.promoCodes || !Array.isArray(tourist.promoCodes)) {
+				console.log(
+					`Removing tourist ${tourist.username} as they do not have a promoCodes parameter.`
+				);
+				return false; // Exclude tourist from the filtered array
+			}
+			return true; // Include tourist in the filtered array
+		});
+
+		console.log(`Filtered tourists count: ${tourists.length}`);
+
+		// Assign promo code to each tourist with a birthday today
+		for (const tourist of tourists) {
+			// Check if the tourist already has a birthday promo code
+			let hasBirthdayCode = false;
+			for (const promoCodeId of tourist.promoCodes) {
+				const promoCode = await PromoCode.findById(promoCodeId);
+				if (promoCode && promoCode.code.startsWith('BIRTHDAY')) {
+					hasBirthdayCode = true;
+					break;
+				}
+			}
+
+			if (hasBirthdayCode) {
+				console.log(
+					`Skipping tourist ${tourist.username} as they already have a birthday promo code.`
+				);
+				continue;
+			}
+
+			// Generate and assign new promo code
+			const code = generatePromoCode();
+			const promoCode = new PromoCode({
+				code,
+				discount: 20, // Example: 20% discount
+				expirationDate: new Date(
+					today.getFullYear(),
+					today.getMonth() + 1,
+					today.getDate()
+				), // 1-month expiry
+				isActive: true,
+			});
+
+			const savedPromoCode = await promoCode.save();
+			tourist.promoCodes.push(savedPromoCode._id);
+			await tourist.save();
+
+			// Send promo code email to the tourist
+			const mailOptions = {
+				from: process.env.USER_EMAIL, // Replace with your email
+				to: tourist.email, // Tourist's email
+				subject: 'Happy Birthday! Here is your special promo code',
+				html: `
+					<h2>Happy Birthday, ${tourist.username}!</h2>
+					<p>We have a special gift for you to celebrate your day.</p>
+					<p><strong>Your Promo Code:</strong> ${code}</p>
+					<p>Use this code to enjoy a 20% discount on your next booking.</p>
+					<p><em>Note: This code expires on ${promoCode.expirationDate.toLocaleDateString()}.</em></p>
+					<p>Have a wonderful day!</p>
+				`,
+			};
+
+			try {
+				await transporter.sendMail(mailOptions);
+				console.log(`Promo code email sent to ${tourist.email}`);
+			} catch (error) {
+				console.error(`Error sending email to ${tourist.email}:`, error);
+			}
+
+			console.log(`Assigned promo code ${code} to tourist ${tourist.username}`);
+		}
+	} catch (error) {
+		console.error('Error assigning birthday promo codes:', error);
+	}
+};
+
+// Schedule the job to run daily at midnight
+schedule.scheduleJob('* * * * *', async () => {
+	console.log('Running birthday promo code assignment...');
+	await assignBirthdayPromoCodes();
+});
+
+// Get promo codes for the authenticated tourist
+exports.getPromoCodesForTourist = async (req, res) => {
+	try {
+		// Retrieve the touristId from the decoded JWT token
+		const touristId = req.user._id; // Assuming the token contains _id in the payload
+
+		// Find the tourist by their ID and populate their promoCodes
+		const tourist = await Tourist.findById(touristId).populate('promoCodes');
+
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found' });
+		}
+
+		// Return the promo codes associated with the tourist
+		return res.status(200).json({ promoCodes: tourist.promoCodes });
+	} catch (error) {
+		return res
+			.status(500)
+			.json({ message: 'Error fetching promo codes', error: error.message });
 	}
 };

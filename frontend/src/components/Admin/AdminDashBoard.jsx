@@ -12,6 +12,8 @@ const AdminDashboard = () => {
 		},
 		{ path: '/admins/addAdmin', label: 'Add New Admin', color: 'bg-teal-500' },
 		{ path: '/notify-admin-product', label: 'Notify', color: 'bg-teal-500' },
+		{ path: '/create-promocode', label: 'PromoCodes', color: 'bg-teal-500' },
+
 		{
 			path: '/admins/addGovernor',
 			label: 'Add Tour Guide',

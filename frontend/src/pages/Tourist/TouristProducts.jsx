@@ -21,7 +21,7 @@ const TouristProducts = () => {
 	useEffect(() => {
 		axios
 			.get(
-				'https://v6.exchangerate-api.com/v6/14c4008744f504c874fd1f25/latest/USD'
+				'https://v6.exchangerate-api.com/v6/c0f66f5d6657d5223735ba62/latest/USD'
 			)
 			.then((response) => {
 				setRates(response.data.conversion_rates);

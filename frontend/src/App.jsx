@@ -93,6 +93,8 @@ import NotifySellerProduct from './components/Seller/NotifySellerProduct.jsx';
 import BookMarks from './pages/Tourist/BookMarks.jsx';
 import TouristNotifications from './pages/Tourist/ActivityNotifications.jsx';
 import TouristItineraryNotifications from './pages/Tourist/ItineraryNotifications.jsx';
+import PromoCodesPage from './pages/Tourist/TouristPromoCode.jsx';
+import PromoCodeForm from './components/Admin/AdminPromoCode.jsx';
 
 // Load Stripe with your public key
 const stripePromise = loadStripe(
@@ -474,6 +476,14 @@ const App = () => {
 			<Route
 				path='/notify-tourist-itineraries'
 				element={<TouristItineraryNotifications />}
+			/>
+			<Route
+				path='/tourist/homePage/promo-codes'
+				element={<PromoCodesPage />}
+			/>
+			<Route
+				path='/create-promocode'
+				element={<PromoCodeForm />}
 			/>
 		</Routes>
 	);
