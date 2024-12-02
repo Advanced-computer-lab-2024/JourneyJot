@@ -7,6 +7,7 @@ import ActivitiesCard from "../../components/Advertiser/ActivitiesCard";
 import ItinerariesCard from "../../components/TourGuide/ItinerariesCard";
 import AttractionsCard from "../../components/TourismGovernor/AttractionsCard";
 import NavigationHeader from "../../components/General/NavigationHeader";
+import Footer from "../../components/General/Footer";
 
 const TouristGuest = () => {
   const navigate = useNavigate();
@@ -513,6 +514,7 @@ const TouristGuest = () => {
         {/* Render active tab content */}
         {renderTabContent()}
       </div>
+      <Footer />
     </div>
   );
 };
