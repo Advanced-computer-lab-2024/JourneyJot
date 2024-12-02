@@ -402,6 +402,11 @@ const TouristGuest = () => {
 						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
 						My Address
 					</button>
+					<button
+						onClick={() => navigate('/tourist/homepage/bookmarks')}
+						className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+						BookMark Events
+					</button>
 				</div>
 			</header>
 			<div className='container mx-auto mt-8 px-4'>
