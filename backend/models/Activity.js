@@ -10,6 +10,10 @@ const activitySchema = new mongoose.Schema(
 			ref: 'User', // Reference to the User model
 			required: false,
 		},
+		name: {
+			type: String,
+			default: 'spiderMan',
+		},
 		date: {
 			type: Date,
 			required: true,

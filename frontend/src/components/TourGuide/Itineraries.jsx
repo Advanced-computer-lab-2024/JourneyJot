@@ -297,6 +297,14 @@ const ItinerariesComponent = () => {
 					className='mb-4 p-2 border border-gray-300 rounded w-full'
 					placeholder='Dropoff Location'
 				/>
+				<input
+					type='checkbox'
+					name='BookingOpen'
+					checked={newItinerary.bookingOpen} // Sets the checkbox based on the current state (true or false)
+					onChange={handleInputChange} // Calls the function to update the state when clicked
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Booking Open' // Optional, placeholder is not typically needed for checkboxes
+				/>
 
 				{/* Error message for available dates */}
 				{availableDatesError && (
@@ -364,6 +372,9 @@ const ItinerariesComponent = () => {
 								</p>
 								<p>
 									<strong>Dropoff Location:</strong> {itinerary.dropoffLocation}
+								</p>
+								<p>
+									<strong>BookingOpen:</strong> {itinerary.bookingOpen}
 								</p>
 							</div>
 						</li>

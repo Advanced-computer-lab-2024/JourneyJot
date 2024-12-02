@@ -51,6 +51,9 @@ const {
 	bookmarkAttraction,
 	getBookmarks,
 	removeBookmark,
+	getTouristNotifications,
+	getTouristItineraryNotifications,
+	getTouristActivityNotifications,
 } = require('../controllers/tourist');
 const auth_check = require('../middleware/auth-check');
 const { changePassword } = require('../helper/tourist-change-password');
@@ -158,5 +161,15 @@ touristRouter.post('/bookMarkAttraction', auth_check, bookmarkAttraction);
 // Route to fetch the bookmarks
 touristRouter.get('/bookmarks', auth_check, getBookmarks);
 touristRouter.delete('/bookmarks/:type/:id', auth_check, removeBookmark);
+touristRouter.get(
+	'/activity-notification',
+	auth_check,
+	getTouristActivityNotifications
+);
+touristRouter.get(
+	'/itinerary-notification',
+	auth_check,
+	getTouristItineraryNotifications
+);
 
 module.exports = touristRouter;

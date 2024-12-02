@@ -11,6 +11,10 @@ const itinerarySchema = new mongoose.Schema(
 			ref: 'User', // Reference to the user (tour guide)
 			required: true,
 		},
+		name: {
+			type: String,
+			default: 'batman',
+		},
 		activities: [
 			{
 				type: String, // You can define a more complex schema for activities if needed
@@ -70,6 +74,10 @@ const itinerarySchema = new mongoose.Schema(
 				comment: { type: String },
 			},
 		],
+		bookingOpen: {
+			type: Boolean,
+			default: true,
+		},
 		flagged: { type: Boolean, default: false },
 		isBooked: { type: Boolean, default: false },
 	},

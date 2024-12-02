@@ -12,6 +12,8 @@ const jwt = require('jsonwebtoken');
 const Transportation = require('../models/Transportation');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer');
+const NotificationTourist = require('../models/NotificationActivityTourist');
+const NotificationItineraryTourist = require('../models/NotificationItineraryTourist');
 
 const transporter = nodemailer.createTransport({
 	service: 'gmail', // You can change this depending on your email provider
@@ -2149,5 +2151,127 @@ exports.removeBookmark = async (req, res) => {
 	} catch (error) {
 		console.error('Error removing bookmark:', error);
 		res.status(500).json({ message: 'Error removing bookmark' });
+	}
+};
+exports.getTouristActivityNotifications = async (req, res) => {
+	try {
+		const { _id: userId } = req.user; // Current user's ID
+		const tourist = await Tourist.findById(userId).populate('savedActivities'); // Fetch the tourist's saved activities
+
+		if (!tourist) {
+			return res.status(404).json({ error: 'Tourist not found' });
+		}
+
+		const savedActivities = tourist.savedActivities;
+
+		// Step 1: Check for activities with `bookingOpen` and create notifications
+		for (let activity of savedActivities) {
+			if (activity.bookingOpen) {
+				// Check if a notification already exists
+				const existingNotification = await NotificationTourist.findOne({
+					userId,
+					activityId: activity._id,
+					message: { $regex: /Booking is now open/i }, // Check for similar notifications
+				});
+
+				if (!existingNotification) {
+					// Create a notification if not already present
+					await NotificationTourist.create({
+						userId,
+						activityId: activity._id,
+						message: `Booking is now open for "${activity.name}". 
+						Date: ${activity.date ? new Date(activity.date).toLocaleDateString() : 'N/A'}
+						Time: ${activity.time}
+						Price: ${activity.price ? `$${activity.price}` : 'N/A'}
+						Price Range: ${activity.priceRange || 'N/A'}
+						Special Discounts: ${activity.specialDiscounts || 'None'}
+						Booking Status: ${activity.bookingOpen ? 'Open' : 'Closed'}`,
+					});
+				}
+			}
+		}
+
+		// Step 2: Fetch notifications for the tourist
+		const notifications = await NotificationTourist.find({ userId })
+			.sort({ timestamp: -1 }) // Most recent notifications first
+			.select('-__v'); // Exclude unnecessary fields
+
+		res.status(200).json({ notifications });
+	} catch (error) {
+		console.error('Error fetching notifications:', error);
+		res.status(500).json({ error: 'Failed to fetch notifications' });
+	}
+};
+exports.getTouristItineraryNotifications = async (req, res) => {
+	try {
+		const { _id: userId } = req.user; // Get current user's ID from the request object
+
+		// Fetch the tourist's saved itineraries
+		const tourist = await Tourist.findById(userId).populate('savedItineraries');
+
+		// Check if the tourist exists
+		if (!tourist) {
+			return res.status(404).json({ error: 'Tourist not found' });
+		}
+
+		const savedItineraries = tourist.savedItineraries;
+
+		// Step 1: Check for itineraries with `bookingOpen` and create notifications
+		for (let itinerary of savedItineraries) {
+			if (itinerary.bookingOpen) {
+				// Check if a notification for this itinerary already exists
+				const existingNotification = await NotificationItineraryTourist.findOne(
+					{
+						userId,
+						itineraryId: itinerary._id,
+					}
+				);
+
+				if (!existingNotification) {
+					// Create a notification if not already present
+					const message = `
+			New booking details for the itinerary "${itinerary.name}":
+			Timeline: ${itinerary.timeline || 'N/A'}
+			Duration: ${itinerary.duration || 'N/A'}
+			Language: ${itinerary.language || 'N/A'}
+			Locations: ${
+				itinerary.locations && itinerary.locations.length
+					? itinerary.locations.join(', ')
+					: 'N/A'
+			}
+			Price: ${itinerary.price ? `$${itinerary.price}` : 'N/A'}
+			Accessibility: ${itinerary.accessibility || 'N/A'}
+			Pickup Location: ${itinerary.pickupLocation || 'N/A'}
+			Dropoff Location: ${itinerary.dropoffLocation || 'N/A'}
+			Available Dates: ${
+				itinerary.availableDates && itinerary.availableDates.length
+					? itinerary.availableDates
+							.map((date) => new Date(date).toLocaleDateString())
+							.join(', ')
+					: 'N/A'
+			}
+			Booking Status: ${itinerary.bookingOpen ? 'Open' : 'Closed'}
+		  `;
+
+					// Create the notification document
+					await NotificationItineraryTourist.create({
+						userId,
+						itineraryId: itinerary._id,
+						message,
+					});
+				}
+			}
+		}
+
+		// Step 2: Fetch notifications for the tourist
+		const notifications = await NotificationItineraryTourist.find({ userId })
+			.sort({ timestamp: -1 }) // Sort notifications by most recent first
+			.select('-__v'); // Exclude unnecessary fields (like __v)
+
+		// Respond with the fetched notifications
+		res.status(200).json({ notifications });
+	} catch (error) {
+		console.error('Error fetching notifications:', error);
+		res.status(500).json({ error: 'Failed to fetch notifications' });
 	}
 };

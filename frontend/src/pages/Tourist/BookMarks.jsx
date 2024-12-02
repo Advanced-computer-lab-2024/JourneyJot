@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const BookMarks = () => {
 	const [savedActivities, setSavedActivities] = useState([]);
@@ -10,6 +11,7 @@ const BookMarks = () => {
 	const [activeTab, setActiveTab] = useState('activities');
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const navigate = useNavigate(); // Initialize navigate function
 
 	// Fetch bookmarks on mount
 	useEffect(() => {
@@ -92,16 +94,16 @@ const BookMarks = () => {
 		}
 
 		return (
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+			<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
 				{items.map((item) => (
 					<div
 						key={item._id}
-						className='border border-gray-300 rounded-lg shadow-md p-4 bg-white'>
-						<ul className='list-disc list-inside space-y-2'>
+						className='bg-white border border-gray-300 rounded-lg shadow-lg p-6 hover:shadow-xl transition-all duration-300'>
+						<ul className='space-y-3'>
 							{activeTab === 'activities' && (
 								<>
 									<li className='text-gray-700'>
-										<span className='font-semibold'>AdvertiserId </span>
+										<span className='font-semibold'>AdvertiserId: </span>
 										{item.advertiserId?.username || 'N/A'}
 									</li>
 									<li className='text-gray-700'>
@@ -117,17 +119,18 @@ const BookMarks = () => {
 										{item.specialDiscounts || 'N/A'}
 									</li>
 									<li className='text-gray-700'>
-										<span className='font-semibold'>category </span>
+										<span className='font-semibold'>Category: </span>
 										{item.category?.name || 'N/A'}
-									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>preferenceTag </span>
-										{item.preferenceTag?.name || 'N/A'}
 									</li>
 									<li className='text-gray-700'>
 										<span className='font-semibold'>Booking Status: </span>
 										{item.bookingOpen ? 'Open' : 'Closed'}
 									</li>
+									<button
+										onClick={() => navigate('/notify-tourist-activities')}
+										className='w-full py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg mt-4'>
+										Notification Activities
+									</button>
 								</>
 							)}
 							{activeTab === 'itineraries' && (
@@ -143,6 +146,10 @@ const BookMarks = () => {
 									<li className='text-gray-700'>
 										<span className='font-semibold'>Duration: </span>
 										{item.duration}
+									</li>
+									<li>
+										<span className='text-gray-700'>Available Dates: </span>
+										{item.availableDates.join(', ')}
 									</li>
 									<li className='text-gray-700'>
 										<span className='font-semibold'>Language: </span>
@@ -160,6 +167,11 @@ const BookMarks = () => {
 										<span className='font-semibold'>Dropoff Locations: </span>
 										{item.dropoffLocation}
 									</li>
+									<button
+										onClick={() => navigate('/notify-tourist-itineraries')}
+										className='w-full py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg mt-4'>
+										Notification Itineraries
+									</button>
 								</>
 							)}
 							{activeTab === 'attractions' && (
@@ -182,7 +194,7 @@ const BookMarks = () => {
 
 						<button
 							onClick={() => removeBookmark(activeTab, item._id)}
-							className='mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'>
+							className='w-full py-2 mt-4 bg-red-500 hover:bg-red-600 text-white rounded-lg'>
 							Remove Bookmark
 						</button>
 					</div>
@@ -198,13 +210,13 @@ const BookMarks = () => {
 	};
 
 	return (
-		<div className='p-6 bg-gray-50 min-h-screen'>
-			<h1 className='text-3xl font-bold text-blue-600 mb-6 text-center'>
+		<div className='min-h-screen bg-gray-50 p-6'>
+			<h1 className='text-4xl font-bold text-center text-blue-600 mb-8'>
 				My Bookmarks
 			</h1>
 
 			{/* Tabs */}
-			<div className='flex justify-center mb-6'>
+			<div className='flex justify-center mb-8'>
 				{Object.keys(tabs).map((tab) => (
 					<button
 						key={tab}
@@ -212,9 +224,9 @@ const BookMarks = () => {
 							setActiveTab(tab);
 							setError(null); // Reset error on tab switch
 						}}
-						className={`px-6 py-2 rounded-lg mx-2 text-sm font-medium ${
+						className={`px-6 py-2 rounded-lg mx-3 text-sm font-medium transition-all duration-300 ${
 							activeTab === tab
-								? 'bg-blue-600 text-white shadow-md'
+								? 'bg-blue-600 text-white shadow-lg'
 								: 'bg-gray-200 text-gray-600 hover:bg-gray-300'
 						}`}>
 						{tabs[tab]}
@@ -225,7 +237,7 @@ const BookMarks = () => {
 			{/* Error */}
 			{error && <p className='text-red-500 text-center mb-4'>{error}</p>}
 
-			{/* Content */}
+			{/* Tab content */}
 			{renderTabContent()}
 		</div>
 	);
