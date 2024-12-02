@@ -11,6 +11,10 @@ const {
 const { uploadImages, upload } = require('../controllers/upload');
 const { changePassword } = require('../helper/change-password');
 const { deleteRequest } = require('../controllers/deletion-request');
+const {
+	updateStock,
+	getNotifications,
+} = require('../controllers/notification');
 const sellerRouter = express.Router();
 // Update tour guide profile
 sellerRouter.put('/profile', auth_check, createSellerProfile);
@@ -23,5 +27,7 @@ sellerRouter.post(
 );
 sellerRouter.post('/changePassword', auth_check, changePassword);
 sellerRouter.put('/account', auth_check, deleteRequest);
+sellerRouter.post('/update-stock', auth_check, updateStock);
+sellerRouter.get('/notifications', auth_check, getNotifications);
 
 module.exports = sellerRouter;

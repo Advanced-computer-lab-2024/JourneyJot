@@ -89,23 +89,20 @@ const ShowProducts = () => {
 
 	return (
 		<div className='p-6 bg-gray-50 min-h-screen'>
+			{/* Header and Search */}
 			<div className='flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0'>
-				{/* Header and search bar */}
 				<h1 className='text-3xl font-bold text-teal-600'>Products</h1>
-				<div className='flex space-x-4 items-center justify-end w-3/4'>
-					{/* Add Product button */}
-					<Link to={'addProduct'}>
-						<button className='bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200'>
+				<div className='flex flex-wrap space-x-4 items-center justify-end w-full md:w-3/4'>
+					<Link to='addProduct'>
+						<button className='bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200 w-full sm:w-auto'>
 							Add Product
 						</button>
 					</Link>
-					{/* Sort By Rating button */}
 					<button
-						className='bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200'
+						className='bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200 w-full sm:w-auto'
 						onClick={() => setSort((prevState) => !prevState)}>
 						Sort By Rating
 					</button>
-					{/* Search bar */}
 					<input
 						type='search'
 						placeholder='Search...'
@@ -116,31 +113,29 @@ const ShowProducts = () => {
 				</div>
 			</div>
 
-			<div className='flex space-x-4 justify-end mb-4'>
-				{/* Min Price input */}
+			{/* Price Filter */}
+			<div className='flex flex-wrap justify-end gap-4 mb-4'>
 				<input
 					placeholder='Min Price'
-					className='border border-gray-300 rounded-lg p-2 w-1/4 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400'
+					className='border border-gray-300 rounded-lg p-2 w-full sm:w-1/4 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400'
 					value={minPrice}
 					onChange={(e) => setMinPrice(e.target.value)}
 				/>
-				{/* Max Price input */}
 				<input
 					placeholder='Max Price'
-					className='border border-gray-300 rounded-lg p-2 w-1/4 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400'
+					className='border border-gray-300 rounded-lg p-2 w-full sm:w-1/4 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400'
 					value={maxPrice}
 					onChange={(e) => setMaxPrice(e.target.value)}
 				/>
-				{/* Filter button */}
 				<button
 					onClick={filterByPrice}
-					className='bg-teal-500 text-white rounded-md px-4 py-2 shadow-md hover:bg-teal-600 transition duration-200'>
+					className='bg-teal-500 text-white rounded-md px-4 py-2 shadow-md hover:bg-teal-600 transition duration-200 w-full sm:w-auto'>
 					Filter
 				</button>
 			</div>
 
+			{/* Display Products or Spinner */}
 			<div className='mb-4'>
-				{/* Display loading spinner or products */}
 				{loading ? <Spinner /> : <ProductCard products={products} />}
 			</div>
 		</div>

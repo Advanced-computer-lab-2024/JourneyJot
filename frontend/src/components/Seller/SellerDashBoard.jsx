@@ -38,6 +38,11 @@ const SellerDashBoard = () => {
 							className='text-blue-600 hover:text-blue-800 transition duration-300'>
 							Forgot Password?
 						</Link>
+						<Link
+							to='/notify-seller-product'
+							className='text-blue-600 hover:text-blue-800 transition duration-300'>
+							Notify
+						</Link>
 
 						<Link
 							to='/product-revenue'

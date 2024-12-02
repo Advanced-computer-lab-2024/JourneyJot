@@ -1,6 +1,7 @@
 /** @format */
 
 const Product = require('../models/Product');
+const { sendOutOfStockEmail } = require('../services/emailService'); // Import email service
 
 exports.getSorted = async (req, res) => {
 	// <- Middleware applied correctly
@@ -70,18 +71,36 @@ exports.getProducts = async (req, res) => {
 	try {
 		const user = req.user; // Assuming req.user is populated by authentication middleware
 
-		// Check if the user has an admin role
+		// Check if the user has an admin or seller role
 		let products;
 		if ((user && user.role === 'admin') || user.role === 'seller') {
-			// If the user is an admin, fetch all products (archived and non-archived)
+			// If the user is an admin or seller, fetch all products (archived and non-archived)
 			products = await Product.find();
 		} else if (!user) {
 			// If the user is not an admin, fetch only non-archived products
 			products = await Product.find({ archived: false });
 		}
 
+		// Check for products that are out of stock and send email notification
+		const outOfStockProducts = products.filter(
+			(product) => product.quantity === 0
+		);
+
+		if (outOfStockProducts.length > 0) {
+			const adminEmail = user.email; // Admin email from environment variables
+
+			// Send email notification for each out-of-stock product
+			for (const product of outOfStockProducts) {
+				await sendOutOfStockEmail(adminEmail, product);
+				console.log(
+					`Notification email sent for out-of-stock product: ${product.name}`
+				);
+			}
+		}
+
 		res.status(200).json({ products });
 	} catch (err) {
+		console.error('Error fetching products:', err);
 		res.status(400).json({ message: err.message });
 	}
 };

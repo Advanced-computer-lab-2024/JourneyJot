@@ -88,6 +88,8 @@ import AddressManagement from './pages/Tourist/Address.jsx';
 import ProductPaymentPage from './components/Tourist/PayStrpeProduct.jsx';
 import BuyProductsCardVisa from './components/Tourist/PayStrpeProduct.jsx';
 import PreviousPurchases from './pages/Tourist/Orders.jsx';
+import NotifyAdminProduct from './components/Admin/NotifyAdminProduct.jsx';
+import NotifySellerProduct from './components/Seller/NotifySellerProduct.jsx';
 
 // Load Stripe with your public key
 const stripePromise = loadStripe(
@@ -449,6 +451,14 @@ const App = () => {
 			<Route
 				path='/tourist-orders'
 				element={<PreviousPurchases />}
+			/>
+			<Route
+				path='/notify-seller-product'
+				element={<NotifySellerProduct />}
+			/>
+			<Route
+				path='/notify-admin-product'
+				element={<NotifyAdminProduct />}
 			/>
 		</Routes>
 	);

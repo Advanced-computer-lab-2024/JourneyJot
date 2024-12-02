@@ -20,6 +20,11 @@ const {
 	sendEmailToAdvertiser,
 	sendEmailToTourGuide,
 } = require('../controllers/request-otp');
+const {
+	updateStock,
+	getNotifications,
+} = require('../controllers/notification');
+
 adminRouter.delete(
 	'/delete-account/:username',
 	authMiddleware,
@@ -65,5 +70,7 @@ adminRouter.put(
 );
 adminRouter.post('/send-email-advertiser', sendEmailToAdvertiser);
 adminRouter.post('/send-email-tour-guide', sendEmailToTourGuide);
+adminRouter.post('/update-stock', authMiddleware, updateStock);
+adminRouter.get('/notifications', authMiddleware, getNotifications);
 
 module.exports = adminRouter;

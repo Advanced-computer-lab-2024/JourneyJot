@@ -37,6 +37,7 @@ const productSchema = new Schema(
 				ref: 'Review', // Reference to the Review model
 			},
 		],
+		isNotified: { type: Boolean, default: false }, // Tracks if notification is sent
 
 		archived: { type: Boolean, default: false },
 		isBooked: { type: Boolean, default: false },

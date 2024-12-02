@@ -1,10 +1,16 @@
+/** @format */
+
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
 const { authenticateAdmin } = require('../middleware/authMiddleware');
 
 // Route to delete a user
-router.delete('/users/:userType/:id', authenticateAdmin, adminController.deleteUser);
+router.delete(
+	'/users/:userType/:id',
+	authenticateAdmin,
+	adminController.deleteUser
+);
 
 // New route to add a Tourism Governor
 // router.post('/users/tourismgovernor', authenticateAdmin, adminController.addTourismGovernor);
