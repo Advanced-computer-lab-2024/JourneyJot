@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const AdvertiserDashBoard = () => {
 	return (
-		<div className='min-h-screen bg-gray-100'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500'>
 			{/* Navigation Bar */}
 			<nav className='bg-white shadow-lg'>
 				<div className='max-w-7xl mx-auto px-6 py-4 flex justify-between items-center'>
