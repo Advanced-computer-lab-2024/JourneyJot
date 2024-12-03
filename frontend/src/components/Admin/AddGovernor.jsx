@@ -31,7 +31,7 @@ const AddGovernor = () => {
 		const token = localStorage.getItem('token');
 
 		if (!token) {
-			setError('You are not authenticated. Please login.');
+			setError('You are not authenticated. Please log in.');
 			return;
 		}
 
@@ -51,7 +51,6 @@ const AddGovernor = () => {
 			setNewGovernor({
 				username: '',
 				password: '',
-				email: '',
 				role: 'governor',
 			});
 		} catch (error) {
@@ -68,29 +67,34 @@ const AddGovernor = () => {
 
 	return (
 		<div className='p-8'>
-			<h2 className='text-2xl mb-4'>Governor Management</h2>
+			<h2 className='text-2xl mb-4 font-bold'>Governor Management</h2>
 
+			{/* Display success and error messages */}
 			{success && (
-				<div className='bg-green-100 p-2 rounded text-green-600 mb-4'>
+				<div className='bg-green-100 border border-green-400 text-green-700 p-3 rounded mb-4'>
 					{success}
 				</div>
 			)}
 			{error && (
-				<div className='bg-red-100 p-2 rounded text-red-600 mb-4'>{error}</div>
+				<div className='bg-red-100 border border-red-400 text-red-700 p-3 rounded mb-4'>
+					{error}
+				</div>
 			)}
 
+			{/* Button to toggle form visibility */}
 			<button
-				className='bg-blue-500 text-white p-2 rounded mb-4'
+				className='bg-blue-500 text-white py-2 px-4 rounded mb-4'
 				onClick={() => setIsCreating(!isCreating)}>
 				{isCreating ? 'Cancel' : 'Create New Governor'}
 			</button>
 
+			{/* Form to create a governor */}
 			{isCreating && (
 				<form
 					onSubmit={handleSubmit}
-					className='mb-6'>
-					<div className='mb-4'>
-						<label>Username</label>
+					className='space-y-4'>
+					<div>
+						<label className='block font-semibold mb-1'>Username</label>
 						<input
 							type='text'
 							name='username'
@@ -101,8 +105,8 @@ const AddGovernor = () => {
 							required
 						/>
 					</div>
-					<div className='mb-4'>
-						<label>Password</label>
+					<div>
+						<label className='block font-semibold mb-1'>Password</label>
 						<input
 							type='password'
 							name='password'
@@ -113,21 +117,19 @@ const AddGovernor = () => {
 							required
 						/>
 					</div>
-					<div className='mb-4'>
-						<label>Role</label>
+					<div>
+						<label className='block font-semibold mb-1'>Role</label>
 						<input
 							type='text'
 							name='role'
 							value={newGovernor.role}
-							onChange={handleInputChange}
 							className='w-full p-2 border border-gray-300 rounded'
-							placeholder='Enter governor role'
 							disabled
 						/>
 					</div>
 					<button
 						type='submit'
-						className='bg-green-500 text-white p-2 rounded'>
+						className='bg-green-500 text-white py-2 px-4 rounded'>
 						Add Governor
 					</button>
 				</form>

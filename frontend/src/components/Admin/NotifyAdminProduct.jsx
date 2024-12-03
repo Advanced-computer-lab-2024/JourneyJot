@@ -45,6 +45,9 @@ const useNotifications = (token) => {
 
 // Custom hook to handle stock update
 const useUpdateStock = (token) => {
+	const [successMessage, setSuccessMessage] = useState('');
+	const [errorMessage, setErrorMessage] = useState('');
+
 	const updateStock = async (productName, newQuantity) => {
 		try {
 			const response = await axios.post(
@@ -52,13 +55,15 @@ const useUpdateStock = (token) => {
 				{ productName, newQuantity },
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
-			console.log(response.data.message);
+			setSuccessMessage(response.data.message);
+			setErrorMessage('');
 		} catch (error) {
+			setErrorMessage('Error updating stock.');
 			console.error('Error updating stock:', error);
 		}
 	};
 
-	return { updateStock };
+	return { updateStock, successMessage, errorMessage };
 };
 
 const NotifyAdminProduct = () => {
@@ -67,13 +72,14 @@ const NotifyAdminProduct = () => {
 	const [authToken, setAuthToken] = useState(getToken());
 
 	const { notifications, loading, error } = useNotifications(authToken);
-	const { updateStock } = useUpdateStock(authToken);
+	const { updateStock, successMessage, errorMessage } =
+		useUpdateStock(authToken);
 
 	const handleUpdateStock = () => {
 		if (productName && newQuantity) {
 			updateStock(productName, newQuantity);
 		} else {
-			alert('Please provide both product name and new quantity.');
+			setErrorMessage('Please provide both product name and new quantity.');
 		}
 	};
 
@@ -114,11 +120,17 @@ const NotifyAdminProduct = () => {
 								className='mt-1 p-4 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
 							/>
 						</div>
+						{errorMessage && (
+							<p className='text-red-500 text-sm'>{errorMessage}</p>
+						)}
 						<button
 							onClick={handleUpdateStock}
 							className='w-full bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'>
 							Update Stock
 						</button>
+						{successMessage && (
+							<p className='text-green-500 text-sm'>{successMessage}</p>
+						)}
 					</div>
 				</section>
 

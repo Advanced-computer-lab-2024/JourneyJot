@@ -41,9 +41,9 @@ const Revenue = () => {
 	};
 
 	return (
-		<div className='min-h-screen bg-gray-50 py-8 px-4'>
-			<div className='max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6'>
-				<h1 className='text-2xl font-bold text-gray-800 text-center mb-6'>
+		<div className='min-h-screen bg-gray-50 py-10 px-4'>
+			<div className='max-w-3xl mx-auto bg-white shadow-xl rounded-lg p-8'>
+				<h1 className='text-3xl font-semibold text-gray-800 text-center mb-6'>
 					Admin Dashboard
 				</h1>
 
@@ -51,14 +51,14 @@ const Revenue = () => {
 				<div className='flex flex-col items-center mb-6'>
 					<label
 						htmlFor='revenueSelect'
-						className='text-lg font-medium text-gray-700 mb-2'>
+						className='text-xl font-medium text-gray-700 mb-2'>
 						Select Revenue Type:
 					</label>
 					<select
 						id='revenueSelect'
 						value={selectedRevenue}
 						onChange={handleSelectChange}
-						className='w-full md:w-1/2 bg-gray-100 border border-gray-300 text-gray-800 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400'>
+						className='w-full md:w-1/2 bg-gray-100 border border-gray-300 text-gray-800 rounded-lg px-6 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-300'>
 						<option value='select'>Select Revenue</option>
 						<option value='activity'>Activity Revenue</option>
 						<option value='itinerary'>Itinerary Revenue</option>
@@ -68,7 +68,7 @@ const Revenue = () => {
 				</div>
 
 				{/* Render the selected component */}
-				<div className='bg-gray-100 p-4 rounded-lg shadow-inner'>
+				<div className='bg-gray-100 p-6 rounded-lg shadow-inner'>
 					{renderSelectedComponent()}
 				</div>
 			</div>

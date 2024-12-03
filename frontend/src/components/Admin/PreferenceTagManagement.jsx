@@ -8,6 +8,8 @@ const PreferenceTagManagement = () => {
 	const [newTag, setNewTag] = useState('');
 	const [isEditing, setIsEditing] = useState(false);
 	const [editTagId, setEditTagId] = useState(null);
+	const [error, setError] = useState('');
+	const [successMessage, setSuccessMessage] = useState('');
 
 	// Fetch tags on component mount
 	useEffect(() => {
@@ -19,6 +21,7 @@ const PreferenceTagManagement = () => {
 				});
 				setTags(response.data);
 			} catch (error) {
+				setError('Error fetching tags.');
 				console.error('Error fetching tags:', error);
 			}
 		};
@@ -29,12 +32,18 @@ const PreferenceTagManagement = () => {
 	// Handle input change for the tag
 	const handleInputChange = (e) => {
 		setNewTag(e.target.value);
+		setError('');
+		setSuccessMessage('');
 	};
 
 	// Add a new tag
 	const handleAddTag = async (e) => {
 		e.preventDefault();
 		const token = localStorage.getItem('token');
+		if (!newTag) {
+			setError('Tag name cannot be empty.');
+			return;
+		}
 		try {
 			const response = await axios.post(
 				'http://localhost:3000/pref-tags',
@@ -45,7 +54,9 @@ const PreferenceTagManagement = () => {
 			);
 			setTags((prev) => [...prev, response.data.tag]);
 			setNewTag('');
+			setSuccessMessage('Tag added successfully.');
 		} catch (error) {
+			setError('Failed to add tag.');
 			console.error('Failed to add tag:', error);
 		}
 	};
@@ -54,6 +65,10 @@ const PreferenceTagManagement = () => {
 	const handleEditTag = async (e) => {
 		e.preventDefault();
 		const token = localStorage.getItem('token');
+		if (!newTag) {
+			setError('Tag name cannot be empty.');
+			return;
+		}
 		try {
 			const response = await axios.put(
 				`http://localhost:3000/pref-tags/${editTagId}`,
@@ -68,7 +83,9 @@ const PreferenceTagManagement = () => {
 			setNewTag('');
 			setIsEditing(false);
 			setEditTagId(null);
+			setSuccessMessage('Tag updated successfully.');
 		} catch (error) {
+			setError('Failed to edit tag.');
 			console.error('Failed to edit tag:', error);
 		}
 	};
@@ -78,6 +95,8 @@ const PreferenceTagManagement = () => {
 		setNewTag(tag.name);
 		setIsEditing(true);
 		setEditTagId(tag._id);
+		setError('');
+		setSuccessMessage('');
 	};
 
 	// Delete a tag
@@ -88,7 +107,9 @@ const PreferenceTagManagement = () => {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 			setTags((prev) => prev.filter((tag) => tag._id !== id));
+			setSuccessMessage('Tag deleted successfully.');
 		} catch (error) {
+			setError('Failed to delete tag.');
 			console.error('Failed to delete tag:', error);
 		}
 	};
@@ -117,6 +138,12 @@ const PreferenceTagManagement = () => {
 					{isEditing ? 'Update Tag' : 'Add Tag'}
 				</button>
 			</form>
+
+			{/* Error and Success messages */}
+			{error && <p className='text-red-500 mb-4'>{error}</p>}
+			{successMessage && (
+				<p className='text-green-500 mb-4'>{successMessage}</p>
+			)}
 
 			<h3 className='text-xl mb-4'>Current Tags</h3>
 			{tags.length > 0 ? (

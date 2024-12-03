@@ -9,6 +9,7 @@ const CategoryManagement = () => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editCategoryId, setEditCategoryId] = useState(null);
 	const [error, setError] = useState(null);
+	const [success, setSuccess] = useState(null);
 
 	// Fetch categories on component mount
 	useEffect(() => {
@@ -18,14 +19,8 @@ const CategoryManagement = () => {
 				const response = await axios.get('http://localhost:3000/categories', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
-				if (Array.isArray(response.data)) {
-					setCategories(response.data);
-				} else {
-					console.error('Unexpected response format:', response.data);
-					setError('Failed to load categories.');
-				}
+				setCategories(response.data || []);
 			} catch (error) {
-				console.error('Error fetching categories:', error);
 				setError('Failed to load categories.');
 			}
 		};
@@ -38,123 +33,125 @@ const CategoryManagement = () => {
 		setNewCategory(e.target.value);
 	};
 
-	// Add a new category
-	const handleAddCategory = async (e) => {
+	// Add or edit category
+	const handleCategorySubmit = async (e) => {
 		e.preventDefault();
 		const token = localStorage.getItem('token');
-		try {
-			const response = await axios.post(
-				'http://localhost:3000/categories',
-				{ name: newCategory },
-				{ headers: { Authorization: `Bearer ${token}` } }
-			);
-			setCategories((prev) => [...prev, response.data.category]);
-			setNewCategory('');
-		} catch (error) {
-			console.error('Failed to add category:', error);
-			setError('Failed to add category.');
-		}
-	};
+		const url = isEditing
+			? `http://localhost:3000/categories/${editCategoryId}`
+			: 'http://localhost:3000/categories';
+		const method = isEditing ? 'put' : 'post';
+		const data = { name: newCategory };
 
-	// Edit an existing category
-	const handleEditCategory = async (e) => {
-		e.preventDefault();
-		const token = localStorage.getItem('token');
 		try {
-			const response = await axios.put(
-				`http://localhost:3000/categories/${editCategoryId}`,
-				{ name: newCategory },
-				{ headers: { Authorization: `Bearer ${token}` } }
-			);
-
-			// Update the categories state with the edited category
+			const response = await axios({
+				url,
+				method,
+				data,
+				headers: { Authorization: `Bearer ${token}` },
+			});
 			setCategories((prev) =>
-				prev.map((category) =>
-					category._id === editCategoryId ? response.data.category : category
-				)
+				isEditing
+					? prev.map((cat) =>
+							cat._id === editCategoryId ? response.data.category : cat
+					  )
+					: [...prev, response.data.category]
 			);
 			setNewCategory('');
 			setIsEditing(false);
 			setEditCategoryId(null);
-		} catch (error) {
-			console.error('Failed to edit category:', error);
-			setError('Failed to edit category.');
+			setSuccess(
+				isEditing
+					? 'Category updated successfully!'
+					: 'Category added successfully!'
+			);
+			setError(null);
+		} catch {
+			setError('Failed to save category.');
 		}
 	};
 
-	// Start editing a category
-	const handleStartEdit = (category) => {
-		setNewCategory(category.name);
-		setIsEditing(true);
-		setEditCategoryId(category._id);
-	};
-
-	// Delete a category
+	// Delete category
 	const handleDeleteCategory = async (id) => {
 		const token = localStorage.getItem('token');
 		try {
 			await axios.delete(`http://localhost:3000/categories/${id}`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			setCategories((prev) => prev.filter((category) => category._id !== id));
-		} catch (error) {
-			console.error('Failed to delete category:', error);
+			setCategories((prev) => prev.filter((cat) => cat._id !== id));
+			setSuccess('Category deleted successfully!');
+			setError(null);
+		} catch {
 			setError('Failed to delete category.');
 		}
 	};
 
+	// Start editing
+	const handleStartEdit = (category) => {
+		setNewCategory(category.name);
+		setIsEditing(true);
+		setEditCategoryId(category._id);
+	};
+
 	return (
-		<div className='p-8'>
-			<h2 className='text-2xl mb-4'>Category Management</h2>
-			{error && <p className='text-red-500'>{error}</p>} {/* Error Message */}
+		<div className='p-8 max-w-2xl mx-auto bg-gray-50 shadow-md rounded'>
+			<h2 className='text-2xl font-bold mb-6 text-gray-800'>
+				Category Management
+			</h2>
+			{error && <p className='text-red-600 mb-4'>{error}</p>}
+			{success && <p className='text-green-600 mb-4'>{success}</p>}
+
 			<form
-				onSubmit={isEditing ? handleEditCategory : handleAddCategory}
-				className='mb-6'>
-				<div className='mb-4'>
-					<label>Category Name</label>
+				onSubmit={handleCategorySubmit}
+				className='space-y-4'>
+				<div>
+					<label className='block text-sm font-medium text-gray-700'>
+						Category Name
+					</label>
 					<input
 						type='text'
 						value={newCategory}
 						onChange={handleInputChange}
-						className='w-full p-2 border border-gray-300 rounded'
+						className='w-full p-2 border border-gray-300 rounded focus:ring-blue-300 focus:outline-none'
 						placeholder='Enter category name'
 						required
 					/>
 				</div>
 				<button
 					type='submit'
-					className='bg-green-500 text-white p-2 rounded'>
+					className='px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition'>
 					{isEditing ? 'Update Category' : 'Add Category'}
 				</button>
 			</form>
-			<h3 className='text-xl mb-4'>Current Categories</h3>
-			{categories.length > 0 ? (
-				<ul className='list-disc pl-5'>
-					{categories.map((category) =>
-						category && category.name ? (
-							<li
-								key={category._id}
-								className='mb-2 flex justify-between'>
-								<span>{category.name}</span>
-								<div>
-									<button
-										className='bg-yellow-500 text-white p-1 rounded mr-2'
-										onClick={() => handleStartEdit(category)}>
-										Edit
-									</button>
-									<button
-										className='bg-red-500 text-white p-1 rounded'
-										onClick={() => handleDeleteCategory(category._id)}>
-										Delete
-									</button>
-								</div>
-							</li>
-						) : null
-					)}
-				</ul>
-			) : (
-				<p>No categories available.</p>
-			)}
+
+			<h3 className='text-xl font-bold mt-8 mb-4 text-gray-800'>
+				Current Categories
+			</h3>
+			<ul className='space-y-2'>
+				{categories.length > 0 ? (
+					categories.map((category) => (
+						<li
+							key={category._id}
+							className='flex justify-between items-center bg-white p-4 border rounded shadow-sm'>
+							<span>{category.name}</span>
+							<div className='space-x-2'>
+								<button
+									onClick={() => handleStartEdit(category)}
+									className='px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600'>
+									Edit
+								</button>
+								<button
+									onClick={() => handleDeleteCategory(category._id)}
+									className='px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700'>
+									Delete
+								</button>
+							</div>
+						</li>
+					))
+				) : (
+					<p className='text-gray-600'>No categories available.</p>
+				)}
+			</ul>
 		</div>
 	);
 };

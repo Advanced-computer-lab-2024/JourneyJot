@@ -9,6 +9,8 @@ const AddAdmin = () => {
 		role: 'admin',
 	});
 	const [isCreating, setIsCreating] = useState(false);
+	const [errorMessage, setErrorMessage] = useState('');
+	const [successMessage, setSuccessMessage] = useState('');
 
 	// Handle input changes for the new admin form
 	const handleInputChange = (e) => {
@@ -23,6 +25,12 @@ const AddAdmin = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const token = localStorage.getItem('token');
+
+		if (!token) {
+			setErrorMessage('User is not authenticated. Please log in.');
+			return;
+		}
+
 		try {
 			const response = await axios.post(
 				'http://localhost:3000/admins/addAdmin',
@@ -31,15 +39,17 @@ const AddAdmin = () => {
 					headers: { Authorization: `Bearer ${token}` },
 				}
 			);
-			setIsCreating(false);
-			console.log(response);
-			alert('Admin created successfully!');
-
-			// Reset the form
-			setNewAdmin({ username: '', password: '', email: '', role: 'admin' });
+			setSuccessMessage('Admin created successfully!');
+			setErrorMessage(''); // Clear any previous error
+			setNewAdmin({ username: '', password: '', role: 'admin' });
+			setIsCreating(false); // Close the form
 		} catch (error) {
-			console.error('Failed to create admin:', error);
-			alert('Failed to create admin');
+			console.error('Failed to create admin:', error.response || error.message);
+			setErrorMessage(
+				error.response?.data?.message ||
+					'An error occurred while creating the admin.'
+			);
+			setSuccessMessage(''); // Clear any previous success message
 		}
 	};
 
@@ -47,12 +57,26 @@ const AddAdmin = () => {
 		<div className='p-8'>
 			<h2 className='text-2xl mb-4'>Admin Management</h2>
 
+			{/* Toggle Create Admin Form */}
 			<button
 				className='bg-blue-500 text-white p-2 rounded mb-4'
 				onClick={() => setIsCreating(!isCreating)}>
 				{isCreating ? 'Cancel' : 'Create New Admin'}
 			</button>
 
+			{/* Display Success or Error Messages */}
+			{errorMessage && (
+				<div className='mb-4 text-red-600 bg-red-100 p-2 rounded'>
+					{errorMessage}
+				</div>
+			)}
+			{successMessage && (
+				<div className='mb-4 text-green-600 bg-green-100 p-2 rounded'>
+					{successMessage}
+				</div>
+			)}
+
+			{/* Create Admin Form */}
 			{isCreating && (
 				<form
 					onSubmit={handleSubmit}
@@ -89,7 +113,6 @@ const AddAdmin = () => {
 							value={newAdmin.role}
 							onChange={handleInputChange}
 							className='w-full p-2 border border-gray-300 rounded'
-							placeholder='Enter admin role'
 							disabled
 						/>
 					</div>

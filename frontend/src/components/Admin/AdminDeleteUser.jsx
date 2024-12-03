@@ -1,5 +1,4 @@
 /** @format */
-
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -8,7 +7,7 @@ const AdminDeleteUser = () => {
 	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
 
-	// Handle input change for user ID
+	// Handle input change for username
 	const handleInputChange = (e) => {
 		setUsername(e.target.value);
 	};
@@ -16,70 +15,77 @@ const AdminDeleteUser = () => {
 	// Handle delete user account submission
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setSuccess(''); // Clear previous success message
-		setError(''); // Clear previous error message
+
+		// Reset error and success states
+		setSuccess('');
+		setError('');
 
 		const token = localStorage.getItem('token');
-
 		if (!token) {
-			setError('You are not authenticated. Please login.');
+			setError('You are not authenticated. Please log in.');
 			return;
 		}
 
 		try {
-			const response = await axios.delete(
+			await axios.delete(
 				`http://localhost:3000/admins/delete-account/${username}`,
 				{
 					headers: { Authorization: `Bearer ${token}` },
 				}
 			);
 			setSuccess('User deleted successfully!');
-			console.log(response);
-
-			// Reset the userId input
-			setUsername('');
+			setUsername(''); // Clear input
 		} catch (error) {
 			console.error(
 				'Failed to delete user:',
 				error.response ? error.response.data : error.message
 			);
 			setError(
-				'Failed to delete user. ' +
-					(error.response ? error.response.data.message : error.message)
+				`Failed to delete user. ${
+					error.response ? error.response.data.message : error.message
+				}`
 			);
 		}
 	};
 
 	return (
-		<div className='p-8'>
-			<h2 className='text-2xl mb-4'>Delete User</h2>
+		<div className='p-8 '>
+			<h2 className='text-2xl font-semibold mb-6 '>Delete User</h2>
 
+			{/* Success Message */}
 			{success && (
-				<div className='bg-green-100 p-2 rounded text-green-600 mb-4'>
+				<div className='bg-green-100 border border-green-300 text-green-700 p-3 rounded-md mb-4'>
 					{success}
 				</div>
 			)}
+
+			{/* Error Message */}
 			{error && (
-				<div className='bg-red-100 p-2 rounded text-red-600 mb-4'>{error}</div>
+				<div className='bg-red-100 border border-red-300 text-red-700 p-3 rounded-md mb-4'>
+					{error}
+				</div>
 			)}
 
+			{/* Form */}
 			<form
 				onSubmit={handleSubmit}
-				className='mb-6'>
+				className='bg-white p-6 rounded shadow-md'>
 				<div className='mb-4'>
-					<label>Username</label>
+					<label className='block text-gray-700 font-medium mb-2'>
+						Username
+					</label>
 					<input
 						type='text'
 						value={username}
 						onChange={handleInputChange}
-						className='w-full p-2 border border-gray-300 rounded'
+						className='w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300'
 						placeholder='Enter username to delete'
 						required
 					/>
 				</div>
 				<button
 					type='submit'
-					className='bg-red-500 text-white p-2 rounded'>
+					className='bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition'>
 					Delete User
 				</button>
 			</form>

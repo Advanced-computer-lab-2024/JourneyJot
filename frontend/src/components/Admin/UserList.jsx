@@ -45,9 +45,9 @@ const UserList = () => {
 	}, []);
 
 	return (
-		<div className='min-h-screen bg-gray-100 p-6'>
-			<div className='bg-white shadow-lg rounded-lg p-8 max-w-4xl mx-auto'>
-				<h1 className='text-3xl font-semibold text-gray-900 mb-6 text-center'>
+		<div className='min-h-screen bg-gray-50 p-6'>
+			<div className='bg-white shadow-2xl rounded-lg p-8 max-w-5xl mx-auto'>
+				<h1 className='text-3xl font-bold text-gray-900 mb-8 text-center'>
 					Users and Tourists Data
 				</h1>
 
@@ -58,19 +58,22 @@ const UserList = () => {
 				) : (
 					<>
 						{/* Users Section */}
-						<div className='mb-8'>
-							<h2 className='text-2xl font-semibold text-gray-800 mb-4'>
+						<div className='mb-10'>
+							<h2 className='text-2xl font-semibold text-gray-800 mb-6'>
 								Users
 							</h2>
-							<ul className='space-y-4'>
+							<ul className='space-y-6'>
 								{users.map((user) => (
 									<li
 										key={user._id}
-										className='p-4 bg-gray-50 rounded-lg shadow-md hover:bg-gray-100'>
-										<div className='flex justify-between'>
-											<p className='text-lg font-medium text-gray-800'>
-												{user.name} - {user.username}
-											</p>
+										className='p-4 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-all'>
+										<div className='flex justify-between items-center'>
+											<div>
+												<p className='text-lg font-medium text-gray-800'>
+													{user.name} - {user.username}
+												</p>
+												<p className='text-sm text-gray-500'>{user.email}</p>
+											</div>
 											<span className='text-sm font-semibold text-blue-600'>
 												{user.role}
 											</span>
@@ -81,19 +84,22 @@ const UserList = () => {
 						</div>
 
 						{/* Tourists Section */}
-						<div className='mb-8'>
-							<h2 className='text-2xl font-semibold text-gray-800 mb-4'>
+						<div>
+							<h2 className='text-2xl font-semibold text-gray-800 mb-6'>
 								Tourists
 							</h2>
-							<ul className='space-y-4'>
+							<ul className='space-y-6'>
 								{tourists.map((tourist) => (
 									<li
 										key={tourist._id}
-										className='p-4 bg-gray-50 rounded-lg shadow-md hover:bg-gray-100'>
-										<div className='flex justify-between'>
-											<p className='text-lg font-medium text-gray-800'>
-												{tourist.name} - {tourist.username}
-											</p>
+										className='p-4 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-all'>
+										<div className='flex justify-between items-center'>
+											<div>
+												<p className='text-lg font-medium text-gray-800'>
+													{tourist.name} - {tourist.username}
+												</p>
+												<p className='text-sm text-gray-500'>{tourist.email}</p>
+											</div>
 										</div>
 									</li>
 								))}
