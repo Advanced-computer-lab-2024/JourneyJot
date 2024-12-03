@@ -83,11 +83,6 @@ const FlightOffers = ({ flightOffers = [], onBook }) => {
 	);
 };
 
-// Default Props
-FlightOffers.defaultProps = {
-	flightOffers: [],
-};
-
 // Prop Types
 FlightOffers.propTypes = {
 	flightOffers: PropTypes.arrayOf(
