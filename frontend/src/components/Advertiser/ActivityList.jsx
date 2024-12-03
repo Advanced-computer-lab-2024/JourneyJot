@@ -156,6 +156,9 @@ const ActivityList = () => {
 							<h3 className='text-xl font-semibold text-gray-800'>
 								{activity.advertiserId.username}'s Activity
 							</h3>
+							<h4 className='text-xl font-semibold text-red-600'>
+								{activity.name} Activity
+							</h4>
 							<p className='text-gray-600'>
 								Date: {new Date(activity.date).toLocaleDateString()}
 							</p>
@@ -184,6 +187,9 @@ const ActivityList = () => {
 							<h3 className='text-xl font-semibold text-gray-800'>
 								{itinerary.tourGuideId.username}'s Itinerary
 							</h3>
+							<h4 className='text-xl font-semibold text-red-600'>
+								{itinerary.name} Itinerary
+							</h4>
 							{itinerary.availableDates &&
 							itinerary.availableDates.length > 0 ? (
 								itinerary.availableDates.map((dateObj, index) => (

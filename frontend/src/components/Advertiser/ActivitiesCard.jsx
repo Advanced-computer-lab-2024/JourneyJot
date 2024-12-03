@@ -185,45 +185,56 @@ const ActivitiesCard = ({
 							key={activity._id}
 							className='border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-2xl transition-shadow duration-300'>
 							<div className='flex flex-col h-full space-y-4 text-left'>
-								<ul className='list-disc list-inside space-y-2'>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Activity Name: </span>
+								<ul className='space-y-3'>
+									<li className='text-gray-800'>
+										<span className='font-semibold text-lg'>
+											Activity Name:{' '}
+										</span>
 										{activity.name || 'N/A'}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Advertiser Name: </span>
+									<li className='text-gray-800'>
+										<span className='font-semibold text-lg'>
+											Advertiser Name:{' '}
+										</span>
 										{activity.advertiserId?.username || 'N/A'}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Date: </span>
+									<li className='text-gray-800'>
+										<span className='font-semibold text-lg'>Date: </span>
 										{new Date(activity.date).toLocaleDateString()}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Time: </span>
+									<li className='text-gray-800'>
+										<span className='font-semibold text-lg'>Time: </span>
 										{activity.time}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Price: </span>
-										{(activity.price * conversionRate).toFixed(1)} {currency}
+									<li className='text-gray-800'>
+										<span className='font-semibold text-lg'>Price: </span>
+										{activity.price
+											? (activity.price * conversionRate).toFixed(1)
+											: 'N/A'}{' '}
+										{currency}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Category: </span>
+									<li className='text-gray-800'>
+										<span className='font-semibold text-lg'>Category: </span>
 										{activity.category?.name || 'N/A'}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Tag: </span>
+									<li className='text-gray-800'>
+										<span className='font-semibold text-lg'>Tag: </span>
 										{activity.preferenceTag?.name || 'N/A'}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Special Discounts: </span>
+									<li className='text-gray-800'>
+										<span className='font-semibold text-lg'>
+											Special Discounts:{' '}
+										</span>
 										{activity.specialDiscounts || 'N/A'}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Booking Status: </span>
+									<li className='text-gray-800'>
+										<span className='font-semibold text-lg'>
+											Booking Status:{' '}
+										</span>
 										{activity.bookingOpen ? 'Open' : 'Closed'}
 									</li>
-									<li className='text-gray-700 flex items-center'>
-										<span className='font-semibold mr-2'>Rating: </span>
+									<li className='text-gray-800 flex items-center'>
+										<span className='font-semibold text-lg mr-2'>Rating: </span>
 										{activity.rating ? (
 											<StarRating rating={activity.rating} />
 										) : (

@@ -6,6 +6,7 @@ import axios from 'axios';
 const ItinerariesComponent = () => {
 	const [itineraries, setItineraries] = useState([]);
 	const [newItinerary, setNewItinerary] = useState({
+		name: '',
 		activities: [],
 		locations: [],
 		timeline: '',
@@ -17,6 +18,7 @@ const ItinerariesComponent = () => {
 		accessibility: '',
 		pickupLocation: '',
 		dropoffLocation: '',
+		bookingOpen: '',
 	});
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -52,9 +54,14 @@ const ItinerariesComponent = () => {
 
 	// Handle form input changes
 	const handleInputChange = (e) => {
-		const { name, value } = e.target;
+		const { name, value, type, checked } = e.target;
 
-		if (name === 'activities' || name === 'locations') {
+		if (type === 'checkbox') {
+			setNewItinerary({
+				...newItinerary,
+				[name]: checked,
+			});
+		} else if (name === 'activities' || name === 'locations') {
 			setNewItinerary({
 				...newItinerary,
 				[name]: value ? value.split(',').map((item) => item.trim()) : [],
@@ -131,6 +138,7 @@ const ItinerariesComponent = () => {
 			);
 			setItineraries(response.data);
 			setNewItinerary({
+				name: '',
 				activities: [],
 				locations: [],
 				timeline: '',
@@ -142,6 +150,7 @@ const ItinerariesComponent = () => {
 				accessibility: '',
 				pickupLocation: '',
 				dropoffLocation: '',
+				bookingOpen: '',
 			}); // Reset form
 		} catch (error) {
 			console.error('Failed to save itinerary', error);
@@ -185,6 +194,17 @@ const ItinerariesComponent = () => {
 			<form
 				onSubmit={handleSubmit}
 				className='mb-6'>
+				{/* Itinerary Name */}
+				<input
+					type='text'
+					name='name'
+					value={newItinerary.name}
+					onChange={handleInputChange}
+					className='mb-4 p-2 border border-gray-300 rounded w-full'
+					placeholder='Itinerary Name'
+					required
+				/>
+
 				{/* Timeline */}
 				<input
 					type='text'
@@ -260,9 +280,9 @@ const ItinerariesComponent = () => {
 
 				{/* Available Dates */}
 				<input
-					type='date'
+					type='text'
 					name='availableDates'
-					value={newItinerary.availableDates.join(',')}
+					value={newItinerary.availableDates.join(', ')}
 					onChange={handleInputChange}
 					className='mb-4 p-2 border border-gray-300 rounded w-full'
 					placeholder='Available Dates (comma separated)'
@@ -297,90 +317,93 @@ const ItinerariesComponent = () => {
 					className='mb-4 p-2 border border-gray-300 rounded w-full'
 					placeholder='Dropoff Location'
 				/>
-				<input
-					type='checkbox'
-					name='BookingOpen'
-					checked={newItinerary.bookingOpen} // Sets the checkbox based on the current state (true or false)
-					onChange={handleInputChange} // Calls the function to update the state when clicked
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Booking Open' // Optional, placeholder is not typically needed for checkboxes
-				/>
+
+				{/* Booking Open Checkbox */}
+				<label className='mb-4'>
+					<input
+						type='checkbox'
+						name='bookingOpen'
+						checked={newItinerary.bookingOpen}
+						onChange={handleInputChange}
+					/>
+					Booking Open
+				</label>
 
 				{/* Error message for available dates */}
 				{availableDatesError && (
 					<p className='text-red-500 mb-4'>{availableDatesError}</p>
 				)}
 
-				{/* Submit Button */}
 				<button
 					type='submit'
-					className='bg-blue-500 text-white py-2 px-4 rounded'>
-					{isEditing ? 'Update Itinerary' : 'Create Itinerary'}
+					className='bg-blue-500 text-white p-2 rounded'>
+					{isEditing ? 'Update Itinerary' : 'Add Itinerary'}
 				</button>
 			</form>
 
-			<div>
-				<h3 className='text-xl mb-4'>Itineraries List</h3>
-				<ul>
-					{itineraries.map((itinerary) => (
-						<li
-							key={itinerary._id}
-							className='mb-4 p-4 border border-gray-300 rounded'>
-							<div className='flex justify-between'>
-								<h4 className='font-bold'>{itinerary.timeline}</h4>
-								<div>
-									<button
-										onClick={() => handleEdit(itinerary)}
-										className='bg-yellow-500 text-white py-1 px-3 rounded mr-2'>
-										Edit
-									</button>
-									<button
-										onClick={() => handleDelete(itinerary._id)}
-										className='bg-red-500 text-white py-1 px-3 rounded'>
-										Delete
-									</button>
-								</div>
+			{/* Display list of itineraries */}
+			<ul>
+				{itineraries.map((itinerary) => (
+					<li
+						key={itinerary._id}
+						className='mb-4 p-4 border border-gray-300 rounded'>
+						<div className='flex justify-between'>
+							<h4 className='font-bold'>{itinerary.timeline}</h4>
+							<div>
+								<button
+									onClick={() => handleEdit(itinerary)}
+									className='bg-yellow-500 text-white py-1 px-3 rounded mr-2'>
+									Edit
+								</button>
+								<button
+									onClick={() => handleDelete(itinerary._id)}
+									className='bg-red-500 text-white py-1 px-3 rounded'>
+									Delete
+								</button>
 							</div>
-							<div className='mt-2'>
-								<p>
-									<strong>Activities:</strong> {itinerary.activities.join(', ')}
-								</p>
-								<p>
-									<strong>Locations:</strong> {itinerary.locations.join(', ')}
-								</p>
-								<p>
-									<strong>Duration:</strong> {itinerary.duration}
-								</p>
-								<p>
-									<strong>Language:</strong> {itinerary.language}
-								</p>
-								<p>
-									<strong>Price:</strong> {itinerary.price}
-								</p>
-								<p>
-									<strong>Rating:</strong> {itinerary.rating}
-								</p>
-								<p>
-									<strong>Available Dates:</strong>{' '}
-									{itinerary.availableDates.join(', ')}
-								</p>
-								<p>
-									<strong>Accessibility:</strong> {itinerary.accessibility}
-								</p>
-								<p>
-									<strong>Pickup Location:</strong> {itinerary.pickupLocation}
-								</p>
-								<p>
-									<strong>Dropoff Location:</strong> {itinerary.dropoffLocation}
-								</p>
-								<p>
-									<strong>BookingOpen:</strong> {itinerary.bookingOpen}
-								</p>
-							</div>
-						</li>
-					))}
-				</ul>
-			</div>
+						</div>
+						<div className='mt-2'>
+							<p>
+								<strong>Itinerary Name:</strong> {itinerary.name}
+							</p>
+							<p>
+								<strong>Activities:</strong> {itinerary.activities.join(', ')}
+							</p>
+							<p>
+								<strong>Locations:</strong> {itinerary.locations.join(', ')}
+							</p>
+							<p>
+								<strong>Duration:</strong> {itinerary.duration}
+							</p>
+							<p>
+								<strong>Language:</strong> {itinerary.language}
+							</p>
+							<p>
+								<strong>Price:</strong> {itinerary.price}
+							</p>
+							<p>
+								<strong>Rating:</strong> {itinerary.rating}
+							</p>
+							<p>
+								<strong>Available Dates:</strong>{' '}
+								{itinerary.availableDates.join(', ')}
+							</p>
+							<p>
+								<strong>Accessibility:</strong> {itinerary.accessibility}
+							</p>
+							<p>
+								<strong>Pickup Location:</strong> {itinerary.pickupLocation}
+							</p>
+							<p>
+								<strong>Dropoff Location:</strong> {itinerary.dropoffLocation}
+							</p>
+							<p>
+								<strong>BookingOpen:</strong> {itinerary.bookingOpen}
+							</p>
+						</div>
+					</li>
+				))}
+			</ul>
 		</div>
 	);
 };

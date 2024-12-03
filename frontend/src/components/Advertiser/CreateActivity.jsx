@@ -6,12 +6,13 @@ import { useNavigate } from 'react-router-dom';
 
 const ActivityForm = () => {
 	const [formData, setFormData] = useState({
+		name: '',
 		date: '',
 		time: '',
 		price: '',
 		priceRange: '',
 		category: '',
-		tags: '', // Changed to a single value
+		preferenceTag: '',
 		specialDiscounts: '',
 		bookingOpen: true,
 		rating: '',
@@ -19,6 +20,8 @@ const ActivityForm = () => {
 
 	const [categories, setCategories] = useState([]);
 	const [tags, setTags] = useState([]);
+	const [error, setError] = useState('');
+	const [success, setSuccess] = useState('');
 
 	useEffect(() => {
 		const fetchCategories = async () => {
@@ -26,7 +29,7 @@ const ActivityForm = () => {
 				const response = await axios.get('http://localhost:3000/categories');
 				setCategories(response.data);
 			} catch (error) {
-				console.error('Error fetching categories:', error);
+				setError('Failed to fetch categories.');
 			}
 		};
 
@@ -35,7 +38,7 @@ const ActivityForm = () => {
 				const response = await axios.get('http://localhost:3000/pref-tags');
 				setTags(response.data);
 			} catch (error) {
-				console.error('Error fetching tags:', error);
+				setError('Failed to fetch tags.');
 			}
 		};
 
@@ -54,10 +57,12 @@ const ActivityForm = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setError('');
+		setSuccess('');
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
-				throw new Error('No token found. Please login again.');
+				throw new Error('No token found. Please log in again.');
 			}
 
 			const config = {
@@ -65,15 +70,28 @@ const ActivityForm = () => {
 					Authorization: `Bearer ${token}`,
 				},
 			};
-			console.log(token);
+
 			const response = await axios.post(
 				'http://localhost:3000/activities',
 				formData,
 				config
 			);
-			console.log('Activity created:', response.data);
+
+			setSuccess('Activity created successfully!');
+			setFormData({
+				name: '',
+				date: '',
+				time: '',
+				price: '',
+				priceRange: '',
+				category: '',
+				preferenceTag: '',
+				specialDiscounts: '',
+				bookingOpen: true,
+				rating: '',
+			});
 		} catch (error) {
-			console.error('Error creating activity:', error);
+			setError('Failed to create activity. Please try again.');
 		}
 	};
 
@@ -89,20 +107,36 @@ const ActivityForm = () => {
 
 			<form
 				onSubmit={handleSubmit}
-				className='max-w-xl mx-auto p-6 bg-white shadow-lg rounded-lg space-y-6 w-3/4 h-3/4'>
+				className='max-w-xl mx-auto p-6 bg-white shadow-lg rounded-lg space-y-6 w-3/4'>
 				<h2 className='text-2xl font-bold text-center'>Create New Activity</h2>
+
+				{/* Error and Success Messages */}
+				{error && (
+					<div className='text-red-600 bg-red-100 p-3 rounded mb-4'>
+						{error}
+					</div>
+				)}
+				{success && (
+					<div className='text-green-600 bg-green-100 p-3 rounded mb-4'>
+						{success}
+					</div>
+				)}
+
 				<div className='grid grid-cols-1 gap-4'>
+					{/* Name */}
 					<label className='flex flex-col'>
 						<span className='font-medium'>Name:</span>
 						<input
 							type='text'
-							name='Name'
+							name='name'
 							value={formData.name}
 							onChange={handleChange}
 							required
 							className='border rounded p-2 mt-1'
 						/>
 					</label>
+
+					{/* Date */}
 					<label className='flex flex-col'>
 						<span className='font-medium'>Date:</span>
 						<input
@@ -114,6 +148,8 @@ const ActivityForm = () => {
 							className='border rounded p-2 mt-1'
 						/>
 					</label>
+
+					{/* Time */}
 					<label className='flex flex-col'>
 						<span className='font-medium'>Time:</span>
 						<input
@@ -125,6 +161,8 @@ const ActivityForm = () => {
 							className='border rounded p-2 mt-1'
 						/>
 					</label>
+
+					{/* Price */}
 					<label className='flex flex-col'>
 						<span className='font-medium'>Price:</span>
 						<input
@@ -136,6 +174,8 @@ const ActivityForm = () => {
 							className='border rounded p-2 mt-1'
 						/>
 					</label>
+
+					{/* Price Range */}
 					<label className='flex flex-col'>
 						<span className='font-medium'>Price Range:</span>
 						<input
@@ -146,6 +186,8 @@ const ActivityForm = () => {
 							className='border rounded p-2 mt-1'
 						/>
 					</label>
+
+					{/* Category */}
 					<label className='flex flex-col'>
 						<span className='font-medium'>Category:</span>
 						<select
@@ -164,11 +206,13 @@ const ActivityForm = () => {
 							))}
 						</select>
 					</label>
+
+					{/* Tags */}
 					<label className='flex flex-col'>
 						<span className='font-medium'>Tags:</span>
 						<select
 							name='preferenceTag'
-							value={formData.preferenceTag} // Value should be a single tag ID
+							value={formData.preferenceTag}
 							onChange={handleChange}
 							className='border rounded p-2 mt-1'>
 							<option value=''>Select a Tag</option>
@@ -181,6 +225,8 @@ const ActivityForm = () => {
 							))}
 						</select>
 					</label>
+
+					{/* Special Discounts */}
 					<label className='flex flex-col'>
 						<span className='font-medium'>Special Discounts:</span>
 						<input
@@ -191,6 +237,8 @@ const ActivityForm = () => {
 							className='border rounded p-2 mt-1'
 						/>
 					</label>
+
+					{/* Booking Open */}
 					<label className='flex items-center'>
 						<input
 							type='checkbox'
@@ -203,6 +251,8 @@ const ActivityForm = () => {
 						/>
 						<span className='font-medium'>Booking Open</span>
 					</label>
+
+					{/* Rating */}
 					<label className='flex flex-col'>
 						<span className='font-medium'>Rating:</span>
 						<input
@@ -216,6 +266,7 @@ const ActivityForm = () => {
 						/>
 					</label>
 				</div>
+
 				<button
 					type='submit'
 					className='w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600 transition'>

@@ -103,9 +103,10 @@ const BookMarks = () => {
 							{activeTab === 'activities' && (
 								<>
 									<li className='text-gray-700'>
-										<span className='font-semibold'>AdvertiserId: </span>
-										{item.advertiserId?.username || 'N/A'}
+										<span className='font-semibold'>Activity Name: </span>
+										{item.name}
 									</li>
+
 									<li className='text-gray-700'>
 										<span className='font-semibold'>Date: </span>
 										{new Date(item.date).toLocaleDateString()}
@@ -118,10 +119,7 @@ const BookMarks = () => {
 										<span className='font-semibold'>Special Discounts: </span>
 										{item.specialDiscounts || 'N/A'}
 									</li>
-									<li className='text-gray-700'>
-										<span className='font-semibold'>Category: </span>
-										{item.category?.name || 'N/A'}
-									</li>
+
 									<li className='text-gray-700'>
 										<span className='font-semibold'>Booking Status: </span>
 										{item.bookingOpen ? 'Open' : 'Closed'}
@@ -136,9 +134,10 @@ const BookMarks = () => {
 							{activeTab === 'itineraries' && (
 								<>
 									<li className='text-gray-700'>
-										<span className='font-semibold'>TourGuide Name: </span>
-										{item.tourGuideId?.name || 'N/A'}
+										<span className='font-semibold'>Itinerary Name: </span>
+										{item.name}
 									</li>
+
 									<li className='text-gray-700'>
 										<span className='font-semibold'>Timeline: </span>
 										{item.timeline}
@@ -166,6 +165,10 @@ const BookMarks = () => {
 									<li className='text-gray-700'>
 										<span className='font-semibold'>Dropoff Locations: </span>
 										{item.dropoffLocation}
+									</li>
+									<li className='text-gray-700'>
+										<span className='font-semibold'>Booking Status: </span>
+										{item.bookingOpen ? 'Open' : 'Closed'}
 									</li>
 									<button
 										onClick={() => navigate('/notify-tourist-itineraries')}

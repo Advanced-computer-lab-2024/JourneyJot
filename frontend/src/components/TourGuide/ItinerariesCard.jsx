@@ -110,61 +110,81 @@ const ItinerariesCard = ({ itineraries = [], currency, conversionRate }) => {
 						className='border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-2xl transition-shadow duration-300'>
 						<div className='flex flex-col h-full space-y-4 text-left'>
 							<h2 className='text-xl font-semibold text-blue-900'>Itinerary</h2>
-							<ul className='list-disc list-inside space-y-2 text-gray-700'>
-								<li>
-									<span className='font-semibold'>Tour Guide Name: </span>
+
+							<ul className='space-y-4'>
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>
+										Itinerary Name:{' '}
+									</span>
+									{itinerary.name || 'N/A'}
+								</li>
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>
+										Tour Guide Name:{' '}
+									</span>
 									{itinerary.tourGuideId?.username || 'Unknown'}
 								</li>
-								<li>
-									<span className='font-semibold'>Activities: </span>
-									{itinerary.activities.join(', ')}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>Activities: </span>
+									{itinerary.activities.join(', ') || 'N/A'}
 								</li>
-								<li>
-									<span className='font-semibold'>Locations: </span>
-									{itinerary.locations.join(', ')}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>Locations: </span>
+									{itinerary.locations.join(', ') || 'N/A'}
 								</li>
-								<li>
-									<span className='font-semibold'>Timeline: </span>
-									{itinerary.timeline}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>Timeline: </span>
+									{itinerary.timeline || 'N/A'}
 								</li>
-								<li>
-									<span className='font-semibold'>Duration: </span>
-									{itinerary.duration}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>Duration: </span>
+									{itinerary.duration || 'N/A'}
 								</li>
-								<li>
-									<span className='font-semibold'>Language: </span>
-									{itinerary.language}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>Language: </span>
+									{itinerary.language || 'N/A'}
 								</li>
-
-								<li>
-									<span className='font-semibold'>Price: </span>
-									{(itinerary.price * conversionRate).toFixed(2)} {currency}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>Price: </span>
+									{itinerary.price
+										? (itinerary.price * conversionRate).toFixed(2)
+										: 'N/A'}{' '}
+									{currency}
 								</li>
-								<li>
-									<span className='font-semibold'>Rating:</span>{' '}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>Rating: </span>
 									<StarRating rating={itinerary.rating || 0} />
 								</li>
-								<li>
-									<span className='font-semibold'>Accessibility: </span>
-									{itinerary.accessibility}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>Accessibility: </span>
+									{itinerary.accessibility || 'N/A'}
 								</li>
-								<li>
-									<span className='font-semibold'>PickUp Location: </span>
-									{itinerary.pickupLocation}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>
+										PickUp Location:{' '}
+									</span>
+									{itinerary.pickupLocation || 'N/A'}
 								</li>
-								<li>
-									<span className='font-semibold'>DropOf Locations: </span>
-									{itinerary.dropoffLocation}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>
+										DropOff Locations:{' '}
+									</span>
+									{itinerary.dropoffLocation || 'N/A'}
 								</li>
-								<li className='text-gray-700'>
-									<span className='font-semibold'>Booking Status: </span>
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>
+										Booking Status:{' '}
+									</span>
 									{itinerary.bookingOpen ? 'Open' : 'Closed'}
 								</li>
-								<li>
-									<span className='font-semibold'>Available Dates: </span>
-									{itinerary.availableDates.join(', ')}
+								<li className='text-gray-800'>
+									<span className='font-semibold text-lg'>
+										Available Dates:{' '}
+									</span>
+									{itinerary.availableDates.join(', ') || 'N/A'}
 								</li>
 							</ul>
+
 							<button
 								onClick={() => handleBookItinerary(itinerary)}
 								className='bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-green-700'>

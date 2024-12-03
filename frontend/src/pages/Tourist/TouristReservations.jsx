@@ -108,6 +108,9 @@ const TouristReservations = () => {
 								<h3 className='text-2xl font-semibold text-indigo-700'>
 									Activity #{index + 1}
 								</h3>
+								<p className='text-gray-700'>
+									<strong>ActivityName:</strong> {activity.name}
+								</p>
 								{activity.advertiserId && (
 									<p className='text-gray-800'>
 										<strong>Advertiser:</strong>{' '}
@@ -180,6 +183,9 @@ const TouristReservations = () => {
 								<h3 className='text-2xl font-semibold text-pink-700'>
 									Itinerary #{index + 1}
 								</h3>
+								<p className='text-gray-700'>
+									<strong>ItineraryName:</strong> {itinerary.name}
+								</p>
 								<p className='text-gray-800'>
 									<strong>Tour Guide:</strong> {itinerary.tourGuideId?.username}
 								</p>
