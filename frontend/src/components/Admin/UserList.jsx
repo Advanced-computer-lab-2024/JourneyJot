@@ -45,8 +45,8 @@ const UserList = () => {
 	}, []);
 
 	return (
-		<div className='min-h-screen bg-gray-50 p-6'>
-			<div className='bg-white shadow-2xl rounded-lg p-8 max-w-5xl mx-auto'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='bg-white shadow-2xl rounded-lg p-8 max-w-6xl mx-auto'>
 				<h1 className='text-3xl font-bold text-gray-900 mb-8 text-center'>
 					Users and Tourists Data
 				</h1>
@@ -58,7 +58,7 @@ const UserList = () => {
 				) : (
 					<>
 						{/* Users Section */}
-						<div className='mb-10'>
+						<div className='mb-12'>
 							<h2 className='text-2xl font-semibold text-gray-800 mb-6'>
 								Users
 							</h2>
@@ -66,7 +66,7 @@ const UserList = () => {
 								{users.map((user) => (
 									<li
 										key={user._id}
-										className='p-4 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-all'>
+										className='p-4 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all ease-in-out'>
 										<div className='flex justify-between items-center'>
 											<div>
 												<p className='text-lg font-medium text-gray-800'>
@@ -92,7 +92,7 @@ const UserList = () => {
 								{tourists.map((tourist) => (
 									<li
 										key={tourist._id}
-										className='p-4 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-all'>
+										className='p-4 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all ease-in-out'>
 										<div className='flex justify-between items-center'>
 											<div>
 												<p className='text-lg font-medium text-gray-800'>

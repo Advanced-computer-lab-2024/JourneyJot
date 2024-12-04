@@ -115,62 +115,71 @@ const PreferenceTagManagement = () => {
 	};
 
 	return (
-		<div className='p-8'>
-			<h2 className='text-2xl mb-4'>Preference Tag Management</h2>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='w-full max-w-lg p-8 bg-white rounded-lg shadow-lg'>
+				<h2 className='text-2xl font-semibold mb-6 text-center'>
+					Preference Tag Management
+				</h2>
 
-			<form
-				onSubmit={isEditing ? handleEditTag : handleAddTag}
-				className='mb-6'>
-				<div className='mb-4'>
-					<label>Tag Name</label>
-					<input
-						type='text'
-						value={newTag}
-						onChange={handleInputChange}
-						className='w-full p-2 border border-gray-300 rounded'
-						placeholder='Enter tag name'
-						required
-					/>
-				</div>
-				<button
-					type='submit'
-					className='bg-green-500 text-white p-2 rounded'>
-					{isEditing ? 'Update Tag' : 'Add Tag'}
-				</button>
-			</form>
+				{/* Form Section */}
+				<form
+					onSubmit={isEditing ? handleEditTag : handleAddTag}
+					className='space-y-4'>
+					<div className='mb-4'>
+						<label className='block text-lg font-medium text-gray-700'>
+							Tag Name
+						</label>
+						<input
+							type='text'
+							value={newTag}
+							onChange={handleInputChange}
+							className='w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500'
+							placeholder='Enter tag name'
+							required
+						/>
+					</div>
 
-			{/* Error and Success messages */}
-			{error && <p className='text-red-500 mb-4'>{error}</p>}
-			{successMessage && (
-				<p className='text-green-500 mb-4'>{successMessage}</p>
-			)}
+					<button
+						type='submit'
+						className='w-full bg-green-500 text-white p-3 rounded-lg shadow hover:bg-green-600 transition duration-200'>
+						{isEditing ? 'Update Tag' : 'Add Tag'}
+					</button>
+				</form>
 
-			<h3 className='text-xl mb-4'>Current Tags</h3>
-			{tags.length > 0 ? (
-				<ul className='list-disc pl-5'>
-					{tags.map((tag) => (
-						<li
-							key={tag._id}
-							className='mb-2 flex justify-between'>
-							<span>{tag.name}</span>
-							<div>
-								<button
-									className='bg-yellow-500 text-white p-1 rounded mr-2'
-									onClick={() => handleStartEdit(tag)}>
-									Edit
-								</button>
-								<button
-									className='bg-red-500 text-white p-1 rounded'
-									onClick={() => handleDeleteTag(tag._id)}>
-									Delete
-								</button>
-							</div>
-						</li>
-					))}
-				</ul>
-			) : (
-				<p>No tags available.</p>
-			)}
+				{/* Error and Success Messages */}
+				{error && <p className='text-red-500 mt-4 text-center'>{error}</p>}
+				{successMessage && (
+					<p className='text-green-500 mt-4 text-center'>{successMessage}</p>
+				)}
+
+				{/* Tags List */}
+				<h3 className='text-xl font-semibold mt-8 mb-4'>Current Tags</h3>
+				{tags.length > 0 ? (
+					<ul className='space-y-3'>
+						{tags.map((tag) => (
+							<li
+								key={tag._id}
+								className='flex justify-between items-center bg-gray-100 p-3 rounded-lg shadow'>
+								<span className='text-lg text-gray-700'>{tag.name}</span>
+								<div className='flex space-x-3'>
+									<button
+										className='bg-yellow-500 text-white px-3 py-1 rounded-lg shadow hover:bg-yellow-600 transition duration-200'
+										onClick={() => handleStartEdit(tag)}>
+										Edit
+									</button>
+									<button
+										className='bg-red-500 text-white px-3 py-1 rounded-lg shadow hover:bg-red-600 transition duration-200'
+										onClick={() => handleDeleteTag(tag._id)}>
+										Delete
+									</button>
+								</div>
+							</li>
+						))}
+					</ul>
+				) : (
+					<p className='text-center text-gray-500'>No tags available.</p>
+				)}
+			</div>
 		</div>
 	);
 };

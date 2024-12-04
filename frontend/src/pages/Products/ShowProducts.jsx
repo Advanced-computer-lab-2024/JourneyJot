@@ -88,55 +88,63 @@ const ShowProducts = () => {
 	}, [searchedProduct]);
 
 	return (
-		<div className='p-6 bg-gray-50 min-h-screen'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-300 via-indigo-400 to-purple-500 flex flex-col justify-center items-center py-8'>
 			{/* Header and Search */}
-			<div className='flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0'>
-				<h1 className='text-3xl font-bold text-teal-600'>Products</h1>
-				<div className='flex flex-wrap space-x-4 items-center justify-end w-full md:w-3/4'>
+			<div className='flex flex-col md:flex-row justify-between items-center mb-6 w-full px-4'>
+				<h1 className='text-4xl font-semibold text-teal-700 mb-4 md:mb-0'>
+					Products
+				</h1>
+				<div className='flex flex-wrap gap-4 items-center justify-end w-full md:w-3/4'>
 					<Link to='addProduct'>
-						<button className='bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200 w-full sm:w-auto'>
+						<button className='bg-teal-600 text-white rounded-lg px-6 py-3 shadow-lg hover:bg-teal-700 transition duration-200 w-full sm:w-auto'>
 							Add Product
 						</button>
 					</Link>
 					<button
-						className='bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200 w-full sm:w-auto'
+						className='bg-teal-600 text-white rounded-lg px-6 py-3 shadow-lg hover:bg-teal-700 transition duration-200 w-full sm:w-auto'
 						onClick={() => setSort((prevState) => !prevState)}>
 						Sort By Rating
 					</button>
 					<input
 						type='search'
-						placeholder='Search...'
+						placeholder='Search Products...'
 						value={searchedProduct}
 						onChange={(e) => setSearchedProduct(e.target.value)}
-						className='w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-teal-400'
+						className='w-full max-w-md px-4 py-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-teal-500'
 					/>
 				</div>
 			</div>
 
 			{/* Price Filter */}
-			<div className='flex flex-wrap justify-end gap-4 mb-4'>
+			<div className='flex flex-wrap justify-end gap-4 mb-6 w-full px-4'>
 				<input
 					placeholder='Min Price'
-					className='border border-gray-300 rounded-lg p-2 w-full sm:w-1/4 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400'
+					className='border border-gray-300 rounded-lg p-3 w-full sm:w-1/4 shadow-md focus:outline-none focus:ring-2 focus:ring-teal-500'
 					value={minPrice}
 					onChange={(e) => setMinPrice(e.target.value)}
 				/>
 				<input
 					placeholder='Max Price'
-					className='border border-gray-300 rounded-lg p-2 w-full sm:w-1/4 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400'
+					className='border border-gray-300 rounded-lg p-3 w-full sm:w-1/4 shadow-md focus:outline-none focus:ring-2 focus:ring-teal-500'
 					value={maxPrice}
 					onChange={(e) => setMaxPrice(e.target.value)}
 				/>
 				<button
 					onClick={filterByPrice}
-					className='bg-teal-500 text-white rounded-md px-4 py-2 shadow-md hover:bg-teal-600 transition duration-200 w-full sm:w-auto'>
+					className='bg-teal-600 text-white rounded-lg px-6 py-3 shadow-lg hover:bg-teal-700 transition duration-200 w-full sm:w-auto'>
 					Filter
 				</button>
 			</div>
 
 			{/* Display Products or Spinner */}
-			<div className='mb-4'>
-				{loading ? <Spinner /> : <ProductCard products={products} />}
+			<div className='w-full px-4'>
+				{loading ? (
+					<div className='flex justify-center items-center'>
+						<div className='animate-spin rounded-full h-12 w-12 border-b-4 border-teal-600'></div>
+					</div>
+				) : (
+					<ProductCard products={products} />
+				)}
 			</div>
 		</div>
 	);

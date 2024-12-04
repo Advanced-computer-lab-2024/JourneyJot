@@ -94,64 +94,71 @@ const CategoryManagement = () => {
 	};
 
 	return (
-		<div className='p-8 max-w-2xl mx-auto bg-gray-50 shadow-md rounded'>
-			<h2 className='text-2xl font-bold mb-6 text-gray-800'>
-				Category Management
-			</h2>
-			{error && <p className='text-red-600 mb-4'>{error}</p>}
-			{success && <p className='text-green-600 mb-4'>{success}</p>}
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='p-8 max-w-2xl mx-auto bg-gray-50 shadow-md rounded-lg'>
+				<h2 className='text-2xl font-bold mb-6 text-gray-800'>
+					Category Management
+				</h2>
 
-			<form
-				onSubmit={handleCategorySubmit}
-				className='space-y-4'>
-				<div>
-					<label className='block text-sm font-medium text-gray-700'>
-						Category Name
-					</label>
-					<input
-						type='text'
-						value={newCategory}
-						onChange={handleInputChange}
-						className='w-full p-2 border border-gray-300 rounded focus:ring-blue-300 focus:outline-none'
-						placeholder='Enter category name'
-						required
-					/>
-				</div>
-				<button
-					type='submit'
-					className='px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition'>
-					{isEditing ? 'Update Category' : 'Add Category'}
-				</button>
-			</form>
+				{/* Error and Success Messages */}
+				{error && <p className='text-red-600 mb-4'>{error}</p>}
+				{success && <p className='text-green-600 mb-4'>{success}</p>}
 
-			<h3 className='text-xl font-bold mt-8 mb-4 text-gray-800'>
-				Current Categories
-			</h3>
-			<ul className='space-y-2'>
-				{categories.length > 0 ? (
-					categories.map((category) => (
-						<li
-							key={category._id}
-							className='flex justify-between items-center bg-white p-4 border rounded shadow-sm'>
-							<span>{category.name}</span>
-							<div className='space-x-2'>
-								<button
-									onClick={() => handleStartEdit(category)}
-									className='px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600'>
-									Edit
-								</button>
-								<button
-									onClick={() => handleDeleteCategory(category._id)}
-									className='px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700'>
-									Delete
-								</button>
-							</div>
-						</li>
-					))
-				) : (
-					<p className='text-gray-600'>No categories available.</p>
-				)}
-			</ul>
+				{/* Category Form */}
+				<form
+					onSubmit={handleCategorySubmit}
+					className='space-y-4'>
+					<div>
+						<label className='block text-sm font-medium text-gray-700 mb-2'>
+							Category Name
+						</label>
+						<input
+							type='text'
+							value={newCategory}
+							onChange={handleInputChange}
+							className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none'
+							placeholder='Enter category name'
+							required
+						/>
+					</div>
+
+					<button
+						type='submit'
+						className='w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300'>
+						{isEditing ? 'Update Category' : 'Add Category'}
+					</button>
+				</form>
+
+				{/* Category List */}
+				<h3 className='text-xl font-bold mt-8 mb-4 text-gray-800'>
+					Current Categories
+				</h3>
+				<ul className='space-y-4'>
+					{categories.length > 0 ? (
+						categories.map((category) => (
+							<li
+								key={category._id}
+								className='flex justify-between items-center bg-white p-4 border rounded-lg shadow-md hover:shadow-lg transition-all'>
+								<span className='text-gray-800'>{category.name}</span>
+								<div className='space-x-3'>
+									<button
+										onClick={() => handleStartEdit(category)}
+										className='px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition duration-200'>
+										Edit
+									</button>
+									<button
+										onClick={() => handleDeleteCategory(category._id)}
+										className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200'>
+										Delete
+									</button>
+								</div>
+							</li>
+						))
+					) : (
+						<p className='text-gray-600'>No categories available.</p>
+					)}
+				</ul>
+			</div>
 		</div>
 	);
 };

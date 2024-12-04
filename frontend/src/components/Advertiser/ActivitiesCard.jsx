@@ -219,37 +219,44 @@ const ActivitiesCard = ({
 								{activity.bookingOpen ? 'Open' : 'Closed'}
 							</p>
 
-							<div className='flex space-x-4 mb-4'>
-								<button
-									onClick={() => handleBookActivity(activity)}
-									className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700'>
-									Book Now
-								</button>
-								<button
-									onClick={() =>
-										handlePayActivityViaStripe(
-											activity,
-											currency,
-											conversionRate
-										)
-									}
-									className='bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-500'>
-									Pay via Stripe
-								</button>
-							</div>
+							{/* Conditionally render buttons based on isAdvertiser */}
+							{!isAdvertiser && (
+								<div className='mb-4'>
+									{/* Rectangular Book Now Button */}
+									<button
+										onClick={() => handleBookActivity(activity)}
+										className='bg-blue-600 text-white w-full py-3 rounded-lg hover:bg-blue-700 mb-2'>
+										Book Now
+									</button>
 
-							<div className='flex justify-between items-center'>
-								<button
-									onClick={toggleShareOptions}
-									className='bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700'>
-									Share
-								</button>
-								<button
-									onClick={() => handleBookmark(activity._id)}
-									className='text-blue-500 hover:text-blue-700'>
-									<FiBookmark size={24} />
-								</button>
-							</div>
+									{/* Rectangular Pay via Stripe Button */}
+									<button
+										onClick={() =>
+											handlePayActivityViaStripe(
+												activity,
+												currency,
+												conversionRate
+											)
+										}
+										className='bg-teal-600 text-white w-full py-3 rounded-lg hover:bg-teal-500 mb-2'>
+										Pay via Stripe
+									</button>
+
+									{/* Share and Bookmark Buttons */}
+									<div className='flex justify-between'>
+										<button
+											onClick={toggleShareOptions}
+											className='bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700'>
+											Share
+										</button>
+										<button
+											onClick={() => handleBookmark(activity._id)}
+											className='text-blue-500 hover:text-blue-700'>
+											<FiBookmark size={24} />
+										</button>
+									</div>
+								</div>
+							)}
 
 							{shareOptionsVisible && (
 								<div className='absolute bg-white border rounded-lg shadow-md mt-4 p-4 w-full'>

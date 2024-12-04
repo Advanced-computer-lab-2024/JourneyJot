@@ -54,75 +54,88 @@ const AddAdmin = () => {
 	};
 
 	return (
-		<div className='p-8'>
-			<h2 className='text-2xl mb-4'>Admin Management</h2>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='w-full max-w-md p-6 bg-white rounded-lg shadow-lg'>
+				<h2 className='text-3xl font-semibold mb-6 text-center text-teal-700'>
+					Admin Management
+				</h2>
 
-			{/* Toggle Create Admin Form */}
-			<button
-				className='bg-blue-500 text-white p-2 rounded mb-4'
-				onClick={() => setIsCreating(!isCreating)}>
-				{isCreating ? 'Cancel' : 'Create New Admin'}
-			</button>
+				{/* Toggle Create Admin Form */}
+				<button
+					className='w-full bg-blue-500 text-white py-2 rounded-lg mb-6 transition-transform transform hover:scale-105'
+					onClick={() => setIsCreating(!isCreating)}>
+					{isCreating ? 'Cancel' : 'Create New Admin'}
+				</button>
 
-			{/* Display Success or Error Messages */}
-			{errorMessage && (
-				<div className='mb-4 text-red-600 bg-red-100 p-2 rounded'>
-					{errorMessage}
-				</div>
-			)}
-			{successMessage && (
-				<div className='mb-4 text-green-600 bg-green-100 p-2 rounded'>
-					{successMessage}
-				</div>
-			)}
+				{/* Display Success or Error Messages */}
+				{errorMessage && (
+					<div className='mb-4 text-red-600 bg-red-100 p-3 rounded-lg'>
+						{errorMessage}
+					</div>
+				)}
+				{successMessage && (
+					<div className='mb-4 text-green-600 bg-green-100 p-3 rounded-lg'>
+						{successMessage}
+					</div>
+				)}
 
-			{/* Create Admin Form */}
-			{isCreating && (
-				<form
-					onSubmit={handleSubmit}
-					className='mb-6'>
-					<div className='mb-4'>
-						<label>Username</label>
-						<input
-							type='text'
-							name='username'
-							value={newAdmin.username}
-							onChange={handleInputChange}
-							className='w-full p-2 border border-gray-300 rounded'
-							placeholder='Enter admin username'
-							required
-						/>
-					</div>
-					<div className='mb-4'>
-						<label>Password</label>
-						<input
-							type='password'
-							name='password'
-							value={newAdmin.password}
-							onChange={handleInputChange}
-							className='w-full p-2 border border-gray-300 rounded'
-							placeholder='Enter admin password'
-							required
-						/>
-					</div>
-					<div className='mb-4'>
-						<label>Role</label>
-						<input
-							type='text'
-							name='role'
-							value={newAdmin.role}
-							onChange={handleInputChange}
-							className='w-full p-2 border border-gray-300 rounded'
-							disabled
-						/>
-					</div>
-					<button
-						type='submit'
-						className='bg-green-500 text-white p-2 rounded'>
-						Add Admin
-					</button>
-				</form>
-			)}
+				{/* Create Admin Form */}
+				{isCreating && (
+					<form
+						onSubmit={handleSubmit}
+						className='space-y-4'>
+						<div>
+							<label className='block text-sm font-medium text-gray-700'>
+								Username
+							</label>
+							<input
+								type='text'
+								name='username'
+								value={newAdmin.username}
+								onChange={handleInputChange}
+								className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500'
+								placeholder='Enter admin username'
+								required
+							/>
+						</div>
+
+						<div>
+							<label className='block text-sm font-medium text-gray-700'>
+								Password
+							</label>
+							<input
+								type='password'
+								name='password'
+								value={newAdmin.password}
+								onChange={handleInputChange}
+								className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500'
+								placeholder='Enter admin password'
+								required
+							/>
+						</div>
+
+						<div>
+							<label className='block text-sm font-medium text-gray-700'>
+								Role
+							</label>
+							<input
+								type='text'
+								name='role'
+								value={newAdmin.role}
+								onChange={handleInputChange}
+								className='w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-500'
+								disabled
+							/>
+						</div>
+
+						<button
+							type='submit'
+							className='w-full bg-green-500 text-white py-3 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500'>
+							Add Admin
+						</button>
+					</form>
+				)}
+			</div>
 		</div>
 	);
 };

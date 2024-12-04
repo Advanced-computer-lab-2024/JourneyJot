@@ -92,38 +92,50 @@ const Flag = () => {
 	};
 
 	return (
-		<div className='p-4'>
-			<h2 className='text-2xl font-bold mb-4'>Flag Itineraries</h2>
-			{error && <p className='text-red-500'>{error}</p>} {/* Error Message */}
-			{loading ? (
-				<p>Loading...</p>
-			) : (
-				<ul className='space-y-2'>
-					{itineraries.map((itinerary) => (
-						<FlagItem
-							key={itinerary._id}
-							item={itinerary}
-							onFlagToggle={(id) => toggleFlag(id, 'itinerary')}
-							disabled={loading}
-						/>
-					))}
-				</ul>
-			)}
-			<h2 className='text-2xl font-bold mt-6 mb-4'>Flag Activities</h2>
-			{loading ? (
-				<p>Loading...</p>
-			) : (
-				<ul className='space-y-2'>
-					{activities.map((activity) => (
-						<FlagItem
-							key={activity._id}
-							item={activity}
-							onFlagToggle={(id) => toggleFlag(id, 'activity')}
-							disabled={loading}
-						/>
-					))}
-				</ul>
-			)}
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='p-4 w-full max-w-4xl'>
+				{/* Flag Itineraries Section */}
+				<h2 className='text-2xl font-bold mb-4'>Flag Itineraries</h2>
+				{error && <p className='text-red-500'>{error}</p>} {/* Error Message */}
+				{loading ? (
+					<p className='text-lg text-gray-700'>Loading itineraries...</p>
+				) : (
+					<ul className='space-y-2'>
+						{itineraries.length > 0 ? (
+							itineraries.map((itinerary) => (
+								<FlagItem
+									key={itinerary._id}
+									item={itinerary}
+									onFlagToggle={(id) => toggleFlag(id, 'itinerary')}
+									disabled={loading}
+								/>
+							))
+						) : (
+							<p className='text-gray-500'>No itineraries available.</p>
+						)}
+					</ul>
+				)}
+				{/* Flag Activities Section */}
+				<h2 className='text-2xl font-bold mt-6 mb-4'>Flag Activities</h2>
+				{loading ? (
+					<p className='text-lg text-gray-700'>Loading activities...</p>
+				) : (
+					<ul className='space-y-2'>
+						{activities.length > 0 ? (
+							activities.map((activity) => (
+								<FlagItem
+									key={activity._id}
+									item={activity}
+									onFlagToggle={(id) => toggleFlag(id, 'activity')}
+									disabled={loading}
+								/>
+							))
+						) : (
+							<p className='text-gray-500'>No activities available.</p>
+						)}
+					</ul>
+				)}
+			</div>
 		</div>
 	);
 };

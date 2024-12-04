@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FiAlertCircle, FiCheckCircle, FiLoader } from 'react-icons/fi'; // Icons for better visuals
 
 // Function to retrieve token from localStorage
 const getToken = () => {
@@ -19,7 +20,7 @@ const useNotifications = (token) => {
 			const fetchNotifications = async () => {
 				try {
 					const response = await axios.get(
-						'http://localhost:3000/admins/notifications',
+						`${'http://localhost:3000'}/admins/notifications`,
 						{
 							headers: { Authorization: `Bearer ${token}` },
 						}
@@ -47,11 +48,13 @@ const useNotifications = (token) => {
 const useUpdateStock = (token) => {
 	const [successMessage, setSuccessMessage] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
+	const [loading, setLoading] = useState(false);
 
 	const updateStock = async (productName, newQuantity) => {
+		setLoading(true);
 		try {
 			const response = await axios.post(
-				'http://localhost:3000/admins/update-stock',
+				`${'http://localhost:3000'}/admins/update-stock`,
 				{ productName, newQuantity },
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
@@ -60,44 +63,52 @@ const useUpdateStock = (token) => {
 		} catch (error) {
 			setErrorMessage('Error updating stock.');
 			console.error('Error updating stock:', error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
-	return { updateStock, successMessage, errorMessage };
+	return { updateStock, successMessage, errorMessage, loading };
 };
 
 const NotifyAdminProduct = () => {
 	const [productName, setProductName] = useState('');
 	const [newQuantity, setNewQuantity] = useState('');
 	const [authToken, setAuthToken] = useState(getToken());
+	const [formError, setFormError] = useState('');
 
 	const { notifications, loading, error } = useNotifications(authToken);
-	const { updateStock, successMessage, errorMessage } =
-		useUpdateStock(authToken);
+	const {
+		updateStock,
+		successMessage,
+		errorMessage,
+		loading: updateLoading,
+	} = useUpdateStock(authToken);
 
 	const handleUpdateStock = () => {
-		if (productName && newQuantity) {
-			updateStock(productName, newQuantity);
+		if (productName.trim() && newQuantity) {
+			updateStock(productName.trim(), newQuantity);
+			setFormError('');
 		} else {
-			setErrorMessage('Please provide both product name and new quantity.');
+			setFormError('Please provide both product name and new quantity.');
 		}
 	};
 
 	return (
-		<div className='min-h-screen flex items-center justify-center bg-gray-50 py-6'>
-			<div className='max-w-4xl w-full bg-white p-8 rounded-lg shadow-xl space-y-8'>
-				<h1 className='text-4xl font-semibold text-center text-gray-800 mb-8'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='max-w-5xl w-full bg-white p-10 rounded-xl shadow-2xl space-y-10'>
+				<h1 className='text-5xl font-bold text-center text-indigo-600'>
 					Admin Dashboard
 				</h1>
 
 				{/* Update Stock Form */}
-				<section>
-					<h2 className='text-3xl font-medium text-gray-700 mb-6'>
+				<section className='bg-indigo-50 p-6 rounded-lg shadow-md'>
+					<h2 className='text-2xl font-semibold text-indigo-700 mb-4'>
 						Update Product Stock
 					</h2>
-					<div className='space-y-6'>
+					<div className='space-y-4'>
 						<div>
-							<label className='block text-sm font-medium text-gray-600'>
+							<label className='block text-sm font-medium text-gray-700 mb-1'>
 								Product Name
 							</label>
 							<input
@@ -105,11 +116,11 @@ const NotifyAdminProduct = () => {
 								value={productName}
 								onChange={(e) => setProductName(e.target.value)}
 								placeholder='Enter product name'
-								className='mt-1 p-4 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+								className='w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
 							/>
 						</div>
 						<div>
-							<label className='block text-sm font-medium text-gray-600'>
+							<label className='block text-sm font-medium text-gray-700 mb-1'>
 								New Quantity
 							</label>
 							<input
@@ -117,48 +128,79 @@ const NotifyAdminProduct = () => {
 								value={newQuantity}
 								onChange={(e) => setNewQuantity(e.target.value)}
 								placeholder='Enter new quantity'
-								className='mt-1 p-4 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+								className='w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
 							/>
 						</div>
+						{formError && (
+							<div className='flex items-center text-red-500 text-sm'>
+								<FiAlertCircle className='mr-1' />
+								{formError}
+							</div>
+						)}
 						{errorMessage && (
-							<p className='text-red-500 text-sm'>{errorMessage}</p>
+							<div className='flex items-center text-red-500 text-sm'>
+								<FiAlertCircle className='mr-1' />
+								{errorMessage}
+							</div>
+						)}
+						{successMessage && (
+							<div className='flex items-center text-green-500 text-sm'>
+								<FiCheckCircle className='mr-1' />
+								{successMessage}
+							</div>
 						)}
 						<button
 							onClick={handleUpdateStock}
-							className='w-full bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'>
-							Update Stock
+							disabled={updateLoading}
+							className='w-full flex items-center justify-center bg-indigo-600 text-white px-4 py-3 rounded-md hover:bg-indigo-700 transition-colors disabled:opacity-50'>
+							{updateLoading ? (
+								<>
+									<FiLoader className='animate-spin mr-2' />
+									Updating...
+								</>
+							) : (
+								'Update Stock'
+							)}
 						</button>
-						{successMessage && (
-							<p className='text-green-500 text-sm'>{successMessage}</p>
-						)}
 					</div>
 				</section>
 
 				{/* Notifications Section */}
-				<section>
-					<h2 className='text-3xl font-medium text-gray-700 mb-6'>
+				<section className='bg-indigo-50 p-6 rounded-lg shadow-md'>
+					<h2 className='text-2xl font-semibold text-indigo-700 mb-4'>
 						Notifications
 					</h2>
 					{loading ? (
-						<p className='text-center text-gray-500'>
+						<div className='flex items-center justify-center text-gray-500'>
+							<FiLoader className='animate-spin mr-2' />
 							Loading notifications...
-						</p>
+						</div>
 					) : error ? (
-						<p className='text-center text-red-500'>{error}</p>
+						<div className='flex items-center text-red-500'>
+							<FiAlertCircle className='mr-2' />
+							{error}
+						</div>
 					) : notifications.length > 0 ? (
-						<ul className='space-y-6'>
+						<ul className='space-y-4'>
 							{notifications.map((notification) => (
 								<li
 									key={notification._id}
-									className='bg-gray-100 p-6 rounded-lg shadow-md hover:bg-gray-200 transition-colors'>
-									{notification.message}
+									className='flex items-start bg-white p-4 rounded-lg shadow hover:bg-indigo-100 transition-colors'>
+									<FiCheckCircle className='text-green-500 mt-1 mr-3' />
+									<div>
+										<p className='text-gray-800'>{notification.message}</p>
+										<small className='text-gray-500'>
+											{new Date(notification.createdAt).toLocaleString()}
+										</small>
+									</div>
 								</li>
 							))}
 						</ul>
 					) : (
-						<p className='text-center text-gray-500'>
+						<div className='flex items-center justify-center text-gray-500'>
+							<FiAlertCircle className='mr-2' />
 							No notifications available
-						</p>
+						</div>
 					)}
 				</section>
 			</div>
