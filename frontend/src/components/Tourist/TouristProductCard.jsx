@@ -2,17 +2,19 @@
 
 import { Link } from 'react-router-dom';
 
-
-const ProductCard = ({ products = [], currency, conversionRate = 1 }) => {	// Render star ratings based on product rating
+// Main ProductCard Component
+const ProductCard = ({ products = [], currency, conversionRate = 1 }) => {
+	// Render star ratings based on product rating
 	const renderStars = (rating) => {
-		const totalStars = 5;
+		const totalStars = 5; // Maximum number of stars
 		return (
 			<div className='flex space-x-1'>
 				{Array.from({ length: totalStars }, (_, index) => (
 					<svg
 						key={index}
-						className={`w-5 h-5 ${index < rating ? 'text-yellow-500' : 'text-gray-300'
-							}`}
+						className={`w-5 h-5 ${
+							index < rating ? 'text-yellow-500' : 'text-gray-300'
+						}`}
 						fill='currentColor'
 						viewBox='0 0 20 20'
 						xmlns='http://www.w3.org/2000/svg'>
@@ -23,8 +25,10 @@ const ProductCard = ({ products = [], currency, conversionRate = 1 }) => {	// Re
 		);
 	};
 
+	// Main return block
 	return (
 		<div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+			{/* Check if there are products to display */}
 			{products.length > 0 ? (
 				products.map((product) => (
 					<Link
@@ -51,7 +55,7 @@ const ProductCard = ({ products = [], currency, conversionRate = 1 }) => {	// Re
 							</h2>
 							<p className='text-gray-600 text-sm mb-2'>{product.details}</p>
 							<p className='text-gray-800 font-medium mb-2'>
-								Price:  {(product.price * conversionRate).toFixed(2)} {currency}
+								Price: {(product.price * conversionRate).toFixed(2)} {currency}
 							</p>
 							<p className='text-gray-800 font-medium mb-2'>
 								Quantity: {product.quantity}
@@ -66,8 +70,9 @@ const ProductCard = ({ products = [], currency, conversionRate = 1 }) => {	// Re
 					</Link>
 				))
 			) : (
+				/* Fallback if no products are available */
 				<p className='col-span-full text-center text-gray-500'>
-					No products Available
+					No products available
 				</p>
 			)}
 		</div>

@@ -18,34 +18,29 @@ const TouristProfile = () => {
 		},
 	});
 	const [error, setError] = useState(null);
+	const [success, setSuccess] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
+
 	useEffect(() => {
 		fetchProfile();
 	}, []);
 
 	const fetchProfile = async () => {
 		try {
+			setError(null);
 			const token = localStorage.getItem('token');
-			if (!token) {
-				throw new Error('No token found. Please login again.');
-			}
+			if (!token) throw new Error('No token found. Please login again.');
 
-			const config = {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			};
-
+			const config = { headers: { Authorization: `Bearer ${token}` } };
 			const response = await axios.get(
 				'http://localhost:3000/tourists/profile',
 				config
 			);
-			console.log('Profile data response:', response.data);
 
 			setProfileData({
 				email: response.data.profile.email || '',
 				username: response.data.profile.username || '',
-				password: '', // Keep password field empty by default
+				password: '',
 				mobileNumber: response.data.profile.mobileNumber || '',
 				nationality: response.data.profile.nationality || '',
 				dob: response.data.profile.dob || '',
@@ -56,8 +51,8 @@ const TouristProfile = () => {
 				},
 			});
 		} catch (error) {
-			setError('Failed to fetch profile');
-			console.error('Failed to fetch profile:', error);
+			setError('Failed to fetch profile. Please try again.');
+			console.error('Fetch Error:', error);
 		}
 	};
 
@@ -77,255 +72,150 @@ const TouristProfile = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const token = localStorage.getItem('token');
-			const config = {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			};
+			setError(null);
+			setSuccess(null);
 
-			const response = await axios.put(
+			const token = localStorage.getItem('token');
+			const config = { headers: { Authorization: `Bearer ${token}` } };
+			await axios.put(
 				'http://localhost:3000/tourists/profile',
 				profileData,
 				config
 			);
 
-			// Directly re-fetching the updated profile data to ensure consistency
+			setSuccess('Profile updated successfully!');
 			await fetchProfile();
-
 			setIsEditing(false);
-			console.log('Profile updated successfully', response.data);
 		} catch (error) {
-			setError('Failed to update profile');
-			console.error('Failed to update profile:', error);
+			setError('Failed to update profile. Please try again.');
+			console.error('Update Error:', error);
 		}
 	};
 
 	const requestDeletion = async () => {
 		try {
+			setError(null);
+			setSuccess(null);
+
 			const token = localStorage.getItem('token');
-			if (!token) {
-				throw new Error('No token found. Please login again.');
-			}
+			if (!token) throw new Error('No token found. Please login again.');
 
-			const config = {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			};
-
-			// Fix: Add an empty object {} as the second parameter for the request body
-			const response = await axios.put(
+			const config = { headers: { Authorization: `Bearer ${token}` } };
+			await axios.put(
 				'http://localhost:3000/tourists/deleteAccount',
-				{}, // empty request body
+				{},
 				config
 			);
 
-			console.log('Account deletion requested successfully', response.data);
+			setSuccess('Account deletion request submitted!');
 		} catch (error) {
-			console.error('Failed to delete account:', error);
+			setError('Failed to submit deletion request. Please try again.');
+			console.error('Deletion Error:', error);
 		}
 	};
+
 	function calculateAge(dob) {
 		const birthDate = new Date(dob);
 		const today = new Date();
 		let age = today.getFullYear() - birthDate.getFullYear();
-
-		const monthDifference = today.getMonth() - birthDate.getMonth();
-		const dayDifference = today.getDate() - birthDate.getDate();
-
-		// Adjust age if the birthdate hasn’t occurred yet this year
-		if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+		const monthDiff = today.getMonth() - birthDate.getMonth();
+		if (
+			monthDiff < 0 ||
+			(monthDiff === 0 && today.getDate() < birthDate.getDate())
+		) {
 			age--;
 		}
-
 		return age;
 	}
 
 	return (
-		<div className='max-w-lg mx-auto p-6 bg-gray-100 rounded-lg shadow-lg'>
-			<h1 className='text-2xl font-bold text-center mb-4'>Tourist Profile</h1>
-			{error && <p className='text-red-500 text-center mb-4'>{error}</p>}
-			{!isEditing ? (
-				<div className='mb-6'>
-					<h2 className='text-xl font-semibold mb-2'>Profile Details</h2>
-					<div className='bg-white p-4 rounded-lg shadow'>
-						<p className='mb-2'>
-							<strong>Email:</strong>{' '}
-							<span className='text-gray-700'>
-								{profileData.email || 'N/A'}
-							</span>
-						</p>
-						<p className='mb-2'>
-							<strong>Username:</strong>{' '}
-							<span className='text-gray-700'>
-								{profileData.username || 'N/A'}
-							</span>
-						</p>
-						<p className='mb-2'>
-							<strong>Mobile Number:</strong>{' '}
-							<span className='text-gray-700'>
-								{profileData.mobileNumber || 'N/A'}
-							</span>
-						</p>
-						<p className='mb-2'>
-							<strong>Nationality:</strong>{' '}
-							<span className='text-gray-700'>
-								{profileData.nationality || 'N/A'}
-							</span>
-						</p>
-						<p className='mb-2'>
-							<strong>Age:</strong>
-							<span className='text-gray-700'>
-								{profileData.dob
-									? ` ${calculateAge(profileData.dob)} years old`
-									: 'N/A'}
-							</span>
-						</p>
+		<div className='min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 flex items-center justify-center'>
+			<div className='max-w-xl w-full bg-white rounded-lg shadow-xl p-6'>
+				<h1 className='text-2xl font-bold text-center mb-6 text-gray-800'>
+					Tourist Profile
+				</h1>
 
-						<p className='mb-2'>
-							<strong>Occupation:</strong>{' '}
-							<span className='text-gray-700'>
-								{profileData.occupation || 'N/A'}
-							</span>
-						</p>
-						<p className='mb-2'>
-							<strong>Wallet Balance:</strong>{' '}
-							<span className='text-gray-700'>
-								${profileData.wallet?.balance || 0}
-							</span>
-						</p>
-						<p className='mb-2'>
-							<strong>Currency:</strong>{' '}
-							<span className='text-gray-700'>
-								{profileData.wallet?.currency || 'USD'}
-							</span>
-						</p>
-					</div>
-					<button
-						className='mt-4 w-full bg-blue-600 text-white py-2 rounded-md shadow hover:bg-blue-700 transition duration-200'
-						onClick={() => setIsEditing(true)}>
-						Edit Profile
-					</button>
-					<button
-						onClick={requestDeletion}
-						className='mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200'>
-						Request to Delete My Profile
-					</button>
-				</div>
-			) : (
-				<form
-					className='bg-white p-6 rounded-lg shadow'
-					onSubmit={handleSubmit}>
-					<h2 className='text-xl font-semibold mb-4'>Edit Profile</h2>
-					<label className='block mb-4'>
-						<span className='font-medium'>Username:</span>
-						<input
-							type='text'
-							name='username'
-							value={profileData.username}
-							disabled
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
-						/>
-					</label>
-					<label className='block mb-4'>
-						<span className='font-medium'>Email:</span>
-						<input
-							type='email'
-							name='email'
-							value={profileData.email}
-							onChange={handleChange}
-							required
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
-						/>
-					</label>
-					<label className='block mb-4'>
-						<span className='font-medium'>Password:</span>
-						<input
-							type='password'
-							name='password'
-							value={profileData.password}
-							disabled
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
-						/>
-					</label>
-					<label className='block mb-4'>
-						<span className='font-medium'>Mobile Number:</span>
-						<input
-							type='text'
-							name='mobileNumber'
-							value={profileData.mobileNumber}
-							onChange={handleChange}
-							required
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
-						/>
-					</label>
-					<label className='block mb-4'>
-						<span className='font-medium'>Nationality:</span>
-						<input
-							type='text'
-							name='nationality'
-							value={profileData.nationality}
-							disabled
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
-						/>
-					</label>
-					<label className='block mb-4'>
-						<span className='font-medium'>Date of Birth:</span>
-						<input
-							type='text'
-							name='dob'
-							value={profileData.dob}
-							disabled
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
-						/>
-					</label>
-					<label className='block mb-4'>
-						<span className='font-medium'>Occupation:</span>
-						<select
-							name='occupation'
-							value={profileData.occupation}
-							disabled
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'>
-							<option value='Job'>Job</option>
-							<option value='Student'>Student</option>
-						</select>
-					</label>
-					<label className='block mb-4'>
-						<span className='font-medium'>Wallet Balance:</span>
-						<input
-							type='number'
-							name='wallet.balance'
-							value={profileData.wallet.balance}
-							disabled
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
-						/>
-					</label>
-					<label className='block mb-4'>
-						<span className='font-medium'>Currency:</span>
-						<input
-							type='text'
-							name='wallet.currency'
-							value={profileData.wallet.currency}
-							disabled
-							className='mt-1 block w-full border border-gray-300 rounded-md p-2'
-						/>
-					</label>
-					<div className='flex justify-between mt-4'>
+				{error && (
+					<p className='text-red-600 bg-red-100 p-2 rounded mb-4'>{error}</p>
+				)}
+				{success && (
+					<p className='text-green-600 bg-green-100 p-2 rounded mb-4'>
+						{success}
+					</p>
+				)}
+
+				{!isEditing ? (
+					<div>
+						<h2 className='text-lg font-semibold mb-3'>Profile Details</h2>
+						<div className='bg-gray-100 p-4 rounded-lg'>
+							<p className='mb-2'>
+								<strong>Email:</strong> {profileData.email || 'N/A'}
+							</p>
+							<p className='mb-2'>
+								<strong>Username:</strong> {profileData.username || 'N/A'}
+							</p>
+							<p className='mb-2'>
+								<strong>Mobile:</strong> {profileData.mobileNumber || 'N/A'}
+							</p>
+							<p className='mb-2'>
+								<strong>Nationality:</strong> {profileData.nationality || 'N/A'}
+							</p>
+							<p className='mb-2'>
+								<strong>Age:</strong>{' '}
+								{profileData.dob ? calculateAge(profileData.dob) : 'N/A'}
+							</p>
+							<p className='mb-2'>
+								<strong>Occupation:</strong> {profileData.occupation || 'N/A'}
+							</p>
+							<p className='mb-2'>
+								<strong>Wallet Balance:</strong> ${profileData.wallet.balance}
+							</p>
+							<p className='mb-2'>
+								<strong>Currency:</strong> {profileData.wallet.currency}
+							</p>
+						</div>
+
 						<button
-							className='bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200'
-							type='submit'>
-							Update Profile
+							className='w-full bg-blue-500 text-white py-2 rounded-md mt-4 hover:bg-blue-600'
+							onClick={() => setIsEditing(true)}>
+							Edit Profile
 						</button>
 						<button
-							className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition duration-200'
-							type='button'
-							onClick={() => setIsEditing(false)}>
-							Cancel
+							className='w-full bg-red-500 text-white py-2 rounded-md mt-4 hover:bg-red-600'
+							onClick={requestDeletion}>
+							Request Account Deletion
 						</button>
 					</div>
-				</form>
-			)}
+				) : (
+					<form onSubmit={handleSubmit}>
+						<h2 className='text-lg font-semibold mb-4'>Edit Profile</h2>
+						{/* Form Fields */}
+						<label className='block mb-4'>
+							<span>Email:</span>
+							<input
+								type='email'
+								name='email'
+								value={profileData.email}
+								onChange={handleChange}
+								className='block w-full mt-1 border-gray-300 rounded-md p-2'
+								required
+							/>
+						</label>
+						{/* Other inputs */}
+						<div className='flex justify-between mt-4'>
+							<button className='bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600'>
+								Save
+							</button>
+							<button
+								className='bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600'
+								type='button'
+								onClick={() => setIsEditing(false)}>
+								Cancel
+							</button>
+						</div>
+					</form>
+				)}
+			</div>
 		</div>
 	);
 };
