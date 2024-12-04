@@ -71,7 +71,7 @@ const CompletedActivities = () => {
 	}, [month, year]);
 
 	return (
-		<div className='min-h-screen bg-gray-50 flex items-center justify-center py-8 px-4'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='bg-white shadow-md rounded-lg p-6 max-w-4xl w-full'>
 				<h1 className='text-2xl font-bold text-gray-800 text-center mb-6'>
 					Completed Activities Report

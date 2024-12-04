@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { AiOutlineWarning } from 'react-icons/ai'; // Using a warning icon
+import { AiOutlineWarning } from 'react-icons/ai'; // Warning icon for flagged itineraries
+import { BiCheckCircle } from 'react-icons/bi'; // Check icon for active itineraries
 
 const DisplayNotificationItinerary = () => {
 	const [itineraries, setItineraries] = useState([]);
@@ -40,31 +41,39 @@ const DisplayNotificationItinerary = () => {
 	}, []);
 
 	return (
-		<div className='min-h-screen bg-gray-100 p-4'>
-			<div className='bg-white shadow-lg rounded-lg p-8 max-w-3xl mx-auto'>
-				<h1 className='text-3xl font-bold text-gray-800 mb-6 text-center'>
-					Itinerary Report
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center p-6'>
+			<div className='bg-white shadow-xl rounded-lg p-8 max-w-3xl w-full'>
+				<h1 className='text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center'>
+					Itinerary Notifications
 				</h1>
 
 				{/* Loading and error handling */}
 				{loading ? (
-					<p className='text-center text-blue-500'>Loading...</p>
+					<div className='flex justify-center items-center'>
+						<p className='text-lg font-medium text-blue-500 animate-pulse'>
+							Loading itineraries...
+						</p>
+					</div>
 				) : error ? (
-					<p className='text-center text-red-500'>{error}</p>
+					<div className='text-center bg-red-100 text-red-700 py-3 px-4 rounded-lg shadow-sm'>
+						<p>{error}</p>
+					</div>
 				) : (
 					<>
 						{/* Flagged Itineraries Notification */}
 						{flaggedItineraries.length > 0 && (
-							<div className='notification-banner animate__animated animate__fadeIn mb-6'>
-								<div className='bg-red-500 text-white p-4 rounded-lg shadow-lg flex items-center space-x-4'>
-									<AiOutlineWarning className='text-xl' />
+							<div className='mb-6 p-4 bg-red-50 border border-red-400 rounded-lg shadow-md'>
+								<div className='flex items-center space-x-3'>
+									<AiOutlineWarning className='text-red-500 text-xl' />
 									<div>
-										<p className='font-semibold'>
+										<p className='font-semibold text-red-600'>
 											Alert: Some itineraries are flagged!
 										</p>
-										<ul className='list-disc list-inside'>
+										<ul className='list-disc list-inside text-gray-700 mt-2'>
 											{flaggedItineraries.map((itinerary) => (
-												<li key={itinerary._id}>{itinerary.name} - Flagged</li>
+												<li key={itinerary._id}>
+													<span className='font-medium'>{itinerary.name}</span>
+												</li>
 											))}
 										</ul>
 									</div>
@@ -73,23 +82,42 @@ const DisplayNotificationItinerary = () => {
 						)}
 
 						{/* All Itineraries List */}
-						<h2 className='text-xl font-semibold text-gray-700 mb-4'>
+						<h2 className='text-lg font-semibold text-gray-800 mb-4'>
 							All Itineraries
 						</h2>
-						<ul className='space-y-4'>
+						<div className='grid grid-cols-1 gap-6'>
 							{itineraries.map((itinerary) => (
-								<li
+								<div
 									key={itinerary._id}
-									className={`p-4 border rounded ${
-										itinerary.flagged ? 'border-red-500' : 'border-gray-300'
+									className={`p-4 rounded-lg shadow-sm ${
+										itinerary.flagged
+											? 'bg-red-50 border border-red-400'
+											: 'bg-green-50 border border-green-400'
 									}`}>
-									<p className='text-lg font-medium'>{itinerary.name}</p>
-									<p className='text-sm text-gray-500'>
-										{itinerary.flagged ? 'Status: Flagged' : 'Status: Active'}
+									<div className='flex items-center justify-between'>
+										<p className='text-lg font-medium text-gray-800'>
+											{itinerary.name}
+										</p>
+										{itinerary.flagged ? (
+											<span className='flex items-center text-red-600'>
+												<AiOutlineWarning className='mr-1' />
+												Flagged
+											</span>
+										) : (
+											<span className='flex items-center text-green-600'>
+												<BiCheckCircle className='mr-1' />
+												Active
+											</span>
+										)}
+									</div>
+									<p className='mt-1 text-sm text-gray-600'>
+										{itinerary.flagged
+											? 'This itinerary requires immediate attention.'
+											: 'This itinerary is currently active.'}
 									</p>
-								</li>
+								</div>
 							))}
-						</ul>
+						</div>
 					</>
 				)}
 			</div>

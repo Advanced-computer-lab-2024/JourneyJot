@@ -177,7 +177,7 @@ const ActivitiesCard = ({
 	};
 
 	return (
-		<div>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4'>
 				{activities.length > 0 ? (
 					activities.map((activity) => (

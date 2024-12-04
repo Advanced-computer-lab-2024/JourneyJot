@@ -188,222 +188,221 @@ const ItinerariesComponent = () => {
 	};
 
 	return (
-		<div className='p-8'>
-			<h2 className='text-2xl mb-4'>Itineraries</h2>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center p-8'>
+			<div className='bg-white rounded-lg shadow-lg w-full max-w-4xl p-6'>
+				<h2 className='text-2xl font-bold text-gray-800 mb-6'>
+					Manage Itineraries
+				</h2>
 
-			<form
-				onSubmit={handleSubmit}
-				className='mb-6'>
-				{/* Itinerary Name */}
-				<input
-					type='text'
-					name='name'
-					value={newItinerary.name}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Itinerary Name'
-					required
-				/>
+				{/* Itinerary Form */}
+				<form
+					onSubmit={handleSubmit}
+					className='space-y-4'>
+					<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+						<input
+							type='text'
+							name='name'
+							value={newItinerary.name}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Itinerary Name'
+							required
+						/>
 
-				{/* Timeline */}
-				<input
-					type='text'
-					name='timeline'
-					value={newItinerary.timeline}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Timeline'
-					required
-				/>
+						<input
+							type='text'
+							name='timeline'
+							value={newItinerary.timeline}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Timeline'
+							required
+						/>
 
-				{/* Activities */}
-				<input
-					type='text'
-					name='activities'
-					value={newItinerary.activities.join(', ')}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Activities (comma separated)'
-				/>
+						<input
+							type='text'
+							name='activities'
+							value={newItinerary.activities.join(', ')}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Activities (comma separated)'
+						/>
 
-				{/* Locations */}
-				<input
-					type='text'
-					name='locations'
-					value={newItinerary.locations.join(', ')}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Locations (comma separated)'
-				/>
+						<input
+							type='text'
+							name='locations'
+							value={newItinerary.locations.join(', ')}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Locations (comma separated)'
+						/>
 
-				{/* Duration */}
-				<input
-					type='text'
-					name='duration'
-					value={newItinerary.duration}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Duration'
-				/>
+						<input
+							type='text'
+							name='duration'
+							value={newItinerary.duration}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Duration'
+						/>
 
-				{/* Language */}
-				<input
-					type='text'
-					name='language'
-					value={newItinerary.language}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Language'
-				/>
+						<input
+							type='text'
+							name='language'
+							value={newItinerary.language}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Language'
+						/>
 
-				{/* Price */}
-				<input
-					type='text'
-					name='price'
-					value={newItinerary.price}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Price'
-				/>
+						<input
+							type='text'
+							name='price'
+							value={newItinerary.price}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Price'
+						/>
 
-				{/* Rating */}
-				<input
-					type='number'
-					name='rating'
-					value={newItinerary.rating}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Rating'
-					min='0'
-					max='5'
-				/>
+						<input
+							type='number'
+							name='rating'
+							value={newItinerary.rating}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Rating (0-5)'
+							min='0'
+							max='5'
+						/>
+					</div>
 
-				{/* Available Dates */}
-				<input
-					type='text'
-					name='availableDates'
-					value={newItinerary.availableDates.join(', ')}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Available Dates (comma separated)'
-				/>
-
-				{/* Accessibility */}
-				<input
-					type='text'
-					name='accessibility'
-					value={newItinerary.accessibility}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Accessibility'
-				/>
-
-				{/* Pickup Location */}
-				<input
-					type='text'
-					name='pickupLocation'
-					value={newItinerary.pickupLocation}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Pickup Location'
-				/>
-
-				{/* Dropoff Location */}
-				<input
-					type='text'
-					name='dropoffLocation'
-					value={newItinerary.dropoffLocation}
-					onChange={handleInputChange}
-					className='mb-4 p-2 border border-gray-300 rounded w-full'
-					placeholder='Dropoff Location'
-				/>
-
-				{/* Booking Open Checkbox */}
-				<label className='mb-4'>
 					<input
-						type='checkbox'
-						name='bookingOpen'
-						checked={newItinerary.bookingOpen}
+						type='text'
+						name='availableDates'
+						value={newItinerary.availableDates.join(', ')}
 						onChange={handleInputChange}
+						className='p-3 border rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:outline-none'
+						placeholder='Available Dates (comma separated)'
 					/>
-					Booking Open
-				</label>
 
-				{/* Error message for available dates */}
-				{availableDatesError && (
-					<p className='text-red-500 mb-4'>{availableDatesError}</p>
-				)}
+					<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+						<input
+							type='text'
+							name='accessibility'
+							value={newItinerary.accessibility}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Accessibility'
+						/>
 
-				<button
-					type='submit'
-					className='bg-blue-500 text-white p-2 rounded'>
-					{isEditing ? 'Update Itinerary' : 'Add Itinerary'}
-				</button>
-			</form>
+						<input
+							type='text'
+							name='pickupLocation'
+							value={newItinerary.pickupLocation}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Pickup Location'
+						/>
 
-			{/* Display list of itineraries */}
-			<ul>
-				{itineraries.map((itinerary) => (
-					<li
-						key={itinerary._id}
-						className='mb-4 p-4 border border-gray-300 rounded'>
-						<div className='flex justify-between'>
-							<h4 className='font-bold'>{itinerary.timeline}</h4>
-							<div>
-								<button
-									onClick={() => handleEdit(itinerary)}
-									className='bg-yellow-500 text-white py-1 px-3 rounded mr-2'>
-									Edit
-								</button>
-								<button
-									onClick={() => handleDelete(itinerary._id)}
-									className='bg-red-500 text-white py-1 px-3 rounded'>
-									Delete
-								</button>
+						<input
+							type='text'
+							name='dropoffLocation'
+							value={newItinerary.dropoffLocation}
+							onChange={handleInputChange}
+							className='p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+							placeholder='Dropoff Location'
+						/>
+					</div>
+
+					<label className='flex items-center space-x-2'>
+						<input
+							type='checkbox'
+							name='bookingOpen'
+							checked={newItinerary.bookingOpen}
+							onChange={handleInputChange}
+							className='form-checkbox text-blue-500 focus:ring-2 focus:ring-blue-500'
+						/>
+						<span className='text-gray-600'>Booking Open</span>
+					</label>
+
+					{availableDatesError && (
+						<p className='text-red-500'>{availableDatesError}</p>
+					)}
+
+					<button
+						type='submit'
+						className='w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition'>
+						{isEditing ? 'Update Itinerary' : 'Add Itinerary'}
+					</button>
+				</form>
+
+				{/* Itineraries List */}
+				<ul className='mt-8 space-y-4'>
+					{itineraries.map((itinerary) => (
+						<li
+							key={itinerary._id}
+							className='border rounded-lg p-4 shadow-md hover:shadow-lg transition'>
+							<div className='flex justify-between items-center'>
+								<h4 className='text-lg font-semibold text-gray-800'>
+									{itinerary.timeline}
+								</h4>
+								<div className='space-x-2'>
+									<button
+										onClick={() => handleEdit(itinerary)}
+										className='bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition'>
+										Edit
+									</button>
+									<button
+										onClick={() => handleDelete(itinerary._id)}
+										className='bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition'>
+										Delete
+									</button>
+								</div>
 							</div>
-						</div>
-						<div className='mt-2'>
-							<p>
-								<strong>Itinerary Name:</strong> {itinerary.name}
-							</p>
-							<p>
-								<strong>Activities:</strong> {itinerary.activities.join(', ')}
-							</p>
-							<p>
-								<strong>Locations:</strong> {itinerary.locations.join(', ')}
-							</p>
-							<p>
-								<strong>Duration:</strong> {itinerary.duration}
-							</p>
-							<p>
-								<strong>Language:</strong> {itinerary.language}
-							</p>
-							<p>
-								<strong>Price:</strong> {itinerary.price}
-							</p>
-							<p>
-								<strong>Rating:</strong> {itinerary.rating}
-							</p>
-							<p>
-								<strong>Available Dates:</strong>{' '}
-								{itinerary.availableDates.join(', ')}
-							</p>
-							<p>
-								<strong>Accessibility:</strong> {itinerary.accessibility}
-							</p>
-							<p>
-								<strong>Pickup Location:</strong> {itinerary.pickupLocation}
-							</p>
-							<p>
-								<strong>Dropoff Location:</strong> {itinerary.dropoffLocation}
-							</p>
-							<p>
-								<strong>BookingOpen:</strong> {itinerary.bookingOpen}
-							</p>
-						</div>
-					</li>
-				))}
-			</ul>
+							<div className='mt-2 text-gray-700'>
+								<p>
+									<strong>Name:</strong> {itinerary.name}
+								</p>
+								<p>
+									<strong>Activities:</strong> {itinerary.activities.join(', ')}
+								</p>
+								<p>
+									<strong>Locations:</strong> {itinerary.locations.join(', ')}
+								</p>
+								<p>
+									<strong>Duration:</strong> {itinerary.duration}
+								</p>
+								<p>
+									<strong>Language:</strong> {itinerary.language}
+								</p>
+								<p>
+									<strong>Price:</strong> {itinerary.price}
+								</p>
+								<p>
+									<strong>Rating:</strong> {itinerary.rating}
+								</p>
+								<p>
+									<strong>Available Dates:</strong>{' '}
+									{itinerary.availableDates.join(', ')}
+								</p>
+								<p>
+									<strong>Accessibility:</strong> {itinerary.accessibility}
+								</p>
+								<p>
+									<strong>Pickup:</strong> {itinerary.pickupLocation}
+								</p>
+								<p>
+									<strong>Dropoff:</strong> {itinerary.dropoffLocation}
+								</p>
+								<p>
+									<strong>Booking Open:</strong>{' '}
+									{itinerary.bookingOpen ? 'Yes' : 'No'}
+								</p>
+							</div>
+						</li>
+					))}
+				</ul>
+			</div>
 		</div>
 	);
 };

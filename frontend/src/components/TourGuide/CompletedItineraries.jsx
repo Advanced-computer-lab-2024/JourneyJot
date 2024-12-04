@@ -72,7 +72,7 @@ const CompletedItineraries = () => {
 	}, [month, year]);
 
 	return (
-		<div className='min-h-screen bg-gray-50 flex items-center justify-center p-6'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-8 flex items-center justify-center'>
 			<div className='bg-white shadow-lg rounded-lg p-6 max-w-5xl w-full'>
 				<h1 className='text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-8'>
 					Completed Itineraries Report

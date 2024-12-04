@@ -179,113 +179,117 @@ const TourGuideProfile = () => {
 	};
 
 	return (
-		<div className='max-w-xl mx-auto p-6 bg-white shadow-lg rounded-lg'>
-			<h1 className='text-3xl font-semibold text-center mb-4'>
-				Tour Guide Profile
-			</h1>
-			{error && <p className='text-red-500 text-center mb-4'>{error}</p>}
-			<div className='mb-6'>
-				{profileData.image && (
-					<img
-						src={profileData.image}
-						alt='Tour Guide'
-						className='w-48 h-48 object-cover rounded-full mx-auto mb-4 border border-gray-300'
-					/>
-				)}
-				<form
-					onSubmit={submitImage}
-					className='text-center'>
-					<input
-						type='file'
-						accept='image/*'
-						onChange={handleImage}
-						className='border border-gray-300 rounded p-2 mt-2 mb-2 w-full'
-					/>
-					{imageUploadError && (
-						<p className='text-red-500'>{imageUploadError}</p>
+		<div className='min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 p-8 flex items-center justify-center'>
+			<div className='max-w-xl mx-auto p-6 bg-white shadow-lg rounded-lg'>
+				<h1 className='text-3xl font-semibold text-center mb-4'>
+					Tour Guide Profile
+				</h1>
+				{error && <p className='text-red-500 text-center mb-4'>{error}</p>}
+				<div className='mb-6'>
+					{profileData.image && (
+						<img
+							src={profileData.image}
+							alt='Tour Guide'
+							className='w-48 h-48 object-cover rounded-full mx-auto mb-4 border border-gray-300'
+						/>
 					)}
-					<button
-						type='submit'
-						className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mt-2 w-full'>
-						Upload Image
-					</button>
-				</form>
-			</div>
-			{!isEditing ? (
-				<div className='mb-4'>
-					<p className='text-lg'>
-						<strong>Mobile Number:</strong> {profileData.mobileNumber || 'N/A'}
-					</p>
-					<p className='text-lg'>
-						<strong>Years of Experience:</strong>{' '}
-						{profileData.yearsOfExperience || 'N/A'}
-					</p>
-					<p className='text-lg'>
-						<strong>Previous Work:</strong> {profileData.previousWork || 'N/A'}
-					</p>
-					<button
-						onClick={() => setIsEditing(true)}
-						className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mt-4 w-full'>
-						Edit Profile
-					</button>
-					<button
-						onClick={requestDeletion}
-						className='mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200'>
-						Request to Delete My Profile
-					</button>
-				</div>
-			) : (
-				<form
-					onSubmit={handleSubmit}
-					className='space-y-4'>
-					<label className='block'>
-						<span>Mobile Number:</span>
+					<form
+						onSubmit={submitImage}
+						className='text-center'>
 						<input
-							type='text'
-							name='mobileNumber'
-							value={profileData.mobileNumber}
-							onChange={handleChange}
-							required
-							className='border border-gray-300 rounded p-2 w-full'
+							type='file'
+							accept='image/*'
+							onChange={handleImage}
+							className='border border-gray-300 rounded p-2 mt-2 mb-2 w-full'
 						/>
-					</label>
-					<label className='block'>
-						<span>Years of Experience:</span>
-						<input
-							type='text'
-							name='yearsOfExperience'
-							value={profileData.yearsOfExperience}
-							onChange={handleChange}
-							required
-							className='border border-gray-300 rounded p-2 w-full'
-						/>
-					</label>
-					<label className='block'>
-						<span>Previous Work:</span>
-						<input
-							type='text'
-							name='previousWork'
-							value={profileData.previousWork}
-							onChange={handleChange}
-							required
-							className='border border-gray-300 rounded p-2 w-full'
-						/>
-					</label>
-					<div className='flex space-x-4 mt-4'>
-						<button
-							type='button'
-							onClick={handleCancel}
-							className='bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 w-full'>
-							Cancel
-						</button>
+						{imageUploadError && (
+							<p className='text-red-500'>{imageUploadError}</p>
+						)}
 						<button
 							type='submit'
-							className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 w-full'>
-							Save Changes
+							className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mt-2 w-full'>
+							Upload Image
+						</button>
+					</form>
+				</div>
+				{!isEditing ? (
+					<div className='mb-4'>
+						<p className='text-lg'>
+							<strong>Mobile Number:</strong>{' '}
+							{profileData.mobileNumber || 'N/A'}
+						</p>
+						<p className='text-lg'>
+							<strong>Years of Experience:</strong>{' '}
+							{profileData.yearsOfExperience || 'N/A'}
+						</p>
+						<p className='text-lg'>
+							<strong>Previous Work:</strong>{' '}
+							{profileData.previousWork || 'N/A'}
+						</p>
+						<button
+							onClick={() => setIsEditing(true)}
+							className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mt-4 w-full'>
+							Edit Profile
+						</button>
+						<button
+							onClick={requestDeletion}
+							className='mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200'>
+							Request to Delete My Profile
 						</button>
 					</div>
-				</form>
-			)}
+				) : (
+					<form
+						onSubmit={handleSubmit}
+						className='space-y-4'>
+						<label className='block'>
+							<span>Mobile Number:</span>
+							<input
+								type='text'
+								name='mobileNumber'
+								value={profileData.mobileNumber}
+								onChange={handleChange}
+								required
+								className='border border-gray-300 rounded p-2 w-full'
+							/>
+						</label>
+						<label className='block'>
+							<span>Years of Experience:</span>
+							<input
+								type='text'
+								name='yearsOfExperience'
+								value={profileData.yearsOfExperience}
+								onChange={handleChange}
+								required
+								className='border border-gray-300 rounded p-2 w-full'
+							/>
+						</label>
+						<label className='block'>
+							<span>Previous Work:</span>
+							<input
+								type='text'
+								name='previousWork'
+								value={profileData.previousWork}
+								onChange={handleChange}
+								required
+								className='border border-gray-300 rounded p-2 w-full'
+							/>
+						</label>
+						<div className='flex space-x-4 mt-4'>
+							<button
+								type='button'
+								onClick={handleCancel}
+								className='bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 w-full'>
+								Cancel
+							</button>
+							<button
+								type='submit'
+								className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 w-full'>
+								Save Changes
+							</button>
+						</div>
+					</form>
+				)}
+			</div>
 		</div>
 	);
 };

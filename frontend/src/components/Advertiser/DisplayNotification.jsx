@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { AiOutlineWarning } from 'react-icons/ai'; // Using a warning icon
+import { AiOutlineWarning } from 'react-icons/ai';
 
 const DisplayNotification = () => {
 	const [activities, setActivities] = useState([]);
@@ -40,31 +40,36 @@ const DisplayNotification = () => {
 	}, []);
 
 	return (
-		<div className='min-h-screen bg-gray-100 p-4'>
-			<div className='bg-white shadow-lg rounded-lg p-8 max-w-3xl mx-auto'>
-				<h1 className='text-3xl font-bold text-gray-800 mb-6 text-center'>
-					Activity Report
+		<div className='min-h-screen bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300 p-6 flex items-center justify-center'>
+			<div className='bg-white shadow-lg rounded-lg w-full max-w-4xl p-8'>
+				<h1 className='text-3xl font-bold text-gray-800 text-center mb-8'>
+					Activity Notifications
 				</h1>
 
 				{/* Loading and error handling */}
 				{loading ? (
-					<p className='text-center text-blue-500'>Loading...</p>
+					<div className='text-center text-blue-600 text-lg'>Loading...</div>
 				) : error ? (
-					<p className='text-center text-red-500'>{error}</p>
+					<div className='text-center text-red-500 text-lg'>{error}</div>
 				) : (
-					<>
+					<div>
 						{/* Flagged Activities Notification */}
 						{flaggedActivities.length > 0 && (
-							<div className='notification-banner animate__animated animate__fadeIn mb-6'>
-								<div className='bg-red-500 text-white p-4 rounded-lg shadow-lg flex items-center space-x-4'>
-									<AiOutlineWarning className='text-xl' />
+							<div className='bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded'>
+								<div className='flex items-center'>
+									<AiOutlineWarning className='text-2xl mr-3' />
 									<div>
-										<p className='font-semibold'>
-											Alert: Some activities are flagged!
+										<p className='font-bold text-lg'>
+											Attention Required: Flagged Activities!
 										</p>
-										<ul className='list-disc list-inside'>
+										<ul className='mt-2 list-disc list-inside text-sm'>
 											{flaggedActivities.map((activity) => (
-												<li key={activity._id}>{activity.name} - Flagged</li>
+												<li
+													key={activity._id}
+													className='text-gray-700'>
+													{activity.name} -{' '}
+													<span className='text-red-600'>Flagged</span>
+												</li>
 											))}
 										</ul>
 									</div>
@@ -76,21 +81,32 @@ const DisplayNotification = () => {
 						<h2 className='text-xl font-semibold text-gray-700 mb-4'>
 							All Activities
 						</h2>
-						<ul className='space-y-4'>
+						<ul className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
 							{activities.map((activity) => (
 								<li
 									key={activity._id}
-									className={`p-4 border rounded ${
-										activity.flagged ? 'border-red-500' : 'border-gray-300'
+									className={`p-6 rounded-lg shadow-md hover:shadow-lg transition transform hover:scale-105 ${
+										activity.flagged
+											? 'bg-red-50 border-l-4 border-red-500'
+											: 'bg-gray-50 border-l-4 border-gray-300'
 									}`}>
-									<p className='text-lg font-medium'>{activity.name}</p>
-									<p className='text-sm text-gray-500'>
-										{activity.flagged ? 'Status: Flagged' : 'Status: Active'}
-									</p>
+									<div>
+										<p className='text-lg font-bold text-gray-800'>
+											{activity.name}
+										</p>
+										<p className='text-sm text-gray-600'>
+											Status: {activity.flagged ? 'Flagged' : 'Active'}
+										</p>
+									</div>
+									{activity.flagged && (
+										<div className='mt-3 text-red-600 text-sm font-medium'>
+											⚠ Needs Attention
+										</div>
+									)}
 								</li>
 							))}
 						</ul>
-					</>
+					</div>
 				)}
 			</div>
 		</div>

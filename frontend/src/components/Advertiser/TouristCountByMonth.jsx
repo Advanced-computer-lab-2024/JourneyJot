@@ -38,33 +38,58 @@ const TouristCountByMonth = () => {
 	}, [selectedMonth]);
 
 	return (
-		<div>
-			<h1>Tourists by Month</h1>
-			<select onChange={(e) => setSelectedMonth(e.target.value)}>
-				<option value=''>Select a month</option>
-				{/* Add more options here for month selection */}
-				<option value='1-2024'>January 2024</option>
-				<option value='2-2024'>February 2024</option>
-				<option value='3-2024'>March 2024</option>
-				{/* Add more months as needed */}
-			</select>
+		<div className='min-h-screen bg-gradient-to-br from-blue-100 via-indigo-200 to-purple-300 flex items-center justify-center p-6'>
+			<div className='bg-white shadow-lg rounded-lg w-full max-w-md p-6'>
+				<h1 className='text-2xl font-bold text-gray-800 text-center mb-4'>
+					Tourists by Month
+				</h1>
 
-			{loading ? (
-				<p>Loading...</p>
-			) : error ? (
-				<p>{error}</p>
-			) : (
-				<div>
-					<h2>Tourist Count by Month</h2>
-					<ul>
-						{Object.entries(touristCountByMonth).map(([month, count]) => (
-							<li key={month}>
-								{month}: {count} tourists
-							</li>
-						))}
-					</ul>
+				{/* Dropdown */}
+				<div className='mb-6'>
+					<label
+						htmlFor='monthSelect'
+						className='block text-gray-600 font-medium mb-2'>
+						Select a Month:
+					</label>
+					<select
+						id='monthSelect'
+						className='w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400'
+						value={selectedMonth}
+						onChange={(e) => setSelectedMonth(e.target.value)}>
+						<option value=''>-- Choose a Month --</option>
+						<option value='1-2024'>January 2024</option>
+						<option value='2-2024'>February 2024</option>
+						<option value='3-2024'>March 2024</option>
+						{/* Add more months as needed */}
+					</select>
 				</div>
-			)}
+
+				{/* Loading and Error Handling */}
+				{loading ? (
+					<p className='text-center text-blue-500 font-semibold'>Loading...</p>
+				) : error ? (
+					<p className='text-center text-red-500 font-medium'>{error}</p>
+				) : (
+					// Display Data
+					<div>
+						<h2 className='text-lg font-semibold text-gray-700 mb-4'>
+							Tourist Count by Month
+						</h2>
+						<ul className='space-y-2'>
+							{Object.entries(touristCountByMonth).map(([month, count]) => (
+								<li
+									key={month}
+									className='flex justify-between items-center bg-gray-50 px-4 py-2 rounded-lg shadow-sm'>
+									<span className='text-gray-700 font-medium'>{month}</span>
+									<span className='text-gray-900 font-bold'>
+										{count} tourists
+									</span>
+								</li>
+							))}
+						</ul>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };

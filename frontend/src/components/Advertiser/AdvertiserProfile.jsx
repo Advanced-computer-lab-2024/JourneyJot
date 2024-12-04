@@ -184,113 +184,115 @@ const AdvertiserProfile = () => {
 	};
 
 	return (
-		<div className='max-w-xl mx-auto p-6 bg-white shadow-lg rounded-lg'>
-			<h1 className='text-3xl font-semibold text-center mb-4'>
-				Advertiser Profile
-			</h1>
-			{error && <p className='text-red-500 text-center mb-4'>{error}</p>}
-			<div className='mb-6'>
-				{profileData.image && (
-					<img
-						src={profileData.image}
-						alt='Advertiser'
-						className='w-48 h-48 object-cover rounded-full mx-auto mb-4 border border-gray-300'
-					/>
-				)}
-				<form
-					onSubmit={submitImage}
-					className='text-center'>
-					<input
-						type='file'
-						accept='image/*'
-						onChange={handleImage}
-						className='border border-gray-300 rounded p-2 mt-2 mb-2 w-full'
-					/>
-					{imageUploadError && (
-						<p className='text-red-500'>{imageUploadError}</p>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='max-w-xl mx-auto p-6 bg-white shadow-lg rounded-lg'>
+				<h1 className='text-3xl font-semibold text-center mb-4'>
+					Advertiser Profile
+				</h1>
+				{error && <p className='text-red-500 text-center mb-4'>{error}</p>}
+				<div className='mb-6'>
+					{profileData.image && (
+						<img
+							src={profileData.image}
+							alt='Advertiser'
+							className='w-48 h-48 object-cover rounded-full mx-auto mb-4 border border-gray-300'
+						/>
 					)}
-					<button
-						type='submit'
-						className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mt-2 w-full'>
-						Upload Image
-					</button>
-				</form>
-			</div>
-			{!isEditing ? (
-				<div className='mb-4'>
-					<p className='text-lg'>
-						<strong>Website:</strong> {profileData.website || 'N/A'}
-					</p>
-					<p className='text-lg'>
-						<strong>Hotline:</strong> {profileData.hotline || 'N/A'}
-					</p>
-					<p className='text-lg'>
-						<strong>Company Profile:</strong>{' '}
-						{profileData.companyProfile || 'N/A'}
-					</p>
-					<button
-						onClick={() => setIsEditing(true)}
-						className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mt-4 w-full'>
-						Edit Profile
-					</button>
-					<button
-						onClick={requestDeletion}
-						className='mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200'>
-						Request to Delete My Profile
-					</button>
-				</div>
-			) : (
-				<form
-					onSubmit={handleSubmit}
-					className='space-y-4'>
-					<label className='block'>
-						<span>Website:</span>
+					<form
+						onSubmit={submitImage}
+						className='text-center'>
 						<input
-							type='text'
-							name='website'
-							value={profileData.website}
-							onChange={handleChange}
-							required
-							className='border border-gray-300 rounded p-2 w-full'
+							type='file'
+							accept='image/*'
+							onChange={handleImage}
+							className='border border-gray-300 rounded p-2 mt-2 mb-2 w-full'
 						/>
-					</label>
-					<label className='block'>
-						<span>Hotline:</span>
-						<input
-							type='text'
-							name='hotline'
-							value={profileData.hotline}
-							onChange={handleChange}
-							required
-							className='border border-gray-300 rounded p-2 w-full'
-						/>
-					</label>
-					<label className='block'>
-						<span>Company Profile:</span>
-						<input
-							type='text'
-							name='companyProfile'
-							value={profileData.companyProfile}
-							onChange={handleChange}
-							required
-							className='border border-gray-300 rounded p-2 w-full'
-						/>
-					</label>
-					<div className='flex space-x-4 mt-4'>
-						<button
-							type='button'
-							onClick={handleCancel}
-							className='bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 w-full'>
-							Cancel
-						</button>
+						{imageUploadError && (
+							<p className='text-red-500'>{imageUploadError}</p>
+						)}
 						<button
 							type='submit'
-							className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 w-full'>
-							Save Changes
+							className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mt-2 w-full'>
+							Upload Image
+						</button>
+					</form>
+				</div>
+				{!isEditing ? (
+					<div className='mb-4'>
+						<p className='text-lg'>
+							<strong>Website:</strong> {profileData.website || 'N/A'}
+						</p>
+						<p className='text-lg'>
+							<strong>Hotline:</strong> {profileData.hotline || 'N/A'}
+						</p>
+						<p className='text-lg'>
+							<strong>Company Profile:</strong>{' '}
+							{profileData.companyProfile || 'N/A'}
+						</p>
+						<button
+							onClick={() => setIsEditing(true)}
+							className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mt-4 w-full'>
+							Edit Profile
+						</button>
+						<button
+							onClick={requestDeletion}
+							className='mt-4 w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition duration-200'>
+							Request to Delete My Profile
 						</button>
 					</div>
-				</form>
-			)}
+				) : (
+					<form
+						onSubmit={handleSubmit}
+						className='space-y-4'>
+						<label className='block'>
+							<span>Website:</span>
+							<input
+								type='text'
+								name='website'
+								value={profileData.website}
+								onChange={handleChange}
+								required
+								className='border border-gray-300 rounded p-2 w-full'
+							/>
+						</label>
+						<label className='block'>
+							<span>Hotline:</span>
+							<input
+								type='text'
+								name='hotline'
+								value={profileData.hotline}
+								onChange={handleChange}
+								required
+								className='border border-gray-300 rounded p-2 w-full'
+							/>
+						</label>
+						<label className='block'>
+							<span>Company Profile:</span>
+							<input
+								type='text'
+								name='companyProfile'
+								value={profileData.companyProfile}
+								onChange={handleChange}
+								required
+								className='border border-gray-300 rounded p-2 w-full'
+							/>
+						</label>
+						<div className='flex space-x-4 mt-4'>
+							<button
+								type='button'
+								onClick={handleCancel}
+								className='bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 w-full'>
+								Cancel
+							</button>
+							<button
+								type='submit'
+								className='bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 w-full'>
+								Save Changes
+							</button>
+						</div>
+					</form>
+				)}
+			</div>
 		</div>
 	);
 };
