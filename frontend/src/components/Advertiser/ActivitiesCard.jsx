@@ -177,77 +177,53 @@ const ActivitiesCard = ({
 	};
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
-			<div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4'>
+		<div className='min-h-screen flex justify-center items-center bg-gray-100 p-4'>
+			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
 				{activities.length > 0 ? (
 					activities.map((activity) => (
 						<div
 							key={activity._id}
-							className='border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-2xl transition-shadow duration-300'>
-							<div className='flex flex-col h-full space-y-4 text-left'>
-								<ul className='space-y-3'>
-									<li className='text-gray-800'>
-										<span className='font-semibold text-lg'>
-											Activity Name:{' '}
-										</span>
-										{activity.name || 'N/A'}
-									</li>
-									<li className='text-gray-800'>
-										<span className='font-semibold text-lg'>
-											Advertiser Name:{' '}
-										</span>
-										{activity.advertiserId?.username || 'N/A'}
-									</li>
-									<li className='text-gray-800'>
-										<span className='font-semibold text-lg'>Date: </span>
-										{new Date(activity.date).toLocaleDateString()}
-									</li>
-									<li className='text-gray-800'>
-										<span className='font-semibold text-lg'>Time: </span>
-										{activity.time}
-									</li>
-									<li className='text-gray-800'>
-										<span className='font-semibold text-lg'>Price: </span>
-										{activity.price
-											? (activity.price * conversionRate).toFixed(1)
-											: 'N/A'}{' '}
-										{currency}
-									</li>
-									<li className='text-gray-800'>
-										<span className='font-semibold text-lg'>Category: </span>
-										{activity.category?.name || 'N/A'}
-									</li>
-									<li className='text-gray-800'>
-										<span className='font-semibold text-lg'>Tag: </span>
-										{activity.preferenceTag?.name || 'N/A'}
-									</li>
-									<li className='text-gray-800'>
-										<span className='font-semibold text-lg'>
-											Special Discounts:{' '}
-										</span>
-										{activity.specialDiscounts || 'N/A'}
-									</li>
-									<li className='text-gray-800'>
-										<span className='font-semibold text-lg'>
-											Booking Status:{' '}
-										</span>
-										{activity.bookingOpen ? 'Open' : 'Closed'}
-									</li>
-									<li className='text-gray-800 flex items-center'>
-										<span className='font-semibold text-lg mr-2'>Rating: </span>
-										{activity.rating ? (
-											<StarRating rating={activity.rating} />
-										) : (
-											'N/A'
-										)}
-									</li>
-								</ul>
+							className='bg-white rounded-lg shadow-md p-6'>
+							<h2 className='text-2xl font-semibold text-blue-900 mb-4'>
+								{activity.name || 'Activity Name'}
+							</h2>
+							<p className='text-gray-600 mb-2'>
+								<strong>Advertiser:</strong>{' '}
+								{activity.advertiserId?.username || 'N/A'}
+							</p>
+							<p className='text-gray-600 mb-2'>
+								<strong>Date:</strong>{' '}
+								{new Date(activity.date).toLocaleDateString()}
+							</p>
+							<p className='text-gray-600 mb-2'>
+								<strong>Time:</strong> {activity.time || 'N/A'}
+							</p>
+							<p className='text-gray-600 mb-2'>
+								<strong>Price:</strong>{' '}
+								{activity.price
+									? (activity.price * conversionRate).toFixed(1)
+									: 'N/A'}{' '}
+								{currency}
+							</p>
+							<p className='text-gray-600 mb-2'>
+								<strong>Category:</strong> {activity.category?.name || 'N/A'}
+							</p>
+							<p className='text-gray-600 mb-2'>
+								<strong>Tag:</strong> {activity.preferenceTag?.name || 'N/A'}
+							</p>
+							<p className='text-gray-600 mb-2'>
+								<strong>Discounts:</strong> {activity.specialDiscounts || 'N/A'}
+							</p>
+							<p className='text-gray-600 mb-4'>
+								<strong>Status:</strong>{' '}
+								{activity.bookingOpen ? 'Open' : 'Closed'}
+							</p>
 
-								{/* Book and Share Buttons */}
+							<div className='flex space-x-4 mb-4'>
 								<button
 									onClick={() => handleBookActivity(activity)}
-									className='bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 mt-4'>
-									Book A Ticket
+									className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700'>
+									Book Now
 								</button>
 								<button
 									onClick={() =>
@@ -257,58 +233,56 @@ const ActivitiesCard = ({
 											conversionRate
 										)
 									}
-									className='px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition duration-300 shadow-md'>
+									className='bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-500'>
 									Pay via Stripe
 								</button>
-								<div className='relative'>
-									<div className='flex justify-between'>
-										<button
-											onClick={toggleShareOptions}
-											className='bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 mt-2'>
-											Share
-										</button>
-										<button
-											onClick={() => handleBookmark(activity._id)}
-											className='text-blue-500 hover:text-blue-700'>
-											<FiBookmark size={24} />
-										</button>
-									</div>
-
-									{shareOptionsVisible && (
-										<div className='absolute bg-white border rounded shadow-md p-2 mt-1'>
-											<button
-												onClick={() => handleCopyLink(activity)}
-												className='text-blue-600 hover:underline block'>
-												Copy Link
-											</button>
-											<button
-												onClick={() => handleShareViaEmail(activity)}
-												className='text-blue-600 hover:underline block'>
-												Share via Email
-											</button>
-										</div>
-									)}
-								</div>
-
-								{/* Edit and Delete for Advertisers */}
-								{isAdvertiser && (
-									<div className='flex space-x-2 mt-4'>
-										<button
-											onClick={() => handleEdit(activity)}
-											className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'>
-											Edit
-										</button>
-										<DeleteActivityButton
-											activityId={activity._id}
-											onDelete={onDelete}
-										/>
-									</div>
-								)}
 							</div>
+
+							<div className='flex justify-between items-center'>
+								<button
+									onClick={toggleShareOptions}
+									className='bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700'>
+									Share
+								</button>
+								<button
+									onClick={() => handleBookmark(activity._id)}
+									className='text-blue-500 hover:text-blue-700'>
+									<FiBookmark size={24} />
+								</button>
+							</div>
+
+							{shareOptionsVisible && (
+								<div className='absolute bg-white border rounded-lg shadow-md mt-4 p-4 w-full'>
+									<button
+										onClick={() => handleCopyLink(activity)}
+										className='text-blue-600 hover:underline block mb-2'>
+										Copy Link
+									</button>
+									<button
+										onClick={() => handleShareViaEmail(activity)}
+										className='text-blue-600 hover:underline block'>
+										Share via Email
+									</button>
+								</div>
+							)}
+
+							{isAdvertiser && (
+								<div className='flex space-x-4 mt-4'>
+									<button
+										onClick={() => handleEdit(activity)}
+										className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
+										Edit
+									</button>
+									<DeleteActivityButton
+										activityId={activity._id}
+										onDelete={onDelete}
+									/>
+								</div>
+							)}
 						</div>
 					))
 				) : (
-					<p className='text-center text-gray-500'>No activities found.</p>
+					<p className='text-center text-gray-500'>No activities available.</p>
 				)}
 			</div>
 
@@ -322,32 +296,28 @@ const ActivitiesCard = ({
 				/>
 			)}
 
-			{/* Confirmation Modal for booking */}
+			{/* Confirmation Modal for Booking */}
 			{isConfirmModalOpen && (
 				<div className='fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center'>
-					<div className='bg-white p-6 rounded-lg'>
-						<h2 className='text-xl mb-4'>Confirm Booking</h2>
-						<p>
+					<div className='bg-white p-8 rounded-lg shadow-lg'>
+						<h2 className='text-2xl font-semibold mb-4'>Confirm Booking</h2>
+						<p className='text-lg'>
 							Do you want to book this activity?{' '}
 							<strong>{selectedActivity?.name}</strong>
 						</p>
-						<div className='flex justify-between mt-4'>
+						<div className='flex justify-between mt-6'>
 							<button
 								onClick={confirmBooking}
-								className='bg-green-600 text-white px-4 py-2 rounded'>
+								className='bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700'>
 								Yes, Book it!
 							</button>
 							<button
 								onClick={() => setIsConfirmModalOpen(false)}
-								className='bg-red-600 text-white px-4 py-2 rounded'>
+								className='bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700'>
 								Cancel
 							</button>
 						</div>
-						{error && (
-							<div className='mt-4 text-red-500'>
-								<p>{error}</p>
-							</div>
-						)}
+						{error && <div className='mt-4 text-red-500'>{error}</div>}
 					</div>
 				</div>
 			)}
