@@ -129,7 +129,7 @@ const TouristProfile = () => {
 	}
 
 	return (
-		<div className='min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 flex items-center justify-center'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='max-w-xl w-full bg-white rounded-lg shadow-xl p-6'>
 				<h1 className='text-2xl font-bold text-center mb-6 text-gray-800'>
 					Tourist Profile

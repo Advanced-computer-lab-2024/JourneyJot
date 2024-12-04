@@ -14,7 +14,7 @@ const AddressManagement = () => {
 	});
 	const [addresses, setAddresses] = useState([]);
 	const [selectedAddress, setSelectedAddress] = useState(null);
-	const [message, setMessage] = useState('');
+	const [message, setMessage] = useState({ type: '', text: '' });
 
 	// Fetch addresses when the component mounts
 	useEffect(() => {
@@ -23,7 +23,7 @@ const AddressManagement = () => {
 				const token = localStorage.getItem('token');
 
 				if (!token) {
-					setMessage('No token found. Please log in.');
+					setMessage({ type: 'error', text: 'No token found. Please log in.' });
 					return;
 				}
 
@@ -37,7 +37,7 @@ const AddressManagement = () => {
 				const errorMessage = error.response
 					? error.response.data.message || 'Error fetching addresses.'
 					: 'Unable to connect to the server.';
-				setMessage(errorMessage);
+				setMessage({ type: 'error', text: errorMessage });
 			}
 		};
 
@@ -62,97 +62,116 @@ const AddressManagement = () => {
 				}
 			);
 
-			setMessage(response.data.message); // Show success message
+			setMessage({ type: 'success', text: response.data.message }); // Show success message
 			setAddresses((prev) => [...prev, response.data.address]); // Add new address to list
 			setFormData({ address: '', city: '', state: '', zip: '', country: '' }); // Reset form
 		} catch (error) {
 			// Error handling
-			setMessage(error.response?.data?.error || 'Error adding address.');
+			setMessage({
+				type: 'error',
+				text: error.response?.data?.error || 'Error adding address.',
+			});
 		}
 	};
 
 	// Select an address
 	const handleSelect = (address) => {
 		setSelectedAddress(address);
-		setMessage(`Selected Address: ${address.address}, ${address.city}`);
+		setMessage({
+			type: 'success',
+			text: `Selected Address: ${address.address}, ${address.city}`,
+		});
 	};
 
 	return (
-		<div className='container mx-auto p-6'>
-			<h1 className='text-2xl font-bold mb-6 text-center'>
-				Address Management
-			</h1>
+		<div className='min-h-screen bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 flex items-center justify-center p-4'>
+			<div className='bg-gradient-to-b from-blue-50 to-white min-h-screen'>
+				<div className='container mx-auto p-6'>
+					<h1 className='text-3xl font-bold mb-6 text-center text-blue-800'>
+						Address Management
+					</h1>
 
-			{/* Form Section */}
-			<div className='mb-8 p-6 bg-white shadow-md rounded-md'>
-				<h2 className='text-lg font-semibold mb-4'>Add Address</h2>
-				<form
-					onSubmit={handleSubmit}
-					className='space-y-4'>
-					{/* Input Fields */}
-					{['address', 'city', 'state', 'zip', 'country'].map((field) => (
-						<input
-							key={field}
-							type='text'
-							name={field}
-							placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-							value={formData[field]}
-							onChange={handleChange}
-							required
-							className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300'
-						/>
-					))}
-					{/* Submit Button */}
-					<button
-						type='submit'
-						className='w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300'>
-						Add Address
-					</button>
-				</form>
-			</div>
+					{/* Display Messages */}
+					{message.text && (
+						<div
+							className={`p-4 mb-6 text-center rounded-md shadow-md ${
+								message.type === 'success'
+									? 'bg-green-100 text-green-800 border border-green-300'
+									: 'bg-red-100 text-red-800 border border-red-300'
+							}`}>
+							{message.text}
+						</div>
+					)}
 
-			{/* Address List */}
-			<div className='mb-8 p-6 bg-white shadow-md rounded-md'>
-				<h2 className='text-lg font-semibold mb-4'>My Addresses</h2>
-				{addresses.length > 0 ? (
-					<ul className='space-y-4'>
-						{addresses.map((address) => (
-							<li
-								key={address._id}
-								className='p-4 bg-gray-100 rounded-md shadow-sm flex items-center justify-between'>
-								<p>
-									<span className='font-semibold'>Address:</span>{' '}
-									{address.address}, {address.city}, {address.state},{' '}
-									{address.zip}, {address.country}
-								</p>
-								{/* Select Button */}
-								<button
-									onClick={() => handleSelect(address)}
-									className='bg-green-500 text-white py-1 px-4 rounded-md hover:bg-green-600 transition duration-300'>
-									Select
-								</button>
-							</li>
-						))}
-					</ul>
-				) : (
-					<p className='text-gray-500'>No addresses found.</p>
-				)}
-			</div>
+					{/* Form Section */}
+					<div className='mb-8 p-6 bg-white shadow-md rounded-md'>
+						<h2 className='text-lg font-semibold mb-4'>Add Address</h2>
+						<form
+							onSubmit={handleSubmit}
+							className='space-y-4'>
+							{/* Input Fields */}
+							{['address', 'city', 'state', 'zip', 'country'].map((field) => (
+								<input
+									key={field}
+									type='text'
+									name={field}
+									placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+									value={formData[field]}
+									onChange={handleChange}
+									required
+									className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300'
+								/>
+							))}
+							{/* Submit Button */}
+							<button
+								type='submit'
+								className='w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300'>
+								Add Address
+							</button>
+						</form>
+					</div>
 
-			{/* Message Display */}
-			{message && <p className='text-blue-600 text-center mb-6'>{message}</p>}
+					{/* Address List */}
+					<div className='mb-8 p-6 bg-white shadow-md rounded-md'>
+						<h2 className='text-lg font-semibold mb-4'>My Addresses</h2>
+						{addresses.length > 0 ? (
+							<ul className='space-y-4'>
+								{addresses.map((address) => (
+									<li
+										key={address._id}
+										className='p-4 bg-gray-100 rounded-md shadow-sm flex items-center justify-between'>
+										<p>
+											<span className='font-semibold'>Address:</span>{' '}
+											{address.address}, {address.city}, {address.state},{' '}
+											{address.zip}, {address.country}
+										</p>
+										{/* Select Button */}
+										<button
+											onClick={() => handleSelect(address)}
+											className='bg-green-500 text-white py-1 px-4 rounded-md hover:bg-green-600 transition duration-300'>
+											Select
+										</button>
+									</li>
+								))}
+							</ul>
+						) : (
+							<p className='text-gray-500'>No addresses found.</p>
+						)}
+					</div>
 
-			{/* Selected Address Details */}
-			{selectedAddress && (
-				<div className='p-6 bg-white shadow-md rounded-md'>
-					<h3 className='text-lg font-semibold mb-4'>Selected Address</h3>
-					<p>
-						{selectedAddress.address}, {selectedAddress.city},{' '}
-						{selectedAddress.state}, {selectedAddress.zip},{' '}
-						{selectedAddress.country}
-					</p>
+					{/* Selected Address Details */}
+					{selectedAddress && (
+						<div className='p-6 bg-white shadow-md rounded-md'>
+							<h3 className='text-lg font-semibold mb-4'>Selected Address</h3>
+							<p>
+								{selectedAddress.address}, {selectedAddress.city},{' '}
+								{selectedAddress.state}, {selectedAddress.zip},{' '}
+								{selectedAddress.country}
+							</p>
+						</div>
+					)}
 				</div>
-			)}
+			</div>
 		</div>
 	);
 };

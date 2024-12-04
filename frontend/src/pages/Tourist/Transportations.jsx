@@ -139,95 +139,112 @@ const Transportation = () => {
 	};
 
 	return (
-		<div className='container mx-auto p-4'>
-			<h1 className='text-2xl font-bold mb-4'>Available Transportation</h1>
-			{error && <p className='text-red-500'>{error}</p>}
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center py-8'>
+			<div className='container mx-auto px-4'>
+				<h1 className='text-3xl font-semibold text-center text-gray-900 mb-8'>
+					Available Transportation
+				</h1>
+				{error && <p className='text-red-600 text-center mb-4'>{error}</p>}
 
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-				{transportationList.map((transportation) => (
-					<div
-						key={transportation._id}
-						className='bg-white p-4 rounded-lg shadow-md'>
-						<h2 className='text-xl font-semibold'>
-							{transportation.vehicleType}
-						</h2>
-						<p>
-							<strong>Location:</strong> {transportation.location}
-						</p>
-						<p>
-							<strong>Available Seats:</strong> {transportation.availableSeats}
-						</p>
-						<p>
-							<strong>Price per Seat:</strong> ${transportation.pricePerSeat}
-						</p>
-						<label>
-							Select Seats:
-							<select
-								value={selectedSeats[transportation._id] || 1}
-								onChange={(e) =>
-									handleSeatSelection(
-										transportation._id,
-										parseInt(e.target.value)
-									)
-								}
-								className='ml-2 p-1 rounded border'>
-								{[...Array(transportation.availableSeats).keys()].map(
-									(_, index) => (
-										<option
-											key={index + 1}
-											value={index + 1}>
-											{index + 1}
-										</option>
-									)
-								)}
-							</select>
-						</label>
-						<button
-							className='bg-blue-600 text-white px-4 py-2 rounded mt-4'
-							onClick={() =>
-								handleBookTransportation(
-									transportation._id,
-									transportation.availableSeats,
-									transportation.pricePerSeat
-								)
-							}>
-							Book Now
-						</button>
-					</div>
-				))}
-			</div>
-
-			<h1 className='text-2xl font-bold mt-8 mb-4'>
-				My Booked Transportations
-			</h1>
-
-			{bookedTransportations.length > 0 ? (
-				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-					{bookedTransportations.map((booking) => (
+				<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
+					{transportationList.map((transportation) => (
 						<div
-							key={booking._id}
-							className='bg-white p-4 rounded-lg shadow-md'>
-							<h2 className='text-xl font-semibold'>{booking.vehicleType}</h2>
-							<p>
-								<strong>Location:</strong> {booking.location}
-							</p>
-							<p>
-								<strong>Booked Seats:</strong> {booking.bookedSeats}
-							</p>
-							<p>
-								<strong>Price per Seat:</strong> ${booking.pricePerSeat}
-							</p>
-							<button
-								className='bg-red-600 text-white px-4 py-2 rounded mt-4'
-								onClick={() => handleCancelBooking(booking._id)}>
-								Cancel Booking
-							</button>
+							key={transportation._id}
+							className='bg-white shadow-lg rounded-lg overflow-hidden transition-all hover:shadow-xl'>
+							<div className='p-6'>
+								<h2 className='text-xl font-semibold text-gray-800'>
+									{transportation.vehicleType}
+								</h2>
+								<p className='mt-2 text-gray-600'>
+									<strong>Location:</strong> {transportation.location}
+								</p>
+								<p className='text-gray-600'>
+									<strong>Available Seats:</strong>{' '}
+									{transportation.availableSeats}
+								</p>
+								<p className='text-gray-600'>
+									<strong>Price per Seat:</strong> $
+									{transportation.pricePerSeat}
+								</p>
+
+								<div className='mt-4'>
+									<label className='block text-sm font-medium text-gray-700'>
+										Select Seats
+									</label>
+									<select
+										value={selectedSeats[transportation._id] || 1}
+										onChange={(e) =>
+											handleSeatSelection(
+												transportation._id,
+												parseInt(e.target.value)
+											)
+										}
+										className='mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'>
+										{[...Array(transportation.availableSeats).keys()].map(
+											(_, index) => (
+												<option
+													key={index + 1}
+													value={index + 1}>
+													{index + 1}
+												</option>
+											)
+										)}
+									</select>
+								</div>
+
+								<button
+									className='mt-4 w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200'
+									onClick={() =>
+										handleBookTransportation(
+											transportation._id,
+											transportation.availableSeats,
+											transportation.pricePerSeat
+										)
+									}>
+									Book Now
+								</button>
+							</div>
 						</div>
 					))}
 				</div>
-			) : (
-				<p>No bookings found.</p>
-			)}
+
+				<h1 className='text-3xl font-semibold text-center text-gray-900 mt-16 mb-8'>
+					My Booked Transportations
+				</h1>
+
+				{bookedTransportations.length > 0 ? (
+					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
+						{bookedTransportations.map((booking) => (
+							<div
+								key={booking._id}
+								className='bg-white shadow-lg rounded-lg overflow-hidden transition-all hover:shadow-xl'>
+								<div className='p-6'>
+									<h2 className='text-xl font-semibold text-gray-800'>
+										{booking.vehicleType}
+									</h2>
+									<p className='mt-2 text-gray-600'>
+										<strong>Location:</strong> {booking.location}
+									</p>
+									<p className='text-gray-600'>
+										<strong>Booked Seats:</strong> {booking.bookedSeats}
+									</p>
+									<p className='text-gray-600'>
+										<strong>Price per Seat:</strong> ${booking.pricePerSeat}
+									</p>
+
+									<button
+										className='mt-4 w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-200'
+										onClick={() => handleCancelBooking(booking._id)}>
+										Cancel Booking
+									</button>
+								</div>
+							</div>
+						))}
+					</div>
+				) : (
+					<p className='text-center text-gray-600'>No bookings found.</p>
+				)}
+			</div>
 		</div>
 	);
 };

@@ -38,19 +38,23 @@ const RequestOTP = () => {
 	};
 
 	return (
-		<div className='flex justify-center items-center min-h-screen bg-gray-100'>
-			<div className='bg-white shadow-lg rounded-lg p-6 w-full max-w-md'>
-				<h2 className='text-2xl font-bold text-center text-gray-800 mb-4'>
-					Forgot Password
+		<div className='min-h-screen bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-500 flex items-center justify-center'>
+			<div className='bg-white shadow-2xl rounded-xl p-8 w-full max-w-md'>
+				<h2 className='text-3xl font-extrabold text-center text-gray-900 mb-6'>
+					Forgot Password?
 				</h2>
+				<p className='text-sm text-gray-600 text-center mb-6'>
+					Enter your email below, and we'll send you an OTP to reset your
+					password.
+				</p>
 				<form
 					onSubmit={handleRequestOtp}
-					className='space-y-4'>
+					className='space-y-5'>
 					<div>
 						<label
 							htmlFor='email'
 							className='block text-sm font-medium text-gray-700'>
-							Email
+							Email Address
 						</label>
 						<input
 							type='email'
@@ -58,20 +62,26 @@ const RequestOTP = () => {
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							required
-							placeholder='Enter your email'
-							className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+							placeholder='e.g., yourname@example.com'
+							className='mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
 						/>
 					</div>
 					<button
 						type='submit'
-						className='w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'>
+						className='w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-lg shadow-md hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-offset-2'>
 						Request OTP
 					</button>
 				</form>
 				{message && (
-					<p className='mt-4 text-green-600 text-center'>{message}</p>
+					<div className='mt-6 p-4 text-sm text-green-800 bg-green-100 rounded-lg shadow'>
+						{message}
+					</div>
 				)}
-				{error && <p className='mt-4 text-red-600 text-center'>{error}</p>}
+				{error && (
+					<div className='mt-6 p-4 text-sm text-red-800 bg-red-100 rounded-lg shadow'>
+						{error}
+					</div>
+				)}
 			</div>
 		</div>
 	);

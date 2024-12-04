@@ -119,87 +119,89 @@ const FlightSearch = () => {
 	};
 
 	return (
-		<div className='container mx-auto p-6 bg-gray-50 shadow-md rounded-lg'>
-			<h1 className='text-3xl font-bold text-gray-800 mb-6'>
-				Search and Book Flights ✈️
-			</h1>
-			{error && (
-				<div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>
-					{error}
-				</div>
-			)}
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-6'>
+			<div className='container mx-auto p-6 bg-gray-50 shadow-md rounded-lg'>
+				<h1 className='text-3xl font-bold text-gray-800 mb-6'>
+					Search and Book Flights ✈️
+				</h1>
+				{error && (
+					<div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>
+						{error}
+					</div>
+				)}
 
-			<div className='flex justify-end mb-6'>
-				<button
-					onClick={() => navigate('/booked-flights')}
-					className='bg-green-600 hover:bg-green-700 text-white font-medium px-5 py-2 rounded-lg shadow-md'>
-					My Bookings
-				</button>
-			</div>
-
-			<div className='space-y-4'>
-				<div>
-					<label className='block text-sm font-medium text-gray-700 mb-2'>
-						Departure Airport:
-					</label>
-					<Select
-						options={airportOptions}
-						value={departure}
-						onChange={setDeparture}
-						placeholder='Select Departure Airport'
-						className='rounded-md'
-					/>
+				<div className='flex justify-end mb-6'>
+					<button
+						onClick={() => navigate('/booked-flights')}
+						className='bg-green-600 hover:bg-green-700 text-white font-medium px-5 py-2 rounded-lg shadow-md'>
+						My Bookings
+					</button>
 				</div>
 
-				<div>
-					<label className='block text-sm font-medium text-gray-700 mb-2'>
-						Destination Airport:
-					</label>
-					<Select
-						options={airportOptions}
-						value={destination}
-						onChange={setDestination}
-						placeholder='Select Destination Airport'
-						className='rounded-md'
-					/>
+				<div className='space-y-4'>
+					<div>
+						<label className='block text-sm font-medium text-gray-700 mb-2'>
+							Departure Airport:
+						</label>
+						<Select
+							options={airportOptions}
+							value={departure}
+							onChange={setDeparture}
+							placeholder='Select Departure Airport'
+							className='rounded-md'
+						/>
+					</div>
+
+					<div>
+						<label className='block text-sm font-medium text-gray-700 mb-2'>
+							Destination Airport:
+						</label>
+						<Select
+							options={airportOptions}
+							value={destination}
+							onChange={setDestination}
+							placeholder='Select Destination Airport'
+							className='rounded-md'
+						/>
+					</div>
+
+					<div>
+						<label className='block text-sm font-medium text-gray-700 mb-2'>
+							Departure Date:
+						</label>
+						<input
+							type='date'
+							value={departureDate}
+							onChange={(e) => setDepartureDate(e.target.value)}
+							className='block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200'
+						/>
+					</div>
 				</div>
 
-				<div>
-					<label className='block text-sm font-medium text-gray-700 mb-2'>
-						Departure Date:
-					</label>
-					<input
-						type='date'
-						value={departureDate}
-						onChange={(e) => setDepartureDate(e.target.value)}
-						className='block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200'
-					/>
+				<div className='mt-6'>
+					<button
+						onClick={handleSearchFlights}
+						className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg shadow-md transition ${
+							loading ? 'opacity-50 cursor-not-allowed' : ''
+						}`}
+						disabled={loading}>
+						{loading ? 'Searching...' : 'Search Flights'}
+					</button>
 				</div>
-			</div>
 
-			<div className='mt-6'>
-				<button
-					onClick={handleSearchFlights}
-					className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg shadow-md transition ${
-						loading ? 'opacity-50 cursor-not-allowed' : ''
-					}`}
-					disabled={loading}>
-					{loading ? 'Searching...' : 'Search Flights'}
-				</button>
-			</div>
-
-			<FlightOffers
-				flightOffers={flightOffers}
-				onBook={handleBookFlight}
-			/>
-
-			{selectedFlight && (
-				<FlightBookingModal
-					open={isModalOpen}
-					onClose={handleModalClose}
-					onSubmit={handleModalSubmit}
+				<FlightOffers
+					flightOffers={flightOffers}
+					onBook={handleBookFlight}
 				/>
-			)}
+
+				{selectedFlight && (
+					<FlightBookingModal
+						open={isModalOpen}
+						onClose={handleModalClose}
+						onSubmit={handleModalSubmit}
+					/>
+				)}
+			</div>
 		</div>
 	);
 };

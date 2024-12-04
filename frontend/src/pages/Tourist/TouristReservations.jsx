@@ -308,27 +308,29 @@ const TouristReservations = () => {
 	};
 
 	return (
-		<div className='p-8 max-w-6xl mx-auto bg-gray-100 rounded-lg shadow-xl'>
-			<div className='flex justify-center space-x-6 mb-10'>
-				{['activities', 'itineraries', 'attractions'].map((tab) => (
-					<button
-						key={tab}
-						className={`px-6 py-3 rounded-full font-semibold text-lg transition-all duration-200 ${
-							activeTab === tab
-								? 'bg-gradient-to-r from-blue-500 to-green-500 text-white shadow-lg'
-								: 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-						}`}
-						onClick={() => setActiveTab(tab)}>
-						{tab.charAt(0).toUpperCase() + tab.slice(1)}
-					</button>
-				))}
-			</div>
-			{errorMessage && (
-				<div className='mb-6 p-4 bg-red-100 text-red-700 border border-red-400 rounded'>
-					{errorMessage}
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 '>
+			<div className='p-8 max-w-6xl mx-auto bg-gray-100 rounded-lg shadow-xl'>
+				<div className='flex justify-center space-x-6 mb-10'>
+					{['activities', 'itineraries', 'attractions'].map((tab) => (
+						<button
+							key={tab}
+							className={`px-6 py-3 rounded-full font-semibold text-lg transition-all duration-200 ${
+								activeTab === tab
+									? 'bg-gradient-to-r from-blue-500 to-green-500 text-white shadow-lg'
+									: 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+							}`}
+							onClick={() => setActiveTab(tab)}>
+							{tab.charAt(0).toUpperCase() + tab.slice(1)}
+						</button>
+					))}
 				</div>
-			)}
-			<div>{renderTabContent()}</div>
+				{errorMessage && (
+					<div className='mb-6 p-4 bg-red-100 text-red-700 border border-red-400 rounded'>
+						{errorMessage}
+					</div>
+				)}
+				<div>{renderTabContent()}</div>
+			</div>
 		</div>
 	);
 };

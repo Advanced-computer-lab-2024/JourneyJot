@@ -50,7 +50,7 @@ const TouristWallet = () => {
 			// Call backend endpoint to add funds
 			const response = await axios.post(
 				'http://localhost:3000/tourists/wallet/addFunds',
-				{},
+				{}, // Add data if needed for the request
 				config
 			);
 			setWalletBalance(response.data.newBalance); // Update wallet balance in state
@@ -68,29 +68,33 @@ const TouristWallet = () => {
 	};
 
 	return (
-		<div className='max-w-lg mx-auto p-6 bg-gray-100 rounded-lg shadow-lg'>
-			<h1 className='text-2xl font-bold text-center mb-4'>Wallet</h1>
-			<div className='bg-white p-4 rounded-lg shadow text-center'>
-				{loading ? (
-					<p className='text-lg font-semibold text-gray-500'>Loading...</p>
-				) : (
-					<p className='text-lg font-semibold'>
-						Wallet Balance:{' '}
-						<span className='text-blue-600'>${walletBalance}</span>
-					</p>
-				)}
-			</div>
-			<div className='mt-4 space-y-3'>
-				<button
-					className='w-full bg-blue-600 text-white py-2 rounded-md shadow hover:bg-blue-700 transition duration-200'
-					onClick={handleAddFunds}>
-					Add 1000$ to Wallet
-				</button>
-				<button
-					className='w-full bg-gray-600 text-white py-2 rounded-md shadow hover:bg-gray-700 transition duration-200'
-					onClick={handleViewHistory}>
-					View Transaction History
-				</button>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-6'>
+			<div className='max-w-md mx-auto p-6 bg-white rounded-lg shadow-xl'>
+				<h1 className='text-3xl font-bold text-center text-gray-800 mb-6'>
+					My Wallet
+				</h1>
+				<div className='bg-gray-100 p-5 rounded-lg shadow-md text-center'>
+					{loading ? (
+						<p className='text-lg text-gray-500'>Loading...</p>
+					) : (
+						<p className='text-xl font-semibold'>
+							Wallet Balance:{' '}
+							<span className='text-green-600 font-bold'>${walletBalance}</span>
+						</p>
+					)}
+				</div>
+				<div className='mt-6 space-y-4'>
+					<button
+						className='w-full bg-green-600 text-white py-3 rounded-md shadow-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105'
+						onClick={handleAddFunds}>
+						Add $1000 to Wallet
+					</button>
+					<button
+						className='w-full bg-gray-600 text-white py-3 rounded-md shadow-lg hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-105'
+						onClick={handleViewHistory}>
+						View Transaction History
+					</button>
+				</div>
 			</div>
 		</div>
 	);

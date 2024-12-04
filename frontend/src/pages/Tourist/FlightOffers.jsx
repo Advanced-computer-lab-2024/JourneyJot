@@ -1,19 +1,49 @@
 /** @format */
 
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const FlightOffers = ({ flightOffers = [], onBook }) => {
+	const [message, setMessage] = useState(null);
+
+	// Handle booking and show success/error messages
+	const handleBook = (offer) => {
+		try {
+			onBook(offer);
+			setMessage({ type: 'success', text: 'Flight booked successfully!' });
+		} catch (error) {
+			setMessage({
+				type: 'error',
+				text: 'Failed to book the flight. Please try again.',
+			});
+		}
+	};
+
 	return (
-		<div>
-			<h2 className='text-2xl font-bold mb-4'>Available Flight Offers</h2>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-6'>
+			<h2 className='text-3xl font-extrabold text-center mb-6 text-white'>
+				Available Flight Offers
+			</h2>
+
+			{/* Inline Success/Error Message */}
+			{message && (
+				<div
+					className={`text-center p-4 mb-4 rounded ${
+						message.type === 'success'
+							? 'bg-green-100 text-green-800'
+							: 'bg-red-100 text-red-800'
+					}`}>
+					{message.text}
+				</div>
+			)}
+
 			{flightOffers.length === 0 ? (
-				<p>
+				<p className='text-lg text-center text-white'>
 					No flights available for the selected criteria. Please try a different
 					search.
 				</p>
 			) : (
-				<ul>
+				<ul className='grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
 					{flightOffers.map((offer) => {
 						const {
 							id,
@@ -21,6 +51,7 @@ const FlightOffers = ({ flightOffers = [], onBook }) => {
 							price = {},
 							validatingAirlineCodes = [],
 						} = offer;
+
 						const itinerary = itineraries[0] || {};
 						const segments = itinerary.segments || [];
 						const departure = segments[0]?.departure || {};
@@ -41,10 +72,10 @@ const FlightOffers = ({ flightOffers = [], onBook }) => {
 						return (
 							<li
 								key={id}
-								className='mb-4 p-4 border rounded shadow'>
-								<p>
-									<strong>Flight ID:</strong> {id}
-								</p>
+								className='p-6 bg-white rounded-lg shadow hover:shadow-xl transition-shadow duration-300'>
+								<h3 className='text-xl font-semibold text-indigo-600 mb-2'>
+									Flight ID: {id}
+								</h3>
 								<p>
 									<strong>Airline:</strong> {airline}
 								</p>
@@ -70,8 +101,8 @@ const FlightOffers = ({ flightOffers = [], onBook }) => {
 									<strong>Total Price:</strong> {totalPrice} {currency}
 								</p>
 								<button
-									onClick={() => onBook(offer)}
-									className='bg-blue-600 text-white px-4 py-2 rounded mt-4'>
+									onClick={() => handleBook(offer)}
+									className='bg-blue-600 text-white px-4 py-2 mt-4 rounded hover:bg-blue-700'>
 									Book This Flight
 								</button>
 							</li>

@@ -97,31 +97,35 @@ const TouristPoints = () => {
 	};
 
 	return (
-		<div className='max-w-lg mx-auto p-6 bg-gray-100 rounded-lg shadow-lg'>
-			<h1 className='text-2xl font-bold text-center mb-4'>Tourist Points</h1>
-			<div className='bg-white p-4 rounded-lg shadow text-center'>
-				{loading ? (
-					<p>Loading...</p>
-				) : (
-					<>
-						<p className='text-lg font-semibold'>
-							Your Points: <span className='text-green-600'>{points}</span>
-						</p>
-						<p className='text-lg font-semibold'>
-							Your Level: <span className='text-blue-600'>Level {level}</span>
-						</p>
-						<p className='text-lg font-semibold'>
-							: <span className='text-yellow-600'>{getBadge(level)}</span>
-						</p>
-						Badge
-					</>
-				)}
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-6'>
+			<div className='max-w-2xl mx-auto p-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-lg shadow-lg'>
+				<h1 className='text-3xl font-semibold text-center text-white mb-6'>
+					Tourist Points
+				</h1>
+				<div className='bg-white p-6 rounded-lg shadow-md'>
+					{loading ? (
+						<p className='text-center text-gray-600'>Loading...</p>
+					) : (
+						<>
+							<p className='text-xl font-medium text-gray-800 mb-2'>
+								Your Points: <span className='text-green-500'>{points}</span>
+							</p>
+							<p className='text-xl font-medium text-gray-800 mb-2'>
+								Your Level: <span className='text-blue-600'>Level {level}</span>
+							</p>
+							<p className='text-xl font-medium text-gray-800 mb-4'>
+								Badge:{' '}
+								<span className='text-yellow-500'>{getBadge(level)}</span>
+							</p>
+						</>
+					)}
+				</div>
+				<button
+					className='mt-6 w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition duration-200'
+					onClick={handleRedeemPoints}>
+					Redeem Points for Wallet Cash
+				</button>
 			</div>
-			<button
-				className='mt-4 w-full bg-green-600 text-white py-2 rounded-md shadow hover:bg-green-700 transition duration-200'
-				onClick={handleRedeemPoints}>
-				Redeem Points for Wallet Cash
-			</button>
 		</div>
 	);
 };

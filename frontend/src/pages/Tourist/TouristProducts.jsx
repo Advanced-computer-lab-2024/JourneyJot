@@ -70,7 +70,7 @@ const TouristProducts = () => {
 		setLoading(true);
 		axios
 			.get('http://localhost:3000/products/filterProductsByPrice', {
-				params: { minPrice: minPrice, maxPrice: maxPrice },
+				params: { minPrice, maxPrice },
 			})
 			.then((response) => {
 				setProducts(response.data.products);
@@ -101,13 +101,13 @@ const TouristProducts = () => {
 	}, [searchedProduct]);
 
 	return (
-		<div className='p-6 bg-gray-100 min-h-screen'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-8'>
 			{/* Header */}
-			<div className='flex flex-col md:flex-row justify-between items-center mb-8'>
+			<div className='flex flex-col md:flex-row justify-between items-center mb-8 space-y-6 md:space-y-0'>
 				<h1 className='text-4xl font-extrabold text-teal-600'>
 					Explore Products
 				</h1>
-				<div className='flex flex-col md:flex-row items-center md:space-x-4 space-y-4 md:space-y-0 w-full md:w-auto'>
+				<div className='flex flex-col md:flex-row items-center space-x-4 md:space-x-6 w-full md:w-auto'>
 					<div className='flex items-center space-x-2'>
 						<label
 							htmlFor='currency-select'

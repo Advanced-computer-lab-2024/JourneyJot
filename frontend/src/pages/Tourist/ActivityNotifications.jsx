@@ -8,29 +8,33 @@ const TouristNotifications = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
 
-	// Fetch notifications when the component mounts
+	// Fetch notifications on component mount
 	useEffect(() => {
-		const authToken = localStorage.getItem('token');
-		if (!authToken) {
-			setError('Authentication token not found.');
-			setLoading(false);
-			return;
-		}
+		const fetchNotifications = async () => {
+			try {
+				const token = localStorage.getItem('token');
+				if (!token) {
+					throw new Error('Authentication token not found.');
+				}
 
-		axios
-			.get('http://localhost:3000/tourists/activity-notification', {
-				headers: {
-					Authorization: `Bearer ${authToken}`,
-				},
-			})
-			.then((response) => {
-				setNotifications(response.data.notifications);
+				const response = await axios.get(
+					'http://localhost:3000/tourists/activity-notification',
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
+				);
+
+				setNotifications(response.data.notifications || []);
+			} catch (err) {
+				setError(err.message || 'Failed to fetch notifications.');
+			} finally {
 				setLoading(false);
-			})
-			.catch((err) => {
-				setError('Failed to fetch notifications');
-				setLoading(false);
-			});
+			}
+		};
+
+		fetchNotifications();
 	}, []);
 
 	if (loading) {
@@ -50,33 +54,33 @@ const TouristNotifications = () => {
 	}
 
 	return (
-		<div className='max-w-3xl mx-auto p-8 bg-white rounded-2xl shadow-xl'>
-			<h2 className='text-3xl font-bold text-gray-800 mb-8 text-center'>
-				Tourist Notifications
-			</h2>
-			{notifications.length === 0 ? (
-				<p className='text-gray-600 text-xl text-center'>
-					No notifications yet.
-				</p>
-			) : (
-				<ul className='space-y-6'>
-					{notifications.map((notification) => (
-						<li
-							key={notification._id}
-							className='p-6 bg-gray-50 rounded-xl shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out'>
-							<div className='flex items-center justify-between'>
-								<strong className='text-gray-800 text-lg font-semibold'>
-									{notification.message}
-								</strong>
-								<small className='text-gray-500 ml-4 text-sm'>
-									{new Date(notification.timestamp).toLocaleString()}
-								</small>
-							</div>
+		<div className='min-h-screen bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 flex items-center justify-center p-4'>
+			<div className='max-w-3xl mx-auto p-8 bg-white rounded-2xl shadow-xl'>
+				<h2 className='text-3xl font-bold text-gray-800 mb-8 text-center'>
+					Tourist Notifications
+				</h2>
+				{notifications.length === 0 ? (
+					<p className='text-gray-600 text-xl text-center'>
+						No notifications yet.
+					</p>
+				) : (
+					<ul className='space-y-6'>
+						{notifications.map((notification) => (
+							<li
+								key={notification._id}
+								className='p-6 bg-gray-50 rounded-xl shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out'>
+								<div className='flex items-center justify-between'>
+									<strong className='text-gray-800 text-lg font-semibold'>
+										{notification.message}
+									</strong>
+									<small className='text-gray-500 ml-4 text-sm'>
+										{new Date(notification.timestamp).toLocaleString()}
+									</small>
+								</div>
 
-							{/* Display additional activity details if available */}
-							<div className='mt-4 space-y-3 text-gray-600'>
+								{/* Display additional activity details */}
 								{notification.activityDetails && (
-									<>
+									<div className='mt-4 space-y-2 text-gray-600'>
 										<p>
 											<span className='font-semibold'>Activity:</span>{' '}
 											{notification.activityDetails.name || 'N/A'}
@@ -109,13 +113,13 @@ const TouristNotifications = () => {
 												? 'Open'
 												: 'Closed'}
 										</p>
-									</>
+									</div>
 								)}
-							</div>
-						</li>
-					))}
-				</ul>
-			)}
+							</li>
+						))}
+					</ul>
+				)}
+			</div>
 		</div>
 	);
 };

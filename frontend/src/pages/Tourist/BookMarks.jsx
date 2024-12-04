@@ -213,35 +213,37 @@ const BookMarks = () => {
 	};
 
 	return (
-		<div className='min-h-screen bg-gray-50 p-6'>
-			<h1 className='text-4xl font-bold text-center text-blue-600 mb-8'>
-				My Bookmarks
-			</h1>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-6'>
+			<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-6'>
+				<h1 className='text-4xl font-bold text-center text-blue-600 mb-8'>
+					My Bookmarks
+				</h1>
 
-			{/* Tabs */}
-			<div className='flex justify-center mb-8'>
-				{Object.keys(tabs).map((tab) => (
-					<button
-						key={tab}
-						onClick={() => {
-							setActiveTab(tab);
-							setError(null); // Reset error on tab switch
-						}}
-						className={`px-6 py-2 rounded-lg mx-3 text-sm font-medium transition-all duration-300 ${
-							activeTab === tab
-								? 'bg-blue-600 text-white shadow-lg'
-								: 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-						}`}>
-						{tabs[tab]}
-					</button>
-				))}
+				{/* Tabs */}
+				<div className='flex justify-center mb-8'>
+					{Object.keys(tabs).map((tab) => (
+						<button
+							key={tab}
+							onClick={() => {
+								setActiveTab(tab);
+								setError(null); // Reset error on tab switch
+							}}
+							className={`px-6 py-2 rounded-lg mx-3 text-sm font-medium transition-all duration-300 ${
+								activeTab === tab
+									? 'bg-blue-600 text-white shadow-lg'
+									: 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+							}`}>
+							{tabs[tab]}
+						</button>
+					))}
+				</div>
+
+				{/* Error */}
+				{error && <p className='text-red-500 text-center mb-4'>{error}</p>}
+
+				{/* Tab content */}
+				{renderTabContent()}
 			</div>
-
-			{/* Error */}
-			{error && <p className='text-red-500 text-center mb-4'>{error}</p>}
-
-			{/* Tab content */}
-			{renderTabContent()}
 		</div>
 	);
 };
