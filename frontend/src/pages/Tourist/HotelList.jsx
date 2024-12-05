@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import HotelBookingModal from './HotelBookingModal';
 
 const HotelList = () => {
+	// State Management
 	const [hotels, setHotels] = useState([]);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [error, setError] = useState('');
@@ -15,8 +15,15 @@ const HotelList = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedHotel, setSelectedHotel] = useState(null);
 	const [loading, setLoading] = useState(false);
+	const [formData, setFormData] = useState({
+		firstName: '',
+		lastName: '',
+		// Add more fields as necessary
+	});
 
 	const navigate = useNavigate();
+
+	// Retry Function for API Calls
 	const retryRequest = async (fn, retries = 5, delay = 1000) => {
 		for (let attempt = 0; attempt < retries; attempt++) {
 			try {
@@ -29,12 +36,14 @@ const HotelList = () => {
 		}
 	};
 
-	// Fetch destination ID
+	// Fetch Destination ID
 	const fetchDestinationId = async () => {
 		return await retryRequest(
 			async () => {
 				const response = await axios.get(
-					`http://localhost:3000/amadeus/locations?query=${searchQuery}`
+					`http://localhost:3000/amadeus/locations?query=${encodeURIComponent(
+						searchQuery
+					)}`
 				);
 				const results = response.data?.data;
 				if (!results || results.length === 0) {
@@ -50,9 +59,10 @@ const HotelList = () => {
 			},
 			5,
 			1000
-		); // Retry up to 3 times with a 1-second delay
+		);
 	};
 
+	// Fetch Hotels Based on Location ID
 	const fetchHotels = async (locationId) => {
 		return await retryRequest(
 			async () => {
@@ -83,10 +93,16 @@ const HotelList = () => {
 			},
 			5,
 			4000
-		); // Retry up to 10 times with a 1-second delay
+		);
 	};
 
+	// Handle Search Button Click
 	const handleSearch = async () => {
+		if (searchQuery.trim() === '') {
+			setError('Please enter a destination to search.');
+			return;
+		}
+
 		setError('');
 		setLoading(true);
 		setHotels([]);
@@ -98,25 +114,43 @@ const HotelList = () => {
 			}
 		} catch (err) {
 			console.error('Search error:', err);
-			setError('An error occurred while searching. Please try again.');
+			setError(
+				err.message || 'An error occurred while searching. Please try again.'
+			);
 		} finally {
 			setLoading(false);
 		}
 	};
-	// Open modal for booking
+
+	// Open Modal for Booking
 	const openModal = (hotel) => {
 		setSelectedHotel(hotel);
 		setIsModalOpen(true);
+		setFormData({
+			firstName: '',
+			lastName: '',
+			// Reset other fields as necessary
+		});
 	};
 
-	// Close modal
+	// Close Modal
 	const closeModal = () => {
 		setIsModalOpen(false);
 		setSelectedHotel(null);
 	};
-	const handleBookingSubmit = async (formData) => {
+
+	// Handle Booking Submission
+	const handleBookingSubmit = async (e) => {
+		e.preventDefault();
+
 		if (!selectedHotel || !selectedHotel.location_id) {
 			alert('Hotel ID is missing. Please select a valid hotel.');
+			return;
+		}
+
+		// Validate form data
+		if (formData.firstName.trim() === '' || formData.lastName.trim() === '') {
+			alert('Please enter your first and last name.');
 			return;
 		}
 
@@ -133,7 +167,11 @@ const HotelList = () => {
 				Date.now() + nights * 24 * 60 * 60 * 1000
 			).toISOString(), // Set check-out date
 			price: {
-				total: selectedHotel.price?.split(' - ')[0].replace('$', '') || '0.00', // Parse the price
+				total: selectedHotel.price
+					? parseFloat(
+							selectedHotel.price.replace('$', '').split(' - ')[0]
+					  ).toFixed(2)
+					: '0.00', // Parse the price
 				currency: 'USD', // Set the currency
 			},
 			roomsAvailable: 1, // Example value; adjust as needed
@@ -162,90 +200,160 @@ const HotelList = () => {
 			alert('Failed to book hotel. Please try again.');
 		}
 	};
+
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-6'>
-			<div style={styles.container}>
-				<h1 style={styles.header}>Hotel List</h1>
-				<button
-					onClick={() => navigate('/booked-hotels')}
-					style={styles.button}>
-					View Booked Hotels
-				</button>
-				<div style={styles.searchContainer}>
+			<div className='font-sans p-6 max-w-6xl mx-auto bg-white bg-opacity-90 rounded-lg shadow-lg'>
+				{/* Header */}
+				<h1 className='text-4xl font-bold text-center text-teal-600 mb-6'>
+					Hotel List
+				</h1>
+
+				{/* Navigation Button */}
+				<div className='flex justify-center mb-6'>
+					<button
+						onClick={() => navigate('/booked-hotels')}
+						className='px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500'
+						aria-label='View Booked Hotels'>
+						View Booked Hotels
+					</button>
+				</div>
+
+				{/* Search Input */}
+				<div className='mb-4'>
 					<input
 						type='text'
 						placeholder='Search for a destination (e.g., Cairo)'
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
-						style={styles.input}
+						className='w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500'
+						aria-label='Search Destination'
 					/>
 				</div>
-				<div style={styles.parameters}>
-					<label style={styles.label}>
+
+				{/* Search Parameters */}
+				<div className='flex flex-col sm:flex-row justify-center items-center gap-4 mb-6'>
+					<label className='flex flex-col items-center'>
 						Adults:
 						<input
 							type='number'
 							min='1'
 							value={adults}
 							onChange={(e) => setAdults(Number(e.target.value))}
-							style={styles.inputNumber}
+							className='mt-1 p-2 w-20 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500'
+							aria-label='Number of Adults'
 						/>
 					</label>
-					<label style={styles.label}>
+					<label className='flex flex-col items-center'>
 						Rooms:
 						<input
 							type='number'
 							min='1'
 							value={rooms}
 							onChange={(e) => setRooms(Number(e.target.value))}
-							style={styles.inputNumber}
+							className='mt-1 p-2 w-20 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500'
+							aria-label='Number of Rooms'
 						/>
 					</label>
-					<label style={styles.label}>
+					<label className='flex flex-col items-center'>
 						Nights:
 						<input
 							type='number'
 							min='1'
 							value={nights}
 							onChange={(e) => setNights(Number(e.target.value))}
-							style={styles.inputNumber}
+							className='mt-1 p-2 w-20 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500'
+							aria-label='Number of Nights'
 						/>
 					</label>
 				</div>
-				<button
-					onClick={handleSearch}
-					style={styles.button}>
-					{loading ? 'Loading...' : 'Search'}
-				</button>
-				{loading && <p style={styles.loadingMessage}>Loading...</p>}
-				{error && <p style={styles.error}>{error}</p>}
+
+				{/* Search Button */}
+				<div className='flex justify-center'>
+					<button
+						onClick={handleSearch}
+						className='w-full sm:w-auto px-6 py-3 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 flex items-center justify-center'
+						aria-label='Search Hotels'>
+						{loading ? (
+							<>
+								<svg
+									className='animate-spin h-5 w-5 mr-3 text-white'
+									xmlns='http://www.w3.org/2000/svg'
+									fill='none'
+									viewBox='0 0 24 24'>
+									<circle
+										className='opacity-25'
+										cx='12'
+										cy='12'
+										r='10'
+										stroke='currentColor'
+										strokeWidth='4'></circle>
+									<path
+										className='opacity-75'
+										fill='currentColor'
+										d='M4 12a8 8 0 018-8v8H4z'></path>
+								</svg>
+								Loading...
+							</>
+						) : (
+							'Search'
+						)}
+					</button>
+				</div>
+
+				{/* Error Message */}
+				{error && (
+					<div
+						className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4'
+						role='alert'>
+						<strong className='font-bold'>Error!</strong>
+						<span className='block sm:inline ml-2'>{error}</span>
+						<button
+							className='absolute top-0 bottom-0 right-0 px-4 py-3'
+							onClick={() => setError('')}
+							aria-label='Close Error Message'>
+							&times;
+						</button>
+					</div>
+				)}
+
+				{/* Hotel Listings */}
 				{hotels.length > 0 && (
-					<div style={styles.hotelList}>
+					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6'>
 						{hotels.map((hotel) => (
 							<div
 								key={hotel.location_id}
-								style={styles.card}>
+								className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300'>
 								<img
 									src={
 										hotel.photo?.images?.medium?.url ||
-										'https://via.placeholder.com/150'
+										'https://via.placeholder.com/300x200'
 									}
 									alt={hotel.name}
-									style={styles.image}
+									className='w-full h-48 object-cover'
+									loading='lazy'
 								/>
-								<div style={styles.cardContent}>
-									<h2 style={styles.hotelName}>{hotel.name}</h2>
-									<p style={styles.location}>{hotel.location_string}</p>
-									<p style={styles.rating}>
-										Rating: {hotel.rating || 'N/A'} ({hotel.num_reviews || '0'}{' '}
-										reviews)
-									</p>
-									<p style={styles.price}>
+								<div className='p-4'>
+									<h2 className='text-xl font-semibold text-gray-800'>
+										{hotel.name}
+									</h2>
+									<p className='text-gray-600'>{hotel.location_string}</p>
+									<div className='flex items-center mt-2'>
+										<span className='text-yellow-500 mr-2'>★</span>
+										<span className='text-gray-700'>
+											{hotel.rating || 'N/A'}
+										</span>
+										<span className='text-gray-500 ml-1'>
+											({hotel.num_reviews || 0} reviews)
+										</span>
+									</div>
+									<p className='mt-2 text-lg font-bold text-teal-600'>
 										Price: {hotel.price || 'Price not available'}
 									</p>
 									<button
-										style={styles.bookButton}
-										onClick={() => openModal(hotel)}>
+										onClick={() => openModal(hotel)}
+										className='mt-4 w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500'
+										aria-label={`Book ${hotel.name}`}>
 										Book Now
 									</button>
 								</div>
@@ -255,171 +363,85 @@ const HotelList = () => {
 				)}
 
 				{/* Booking Modal */}
-				<HotelBookingModal
-					open={isModalOpen}
-					onClose={closeModal}
-					onSubmit={handleBookingSubmit}
-				/>
+				{isModalOpen && selectedHotel && (
+					<div
+						className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'
+						aria-modal='true'
+						role='dialog'>
+						<div className='bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6 relative'>
+							<button
+								onClick={closeModal}
+								className='absolute top-3 right-3 text-gray-500 hover:text-gray-700'
+								aria-label='Close Modal'>
+								&times;
+							</button>
+							<h2 className='text-2xl font-semibold mb-4'>
+								Book {selectedHotel.name}
+							</h2>
+							<form
+								onSubmit={handleBookingSubmit}
+								className='space-y-4'>
+								<div>
+									<label
+										htmlFor='firstName'
+										className='block text-gray-700'>
+										First Name
+									</label>
+									<input
+										type='text'
+										name='firstName'
+										id='firstName'
+										value={formData.firstName}
+										onChange={(e) =>
+											setFormData({ ...formData, firstName: e.target.value })
+										}
+										className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500'
+										required
+										aria-required='true'
+									/>
+								</div>
+								<div>
+									<label
+										htmlFor='lastName'
+										className='block text-gray-700'>
+										Last Name
+									</label>
+									<input
+										type='text'
+										name='lastName'
+										id='lastName'
+										value={formData.lastName}
+										onChange={(e) =>
+											setFormData({ ...formData, lastName: e.target.value })
+										}
+										className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500'
+										required
+										aria-required='true'
+									/>
+								</div>
+								{/* Add more form fields as needed */}
+								<div className='flex justify-end gap-4'>
+									<button
+										type='button'
+										onClick={closeModal}
+										className='px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500'
+										aria-label='Cancel Booking'>
+										Cancel
+									</button>
+									<button
+										type='submit'
+										className='px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500'
+										aria-label='Submit Booking'>
+										Submit
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				)}
 			</div>
 		</div>
 	);
-};
-
-const styles = {
-	container: {
-		fontFamily: 'Arial, sans-serif',
-		padding: '20px',
-		maxWidth: '1200px',
-		margin: '0 auto',
-	},
-	header: {
-		textAlign: 'center',
-		color: '#333',
-	},
-	searchContainer: {
-		marginBottom: '20px',
-		textAlign: 'center',
-	},
-	input: {
-		padding: '10px',
-		width: '80%',
-		fontSize: '16px',
-		borderRadius: '4px',
-		border: '1px solid #ccc',
-	},
-	parameters: {
-		display: 'flex',
-		justifyContent: 'center',
-		gap: '15px',
-		marginBottom: '20px',
-	},
-	label: {
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center',
-		fontSize: '14px',
-	},
-	inputNumber: {
-		padding: '5px',
-		width: '50px',
-		textAlign: 'center',
-		fontSize: '16px',
-		borderRadius: '4px',
-		border: '1px solid #ccc',
-	},
-	button: {
-		display: 'block',
-		margin: '0 auto',
-		padding: '10px 20px',
-		backgroundColor: '#007BFF',
-		color: '#fff',
-		fontSize: '16px',
-		border: 'none',
-		borderRadius: '4px',
-		cursor: 'pointer',
-	},
-	error: {
-		color: 'red',
-		textAlign: 'center',
-		marginBottom: '20px',
-	},
-	hotelList: {
-		display: 'flex',
-		flexWrap: 'wrap',
-		gap: '20px',
-		justifyContent: 'center',
-	},
-	card: {
-		width: '300px',
-		border: '1px solid #ccc',
-		borderRadius: '8px',
-		overflow: 'hidden',
-		boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-		transition: 'transform 0.2s',
-		backgroundColor: '#fff',
-	},
-	image: {
-		width: '100%',
-		height: '200px',
-		objectFit: 'cover',
-	},
-	cardContent: {
-		padding: '15px',
-	},
-	hotelName: {
-		fontSize: '18px',
-		margin: '10px 0',
-		color: '#333',
-	},
-	location: {
-		color: '#666',
-		fontSize: '14px',
-	},
-	rating: {
-		fontSize: '14px',
-		color: '#333',
-	},
-	price: {
-		fontSize: '16px',
-		fontWeight: 'bold',
-		color: '#28a745',
-	},
-	bookButton: {
-		padding: '10px 20px',
-		backgroundColor: '#28a745',
-		color: '#fff',
-		fontSize: '14px',
-		border: 'none',
-		borderRadius: '4px',
-		cursor: 'pointer',
-		marginTop: '10px',
-		textAlign: 'center',
-		width: '100%',
-	},
-	modal: {
-		position: 'fixed',
-		top: '0',
-		left: '0',
-		width: '100%',
-		height: '100%',
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	loadingMessage: {
-		textAlign: 'center',
-		fontSize: '18px',
-		color: '#007BFF',
-		margin: '20px 0',
-	},
-
-	modalContent: {
-		backgroundColor: '#fff',
-		padding: '20px',
-		borderRadius: '8px',
-		textAlign: 'center',
-		width: '400px',
-	},
-	closeButton: {
-		padding: '10px 20px',
-		backgroundColor: '#ccc',
-		color: '#fff',
-		fontSize: '14px',
-		border: 'none',
-		borderRadius: '4px',
-		cursor: 'pointer',
-	},
-	bookNowButton: {
-		padding: '10px 20px',
-		backgroundColor: '#007BFF',
-		color: '#fff',
-		fontSize: '14px',
-		border: 'none',
-		borderRadius: '4px',
-		cursor: 'pointer',
-		marginTop: '10px',
-	},
 };
 
 export default HotelList;

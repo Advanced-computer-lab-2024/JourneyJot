@@ -92,52 +92,63 @@ const PreviousPurchases = () => {
 
 	// Render the list of previous purchases
 	return (
-		<div className='max-w-5xl mx-auto px-6 py-10 bg-gray-100 min-h-screen'>
-			<h1 className='text-4xl font-extrabold text-center text-indigo-700 mb-10'>
-				Previous Purchases
-			</h1>
-			<ul className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-				{purchases.map((purchase, index) => (
-					<li
-						key={index}
-						className='bg-white rounded-lg shadow-lg p-6 transform hover:-translate-y-1 hover:shadow-xl transition duration-300'>
-						<div className='flex items-center justify-between mb-4'>
-							<h2 className='text-xl font-bold text-gray-800'>
-								{purchase.productId.name}
-							</h2>
-							<span
-								className={`px-3 py-1 text-sm font-semibold rounded-full ${
-									purchase.status === 'purchased'
-										? 'bg-green-100 text-green-800'
-										: purchase.status === 'canceled'
-										? 'bg-red-100 text-red-800'
-										: 'bg-yellow-100 text-yellow-800'
-								}`}>
-								{purchase.status}
-							</span>
-						</div>
-						<p className='text-gray-600 mb-2'>{purchase.productId.details}</p>
-						<div className='flex justify-between text-sm text-gray-500'>
-							<span>Quantity: {purchase.quantity}</span>
-							<span>Price: {purchase.price}</span>
-							<span>
-								Date: {new Date(purchase.purchaseDate).toLocaleDateString()}
-							</span>
-						</div>
-						<div className='mt-4'>
+		<div className='min-h-screen bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-100 flex items-center justify-center'>
+			<div className='max-w-7xl mx-auto px-4 py-8 bg-white rounded-lg shadow-md'>
+				<h1 className='text-3xl font-semibold text-center text-indigo-800 mb-8'>
+					Purchase History
+				</h1>
+				<ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+					{purchases.map((purchase, index) => (
+						<li
+							key={index}
+							className='bg-gray-50 rounded-md shadow-sm p-4 hover:shadow-md transform hover:scale-105 transition duration-200'>
+							<div className='flex items-center justify-between mb-2'>
+								<h2 className='text-base font-semibold text-gray-800 truncate'>
+									{purchase.productId.name}
+								</h2>
+								<span
+									className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
+										purchase.status === 'purchased'
+											? 'bg-green-100 text-green-700'
+											: purchase.status === 'canceled'
+											? 'bg-red-100 text-red-700'
+											: 'bg-yellow-100 text-yellow-700'
+									}`}>
+									{purchase.status}
+								</span>
+							</div>
+							<p className='text-gray-600 text-xs mb-2 line-clamp-2'>
+								{purchase.productId.details}
+							</p>
+							<div className='flex justify-between text-xs text-gray-500 border-t pt-1'>
+								<span>
+									<strong>Qty:</strong> {purchase.quantity}
+								</span>
+								<span>
+									<strong>Price:</strong> ${purchase.price}
+								</span>
+							</div>
+							<div className='text-xs text-gray-500 mt-1'>
+								<span>
+									<strong>Date:</strong>{' '}
+									{new Date(purchase.purchaseDate).toLocaleDateString()}
+								</span>
+							</div>
 							{purchase.status === 'purchased' && (
-								<button
-									onClick={() =>
-										cancelOrder(purchase.productId._id, purchase._id)
-									}
-									className='bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition'>
-									Cancel Order
-								</button>
+								<div className='mt-3'>
+									<button
+										onClick={() =>
+											cancelOrder(purchase.productId._id, purchase._id)
+										}
+										className='bg-red-600 text-white w-full py-1.5 rounded-md hover:bg-red-700 transition duration-200 text-sm'>
+										Cancel Order
+									</button>
+								</div>
 							)}
-						</div>
-					</li>
-				))}
-			</ul>
+						</li>
+					))}
+				</ul>
+			</div>
 		</div>
 	);
 };

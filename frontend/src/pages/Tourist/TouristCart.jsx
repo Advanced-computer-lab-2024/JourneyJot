@@ -172,85 +172,99 @@ const TouristCart = () => {
 	}
 
 	return (
-		<div className='p-6 bg-gray-50 min-h-screen'>
-			<h1 className='text-3xl font-bold text-teal-600 mb-6'>Your Cart</h1>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='p-8 bg-gray-50 shadow-lg rounded-lg w-full max-w-3xl'>
+				<h1 className='text-4xl font-bold text-teal-600 mb-8 text-center'>
+					Your Cart
+				</h1>
 
-			{error && <p className='text-red-500'>{error}</p>}
-			{purchaseError && <p className='text-red-500'>{purchaseError}</p>}
-			{purchaseSuccess && (
-				<p className='text-green-500'>Purchase successful!</p>
-			)}
+				{error && <p className='text-red-500 text-center mb-4'>{error}</p>}
+				{purchaseError && (
+					<p className='text-red-500 text-center mb-4'>{purchaseError}</p>
+				)}
+				{purchaseSuccess && (
+					<p className='text-green-500 text-center mb-4'>
+						Purchase successful!
+					</p>
+				)}
 
-			{cartItems.length === 0 ? (
-				<p>Your cart is empty</p>
-			) : (
-				<div className='space-y-6'>
-					{cartItems.map((item) => (
-						<div
-							key={item.productId._id}
-							className='flex items-center justify-between border-b pb-4'>
-							<div className='flex items-center space-x-4'>
-								<img
-									src={`http://localhost:3000/photos/${item.productId.picture}`}
-									alt={item.productId.name}
-									className='w-16 h-16 object-cover'
-								/>
-								<div>
-									<h2 className='text-lg font-semibold'>
-										{item.productId.name}
-									</h2>
-									<p className='text-gray-500'>${item.productId.price}</p>
+				{cartItems.length === 0 ? (
+					<p className='text-center text-lg font-medium text-gray-700'>
+						Your cart is empty
+					</p>
+				) : (
+					<div className='space-y-8'>
+						{cartItems.map((item) => (
+							<div
+								key={item.productId._id}
+								className='flex items-center justify-between border-b pb-4'>
+								<div className='flex items-center space-x-6'>
+									<img
+										src={`http://localhost:3000/photos/${item.productId.picture}`}
+										alt={item.productId.name}
+										className='w-20 h-20 object-cover rounded-lg shadow-md'
+									/>
+									<div>
+										<h2 className='text-xl font-semibold text-gray-800'>
+											{item.productId.name}
+										</h2>
+										<p className='text-gray-500 text-sm'>
+											${item.productId.price}
+										</p>
+									</div>
+								</div>
+
+								<div className='flex items-center space-x-4'>
+									<button
+										onClick={() =>
+											updateQuantity(item.productId._id, item.quantity - 1)
+										}
+										disabled={item.quantity <= 1}
+										className='bg-teal-500 text-white p-3 rounded-full hover:bg-teal-600 focus:outline-none transition-all'>
+										-
+									</button>
+									<span className='text-lg font-medium'>{item.quantity}</span>
+									<button
+										onClick={() =>
+											updateQuantity(item.productId._id, item.quantity + 1)
+										}
+										className='bg-teal-500 text-white p-3 rounded-full hover:bg-teal-600 focus:outline-none transition-all'>
+										+
+									</button>
+									<button
+										onClick={() => removeProduct(item.productId._id)}
+										className='bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none transition-all'>
+										Remove
+									</button>
 								</div>
 							</div>
+						))}
+					</div>
+				)}
 
-							<div className='flex items-center space-x-4'>
-								<button
-									onClick={() =>
-										updateQuantity(item.productId._id, item.quantity - 1)
-									}
-									disabled={item.quantity <= 1}
-									className='bg-teal-500 text-white p-2 rounded-md'>
-									-
-								</button>
-								<span>{item.quantity}</span>
-								<button
-									onClick={() =>
-										updateQuantity(item.productId._id, item.quantity + 1)
-									}
-									className='bg-teal-500 text-white p-2 rounded-md'>
-									+
-								</button>
-								<button
-									onClick={() => removeProduct(item.productId._id)}
-									className='bg-red-500 text-white p-2 rounded-md'>
-									Remove
-								</button>
-							</div>
-						</div>
-					))}
+				<div className='mt-6 text-right'>
+					<p className='text-2xl font-semibold text-gray-800'>
+						Total: ${getTotalPrice()}
+					</p>
 				</div>
-			)}
 
-			<div className='mt-6 text-right'>
-				<p className='text-lg font-semibold'>Total: ${getTotalPrice()}</p>
-			</div>
-
-			<div className='mt-6 space-x-4'>
-				<button
-					onClick={handlePurchase}
-					className='bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700'>
-					Complete Purchase
-				</button>
-				<button
-					onClick={() => handlePayProductViaStripe(cartItems)}
-					className='bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700'>
-					Pay Visa
-				</button>
-				<button
-					onClick={handleCashOnDelivery}
-					className='bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700'>
-					Cash on Delivery
-				</button>
+				<div className='mt-8 space-x-6 flex justify-center'>
+					<button
+						onClick={handlePurchase}
+						className='bg-teal-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all'>
+						Complete Purchase
+					</button>
+					<button
+						onClick={() => handlePayProductViaStripe(cartItems)}
+						className='bg-teal-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all'>
+						Pay Visa
+					</button>
+					<button
+						onClick={handleCashOnDelivery}
+						className='bg-teal-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all'>
+						Cash on Delivery
+					</button>
+				</div>
 			</div>
 		</div>
 	);

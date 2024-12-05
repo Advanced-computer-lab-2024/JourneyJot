@@ -2,7 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiBookmark } from 'react-icons/fi';
+import { FiBookmark, FiShare2 } from 'react-icons/fi';
+import { MdPayment } from 'react-icons/md';
+import {
+	FaFacebookF,
+	FaTwitter,
+	FaInstagram,
+	FaLinkedinIn,
+} from 'react-icons/fa';
+import StarRating from '../Helper/StarRating'; // Ensure this component exists and is properly implemented
+import { useNavigate } from 'react-router-dom';
 
 const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 	const [attractions, setAttractions] = useState([]);
@@ -13,21 +22,24 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 	const [selectedTicketType, setSelectedTicketType] = useState('');
 	const [ticketPrice, setTicketPrice] = useState(null); // NEW state for ticket price
 	const [error, setError] = useState(null);
-	const [shareOptionsVisible, setShareOptionsVisible] = useState(false);
+	const [shareOptionsVisible, setShareOptionsVisible] = useState({});
+	const navigate = useNavigate(); // Ensure you have imported useNavigate from 'react-router-dom'
 
 	// Fetch data from the API using axios
 	useEffect(() => {
-		axios
-			.get('http://localhost:3000/attractions') // Replace with your API endpoint for attractions
-			.then((response) => {
+		const fetchAttractions = async () => {
+			try {
+				const response = await axios.get('http://localhost:3000/attractions'); // Replace with your API endpoint for attractions
 				setAttractions(response.data);
 				const allTags = response.data.flatMap((attraction) => attraction.tags);
 				const uniqueTags = [...new Set(allTags)];
 				setTags(uniqueTags);
-			})
-			.catch((error) => {
+			} catch (error) {
 				console.error('Error fetching attractions:', error);
-			});
+			}
+		};
+
+		fetchAttractions();
 	}, []);
 
 	const handleFilterChange = (event) => {
@@ -74,11 +86,19 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 				config
 			);
 
-			console.log('Booking successful:', response.data);
-			setIsConfirmModalOpen(false);
+			const { message, updatedWalletBalance, pointsEarned, totalPoints } =
+				response.data;
+
+			// Display a success message with wallet and points details
+			alert(
+				`${message}. You earned ${pointsEarned} points! Your total points are now ${totalPoints}. Wallet balance: $${updatedWalletBalance}.`
+			);
+
+			setIsConfirmModalOpen(false); // Close the modal after booking
 		} catch (error) {
+			setError(error.response?.data?.message || 'An error occurred.'); // Set the error message in state
 			console.error('Error booking attraction:', error);
-			setError(error.response?.data?.message || 'An error occurred.');
+			setIsConfirmModalOpen(false);
 		}
 	};
 
@@ -89,15 +109,28 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 	};
 
 	const handleShareViaEmail = (attraction) => {
-		const subject = encodeURIComponent(`Check out this activity`);
+		const subject = encodeURIComponent(`Check out this attraction`);
 		const body = encodeURIComponent(
-			`Here is a link to the activity: http://localhost:5173/attractions/${attraction._id}`
+			`Here is a link to the attraction: http://localhost:5173/attractions/${attraction._id}`
 		);
 		window.location.href = `mailto:?subject=${subject}&body=${body}`;
 	};
 
-	const toggleShareOptions = () => {
-		setShareOptionsVisible(!shareOptionsVisible);
+	const toggleShareOptions = (attractionId) => {
+		setShareOptionsVisible((prev) => ({
+			...prev,
+			[attractionId]: !prev[attractionId],
+		}));
+	};
+
+	const handlePayAttractionViaStripe = (attraction) => {
+		navigate('/pay-attraction-stripe', {
+			state: {
+				attraction: attraction, // Pass only the serializable attraction data
+				currency: currency,
+				conversionRate: conversionRate,
+			},
+		});
 	};
 
 	const handleBookmark = async (attractionId) => {
@@ -126,17 +159,17 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 	};
 
 	return (
-		<div className='min-h-screen flex flex-col items-center py-10'>
+		<div className='flex flex-col items-center py-10'>
 			{/* Filter Section */}
-			<div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4'>
+			<div className='w-full max-w-7xl px-4 mb-8'>
 				<label
 					htmlFor='filter'
-					className='block text-lg font-semibold text-gray-800'>
+					className='block text-lg font-semibold text-gray-800 mb-2'>
 					Filter by Tag:
 				</label>
 				<select
 					id='filter'
-					className='w-full mt-2 border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none'
+					className='w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none'
 					value={selectedTag}
 					onChange={handleFilterChange}>
 					<option value=''>All Tags</option>
@@ -151,35 +184,36 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 			</div>
 
 			{/* Attractions Grid */}
-			<div className='grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 w-full max-w-7xl'>
+			<div className='w-full max-w-7xl grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4'>
 				{filteredAttractions.length > 0 ? (
 					filteredAttractions.map((attraction) => (
 						<div
 							key={attraction._id}
-							className='border border-gray-300 rounded-lg shadow-lg p-6 bg-white hover:shadow-xl hover:scale-[1.02] transition-all duration-300'>
-							<div className='flex flex-col h-full space-y-4'>
-								<h2 className='text-xl font-bold text-gray-900 truncate'>
-									{attraction.name || 'No name provided'}
+							className='relative bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300'>
+							{/* Attraction Details */}
+							<div className='p-4 space-y-2'>
+								<h2 className='text-xl font-semibold text-blue-900 truncate'>
+									{attraction.name || 'Attraction Name'}
 								</h2>
-								<ul className='text-gray-700 space-y-2'>
+								<ul className='space-y-1 text-gray-700 text-sm'>
 									<li>
-										<strong>Governor:</strong>{' '}
-										{attraction.governorId?.username || 'NA'}
+										<span className='font-medium'>Governor:</span>{' '}
+										{attraction.governorId?.username || 'N/A'}
 									</li>
 									<li>
-										<strong>Description:</strong>{' '}
+										<span className='font-medium'>Description:</span>{' '}
 										{attraction.description || 'Not available'}
 									</li>
 									<li>
-										<strong>Location:</strong>{' '}
+										<span className='font-medium'>Location:</span>{' '}
 										{attraction.location || 'Not specified'}
 									</li>
 									<li>
-										<strong>Opening Hours:</strong>{' '}
+										<span className='font-medium'>Opening Hours:</span>{' '}
 										{attraction.openingHours || 'Not available'}
 									</li>
 									<li>
-										<strong>Ticket Prices:</strong>
+										<span className='font-medium'>Ticket Prices:</span>
 										{attraction.ticketPrices ? (
 											<ul className='pl-6 space-y-1'>
 												<li>
@@ -210,32 +244,120 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 									</li>
 									{attraction.tags?.length > 0 && (
 										<li>
-											<strong>Tags:</strong> {attraction.tags.join(', ')}
+											<span className='font-medium'>Tags:</span>{' '}
+											{attraction.tags.join(', ')}
 										</li>
 									)}
 								</ul>
-								<div className='mt-auto'>
-									<button className='w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'>
+
+								{/* Star Rating */}
+								<div className='flex items-center'>
+									<StarRating rating={attraction.rating || 0} />
+									<span className='ml-2 text-gray-600 text-sm'>
+										({attraction.num_reviews || 0})
+									</span>
+								</div>
+
+								{/* Action Buttons */}
+								<div className='mt-4 flex flex-col space-y-2'>
+									{/* Book Ticket Button */}
+									<button
+										onClick={() => handleBookTicket(attraction)}
+										className='flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200'>
 										Book Ticket
 									</button>
-									<div className='flex justify-between items-center mt-3'>
-										<button
-											onClick={toggleShareOptions}
-											className='py-1 px-3 bg-green-500 text-white rounded-lg hover:bg-green-600'>
-											Share
-										</button>
-										<button
-											onClick={() => handleBookmark(attraction._id)}
-											className='text-blue-500 hover:text-blue-700'>
-											<FiBookmark size={20} />
-										</button>
-									</div>
+
+									{/* Pay via Stripe Button */}
+									<button
+										onClick={() => handlePayAttractionViaStripe(attraction)}
+										className='flex items-center justify-center bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-500 transition-colors duration-200'>
+										<MdPayment className='mr-2' /> Pay via Stripe
+									</button>
 								</div>
+							</div>
+
+							{/* Share and Bookmark Icons */}
+							<div className='flex justify-between items-center p-4 bg-gray-50 border-t border-gray-200'>
+								{/* Share Dropdown */}
+								<div className='relative '>
+									<button
+										onClick={() => toggleShareOptions(attraction._id)}
+										className='flex items-center text-gray-700 hover:text-indigo-600 font-semibold transition-colors duration-200'
+										aria-label='Share Attraction'>
+										<FiShare2
+											size={22}
+											className='mr-2'
+										/>
+										Share
+									</button>
+
+									{shareOptionsVisible[attraction._id] && (
+										<div className='absolute right-0 mt-2 w-48 bg-blue border border-gray-300 rounded-lg shadow-lg z-20'>
+											<div className='p-2'>
+												{/* Copy Link */}
+												<button
+													onClick={() => handleCopyLink(attraction)}
+													className='flex items-center w-full text-left px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200'>
+													Copy Link
+												</button>
+												{/* Share via Email */}
+												<button
+													onClick={() => handleShareViaEmail(attraction)}
+													className='flex items-center w-full text-left px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200'>
+													Share via Email
+												</button>
+											</div>
+											{/* Social Media Share Icons */}
+											<div className='flex justify-around p-2 border-t border-gray-200 bg-gray-50'>
+												<a
+													href={`https://facebook.com/sharer/sharer.php?u=http://localhost:5173/attractions/${attraction._id}`}
+													target='_blank'
+													rel='noopener noreferrer'
+													className='text-blue-600 hover:text-blue-800'
+													aria-label='Share on Facebook'>
+													<FaFacebookF size={20} />
+												</a>
+												<a
+													href={`https://twitter.com/intent/tweet?url=http://localhost:5173/attractions/${attraction._id}`}
+													target='_blank'
+													rel='noopener noreferrer'
+													className='text-blue-400 hover:text-blue-600'
+													aria-label='Share on Twitter'>
+													<FaTwitter size={20} />
+												</a>
+												<a
+													href={`https://instagram.com/?url=http://localhost:5173/attractions/${attraction._id}`}
+													target='_blank'
+													rel='noopener noreferrer'
+													className='text-pink-500 hover:text-pink-700'
+													aria-label='Share on Instagram'>
+													<FaInstagram size={20} />
+												</a>
+												<a
+													href={`https://linkedin.com/shareArticle?mini=true&url=http://localhost:5173/attractions/${attraction._id}`}
+													target='_blank'
+													rel='noopener noreferrer'
+													className='text-blue-700 hover:text-blue-900'
+													aria-label='Share on LinkedIn'>
+													<FaLinkedinIn size={20} />
+												</a>
+											</div>
+										</div>
+									)}
+								</div>
+
+								{/* Bookmark Icon */}
+								<button
+									onClick={() => handleBookmark(attraction._id)}
+									className='text-blue-500 hover:text-blue-700 transition-colors duration-200'
+									aria-label='Bookmark Attraction'>
+									<FiBookmark size={20} />
+								</button>
 							</div>
 						</div>
 					))
 				) : (
-					<p className='text-center text-gray-600 col-span-full'>
+					<p className='text-center text-gray-500 col-span-full'>
 						No attractions available.
 					</p>
 				)}
@@ -243,57 +365,41 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 
 			{/* Error Notification */}
 			{error && (
-				<div className='fixed bottom-5 right-5 bg-red-500 text-white py-3 px-5 rounded-lg shadow-lg'>
+				<div className='fixed bottom-5 right-5 bg-red-600 text-white py-3 px-5 rounded-lg shadow-lg z-50 transition-opacity duration-500 opacity-100'>
 					<div className='flex justify-between items-center'>
 						<span>{error}</span>
 						<button
-							onClick={() => setError(null)}
-							className='text-xl font-bold'>
-							×
+							className='text-white font-bold'
+							onClick={() => setError(null)}>
+							X
 						</button>
 					</div>
 				</div>
 			)}
 
-			{/* Ticket Selection Modal */}
+			{/* Confirmation Modal for Booking */}
 			{isConfirmModalOpen && selectedAttraction && (
-				<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center'>
-					<div className='bg-white rounded-lg p-6 w-80 shadow-lg'>
-						<h3 className='text-lg font-semibold text-gray-900'>
-							Select Ticket Type
+				<div className='fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50'>
+					<div className='bg-white p-6 rounded-lg shadow-lg w-80'>
+						<h3 className='text-lg font-semibold text-center mb-4'>
+							Confirm Booking
 						</h3>
-						<select
-							className='w-full mt-3 border border-gray-300 rounded-lg p-2'
-							value={selectedTicketType}
-							onChange={(e) => handleTicketTypeChange(e.target.value)}>
-							<option value=''>Select Ticket Type</option>
-							{selectedAttraction.ticketPrices?.native && (
-								<option value='native'>Natives</option>
-							)}
-							{selectedAttraction.ticketPrices?.foreigner && (
-								<option value='foreigner'>Foreigners</option>
-							)}
-							{selectedAttraction.ticketPrices?.student && (
-								<option value='student'>Students</option>
-							)}
-						</select>
-						{selectedTicketType && (
-							<p className='mt-4 text-gray-700'>
-								<strong>Price:</strong> {currency} {ticketPrice || 'N/A'}
-							</p>
-						)}
-						<div className='mt-6 flex justify-end space-x-4'>
+						<p className='text-center mb-6'>
+							Price: {currency} {ticketPrice || 'N/A'}
+						</p>
+						<div className='flex justify-between'>
 							<button
 								onClick={() => setIsConfirmModalOpen(false)}
-								className='py-2 px-4 bg-gray-500 text-white rounded-lg hover:bg-gray-600'>
-								Close
+								className='bg-gray-500 text-white px-4 py-2 rounded-md'>
+								Cancel
 							</button>
 							<button
 								onClick={confirmBooking}
-								className='py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700'>
-								Confirm Booking
+								className='bg-blue-600 text-white px-4 py-2 rounded-md'>
+								Confirm
 							</button>
 						</div>
+						{error && <div className='mt-4 text-red-500'>{error}</div>}
 					</div>
 				</div>
 			)}

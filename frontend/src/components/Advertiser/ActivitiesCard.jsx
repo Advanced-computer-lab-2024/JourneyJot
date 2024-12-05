@@ -6,7 +6,15 @@ import EditActivityModal from './EditActivity';
 import DeleteActivityButton from './DeleteActivity';
 import StarRating from '../Helper/StarRating';
 import { useNavigate } from 'react-router-dom';
-import { FiBookmark } from 'react-icons/fi';
+import { FiBookmark, FiShare2, FiEdit, FiTrash2 } from 'react-icons/fi';
+import { MdPayment } from 'react-icons/md';
+import {
+	FaFacebookF,
+	FaTwitter,
+	FaInstagram,
+	FaLinkedinIn,
+} from 'react-icons/fa';
+
 const ActivitiesCard = ({
 	activities = [],
 	isAdvertiser = false,
@@ -19,11 +27,11 @@ const ActivitiesCard = ({
 	const [currentActivity, setCurrentActivity] = useState(null);
 	const [categories, setCategories] = useState([]);
 	const [tags, setTags] = useState([]);
-	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Modal state
-	const [selectedActivity, setSelectedActivity] = useState(null); // Store selected activity
-	const [error, setError] = useState(null); // State to handle errors
-	const [shareOptionsVisible, setShareOptionsVisible] = useState(false); // Toggle for share options
-	const navigate = useNavigate(); // For navigation
+	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+	const [selectedActivity, setSelectedActivity] = useState(null);
+	const [error, setError] = useState(null);
+	const [shareOptionsVisible, setShareOptionsVisible] = useState({});
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		// Fetch categories and tags
@@ -86,8 +94,8 @@ const ActivitiesCard = ({
 	};
 
 	const handleBookActivity = (activity) => {
-		setSelectedActivity(activity); // Set selected activity for booking
-		setIsConfirmModalOpen(true); // Open confirmation modal
+		setSelectedActivity(activity);
+		setIsConfirmModalOpen(true);
 	};
 
 	const confirmBooking = async () => {
@@ -114,9 +122,9 @@ const ActivitiesCard = ({
 				`${message}. You earned ${pointsEarned} points! Your total points are now ${totalPoints}. Wallet balance: $${updatedWalletBalance}.`
 			);
 
-			setIsConfirmModalOpen(false); // Close the modal after booking
+			setIsConfirmModalOpen(false);
 		} catch (error) {
-			setError(error.response?.data?.message || 'An error occurred.'); // Set the error message in state
+			setError(error.response?.data?.message || 'An error occurred.');
 			console.error('Error booking attraction:', error);
 			setIsConfirmModalOpen(false);
 		}
@@ -136,15 +144,17 @@ const ActivitiesCard = ({
 		window.location.href = `mailto:?subject=${subject}&body=${body}`;
 	};
 
-	const toggleShareOptions = () => {
-		setShareOptionsVisible(!shareOptionsVisible);
+	const toggleShareOptions = (activityId) => {
+		setShareOptionsVisible((prev) => ({
+			...prev,
+			[activityId]: !prev[activityId],
+		}));
 	};
 
 	const handlePayActivityViaStripe = (activity) => {
-		// Ensure no PointerEvent is passed to navigate
 		navigate('/pay-activity-stripe', {
 			state: {
-				activity: activity, // Pass only the serializable activity data
+				activity: activity,
 				currency: currency,
 				conversionRate: conversionRate,
 			},
@@ -177,121 +187,191 @@ const ActivitiesCard = ({
 	};
 
 	return (
-		<div className='min-h-screen flex justify-center items-center bg-gray-100 p-4'>
-			<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
-				{activities.length > 0 ? (
-					activities.map((activity) => (
-						<div
-							key={activity._id}
-							className='bg-white rounded-lg shadow-md p-6'>
-							<h2 className='text-2xl font-semibold text-blue-900 mb-4'>
+		<div className='flex flex-wrap justify-center gap-4'>
+			{activities.length > 0 ? (
+				activities.map((activity) => (
+					<div
+						key={activity._id}
+						className='relative bg-white rounded-lg shadow-md overflow-hidden w-72 hover:shadow-xl transition-shadow duration-300'>
+						{/* Activity Details */}
+						<div className='p-4 space-y-2'>
+							<h2 className='text-xl font-semibold text-blue-900 truncate'>
 								{activity.name || 'Activity Name'}
 							</h2>
-							<p className='text-gray-600 mb-2'>
-								<strong>Advertiser:</strong>{' '}
-								{activity.advertiserId?.username || 'N/A'}
-							</p>
-							<p className='text-gray-600 mb-2'>
-								<strong>Date:</strong>{' '}
-								{new Date(activity.date).toLocaleDateString()}
-							</p>
-							<p className='text-gray-600 mb-2'>
-								<strong>Time:</strong> {activity.time || 'N/A'}
-							</p>
-							<p className='text-gray-600 mb-2'>
-								<strong>Price:</strong>{' '}
-								{activity.price
-									? (activity.price * conversionRate).toFixed(1)
-									: 'N/A'}{' '}
-								{currency}
-							</p>
-							<p className='text-gray-600 mb-2'>
-								<strong>Category:</strong> {activity.category?.name || 'N/A'}
-							</p>
-							<p className='text-gray-600 mb-2'>
-								<strong>Tag:</strong> {activity.preferenceTag?.name || 'N/A'}
-							</p>
-							<p className='text-gray-600 mb-2'>
-								<strong>Discounts:</strong> {activity.specialDiscounts || 'N/A'}
-							</p>
-							<p className='text-gray-600 mb-4'>
-								<strong>Status:</strong>{' '}
-								{activity.bookingOpen ? 'Open' : 'Closed'}
-							</p>
-
-							{/* Conditionally render buttons based on isAdvertiser */}
-							{!isAdvertiser && (
-								<div className='mb-4'>
-									{/* Rectangular Book Now Button */}
-									<button
-										onClick={() => handleBookActivity(activity)}
-										className='bg-blue-600 text-white w-full py-3 rounded-lg hover:bg-blue-700 mb-2'>
-										Book Now
-									</button>
-
-									{/* Rectangular Pay via Stripe Button */}
-									<button
-										onClick={() =>
-											handlePayActivityViaStripe(
-												activity,
-												currency,
-												conversionRate
-											)
-										}
-										className='bg-teal-600 text-white w-full py-3 rounded-lg hover:bg-teal-500 mb-2'>
-										Pay via Stripe
-									</button>
-
-									{/* Share and Bookmark Buttons */}
-									<div className='flex justify-between'>
-										<button
-											onClick={toggleShareOptions}
-											className='bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700'>
-											Share
-										</button>
-										<button
-											onClick={() => handleBookmark(activity._id)}
-											className='text-blue-500 hover:text-blue-700'>
-											<FiBookmark size={24} />
-										</button>
-									</div>
-								</div>
-							)}
-
-							{shareOptionsVisible && (
-								<div className='absolute bg-white border rounded-lg shadow-md mt-4 p-4 w-full'>
-									<button
-										onClick={() => handleCopyLink(activity)}
-										className='text-blue-600 hover:underline block mb-2'>
-										Copy Link
-									</button>
-									<button
-										onClick={() => handleShareViaEmail(activity)}
-										className='text-blue-600 hover:underline block'>
-										Share via Email
-									</button>
-								</div>
-							)}
-
-							{isAdvertiser && (
-								<div className='flex space-x-4 mt-4'>
-									<button
-										onClick={() => handleEdit(activity)}
-										className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
-										Edit
-									</button>
-									<DeleteActivityButton
-										activityId={activity._id}
-										onDelete={onDelete}
-									/>
-								</div>
-							)}
+							<div className='flex items-center text-gray-600 text-sm'>
+								<span className='font-medium'>Advertiser:</span>
+								<span className='ml-1'>
+									{activity.advertiserId?.username || 'N/A'}
+								</span>
+							</div>
+							<div className='flex items-center text-gray-600 text-sm'>
+								<span className='font-medium'>Date:</span>
+								<span className='ml-1'>
+									{new Date(activity.date).toLocaleDateString()}
+								</span>
+							</div>
+							<div className='flex items-center text-gray-600 text-sm'>
+								<span className='font-medium'>Time:</span>
+								<span className='ml-1'>{activity.time || 'N/A'}</span>
+							</div>
+							<div className='flex items-center text-gray-600 text-sm'>
+								<span className='font-medium'>Price:</span>
+								<span className='ml-1'>
+									{activity.price
+										? (activity.price * conversionRate).toFixed(2)
+										: 'N/A'}{' '}
+									{currency}
+								</span>
+							</div>
+							<div className='flex items-center text-gray-600 text-sm'>
+								<span className='font-medium'>Category:</span>
+								<span className='ml-1'>{activity.category?.name || 'N/A'}</span>
+							</div>
+							<div className='flex items-center text-gray-600 text-sm'>
+								<span className='font-medium'>Tag:</span>
+								<span className='ml-1'>
+									{activity.preferenceTag?.name || 'N/A'}
+								</span>
+							</div>
+							<div className='flex items-center text-gray-600 text-sm'>
+								<span className='font-medium'>Discounts:</span>
+								<span className='ml-1'>
+									{activity.specialDiscounts || 'N/A'}
+								</span>
+							</div>
+							<div className='flex items-center text-gray-600 text-sm'>
+								<span className='font-medium'>Status:</span>
+								<span className='ml-1'>
+									{activity.bookingOpen ? (
+										<span className='text-green-500'>Open</span>
+									) : (
+										<span className='text-red-500'>Closed</span>
+									)}
+								</span>
+							</div>
+							{/* Star Rating */}
+							<div className='flex items-center'>
+								<StarRating rating={activity.rating || 0} />
+								<span className='ml-2 text-gray-600 text-sm'>
+									({activity.num_reviews || 0})
+								</span>
+							</div>
 						</div>
-					))
-				) : (
-					<p className='text-center text-gray-500'>No activities available.</p>
-				)}
-			</div>
+
+						{/* Action Buttons */}
+						{!isAdvertiser && (
+							<div className='p-4 border-t border-gray-200 flex flex-col space-y-2'>
+								{/* Book Now Button */}
+								<button
+									onClick={() => handleBookActivity(activity)}
+									className='flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200'>
+									Book Now
+								</button>
+
+								{/* Pay via Stripe Button */}
+								<button
+									onClick={() => handlePayActivityViaStripe(activity)}
+									className='flex items-center justify-center bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-500 transition-colors duration-200'>
+									<MdPayment className='mr-2' /> Pay via Stripe
+								</button>
+
+								{/* Share and Bookmark Icons */}
+								<div className='flex justify-between items-center'>
+									{/* Share Dropdown */}
+									<div className='relative'>
+										<button
+											onClick={() => toggleShareOptions(activity._id)}
+											className='flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200'
+											aria-label='Share Activity'>
+											<FiShare2 size={20} />
+										</button>
+
+										{shareOptionsVisible[activity._id] && (
+											<div className='absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10'>
+												<button
+													onClick={() => handleCopyLink(activity)}
+													className='flex items-center w-full text-left px-2 py-1 hover:bg-gray-100 rounded'>
+													Copy Link
+												</button>
+												<button
+													onClick={() => handleShareViaEmail(activity)}
+													className='flex items-center w-full text-left px-2 py-1 hover:bg-gray-100 rounded'>
+													Share via Email
+												</button>
+												{/* Social Media Share Icons */}
+												<div className='flex justify-around mt-2'>
+													<a
+														href={`https://facebook.com/sharer/sharer.php?u=http://localhost:5173/activities/${activity._id}`}
+														target='_blank'
+														rel='noopener noreferrer'
+														className='text-blue-600 hover:text-blue-800'
+														aria-label='Share on Facebook'>
+														<FaFacebookF size={18} />
+													</a>
+													<a
+														href={`https://twitter.com/intent/tweet?url=http://localhost:5173/activities/${activity._id}`}
+														target='_blank'
+														rel='noopener noreferrer'
+														className='text-blue-400 hover:text-blue-600'
+														aria-label='Share on Twitter'>
+														<FaTwitter size={18} />
+													</a>
+													<a
+														href={`https://instagram.com/?url=http://localhost:5173/activities/${activity._id}`}
+														target='_blank'
+														rel='noopener noreferrer'
+														className='text-pink-500 hover:text-pink-700'
+														aria-label='Share on Instagram'>
+														<FaInstagram size={18} />
+													</a>
+													<a
+														href={`https://linkedin.com/shareArticle?mini=true&url=http://localhost:5173/activities/${activity._id}`}
+														target='_blank'
+														rel='noopener noreferrer'
+														className='text-blue-700 hover:text-blue-900'
+														aria-label='Share on LinkedIn'>
+														<FaLinkedinIn size={18} />
+													</a>
+												</div>
+											</div>
+										)}
+									</div>
+
+									{/* Bookmark Icon */}
+									<button
+										onClick={() => handleBookmark(activity._id)}
+										className='text-blue-500 hover:text-blue-700 transition-colors duration-200'
+										aria-label='Bookmark Activity'>
+										<FiBookmark size={20} />
+									</button>
+								</div>
+							</div>
+						)}
+
+						{/* Advertiser Action Buttons */}
+						{isAdvertiser && (
+							<div className='p-4 border-t border-gray-200 flex justify-end space-x-2'>
+								<button
+									onClick={() => handleEdit(activity)}
+									className='flex items-center bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600 transition-colors duration-200'
+									aria-label='Edit Activity'>
+									<FiEdit
+										size={18}
+										className='mr-1'
+									/>{' '}
+									Edit
+								</button>
+								<DeleteActivityButton
+									activityId={activity._id}
+									onDelete={onDelete}
+								/>
+							</div>
+						)}
+					</div>
+				))
+			) : (
+				<p className='text-center text-gray-500'>No activities available.</p>
+			)}
 
 			{/* Edit Modal */}
 			{isEditModalOpen && (
@@ -305,22 +385,22 @@ const ActivitiesCard = ({
 
 			{/* Confirmation Modal for Booking */}
 			{isConfirmModalOpen && (
-				<div className='fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center'>
-					<div className='bg-white p-8 rounded-lg shadow-lg'>
-						<h2 className='text-2xl font-semibold mb-4'>Confirm Booking</h2>
-						<p className='text-lg'>
-							Do you want to book this activity?{' '}
-							<strong>{selectedActivity?.name}</strong>
+				<div className='fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50'>
+					<div className='bg-white p-6 rounded-lg shadow-lg w-80'>
+						<h2 className='text-xl font-semibold mb-4'>Confirm Booking</h2>
+						<p className='mb-6'>
+							Do you want to book the activity{' '}
+							<strong>{selectedActivity?.name}</strong>?
 						</p>
-						<div className='flex justify-between mt-6'>
+						<div className='flex justify-end space-x-4'>
 							<button
 								onClick={confirmBooking}
-								className='bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700'>
+								className='bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200'>
 								Yes, Book it!
 							</button>
 							<button
 								onClick={() => setIsConfirmModalOpen(false)}
-								className='bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700'>
+								className='bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200'>
 								Cancel
 							</button>
 						</div>

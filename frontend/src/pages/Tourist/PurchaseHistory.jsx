@@ -104,78 +104,94 @@ const PurchaseHistory = () => {
 	};
 
 	return (
-		<div className='container mx-auto p-4'>
-			<h1 className='text-3xl font-semibold mb-6'>Purchase History</h1>
+		<div className='min-h-screen bg-gradient-to-br from-blue-100 via-indigo-200 to-purple-300 flex items-center justify-center'>
+			<div className='container mx-auto px-6 py-8'>
+				<h1 className='text-4xl font-bold text-center text-gray-800 mb-8'>
+					Purchase History
+				</h1>
 
-			{loading ? (
-				<div className='flex justify-center items-center'>
-					<div className='w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin'></div>
-				</div>
-			) : error ? (
-				<div className='text-red-600'>{error}</div>
-			) : products.length === 0 ? (
-				<p>No products purchased.</p>
-			) : (
-				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-					{products.map((product) => (
-						<div
-							key={product._id}
-							className='bg-white shadow-lg rounded-lg p-4'>
-							<img
-								src={`http://localhost:3000/photos/${product.picture}`}
-								alt={product.name}
-								className='w-full h-48 object-cover rounded-md mb-4'
-							/>
-							<h2 className='text-xl font-semibold text-teal-600 mb-2'>
-								{product.name}
-							</h2>
-							<p className='text-gray-600 mb-4'>{product.details}</p>
-							<button
-								onClick={() => openModal(product._id)}
-								className='bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-800 transition duration-200'>
+				{loading ? (
+					<div className='flex justify-center items-center'>
+						<div className='w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin'></div>
+					</div>
+				) : error ? (
+					<div className='text-center text-red-600 text-lg'>{error}</div>
+				) : products.length === 0 ? (
+					<p className='text-center text-gray-600 text-lg'>
+						No products purchased.
+					</p>
+				) : (
+					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
+						{products.map((product) => (
+							<div
+								key={product._id}
+								className='bg-white shadow-md hover:shadow-lg rounded-lg overflow-hidden transform hover:scale-105 transition duration-300'>
+								<img
+									src={`http://localhost:3000/photos/${product.picture}`}
+									alt={product.name}
+									className='w-full h-48 object-cover'
+								/>
+								<div className='p-6'>
+									<h2 className='text-xl font-bold text-teal-600 mb-2'>
+										{product.name}
+									</h2>
+									<p className='text-gray-700 text-sm mb-4'>
+										{product.details}
+									</p>
+									<button
+										onClick={() => openModal(product._id)}
+										className='bg-teal-600 text-white w-full py-2 rounded-md hover:bg-teal-700 transition duration-200'>
+										Add Review
+									</button>
+								</div>
+							</div>
+						))}
+					</div>
+				)}
+
+				{modalOpen && (
+					<div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
+						<div className='bg-gradient-to-br from-blue-100 via-indigo-200 to-purple-300  rounded-lg shadow-lg p-6 w-11/12 md:w-96'>
+							<h2 className='text-2xl font-bold text-gray-800 mb-4'>
 								Add Review
-							</button>
-						</div>
-					))}
-				</div>
-			)}
-
-			{modalOpen && (
-				<div className='fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50'>
-					<div className='bg-white p-6 rounded-lg shadow-lg w-96'>
-						<h2 className='text-2xl font-semibold mb-4'>Add Review</h2>
-						<div className='mb-4'>
-							<label className='block text-gray-700 mb-2'>Rating</label>
-							<StarRating
-								rating={rating}
-								onChange={setRating}
-							/>
-						</div>
-						<div className='mb-4'>
-							<label className='block text-gray-700 mb-2'>Comment</label>
-							<textarea
-								value={comment}
-								onChange={(e) => setComment(e.target.value)}
-								rows='4'
-								className='w-full p-2 border border-gray-300 rounded-lg'
-								placeholder='Write your comment here'
-							/>
-						</div>
-						<div className='flex justify-between'>
-							<button
-								onClick={closeModal}
-								className='text-gray-600 hover:text-gray-800'>
-								Cancel
-							</button>
-							<button
-								onClick={handleReviewSubmit}
-								className='bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-800 transition duration-200'>
-								Submit Review
-							</button>
+							</h2>
+							<div className='mb-4'>
+								<label className='block text-gray-700 text-sm font-medium mb-2'>
+									Rating
+								</label>
+								<StarRating
+									rating={rating}
+									onChange={setRating}
+								/>
+							</div>
+							<div className='mb-4'>
+								<label className='block text-gray-700 text-sm font-medium mb-2'>
+									Comment
+								</label>
+								<textarea
+									value={comment}
+									onChange={(e) => setComment(e.target.value)}
+									rows='4'
+									className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500'
+									placeholder='Write your comment here'
+								/>
+							</div>
+							<div className='flex justify-between'>
+								<button
+									onClick={closeModal}
+									className='text-gray-600 hover:text-gray-800'>
+									Cancel
+								</button>
+								<button
+									onClick={handleReviewSubmit}
+									className='bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 transition duration-200'>
+									Submit Review
+								</button>
+							</div>
 						</div>
 					</div>
-				</div>
-			)}
+				)}
+			</div>
 		</div>
 	);
 };

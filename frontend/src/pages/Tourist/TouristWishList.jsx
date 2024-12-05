@@ -91,70 +91,65 @@ const TouristWishList = () => {
 		}
 	};
 
-	if (loading) return <div className='text-center mt-10'>Loading...</div>;
+	if (loading)
+		return <div className='text-center mt-10 text-xl'>Loading...</div>;
 	if (error)
-		return <div className='text-center text-red-500 mt-10'>{error}</div>;
+		return (
+			<div className='text-center text-red-500 mt-10 text-xl'>{error}</div>
+		);
 
 	return (
-		<div className='max-w-7xl mx-auto p-6'>
-			<h2 className='text-3xl font-semibold mb-8 text-center text-teal-600'>
-				Your Wish List
-			</h2>
-			{wishList.length === 0 ? (
-				<div className='text-center text-gray-500'>
-					Your wish list is empty.
-				</div>
-			) : (
-				<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
-					{wishList.map((product) => (
-						<div
-							key={product._id}
-							className='relative flex flex-col items-start border border-gray-300 rounded-lg p-5 shadow-md hover:shadow-xl transition-shadow cursor-pointer bg-white hover:bg-gray-50'>
-							<img
-								src={`http://localhost:3000/photos/${product.picture}`}
-								alt={product.name}
-								className='w-32 h-32 object-cover rounded-t-lg mb-4' // Adjusted size of product image
-							/>
-							<div className='mt-4'>
-								<h3 className='text-lg font-semibold text-gray-800'>
-									{product.name}
-								</h3>
-								<p className='text-gray-600 mt-2'>
-									${product.price.toFixed(2)}
-								</p>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='max-w-7xl mx-auto p-8'>
+				<h2 className='text-4xl font-bold mb-12 text-center text-white'>
+					Your Wish List
+				</h2>
+				{wishList.length === 0 ? (
+					<div className='text-center text-gray-500 text-xl'>
+						Your wish list is empty.
+					</div>
+				) : (
+					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
+						{wishList.map((product) => (
+							<div
+								key={product._id}
+								className='relative flex flex-col items-start border border-gray-300 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer bg-white hover:bg-gray-50'>
+								{/* Image inside the card with proper alignment */}
+								<div className='w-full h-48 mb-6 overflow-hidden rounded-lg'>
+									<img
+										src={`http://localhost:3000/photos/${product.picture}`}
+										alt={product.name}
+										className='w-full h-full object-cover transition-transform transform hover:scale-105'
+									/>
+								</div>
+
+								<div className='flex flex-col justify-between flex-grow mb-4'>
+									<h3 className='text-xl font-semibold text-gray-800 truncate'>
+										{product.name}
+									</h3>
+									<p className='text-lg text-gray-600 mt-2'>
+										${product.price.toFixed(2)}
+									</p>
+								</div>
+
+								<div className='mt-6 flex gap-6'>
+									<button className='flex-1 bg-red-600 text-white py-3 text-sm font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all'>
+										Remove
+									</button>
+
+									<button className='flex-1 bg-teal-600 text-white py-3 text-sm font-semibold rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-600 transition-all'>
+										View Product
+									</button>
+
+									<button className='flex-1 bg-yellow-600 text-white py-3 text-sm font-semibold rounded-lg shadow-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-600 transition-all'>
+										Add to Cart
+									</button>
+								</div>
 							</div>
-
-							<div className='mt-4 w-full flex gap-x-4'>
-								<button
-									className='bg-red-500 text-white px-4 py-2 text-sm rounded-md shadow-md hover:bg-red-600 focus:outline-none'
-									onClick={(e) => {
-										e.stopPropagation(); // Prevent navigation when clicking the button
-										removeFromWishList(product._id);
-									}}>
-									Remove
-								</button>
-
-								<button
-									className='bg-teal-500 text-white px-4 py-2 text-sm rounded-md shadow-md hover:bg-teal-600 focus:outline-none'
-									onClick={() =>
-										navigate(`/tourist/homePage/products/${product._id}`)
-									}>
-									View Product
-								</button>
-
-								<button
-									className='bg-yellow-500 text-white px-4 py-2 text-sm rounded-md shadow-md hover:bg-yellow-600 focus:outline-none'
-									onClick={(e) => {
-										e.stopPropagation(); // Prevent navigation when clicking the button
-										addToCart(product._id);
-									}}>
-									Add to Cart
-								</button>
-							</div>
-						</div>
-					))}
-				</div>
-			)}
+						))}
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };

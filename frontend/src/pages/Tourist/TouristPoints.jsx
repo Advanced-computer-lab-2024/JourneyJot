@@ -97,31 +97,43 @@ const TouristPoints = () => {
 	};
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-6'>
-			<div className='max-w-2xl mx-auto p-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-lg shadow-lg'>
-				<h1 className='text-3xl font-semibold text-center text-white mb-6'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400  p-4 flex items-center justify-center'>
+			<div className='max-w-lg w-full p-6 bg-white rounded-xl shadow-lg border border-gray-200'>
+				<h1 className='text-2xl font-bold text-center text-indigo-800 mb-6'>
 					Tourist Points
 				</h1>
-				<div className='bg-white p-6 rounded-lg shadow-md'>
+				<div className='bg-gray-50 p-4 rounded-lg shadow-inner'>
 					{loading ? (
-						<p className='text-center text-gray-600'>Loading...</p>
+						<p className='text-center text-gray-500 text-sm'>Loading...</p>
 					) : (
 						<>
-							<p className='text-xl font-medium text-gray-800 mb-2'>
-								Your Points: <span className='text-green-500'>{points}</span>
-							</p>
-							<p className='text-xl font-medium text-gray-800 mb-2'>
-								Your Level: <span className='text-blue-600'>Level {level}</span>
-							</p>
-							<p className='text-xl font-medium text-gray-800 mb-4'>
-								Badge:{' '}
-								<span className='text-yellow-500'>{getBadge(level)}</span>
-							</p>
+							<div className='mb-3'>
+								<p className='text-lg font-medium text-gray-800'>
+									<span className='text-gray-600'>Your Points: </span>
+									<span className='text-green-600 font-semibold'>{points}</span>
+								</p>
+							</div>
+							<div className='mb-3'>
+								<p className='text-lg font-medium text-gray-800'>
+									<span className='text-gray-600'>Your Level: </span>
+									<span className='text-blue-600 font-semibold'>
+										Level {level}
+									</span>
+								</p>
+							</div>
+							<div>
+								<p className='text-lg font-medium text-gray-800'>
+									<span className='text-gray-600'>Badge: </span>
+									<span className='text-yellow-500 font-semibold'>
+										{getBadge(level)}
+									</span>
+								</p>
+							</div>
 						</>
 					)}
 				</div>
 				<button
-					className='mt-6 w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition duration-200'
+					className='mt-6 w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition duration-200'
 					onClick={handleRedeemPoints}>
 					Redeem Points for Wallet Cash
 				</button>

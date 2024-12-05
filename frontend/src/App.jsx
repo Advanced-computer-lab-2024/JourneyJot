@@ -96,6 +96,7 @@ import TouristItineraryNotifications from './pages/Tourist/ItineraryNotification
 import PromoCodesPage from './pages/Tourist/TouristPromoCode.jsx';
 import PromoCodeForm from './components/Admin/AdminPromoCode.jsx';
 import ComplaintsAdmin from './components/Admin/AdminComplain.jsx';
+import VacationGuide from './components/General/VacationGuide.jsx';
 
 // Load Stripe with your public key
 const stripePromise = loadStripe(
@@ -485,6 +486,10 @@ const App = () => {
 			<Route
 				path='/create-promocode'
 				element={<PromoCodeForm />}
+			/>
+			<Route
+				path='/about'
+				element={<VacationGuide />}
 			/>
 		</Routes>
 	);
