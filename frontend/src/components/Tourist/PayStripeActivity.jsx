@@ -82,48 +82,81 @@ const ActivityPaymentPage = () => {
 	};
 
 	return (
-		<div className='payment-container p-6 max-w-lg mx-auto bg-white shadow-lg rounded-lg'>
-			<h2 className='text-xl font-bold text-center mb-4'>Payment Page</h2>
-			<p className='text-center text-lg'>
-				You're about to pay for the activity: <strong>{activity?.name}</strong>
-			</p>
-			<p className='text-center text-md mb-4'>
-				Price: {(activity?.price * conversionRate).toFixed(2)} {currency}
-			</p>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='payment-container p-8 max-w-lg mx-auto bg-white shadow-2xl rounded-2xl'>
+				<h2 className='text-2xl font-bold text-center mb-6 text-gray-800 tracking-wide'>
+					Payment Page
+				</h2>
 
-			{paymentStatus && (
-				<p className='text-center text-xl font-semibold text-green-600 mb-4'>
-					{paymentStatus}
+				<p className='text-center text-lg text-gray-700 mb-2'>
+					You're about to pay for the activity:{' '}
+					<strong>{activity?.name}</strong>
 				</p>
-			)}
+				<p className='text-center text-lg font-semibold text-gray-900 mb-6'>
+					Price: {(activity?.price * conversionRate).toFixed(2)} {currency}
+				</p>
 
-			{/* Card Element for Stripe payment */}
-			<div className='mb-4'>
-				<CardElement className='mt-1 block w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500' />
+				{paymentStatus && (
+					<p className='text-center text-xl font-semibold text-green-500 mb-6'>
+						{paymentStatus}
+					</p>
+				)}
+
+				{/* Card Element for Stripe payment */}
+				<div className='mb-6'>
+					<CardElement className='mt-2 block w-full p-4 bg-gray-50 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800' />
+				</div>
+
+				{/* Wallet Balance Section */}
+				<div className='mb-6'>
+					<label className='block text-sm font-medium text-gray-700 mb-2'>
+						Wallet Balance
+					</label>
+					<input
+						type='number'
+						className='mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800'
+						placeholder='Enter wallet amount'
+						value={walletAmount}
+						onChange={(e) => setWalletAmount(parseFloat(e.target.value))}
+					/>
+				</div>
+
+				<button
+					onClick={handleFakeVisaPayment}
+					className='w-full py-3 text-lg font-semibold bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-500 hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+					disabled={
+						isLoading ||
+						!stripe ||
+						!elements ||
+						!walletAmount ||
+						walletAmount < 0
+					}>
+					{isLoading ? (
+						<span className='flex items-center justify-center gap-2'>
+							<svg
+								className='animate-spin h-5 w-5 text-white'
+								xmlns='http://www.w3.org/2000/svg'
+								fill='none'
+								viewBox='0 0 24 24'>
+								<circle
+									className='opacity-25'
+									cx='12'
+									cy='12'
+									r='10'
+									stroke='currentColor'
+									strokeWidth='4'></circle>
+								<path
+									className='opacity-75'
+									fill='currentColor'
+									d='M4 12a8 8 0 018-8v4a4 4 0 100 8v4a8 8 0 01-8-8z'></path>
+							</svg>
+							Processing Payment...
+						</span>
+					) : (
+						'Pay with Fake Visa'
+					)}
+				</button>
 			</div>
-
-			{/* Optional: Display wallet balance if you want to allow the user to apply wallet credits */}
-			<div className='mb-4'>
-				<label className='block text-sm font-medium text-gray-700'>
-					Wallet Balance
-				</label>
-				<input
-					type='number'
-					className='mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500'
-					placeholder='Enter wallet amount'
-					value={walletAmount}
-					onChange={(e) => setWalletAmount(parseFloat(e.target.value))}
-				/>
-			</div>
-
-			<button
-				onClick={handleFakeVisaPayment}
-				className='bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-500 w-full mt-4'
-				disabled={
-					isLoading || !stripe || !elements || !walletAmount || walletAmount < 0
-				}>
-				{isLoading ? 'Processing Payment...' : 'Pay with Fake Visa'}
-			</button>
 		</div>
 	);
 };

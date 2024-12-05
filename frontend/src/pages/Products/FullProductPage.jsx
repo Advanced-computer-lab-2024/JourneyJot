@@ -218,137 +218,148 @@ const FullProductPage = () => {
 	//console.log(product);
 
 	return (
-		<div className='max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md'>
-			<label htmlFor='currency-select'>Select Currency:</label>
-			<select
-				id='currency-select'
-				value={selectedCurrency}
-				onChange={handleCurrencyChange}>
-				{Object.keys(rates).map((currency) => (
-					<option
-						key={currency}
-						value={currency}>
-						{currency}
-					</option>
-				))}
-			</select>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-xl space-y-6'>
+				<div>
+					<label
+						htmlFor='currency-select'
+						className='text-xl font-semibold'>
+						Select Currency:
+					</label>
+					<select
+						id='currency-select'
+						value={selectedCurrency}
+						onChange={handleCurrencyChange}
+						className='mt-2 p-2 rounded-md border border-gray-300 bg-white text-lg focus:outline-none focus:ring-2 focus:ring-teal-400'>
+						{Object.keys(rates).map((currency) => (
+							<option
+								key={currency}
+								value={currency}>
+								{currency}
+							</option>
+						))}
+					</select>
+				</div>
 
-			{product ? (
-				<>
-					<div className='flex flex-col md:flex-row pt-8'>
-						{/* Left: Product Image */}
-						{product.picture && (
-							<div className='md:w-1/2 mb-4 md:mb-0 md:mr-4'>
-								<img
-									src={`http://localhost:3000/photos/${product.picture}`}
-									alt={product.name}
-									className='w-full h-80 object-cover rounded-lg'
-								/>
-							</div>
-						)}
+				{product ? (
+					<>
+						<div className='flex flex-col md:flex-row pt-8 space-y-6 md:space-y-0 md:space-x-6'>
+							{/* Left: Product Image */}
+							{product.picture && (
+								<div className='md:w-1/2'>
+									<img
+										src={`http://localhost:3000/photos/${product.picture}`}
+										alt={product.name}
+										className='w-full h-80 object-cover rounded-lg shadow-lg'
+									/>
+								</div>
+							)}
 
-						{/* Right: Product Information */}
-						<div className='md:w-1/2 flex flex-col justify-between'>
-							<div>
-								<h1 className='text-3xl font-bold mb-2'>{product.name}</h1>
-								<p className='text-gray-700 mb-4'>{product.details}</p>
-								<p className='text-gray-700 mb-2 text-xl font-semibold'>
+							{/* Right: Product Information */}
+							<div className='md:w-1/2 space-y-6'>
+								<h1 className='text-3xl font-bold text-gray-800'>
+									{product.name}
+								</h1>
+								<p className='text-gray-700'>{product.details}</p>
+								<p className='text-xl font-semibold text-gray-800'>
 									Price:{' '}
 									{(product.price * conversionRate * quantity).toFixed(2)}{' '}
 									{selectedCurrency}
 								</p>
-								<p className='text-gray-700 mb-4'>
+								<p className='text-lg text-gray-700'>
 									Available Quantity: {product.quantity}
 								</p>
 
 								{/* Quantity controls */}
-								<div className='flex items-center mb-4'>
+								<div className='flex items-center space-x-4'>
 									<button
 										onClick={handleDecreaseQuantity}
-										className='bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-l'>
+										className='bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg shadow-md transition-all'>
 										-
 									</button>
-									<span className='px-4'>{quantity}</span>
+									<span className='text-xl font-semibold'>{quantity}</span>
 									<button
 										onClick={handleIncreaseQuantity}
-										className='bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-r'>
+										className='bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg shadow-md transition-all'>
 										+
 									</button>
 								</div>
 
 								{/* Rating */}
-								<div className='flex items-center mb-6'>
-									<p className='text-gray-700 mr-2 font-semibold'>Rating:</p>
+								<div className='flex items-center'>
+									<p className='text-gray-700 mr-4 font-semibold'>Rating:</p>
 									{renderStars(Math.round(product.rating || 0))}
 								</div>
 
-								{/* CTA Button */}
-								<div className='flex flex-col gap-y-3'>
-									<div className='flex gap-x-4'>
+								{/* CTA Buttons */}
+								<div className='flex flex-col gap-4 mt-6'>
+									<div className='flex gap-6'>
 										<button
-											className='bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition duration-300'
+											className='bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105'
 											onClick={addToProductsList}>
 											Buy Now
 										</button>
 										<button
-											className='bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition duration-300'
+											className='bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105'
 											onClick={addToWishList}>
-											Add To WishList
+											Add to WishList
 										</button>
 									</div>
 									<div>
 										<button
-											className='bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition duration-300'
+											className='bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105'
 											onClick={addToCart}>
-											Add To Cart
+											Add to Cart
 										</button>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 
-					{/* Reviews Section */}
-					<div className='mt-8'>
-						<h2 className='text-2xl font-bold mb-4'>Reviews</h2>
+						{/* Reviews Section */}
+						<div className='mt-8'>
+							<h2 className='text-2xl font-bold text-gray-800 mb-4'>Reviews</h2>
 
-						<div className='flex items-center mb-4'>
-							<p className='mr-4'>Reviews ({product.reviews.length})</p>
-							<button
-								onClick={() => setShowReviews(!showReviews)}
-								className='bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg'>
-								{showReviews ? 'Hide Reviews' : 'Show Reviews'}
-							</button>
-						</div>
-
-						{product.reviews.length === 0 && (
-							<p className='text-gray-500'>
-								No reviews yet. Be the first to review!
-							</p>
-						)}
-
-						{showReviews && product.reviews && product.reviews.length > 0 ? (
-							<div className='overflow-y-auto max-h-64 space-y-4'>
-								{product.reviews.map((review, index) => (
-									<div
-										key={index}
-										className='border-t border-gray-300 pt-4 mt-4 first:border-0 first:pt-0'>
-										<p className='text-lg font-semibold'>
-											{review.user.username}
-										</p>
-										<p className='text-gray-700'>{review.comment}</p>
-										<div className='flex items-center mt-1'>
-											{renderStars(review.rating)}
-										</div>
-									</div>
-								))}
+							<div className='flex items-center mb-4'>
+								<p className='text-gray-700 mr-4'>
+									Reviews ({product.reviews.length})
+								</p>
+								<button
+									onClick={() => setShowReviews(!showReviews)}
+									className='bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300'>
+									{showReviews ? 'Hide Reviews' : 'Show Reviews'}
+								</button>
 							</div>
-						) : null}
-					</div>
-				</>
-			) : (
-				<div>Product not found</div>
-			)}
+
+							{product.reviews.length === 0 && (
+								<p className='text-gray-500'>
+									No reviews yet. Be the first to review!
+								</p>
+							)}
+
+							{showReviews && product.reviews && product.reviews.length > 0 ? (
+								<div className='overflow-y-auto max-h-64 space-y-4'>
+									{product.reviews.map((review, index) => (
+										<div
+											key={index}
+											className='border-t border-gray-300 pt-4 mt-4 first:border-0 first:pt-0'>
+											<p className='text-lg font-semibold text-gray-800'>
+												{review.user.username}
+											</p>
+											<p className='text-gray-700'>{review.comment}</p>
+											<div className='flex items-center mt-2'>
+												{renderStars(review.rating)}
+											</div>
+										</div>
+									))}
+								</div>
+							) : null}
+						</div>
+					</>
+				) : (
+					<div className='text-center text-gray-700'>Product not found</div>
+				)}
+			</div>
 		</div>
 	);
 };
