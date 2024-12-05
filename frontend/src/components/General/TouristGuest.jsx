@@ -6,6 +6,7 @@ import ActivitiesCard from './TouristActivityCard';
 import ItinerariesCard from './TouristItineraryCard';
 import AttractionsCard from './TouristAttractionCard';
 import Header from './Header'; // Ensure this Header includes Profile and Products buttons
+import Footer from './Footer';
 
 const TouristGuest = () => {
 	const [activities, setActivities] = useState([]);
@@ -168,9 +169,7 @@ const TouristGuest = () => {
 				return (
 					<div className='text-center'>
 						<div className='flex justify-between items-center mb-6'>
-							<h1 className='text-3xl font-extrabold text-blue-900'>
-								Activities
-							</h1>
+							<h1 className='text-3xl font-extrabold text-white'>Activities</h1>
 							<div className='flex space-x-2'>
 								<button
 									onClick={filterActivities}
@@ -198,7 +197,7 @@ const TouristGuest = () => {
 				return (
 					<div className='text-center'>
 						<div className='flex justify-between items-center mb-6'>
-							<h1 className='text-3xl font-extrabold text-blue-900'>
+							<h1 className='text-3xl font-extrabold text-white'>
 								Itineraries
 							</h1>
 							<div className='flex space-x-2'>
@@ -228,7 +227,7 @@ const TouristGuest = () => {
 				return (
 					<div className='text-center'>
 						<div className='flex justify-between items-center mb-6'>
-							<h1 className='text-3xl font-extrabold text-blue-900'>
+							<h1 className='text-3xl font-extrabold text-white'>
 								Attractions
 							</h1>
 							<button
@@ -257,7 +256,7 @@ const TouristGuest = () => {
 						className={`tab-btn ${
 							activeTab === 'Activities'
 								? 'bg-blue-500 text-white'
-								: 'text-blue-500'
+								: 'text-white'
 						} hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
 						onClick={() => setActiveTab('Activities')}>
 						Activities
@@ -266,7 +265,7 @@ const TouristGuest = () => {
 						className={`tab-btn ${
 							activeTab === 'Itineraries'
 								? 'bg-blue-500 text-white'
-								: 'text-blue-500'
+								: 'text-white'
 						} hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
 						onClick={() => setActiveTab('Itineraries')}>
 						Itineraries
@@ -275,7 +274,7 @@ const TouristGuest = () => {
 						className={`tab-btn ${
 							activeTab === 'Attractions'
 								? 'bg-blue-500 text-white'
-								: 'text-blue-500'
+								: 'text-white'
 						} hover:bg-blue-500 hover:text-white py-2 px-4 rounded-md transition`}
 						onClick={() => setActiveTab('Attractions')}>
 						Attractions
@@ -406,6 +405,7 @@ const TouristGuest = () => {
 				{/* Render active tab content */}
 				{renderTabContent()}
 			</div>
+			<Footer />
 		</div>
 	);
 };

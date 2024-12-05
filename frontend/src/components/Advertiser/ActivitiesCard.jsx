@@ -187,7 +187,7 @@ const ActivitiesCard = ({
 	};
 
 	return (
-		<div className='flex flex-wrap justify-center gap-4'>
+		<div className=' flex flex-wrap justify-center gap-4'>
 			{activities.length > 0 ? (
 				activities.map((activity) => (
 					<div

@@ -79,60 +79,83 @@ const AddProduct = () => {
 	};
 
 	return (
-		<div className='h-screen flex flex-col items-center justify-center p-4'>
-			{loading && <Spinner />}
-			<div className='flex flex-col space-y-4'>
-				<input
-					type='text'
-					placeholder='Product Name'
-					value={productName}
-					onChange={(e) => setProductName(e.target.value)}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
-				<input
-					type='text'
-					placeholder='Product Details'
-					value={productDetails}
-					onChange={(e) => setProductDetails(e.target.value)}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
-				<input
-					type='text'
-					placeholder='Price'
-					value={productPrice}
-					onChange={(e) => setProductPrice(e.target.value)}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
-				<input
-					type='text'
-					placeholder='Quantity'
-					value={productQuantity}
-					onChange={(e) => setProductQuantity(e.target.value)}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
-
-				{/* Image File Input */}
-				<input
-					type='file'
-					accept='image/*' // Accept only image files
-					onChange={(e) => setProductPicture(e.target.files[0])}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
-
-				<input
-					type='text'
-					placeholder='Rating (0-5)'
-					value={productRating}
-					onChange={(e) => setProductRating(e.target.value)}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
-			</div>
-			<div className='mt-4'>
-				<button
-					className='bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200'
-					onClick={handleSaveProduct}>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='w-full max-w-lg bg-white rounded-lg shadow-lg p-6'>
+				{loading && (
+					<div className='flex justify-center mb-4'>
+						<Spinner />
+					</div>
+				)}
+				<h1 className='text-2xl font-bold text-gray-800 text-center mb-6'>
 					Add Product
-				</button>
+				</h1>
+				<form className='flex flex-col space-y-4'>
+					{/* Product Name */}
+					<input
+						type='text'
+						placeholder='Product Name'
+						value={productName}
+						onChange={(e) => setProductName(e.target.value)}
+						className='border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none'
+					/>
+
+					{/* Product Details */}
+					<textarea
+						placeholder='Product Details'
+						value={productDetails}
+						onChange={(e) => setProductDetails(e.target.value)}
+						className='border border-gray-300 rounded-lg px-4 py-2 resize-none focus:ring-2 focus:ring-indigo-400 focus:outline-none'
+						rows='3'
+					/>
+
+					{/* Price */}
+					<input
+						type='text'
+						placeholder='Price'
+						value={productPrice}
+						onChange={(e) => setProductPrice(e.target.value)}
+						className='border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none'
+					/>
+
+					{/* Quantity */}
+					<input
+						type='text'
+						placeholder='Quantity'
+						value={productQuantity}
+						onChange={(e) => setProductQuantity(e.target.value)}
+						className='border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none'
+					/>
+
+					{/* Image File Input */}
+					<div className='flex flex-col'>
+						<label className='text-sm text-gray-600 mb-1'>
+							Upload Product Image:
+						</label>
+						<input
+							type='file'
+							accept='image/*'
+							onChange={(e) => setProductPicture(e.target.files[0])}
+							className='border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none'
+						/>
+					</div>
+
+					{/* Rating */}
+					<input
+						type='text'
+						placeholder='Rating (0-5)'
+						value={productRating}
+						onChange={(e) => setProductRating(e.target.value)}
+						className='border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none'
+					/>
+
+					{/* Submit Button */}
+					<button
+						type='button'
+						className='bg-teal-500 text-white rounded-lg px-6 py-2 mt-4 shadow hover:bg-teal-600 transition duration-200'
+						onClick={handleSaveProduct}>
+						Add Product
+					</button>
+				</form>
 			</div>
 		</div>
 	);

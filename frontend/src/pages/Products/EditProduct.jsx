@@ -89,72 +89,67 @@ const EditProduct = () => {
 	};
 
 	return (
-		<div className='h-screen flex flex-col items-center justify-center p-4'>
-			{loading && <Spinner />}
-			<h1>Edit Product</h1>
-			<div className='flex flex-col space-y-4'>
-				<input
-					type='text'
-					placeholder='Product Name'
-					value={productName}
-					onChange={(e) => setProductName(e.target.value)}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
-				<textarea
-					placeholder='Product Details'
-					value={productDetails}
-					onChange={(e) => setProductDetails(e.target.value)}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl resize-none'
-				/>
-				<input
-					type='text'
-					placeholder='Price'
-					value={productPrice}
-					onChange={(e) => setProductPrice(e.target.value)}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
-				<input
-					type='text'
-					placeholder='Quantity'
-					value={productQuantity}
-					onChange={(e) => setProductQuantity(e.target.value)}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+			<div className='w-full max-w-md bg-white shadow-lg rounded-lg p-6'>
+				{loading && <Spinner />}
+				<h1 className='text-2xl font-bold text-gray-700 mb-6 text-center'>
+					Edit Product
+				</h1>
+				<div className='flex flex-col space-y-4'>
+					{/* Product Name */}
+					<input
+						type='text'
+						placeholder='Product Name'
+						value={productName}
+						onChange={(e) => setProductName(e.target.value)}
+						className='border border-gray-300 rounded-lg px-4 py-2 hover:shadow focus:ring focus:ring-blue-300 focus:outline-none'
+					/>
 
-				{/* Image File Input */}
-				<input
-					type='file'
-					accept='image/*' // Accept only image files
-					onChange={(e) => setProductPicture(e.target.files[0])} // Set the file as state
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
+					{/* Product Details */}
+					<textarea
+						placeholder='Product Details'
+						value={productDetails}
+						onChange={(e) => setProductDetails(e.target.value)}
+						className='border border-gray-300 rounded-lg px-4 py-2 resize-none hover:shadow focus:ring focus:ring-blue-300 focus:outline-none'
+					/>
 
-				{/* If there is an existing picture, show a preview */}
-				{existingPicture && !productPicture && (
-					<div className='mt-2'>
-						<p>Current Picture:</p>
-						<img
-							src={`http://localhost:3000${existingPicture}`} // Assuming the picture path is relative
-							alt='Current Product'
-							className='w-32 h-32 object-cover'
-						/>
-					</div>
-				)}
+					{/* Price */}
+					<input
+						type='text'
+						placeholder='Price'
+						value={productPrice}
+						onChange={(e) => setProductPrice(e.target.value)}
+						className='border border-gray-300 rounded-lg px-4 py-2 hover:shadow focus:ring focus:ring-blue-300 focus:outline-none'
+					/>
 
-				<input
-					type='text'
-					placeholder='Rating (0-5)'
-					value={productRating}
-					onChange={(e) => setProductRating(e.target.value)}
-					className='border-2 border-gray-500 rounded-lg px-4 py-2 relative hover:shadow-xl'
-				/>
-			</div>
-			<div className='mt-4'>
-				<button
-					className='bg-teal-500 text-white rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200'
-					onClick={handleEditProduct}>
-					Save
-				</button>
+					{/* Image File Input */}
+					<input
+						type='file'
+						accept='image/*'
+						onChange={(e) => setProductPicture(e.target.files[0])}
+						className='border border-gray-300 rounded-lg px-4 py-2 hover:shadow focus:ring focus:ring-blue-300 focus:outline-none'
+					/>
+
+					{/* Existing Picture */}
+
+					{/* Rating */}
+					<input
+						type='text'
+						placeholder='Rating (0-5)'
+						value={productRating}
+						onChange={(e) => setProductRating(e.target.value)}
+						className='border border-gray-300 rounded-lg px-4 py-2 hover:shadow focus:ring focus:ring-blue-300 focus:outline-none'
+					/>
+				</div>
+
+				{/* Save Button */}
+				<div className='mt-6 text-center'>
+					<button
+						className='bg-teal-500 text-white font-medium rounded-md px-6 py-2 shadow-md hover:bg-teal-600 transition duration-200'
+						onClick={handleEditProduct}>
+						Save
+					</button>
+				</div>
 			</div>
 		</div>
 	);
