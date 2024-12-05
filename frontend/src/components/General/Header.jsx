@@ -6,8 +6,8 @@ const Header = () => {
 	const navigate = useNavigate();
 
 	return (
-		<div className='flex justify-between items-center p-4 bg-white shadow-md'>
-			<h1 className='text-3xl font-extrabold text-blue-900 md:text-4xl'>
+		<div className='flex justify-between items-center p-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-md'>
+			<h1 className='text-3xl font-extrabold text-white md:text-4xl'>
 				Welcome to JourneyJot
 			</h1>
 			<div className='flex space-x-4'>

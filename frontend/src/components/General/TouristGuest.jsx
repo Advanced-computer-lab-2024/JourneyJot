@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import ActivitiesCard from '../Advertiser/ActivitiesCard';
-import ItinerariesCard from '../TourGuide/ItinerariesCard';
-import AttractionsCard from '../TourismGovernor/AttractionsCard';
+import ActivitiesCard from './TouristActivityCard';
+import ItinerariesCard from './TouristItineraryCard';
+import AttractionsCard from './TouristAttractionCard';
 import Header from './Header'; // Ensure this Header includes Profile and Products buttons
 
 const TouristGuest = () => {
@@ -248,7 +248,7 @@ const TouristGuest = () => {
 	};
 
 	return (
-		<div className='bg-gray-100 min-h-screen'>
+		<div className='bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 min-h-screen'>
 			<Header />
 			<div className='container mx-auto mt-8'>
 				{/* Tabs for Activities, Itineraries, and Attractions */}

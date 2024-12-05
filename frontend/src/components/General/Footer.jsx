@@ -30,9 +30,9 @@ const Footer = () => {
 						<ul className='flex flex-col md:flex-row md:space-x-6'>
 							<li className='mb-2 md:mb-0'>
 								<a
-									href='/about'
+									href='/step-guide'
 									className='hover:text-gray-300 transition-colors duration-200'>
-									About Us
+									Step Guide
 								</a>
 							</li>
 							<li className='mb-2 md:mb-0'>

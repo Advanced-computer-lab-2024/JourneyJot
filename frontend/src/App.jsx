@@ -488,7 +488,7 @@ const App = () => {
 				element={<PromoCodeForm />}
 			/>
 			<Route
-				path='/about'
+				path='/step-guide'
 				element={<VacationGuide />}
 			/>
 		</Routes>

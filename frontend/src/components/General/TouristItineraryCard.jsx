@@ -37,22 +37,6 @@ const ItinerariesCard = ({
 					<div
 						key={itinerary._id}
 						className='bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden w-80 hover:shadow-lg transition-shadow duration-300'>
-						{/* Itinerary Image */}
-						{itinerary.imageUrl ? (
-							<img
-								src={itinerary.imageUrl}
-								alt={itinerary.name || 'Itinerary Image'}
-								className='w-full h-40 object-cover'
-								loading='lazy'
-							/>
-						) : (
-							<div className='w-full h-40 bg-gray-200 dark:bg-gray-700 flex items-center justify-center'>
-								<span className='text-gray-500 dark:text-gray-300'>
-									No Image Available
-								</span>
-							</div>
-						)}
-
 						{/* Itinerary Details */}
 						<div className='p-4 space-y-2'>
 							<h2 className='text-xl font-semibold text-blue-900 dark:text-blue-300 truncate'>
