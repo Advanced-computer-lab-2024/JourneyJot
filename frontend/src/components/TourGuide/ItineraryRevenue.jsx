@@ -41,14 +41,15 @@ const ItineraryRevenue = () => {
 
 				{/* Error message */}
 				{error && (
-					<div className='p-4 mb-6 text-sm bg-red-100 text-red-700 rounded-md'>
+					<div className='p-4 mb-6 text-sm bg-red-100 text-red-700 rounded-md border border-red-200'>
 						{error}
 					</div>
 				)}
 
-				{/* Date input */}
+				{/* Date input and Filter button */}
 				<div className='flex flex-col sm:flex-row items-center gap-4 mb-8'>
-					<div className='w-full sm:w-auto'>
+					{/* Date Picker */}
+					<div className='w-full sm:w-auto flex flex-col'>
 						<label
 							htmlFor='date'
 							className='block text-gray-700 font-medium text-sm mb-2'>
@@ -59,29 +60,48 @@ const ItineraryRevenue = () => {
 							type='date'
 							value={date}
 							onChange={(e) => setDate(e.target.value)}
-							className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none'
+							className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none transition duration-200'
 						/>
 					</div>
+
+					{/* Filter Button */}
 					<button
 						onClick={fetchRevenue}
-						className='bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400'>
+						className='w-full sm:w-auto bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 transition duration-200'>
 						Filter
 					</button>
 				</div>
 
 				{/* Loading state */}
 				{loading && (
-					<div className='text-center'>
-						<p className='text-lg text-indigo-500'>Fetching data...</p>
+					<div className='flex justify-center items-center mb-6'>
+						<svg
+							className='animate-spin h-8 w-8 text-indigo-600'
+							xmlns='http://www.w3.org/2000/svg'
+							fill='none'
+							viewBox='0 0 24 24'>
+							<circle
+								className='opacity-25'
+								cx='12'
+								cy='12'
+								r='10'
+								stroke='currentColor'
+								strokeWidth='4'></circle>
+							<path
+								className='opacity-75'
+								fill='currentColor'
+								d='M4 12a8 8 0 018-8v8H4z'></path>
+						</svg>
+						<p className='ml-4 text-lg text-indigo-500'>Fetching data...</p>
 					</div>
 				)}
 
 				{/* Revenue details */}
 				{revenue && !loading && (
 					<div>
-						{/* Total revenue */}
+						{/* Total Revenue */}
 						<div className='mb-8'>
-							<div className='bg-blue-50 p-6 rounded-lg shadow-md'>
+							<div className='bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200 transform hover:scale-105 transition duration-200'>
 								<h3 className='text-center text-2xl font-semibold text-indigo-700'>
 									Total Revenue
 								</h3>
@@ -91,7 +111,7 @@ const ItineraryRevenue = () => {
 							</div>
 						</div>
 
-						{/* Itinerary details */}
+						{/* Itinerary Breakdown */}
 						<h4 className='text-lg font-semibold text-gray-800 mb-4 text-center'>
 							Itinerary Breakdown
 						</h4>
@@ -99,21 +119,49 @@ const ItineraryRevenue = () => {
 							{revenue.itineraries.map((itinerary) => (
 								<li
 									key={itinerary.id}
-									className='p-4 bg-gray-50 rounded-lg shadow-md border border-gray-200'>
-									<div className='flex justify-between items-center'>
-										<h5 className='text-lg font-bold text-indigo-700'>
-											{itinerary.name?.username}
-										</h5>
-										<span
-											className={`px-3 py-1 rounded-lg text-sm font-medium ${
-												itinerary.isBooked
-													? 'bg-green-100 text-green-700'
-													: 'bg-red-100 text-red-700'
-											}`}>
-											{itinerary.isBooked ? 'Booked' : 'Not Booked'}
+									className='p-4 bg-gray-50 rounded-lg shadow-md border border-gray-200 hover:bg-gray-100 transition duration-200 flex flex-col sm:flex-row justify-between items-start sm:items-center'>
+									<div className='flex items-center space-x-3'>
+										{/* Status Icon */}
+										<span>
+											{itinerary.isBooked ? (
+												<svg
+													className='h-6 w-6 text-green-500'
+													xmlns='http://www.w3.org/2000/svg'
+													fill='none'
+													viewBox='0 0 24 24'
+													stroke='currentColor'>
+													<path
+														strokeLinecap='round'
+														strokeLinejoin='round'
+														strokeWidth={2}
+														d='M5 13l4 4L19 7'
+													/>
+												</svg>
+											) : (
+												<svg
+													className='h-6 w-6 text-red-500'
+													xmlns='http://www.w3.org/2000/svg'
+													fill='none'
+													viewBox='0 0 24 24'
+													stroke='currentColor'>
+													<path
+														strokeLinecap='round'
+														strokeLinejoin='round'
+														strokeWidth={2}
+														d='M6 18L18 6M6 6l12 12'
+													/>
+												</svg>
+											)}
 										</span>
+
+										{/* Itinerary Name */}
+										<h5 className='text-lg font-bold text-indigo-700'>
+											{itinerary.name?.username || 'N/A'}
+										</h5>
 									</div>
-									<div className='mt-2 text-sm text-gray-600'>
+
+									{/* Itinerary Details */}
+									<div className='mt-2 sm:mt-0 text-sm text-gray-600'>
 										<p>
 											<strong>Price:</strong> ${itinerary.price}
 										</p>
@@ -128,14 +176,41 @@ const ItineraryRevenue = () => {
 				)}
 
 				{/* Refresh button */}
-				<div className='text-center mt-8'>
-					<button
-						onClick={fetchRevenue}
-						className='px-6 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400'
-						disabled={loading}>
-						{loading ? 'Fetching...' : 'Refresh Revenue Data'}
-					</button>
-				</div>
+				{revenue && (
+					<div className='text-center mt-8'>
+						<button
+							onClick={fetchRevenue}
+							className={`px-6 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 transition duration-200 ${
+								loading ? 'opacity-50 cursor-not-allowed' : ''
+							}`}
+							disabled={loading}>
+							{loading ? (
+								<>
+									<svg
+										className='animate-spin h-5 w-5 mr-3 inline-block text-white'
+										xmlns='http://www.w3.org/2000/svg'
+										fill='none'
+										viewBox='0 0 24 24'>
+										<circle
+											className='opacity-25'
+											cx='12'
+											cy='12'
+											r='10'
+											stroke='currentColor'
+											strokeWidth='4'></circle>
+										<path
+											className='opacity-75'
+											fill='currentColor'
+											d='M4 12a8 8 0 018-8v8H4z'></path>
+									</svg>
+									Fetching...
+								</>
+							) : (
+								'Refresh Revenue Data'
+							)}
+						</button>
+					</div>
+				)}
 			</div>
 		</div>
 	);
