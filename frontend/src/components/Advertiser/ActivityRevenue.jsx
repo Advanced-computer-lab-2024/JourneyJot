@@ -117,7 +117,7 @@ const ActivityRevenue = () => {
 									<thead>
 										<tr className='bg-gray-100'>
 											<th className='py-3 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider'>
-												Activity Name
+												Advertiser Name
 											</th>
 											<th className='py-3 px-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider'>
 												Price ($)

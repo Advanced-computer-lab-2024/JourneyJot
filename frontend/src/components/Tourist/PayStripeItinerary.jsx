@@ -83,7 +83,7 @@ const ItineraryPaymentPage = () => {
 
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
-			<div className='payment-container p-6 max-w-lg mx-auto bg-gradient-to-r from-teal-500 to-blue-500 shadow-2xl rounded-2xl text-white'>
+			<div className='payment-container p-8 max-w-lg mx-auto bg-white shadow-2xl rounded-2xl'>
 				<h2 className='text-2xl font-bold text-center mb-6 tracking-wider'>
 					Payment Page
 				</h2>

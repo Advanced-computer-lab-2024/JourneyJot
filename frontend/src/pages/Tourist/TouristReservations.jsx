@@ -1,26 +1,34 @@
 /** @format */
 
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { FaBus, FaCar, FaMapMarkerAlt, FaDollarSign } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const TouristReservations = () => {
 	const [activities, setActivities] = useState([]);
 	const [itineraries, setItineraries] = useState([]);
 	const [attractions, setAttractions] = useState([]);
 	const [activeTab, setActiveTab] = useState('activities'); // default to activities tab
-	const [errorMessage, setErrorMessage] = useState('');
+	const [loading, setLoading] = useState({
+		fetchReservations: false,
+		cancel: false,
+	});
 
 	useEffect(() => {
 		fetchTouristReservations();
 	}, []);
 
 	const fetchTouristReservations = async () => {
+		setLoading((prev) => ({ ...prev, fetchReservations: true }));
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
 				throw new Error('No token found. Please login again.');
 			}
 
-			const response = await fetch(
+			const response = await axios.get(
 				'http://localhost:3000/tourists/getTourist',
 				{
 					headers: {
@@ -29,35 +37,43 @@ const TouristReservations = () => {
 				}
 			);
 
-			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
-			}
-
-			const data = await response.json();
-			setActivities(data.tourist.activities);
-			setItineraries(data.tourist.itineraries);
-			setAttractions(data.tourist.attractions);
+			const data = response.data;
+			setActivities(data.tourist.activities || []);
+			setItineraries(data.tourist.itineraries || []);
+			setAttractions(data.tourist.attractions || []);
+			toast.success('Reservations fetched successfully!');
 		} catch (err) {
-			console.error(err);
+			const errorMsg =
+				err.response?.data?.message ||
+				err.message ||
+				'Failed to fetch reservations.';
+			toast.error(errorMsg);
+			console.error('Error fetching reservations:', err);
+		} finally {
+			setLoading((prev) => ({ ...prev, fetchReservations: false }));
 		}
 	};
 
 	const cancelReservation = async (type, id, reservationDate) => {
 		if (type !== 'Attraction' && !canCancel(reservationDate)) {
-			setErrorMessage(
+			toast.error(
 				'This reservation cannot be canceled within 48 hours of the start date.'
 			);
-			setTimeout(() => setErrorMessage(''), 5000); // Clear message after 5 seconds
 			return;
 		}
 
+		setLoading((prev) => ({ ...prev, cancel: true }));
 		try {
 			const token = localStorage.getItem('token');
 
-			const response = await fetch(
+			if (!token) {
+				throw new Error('No token found. Please login again.');
+			}
+
+			const response = await axios.post(
 				`http://localhost:3000/tourists/cancel${type}/${id}`,
+				{},
 				{
-					method: 'POST',
 					headers: {
 						Authorization: `Bearer ${token}`,
 						'Content-Type': 'application/json',
@@ -65,15 +81,19 @@ const TouristReservations = () => {
 				}
 			);
 
-			if (!response.ok) {
-				throw new Error(`Failed to cancel ${type}. Status: ${response.status}`);
-			}
-
-			alert(`${type} cancelled successfully!`);
+			const successMsg =
+				response.data.message || `${type} canceled successfully!`;
+			toast.success(successMsg);
 			fetchTouristReservations(); // Refresh reservations after cancellation
-		} catch (error) {
-			console.error(`Error canceling ${type}:`, error);
-			alert(`Failed to cancel ${type}.`);
+		} catch (err) {
+			const errorMsg =
+				err.response?.data?.message ||
+				err.message ||
+				`Failed to cancel ${type}.`;
+			toast.error(errorMsg);
+			console.error(`Error canceling ${type}:`, err);
+		} finally {
+			setLoading((prev) => ({ ...prev, cancel: false }));
 		}
 	};
 
@@ -84,11 +104,14 @@ const TouristReservations = () => {
 		return diffInHours > 48;
 	};
 
-	const renderCancelButton = (type, id, reservationDate) => (
+	const renderCancelButton = (type, id, reservationDate = null) => (
 		<button
-			className='mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
-			onClick={() => cancelReservation(type, id, reservationDate)}>
-			Cancel
+			className={`mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200 ${
+				loading.cancel ? 'opacity-50 cursor-not-allowed' : ''
+			}`}
+			onClick={() => cancelReservation(type, id, reservationDate)}
+			disabled={loading.cancel}>
+			{loading.cancel ? 'Canceling...' : 'Cancel'}
 		</button>
 	);
 
@@ -109,7 +132,7 @@ const TouristReservations = () => {
 									Activity #{index + 1}
 								</h3>
 								<p className='text-gray-700'>
-									<strong>ActivityName:</strong> {activity.name}
+									<strong>Activity Name:</strong> {activity.name}
 								</p>
 								{activity.advertiserId && (
 									<p className='text-gray-800'>
@@ -184,7 +207,7 @@ const TouristReservations = () => {
 									Itinerary #{index + 1}
 								</h3>
 								<p className='text-gray-700'>
-									<strong>ItineraryName:</strong> {itinerary.name}
+									<strong>Itinerary Name:</strong> {itinerary.name}
 								</p>
 								<p className='text-gray-800'>
 									<strong>Tour Guide:</strong> {itinerary.tourGuideId?.username}
@@ -228,7 +251,7 @@ const TouristReservations = () => {
 								{renderCancelButton(
 									'Itinerary',
 									itinerary._id,
-									itinerary.availableDates
+									itinerary.availableDates[0] // Assuming the first date for cancellation
 								)}
 							</div>
 						))}
@@ -308,7 +331,20 @@ const TouristReservations = () => {
 	};
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 '>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400'>
+			{/* Toast Container for Notifications */}
+			<ToastContainer
+				position='top-right'
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme='colored'
+			/>
+
 			<div className='p-8 max-w-6xl mx-auto bg-gray-100 rounded-lg shadow-xl'>
 				<div className='flex justify-center space-x-6 mb-10'>
 					{['activities', 'itineraries', 'attractions'].map((tab) => (
@@ -324,11 +360,7 @@ const TouristReservations = () => {
 						</button>
 					))}
 				</div>
-				{errorMessage && (
-					<div className='mb-6 p-4 bg-red-100 text-red-700 border border-red-400 rounded'>
-						{errorMessage}
-					</div>
-				)}
+
 				<div>{renderTabContent()}</div>
 			</div>
 		</div>
