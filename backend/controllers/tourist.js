@@ -458,64 +458,103 @@ exports.TouristBookActivity = async (req, res) => {
 exports.TouristBookAttraction = async (req, res) => {
 	try {
 		const userId = req.user._id;
-		const attractionId = req.body.attractionId;
-		const ticketType = req.body.ticketType; // e.g., 'native', 'foreigner', 'student'
+		const { attractionId, ticketType } = req.body; // Destructure for clarity
+
+		// Validate input presence
+		if (!attractionId || !ticketType) {
+			return res
+				.status(400)
+				.json({ message: 'Attraction ID and ticket type are required.' });
+		}
+
+		// Convert ticketType to lowercase to ensure consistency
+		const formattedTicketType = ticketType.toLowerCase();
+
+		// Define allowed ticket types (optional but recommended)
+		const allowedTicketTypes = ['native', 'foreigner', 'student'];
+
+		// Check if the provided ticketType is among the allowed types
+		if (!allowedTicketTypes.includes(formattedTicketType)) {
+			return res.status(400).json({ message: 'Invalid ticket type provided.' });
+		}
 
 		// Find the tourist and attraction
 		const tourist = await Tourist.findById(userId);
-		const attraction = await Attraction.findById(attractionId).populate(
-			'isBooked'
-		);
+		const attraction = await Attraction.findById(attractionId);
 
-		if (!tourist) return res.status(404).json({ message: 'Tourist not found' });
-		if (!attraction)
-			return res.status(404).json({ message: 'Attraction not found' });
+		// Validate tourist and attraction existence
+		if (!tourist) {
+			return res.status(404).json({ message: 'Tourist not found.' });
+		}
+
+		if (!attraction) {
+			return res.status(404).json({ message: 'Attraction not found.' });
+		}
+
+		// Check if the attraction is already booked by the tourist
+		// If you intend to allow multiple bookings with different ticket types, adjust this logic accordingly
 		if (tourist.attractions.includes(attractionId)) {
 			return res
 				.status(400)
-				.json({ message: 'Attraction has already been booked' });
+				.json({ message: 'Attraction has already been booked.' });
 		}
 
-		// Validate the ticket type and get the appropriate price
-		const ticketPrice = attraction.ticketPrices[ticketType];
+		// Validate the ticket type against the attraction's ticketPrices
+		const ticketPrice = attraction.ticketPrices[formattedTicketType];
+
 		if (ticketPrice === undefined) {
 			return res
 				.status(400)
-				.json({ message: 'Invalid or unavailable ticket type' });
+				.json({ message: 'Invalid or unavailable ticket type.' });
 		}
 
-		// Check balance and deduct price
+		// Check if the tourist has sufficient wallet balance
 		if (tourist.wallet.balance < ticketPrice) {
-			return res.status(400).json({ message: 'Insufficient wallet balance' });
+			return res.status(400).json({ message: 'Insufficient wallet balance.' });
 		}
+
+		// Deduct the ticket price from the tourist's wallet
 		tourist.wallet.balance -= ticketPrice;
 
-		// Calculate and add points
-		let pointsMultiplier =
-			tourist.points >= 500000 ? 1.5 : tourist.points >= 100000 ? 1 : 0.5;
-		const pointsEarned = ticketPrice * pointsMultiplier;
+		// Calculate points earned based on the current points
+		let pointsMultiplier = 0.5; // Default multiplier
+		if (tourist.points >= 500000) {
+			pointsMultiplier = 1.5;
+		} else if (tourist.points >= 100000) {
+			pointsMultiplier = 1;
+		}
+
+		const pointsEarned = Math.floor(ticketPrice * pointsMultiplier);
 		tourist.points += pointsEarned;
 
-		// Add attraction to tourist's bookings
+		// Add the attraction to the tourist's bookings
 		tourist.attractions.push(attractionId);
+
+		// Mark the attraction as booked (assuming isBooked is a boolean)
 		attraction.isBooked = true;
 
-		await attraction.save(); // Save the updated attraction object
+		// Save the updated documents
+		await attraction.save();
 		await tourist.save();
 
-		// Send response
+		// Respond with success details
 		res.status(200).json({
-			message: 'Attraction booked successfully',
-			attraction,
-			ticketType,
+			message: 'Attraction booked successfully.',
+			attraction: {
+				_id: attraction._id,
+				name: attraction.name,
+				location: attraction.location,
+				// Include other necessary attraction details as needed
+			},
+			ticketType: formattedTicketType,
 			ticketPrice: ticketPrice.toFixed(2),
 			updatedWalletBalance: tourist.wallet.balance.toFixed(2),
-			pointsEarned: Math.floor(pointsEarned),
+			pointsEarned: pointsEarned,
 			totalPoints: Math.floor(tourist.points),
 		});
 	} catch (error) {
 		console.error('Error booking attraction:', error);
-		res.status(500).json({ message: 'Server error', error: error.message });
+		res.status(500).json({ message: 'Server error.', error: error.message });
 	}
 };
 
