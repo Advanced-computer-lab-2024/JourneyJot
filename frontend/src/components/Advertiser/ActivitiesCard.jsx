@@ -14,6 +14,8 @@ import {
 	FaInstagram,
 	FaLinkedinIn,
 } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ActivitiesCard = ({
 	activities = [],
@@ -29,8 +31,11 @@ const ActivitiesCard = ({
 	const [tags, setTags] = useState([]);
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [selectedActivity, setSelectedActivity] = useState(null);
-	const [error, setError] = useState(null);
 	const [shareOptionsVisible, setShareOptionsVisible] = useState({});
+	const [loading, setLoading] = useState({
+		book: false,
+		cancel: false,
+	});
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -40,6 +45,7 @@ const ActivitiesCard = ({
 				const response = await axios.get('http://localhost:3000/categories');
 				setCategories(response.data);
 			} catch (error) {
+				toast.error('Error fetching categories.');
 				console.error('Error fetching categories:', error);
 			}
 		};
@@ -49,6 +55,7 @@ const ActivitiesCard = ({
 				const response = await axios.get('http://localhost:3000/pref-tags');
 				setTags(response.data);
 			} catch (error) {
+				toast.error('Error fetching tags.');
 				console.error('Error fetching tags:', error);
 			}
 		};
@@ -65,7 +72,10 @@ const ActivitiesCard = ({
 	const handleUpdateActivity = async (updatedActivity) => {
 		try {
 			const token = localStorage.getItem('token');
-			if (!token) throw new Error('No token found. Please login again.');
+			if (!token) {
+				toast.error('No token found. Please login again.');
+				throw new Error('No token found. Please login again.');
+			}
 
 			const config = {
 				headers: { Authorization: `Bearer ${token}` },
@@ -86,54 +96,81 @@ const ActivitiesCard = ({
 				updatedActivity,
 				config
 			);
+			toast.success('Activity updated successfully!');
 			setIsEditModalOpen(false);
 			fetchActivities();
 		} catch (error) {
+			const errorMsg =
+				error.response?.data?.message || 'Error updating activity.';
+			toast.error(errorMsg);
 			console.error('Error updating activity:', error);
 		}
 	};
 
 	const handleBookActivity = (activity) => {
+		if (!activity.bookingOpen) {
+			toast.info('This activity is not available for booking.');
+			return;
+		}
 		setSelectedActivity(activity);
 		setIsConfirmModalOpen(true);
 	};
 
 	const confirmBooking = async () => {
+		if (!selectedActivity) {
+			toast.error('No activity selected for booking.');
+			return;
+		}
+
+		setLoading((prev) => ({ ...prev, book: true }));
 		try {
 			const token = localStorage.getItem('token');
-			if (!token) throw new Error('No token found. Please login again.');
+			if (!token) {
+				toast.error('No token found. Please login again.');
+				throw new Error('No token found. Please login again.');
+			}
 
 			const config = {
 				headers: { Authorization: `Bearer ${token}` },
 			};
 
-			// Make booking request to backend
+			// Verify if the backend expects 'activityId' or 'attractionId' and 'ticketType'
+			// Adjust the payload accordingly
+			// Assuming backend expects 'activityId'
+			const payload = {
+				activityId: selectedActivity._id,
+			};
+
 			const response = await axios.post(
 				'http://localhost:3000/tourists/bookActivity',
-				{ activityId: selectedActivity._id },
+				payload,
 				config
 			);
 
 			const { message, updatedWalletBalance, pointsEarned, totalPoints } =
 				response.data;
 
-			// Display a success message with wallet and points details
-			alert(
+			// Display a success toast with wallet and points details
+			toast.success(
 				`${message}. You earned ${pointsEarned} points! Your total points are now ${totalPoints}. Wallet balance: $${updatedWalletBalance}.`
 			);
 
 			setIsConfirmModalOpen(false);
 		} catch (error) {
-			setError(error.response?.data?.message || 'An error occurred.');
-			console.error('Error booking attraction:', error);
+			const errorMsg =
+				error.response?.data?.message || 'An error occurred while booking.';
+			toast.error(errorMsg);
+			console.error('Error booking activity:', error);
 			setIsConfirmModalOpen(false);
+		} finally {
+			setLoading((prev) => ({ ...prev, book: false }));
 		}
 	};
 
 	const handleCopyLink = (activity) => {
 		const link = `http://localhost:5173/activities/${activity._id}`;
 		navigator.clipboard.writeText(link);
-		alert('Link copied to clipboard!');
+		toast.info('Link copied to clipboard!');
 	};
 
 	const handleShareViaEmail = (activity) => {
@@ -154,7 +191,7 @@ const ActivitiesCard = ({
 	const handlePayActivityViaStripe = (activity) => {
 		navigate('/pay-activity-stripe', {
 			state: {
-				activity: activity,
+				activity: activity, // Pass only the serializable activity data
 				currency: currency,
 				conversionRate: conversionRate,
 			},
@@ -164,7 +201,10 @@ const ActivitiesCard = ({
 	const handleBookmark = async (activityId) => {
 		try {
 			const token = localStorage.getItem('token');
-			if (!token) throw new Error('No token found. Please login again.');
+			if (!token) {
+				toast.error('No token found. Please login again.');
+				throw new Error('No token found. Please login again.');
+			}
 
 			const config = {
 				headers: { Authorization: `Bearer ${token}` },
@@ -176,18 +216,33 @@ const ActivitiesCard = ({
 				config
 			);
 
-			alert(response.data.message || 'Activity bookmarked successfully!');
-		} catch (error) {
-			console.error('Error bookmarking activity:', error);
-			alert(
-				error.response?.data?.message ||
-					'Failed to bookmark activity. Try again later.'
+			toast.success(
+				response.data.message || 'Activity bookmarked successfully!'
 			);
+		} catch (error) {
+			const errorMsg =
+				error.response?.data?.message ||
+				'Failed to bookmark activity. Try again later.';
+			toast.error(errorMsg);
+			console.error('Error bookmarking activity:', error);
 		}
 	};
 
 	return (
-		<div className=' flex flex-wrap justify-center gap-4'>
+		<div className='flex flex-wrap justify-center gap-4'>
+			{/* Toast Container for Notifications */}
+			<ToastContainer
+				position='top-right'
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme='colored'
+			/>
+
 			{activities.length > 0 ? (
 				activities.map((activity) => (
 					<div
@@ -264,8 +319,11 @@ const ActivitiesCard = ({
 								{/* Book Now Button */}
 								<button
 									onClick={() => handleBookActivity(activity)}
-									className='flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200'>
-									Book Now
+									className={`flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 ${
+										loading.book ? 'opacity-50 cursor-not-allowed' : ''
+									}`}
+									disabled={loading.book}>
+									{loading.book ? 'Booking...' : 'Book Now'}
 								</button>
 
 								{/* Pay via Stripe Button */}
@@ -384,7 +442,7 @@ const ActivitiesCard = ({
 			)}
 
 			{/* Confirmation Modal for Booking */}
-			{isConfirmModalOpen && (
+			{isConfirmModalOpen && selectedActivity && (
 				<div className='fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50'>
 					<div className='bg-white p-6 rounded-lg shadow-lg w-80'>
 						<h2 className='text-xl font-semibold mb-4'>Confirm Booking</h2>
@@ -395,8 +453,10 @@ const ActivitiesCard = ({
 						<div className='flex justify-end space-x-4'>
 							<button
 								onClick={confirmBooking}
-								className='bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200'>
-								Yes, Book it!
+								className={`bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 ${
+									loading.book ? 'opacity-50 cursor-not-allowed' : ''
+								}`}>
+								{loading.book ? 'Booking...' : 'Yes, Book it!'}
 							</button>
 							<button
 								onClick={() => setIsConfirmModalOpen(false)}
@@ -404,7 +464,6 @@ const ActivitiesCard = ({
 								Cancel
 							</button>
 						</div>
-						{error && <div className='mt-4 text-red-500'>{error}</div>}
 					</div>
 				</div>
 			)}

@@ -12,8 +12,6 @@ import {
 } from 'react-icons/fa';
 import StarRating from '../Helper/StarRating'; // Ensure this component exists and is properly implemented
 import { useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 	const [attractions, setAttractions] = useState([]);
@@ -22,32 +20,22 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [selectedAttraction, setSelectedAttraction] = useState(null);
 	const [selectedTicketType, setSelectedTicketType] = useState('');
-	const [ticketPrice, setTicketPrice] = useState(null); // State for ticket price
-	const [loading, setLoading] = useState({
-		fetchAttractions: false,
-		book: false,
-	});
+	const [ticketPrice, setTicketPrice] = useState(null); // NEW state for ticket price
+	const [error, setError] = useState(null);
 	const [shareOptionsVisible, setShareOptionsVisible] = useState({});
-	const navigate = useNavigate();
+	const navigate = useNavigate(); // Ensure you have imported useNavigate from 'react-router-dom'
 
 	// Fetch data from the API using axios
 	useEffect(() => {
 		const fetchAttractions = async () => {
-			setLoading((prev) => ({ ...prev, fetchAttractions: true }));
 			try {
 				const response = await axios.get('http://localhost:3000/attractions'); // Replace with your API endpoint for attractions
 				setAttractions(response.data);
-				const allTags = response.data.flatMap(
-					(attraction) => attraction.tags || []
-				);
+				const allTags = response.data.flatMap((attraction) => attraction.tags);
 				const uniqueTags = [...new Set(allTags)];
 				setTags(uniqueTags);
-				toast.success('Attractions fetched successfully!');
 			} catch (error) {
 				console.error('Error fetching attractions:', error);
-				toast.error('Failed to fetch attractions. Please try again later.');
-			} finally {
-				setLoading((prev) => ({ ...prev, fetchAttractions: false }));
 			}
 		};
 
@@ -65,23 +53,15 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 		: attractions;
 
 	const handleBookTicket = (attraction) => {
-		if (!attraction.bookingOpen || attraction.isBooked) {
-			toast.info('This attraction is not available for booking.');
-			return;
-		}
 		setSelectedAttraction(attraction);
-		setSelectedTicketType(''); // Reset ticket type selection
-		setTicketPrice(null); // Reset ticket price
 		setIsConfirmModalOpen(true);
 	};
 
 	const handleTicketTypeChange = (ticketType) => {
-		// Ensure ticketType matches backend's expected casing
-		const formattedType = ticketType.toLowerCase();
-		setSelectedTicketType(formattedType);
-		if (formattedType && selectedAttraction.ticketPrices[formattedType]) {
+		setSelectedTicketType(ticketType);
+		if (ticketType && selectedAttraction.ticketPrices[ticketType]) {
 			const calculatedPrice =
-				selectedAttraction.ticketPrices[formattedType] * conversionRate;
+				selectedAttraction.ticketPrices[ticketType] * conversionRate;
 			setTicketPrice(calculatedPrice.toFixed(2)); // Update the ticket price state
 		} else {
 			setTicketPrice(null);
@@ -89,12 +69,6 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 	};
 
 	const confirmBooking = async () => {
-		if (!selectedTicketType) {
-			toast.error('Please select a ticket type before booking.');
-			return;
-		}
-
-		setLoading((prev) => ({ ...prev, book: true }));
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) throw new Error('No token found. Please login again.');
@@ -102,12 +76,6 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 			const config = {
 				headers: { Authorization: `Bearer ${token}` },
 			};
-
-			// Debugging: Log the data being sent
-			console.log('Booking Data:', {
-				attractionId: selectedAttraction._id,
-				ticketType: selectedTicketType,
-			});
 
 			const response = await axios.post(
 				'http://localhost:3000/tourists/bookAttraction',
@@ -121,37 +89,23 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 			const { message, updatedWalletBalance, pointsEarned, totalPoints } =
 				response.data;
 
-			// Display a success toast with wallet and points details
-			toast.success(
+			// Display a success message with wallet and points details
+			alert(
 				`${message}. You earned ${pointsEarned} points! Your total points are now ${totalPoints}. Wallet balance: $${updatedWalletBalance}.`
 			);
 
-			// Update the attraction's booking status in the frontend state
-			setAttractions((prevAttractions) =>
-				prevAttractions.map((att) =>
-					att._id === selectedAttraction._id ? { ...att, isBooked: true } : att
-				)
-			);
-
 			setIsConfirmModalOpen(false); // Close the modal after booking
-			setSelectedAttraction(null); // Reset selected attraction
-			setSelectedTicketType(''); // Reset ticket type
-			setTicketPrice(null); // Reset ticket price
 		} catch (error) {
-			const errorMsg =
-				error.response?.data?.message || 'An error occurred while booking.';
-			toast.error(errorMsg); // Display error toast
+			setError(error.response?.data?.message || 'An error occurred.'); // Set the error message in state
 			console.error('Error booking attraction:', error);
 			setIsConfirmModalOpen(false);
-		} finally {
-			setLoading((prev) => ({ ...prev, book: false }));
 		}
 	};
 
 	const handleCopyLink = (attraction) => {
 		const link = `http://localhost:5173/attractions/${attraction._id}`;
 		navigator.clipboard.writeText(link);
-		toast.info('Link copied to clipboard!');
+		alert('Link copied to clipboard!');
 	};
 
 	const handleShareViaEmail = (attraction) => {
@@ -194,33 +148,18 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 				config
 			);
 
-			toast.success(
-				response.data.message || 'Attraction bookmarked successfully!'
-			);
+			alert(response.data.message || 'Attraction bookmarked successfully!');
 		} catch (error) {
-			const errorMsg =
-				error.response?.data?.message ||
-				'Failed to bookmark attraction. Try again later.';
-			toast.error(errorMsg);
 			console.error('Error bookmarking Attraction:', error);
+			alert(
+				error.response?.data?.message ||
+					'Failed to bookmark Attraction. Try again later.'
+			);
 		}
 	};
 
 	return (
 		<div className='flex flex-col items-center py-10'>
-			{/* Toast Container for Notifications */}
-			<ToastContainer
-				position='top-right'
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-				theme='colored'
-			/>
-
 			{/* Filter Section */}
 			<div className='w-full max-w-7xl px-4 mb-8'>
 				<label
@@ -246,11 +185,7 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 
 			{/* Attractions Grid */}
 			<div className='w-full max-w-7xl grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4'>
-				{loading.fetchAttractions ? (
-					<div className='flex justify-center items-center col-span-full'>
-						<div className='loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16'></div>
-					</div>
-				) : filteredAttractions.length > 0 ? (
+				{filteredAttractions.length > 0 ? (
 					filteredAttractions.map((attraction) => (
 						<div
 							key={attraction._id}
@@ -261,6 +196,10 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 									{attraction.name || 'Attraction Name'}
 								</h2>
 								<ul className='space-y-1 text-gray-700 text-sm'>
+									<li>
+										<span className='font-medium'>Governor:</span>{' '}
+										{attraction.governorId?.username || 'N/A'}
+									</li>
 									<li>
 										<span className='font-medium'>Description:</span>{' '}
 										{attraction.description || 'Not available'}
@@ -324,12 +263,7 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 									{/* Book Ticket Button */}
 									<button
 										onClick={() => handleBookTicket(attraction)}
-										className={`flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200 ${
-											!attraction.bookingOpen || attraction.isBooked
-												? 'opacity-50 cursor-not-allowed'
-												: ''
-										}`}
-										disabled={!attraction.bookingOpen || attraction.isBooked}>
+										className='flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200'>
 										Book Ticket
 									</button>
 
@@ -358,7 +292,7 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 									</button>
 
 									{shareOptionsVisible[attraction._id] && (
-										<div className='absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-20'>
+										<div className='absolute right-0 mt-2 w-48 bg-blue border border-gray-300 rounded-lg shadow-lg z-20'>
 											<div className='p-2'>
 												{/* Copy Link */}
 												<button
@@ -429,61 +363,72 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 				)}
 			</div>
 
-			{/* Confirmation Modal for Booking */}
-			{isConfirmModalOpen && selectedAttraction && (
-				<div className='fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50'>
-					<div className='bg-white p-6 rounded-lg shadow-lg w-80'>
-						<h3 className='text-lg font-semibold text-center mb-4'>
-							Confirm Booking
-						</h3>
+			{/* Error Notification */}
+			{error && (
+				<div className='fixed bottom-5 right-5 bg-red-600 text-white py-3 px-5 rounded-lg shadow-lg z-50 transition-opacity duration-500 opacity-100'>
+					<div className='flex justify-between items-center'>
+						<span>{error}</span>
+						<button
+							className='text-white font-bold'
+							onClick={() => setError(null)}>
+							X
+						</button>
+					</div>
+				</div>
+			)}
 
-						{/* Ticket Type Selection */}
+			{/* Confirmation Modal for Booking */}
+			{/* Ticket Selection Modal */}
+			{isConfirmModalOpen && selectedAttraction && (
+				<div className='fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50'>
+					<div className='bg-white p-6 rounded-lg shadow-lg w-80'>
+						<h3 className='text-lg font-semibold'>Select Ticket Type</h3>
 						<div className='mb-4'>
-							<label
-								htmlFor='ticketType'
-								className='block text-sm font-medium text-gray-700 mb-1'>
-								Select Ticket Type:
+							<label className='font-semibold text-gray-700'>
+								Choose a ticket:
 							</label>
 							<select
-								id='ticketType'
-								className='w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
 								value={selectedTicketType}
-								onChange={(e) => handleTicketTypeChange(e.target.value)}>
-								<option value=''>-- Select Ticket Type --</option>
-								{selectedAttraction.ticketPrices &&
-									Object.keys(selectedAttraction.ticketPrices).map((type) => (
-										<option
-											key={type}
-											value={type}>
-											{type.charAt(0).toUpperCase() + type.slice(1)}
-										</option>
-									))}
+								onChange={(e) => setSelectedTicketType(e.target.value)}
+								className='ml-2 border border-gray-300 rounded-md p-2'>
+								<option value=''>Select Ticket Type</option>
+								{selectedAttraction.ticketPrices && (
+									<>
+										{selectedAttraction.ticketPrices.native && (
+											<option value='native'>Natives</option>
+										)}
+										{selectedAttraction.ticketPrices.foreigner && (
+											<option value='foreigner'>Foreigners</option>
+										)}
+										{selectedAttraction.ticketPrices.student && (
+											<option value='student'>Students</option>
+										)}
+									</>
+								)}
 							</select>
 						</div>
-
-						{/* Display Ticket Price */}
-						{ticketPrice && (
-							<p className='text-center mb-4'>
-								Price: {currency} {ticketPrice}
-							</p>
+						{selectedTicketType && (
+							<div>
+								<p className='font-semibold'>Price: </p>
+								<p>
+									{currency}{' '}
+									{(
+										selectedAttraction.ticketPrices[selectedTicketType] *
+										conversionRate
+									).toFixed(2) || 'N/A'}
+								</p>
+								<button
+									className='mt-4 py-2 px-4 bg-green-600 text-white rounded-md'
+									onClick={confirmBooking}>
+									Confirm Booking
+								</button>
+							</div>
 						)}
-
-						{/* Action Buttons */}
-						<div className='flex justify-between'>
-							<button
-								onClick={() => setIsConfirmModalOpen(false)}
-								className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-200'>
-								Cancel
-							</button>
-							<button
-								onClick={confirmBooking}
-								className={`bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 ${
-									loading.book ? 'opacity-50 cursor-not-allowed' : ''
-								}`}
-								disabled={loading.book}>
-								{loading.book ? 'Booking...' : 'Confirm'}
-							</button>
-						</div>
+						<button
+							className='mt-4 py-2 px-4 bg-red-600 text-white rounded-md'
+							onClick={() => setIsConfirmModalOpen(false)}>
+							Close
+						</button>
 					</div>
 				</div>
 			)}

@@ -7,11 +7,20 @@ const ProductRevenue = () => {
 	const [revenue, setRevenue] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+	const [startDate, setStartDate] = useState('');
+	const [endDate, setEndDate] = useState('');
+	const [filteredProducts, setFilteredProducts] = useState([]);
 
 	// Fetch revenue data when the component mounts
 	useEffect(() => {
 		fetchRevenue();
 	}, []);
+
+	useEffect(() => {
+		if (revenue) {
+			applyDateFilter();
+		}
+	}, [startDate, endDate, revenue]);
 
 	const fetchRevenue = async () => {
 		setLoading(true);
@@ -22,11 +31,31 @@ const ProductRevenue = () => {
 			const endpoint = 'http://localhost:3000/products/revenue';
 			const response = await axios.get(endpoint);
 			setRevenue(response.data); // Assuming response.data contains the revenue data
+			setFilteredProducts(response.data.products); // Set initial filtered products
 		} catch (err) {
 			setError(err.response?.data?.message || 'Failed to fetch revenue');
 		} finally {
 			setLoading(false);
 		}
+	};
+
+	const applyDateFilter = () => {
+		if (!startDate && !endDate) {
+			setFilteredProducts(revenue.products);
+			return;
+		}
+
+		const start = startDate ? new Date(startDate) : null;
+		const end = endDate ? new Date(endDate) : null;
+
+		const filtered = revenue.products.filter((product) => {
+			const productDate = new Date(product.date); // Assuming `product.date` exists in ISO format
+			if (start && productDate < start) return false;
+			if (end && productDate > end) return false;
+			return true;
+		});
+
+		setFilteredProducts(filtered);
 	};
 
 	return (
@@ -42,6 +71,32 @@ const ProductRevenue = () => {
 						<p className='text-center font-medium'>{error}</p>
 					</div>
 				)}
+
+				{/* Date Filter */}
+				<div className='flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8'>
+					<div>
+						<label className='block text-gray-600 font-medium mb-1'>
+							Start Date
+						</label>
+						<input
+							type='date'
+							className='w-full sm:w-auto px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+							value={startDate}
+							onChange={(e) => setStartDate(e.target.value)}
+						/>
+					</div>
+					<div>
+						<label className='block text-gray-600 font-medium mb-1'>
+							End Date
+						</label>
+						<input
+							type='date'
+							className='w-full sm:w-auto px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+							value={endDate}
+							onChange={(e) => setEndDate(e.target.value)}
+						/>
+					</div>
+				</div>
 
 				{/* Loading State */}
 				{loading && (
@@ -68,7 +123,7 @@ const ProductRevenue = () => {
 				)}
 
 				{/* Revenue Details */}
-				{revenue && !loading && (
+				{!loading && filteredProducts.length > 0 && (
 					<div>
 						{/* Total Revenue */}
 						<div className='p-8 bg-gradient-to-r from-blue-200 to-blue-400 rounded-lg shadow-lg mb-12 transform hover:scale-105 transition duration-200'>
@@ -80,52 +135,18 @@ const ProductRevenue = () => {
 							</p>
 						</div>
 
-						{/* Attractions Overview */}
+						{/* Products Overview */}
 						<h4 className='text-2xl font-semibold text-gray-800 mb-6 text-center'>
 							Seller Overview
 						</h4>
 						<ul className='space-y-6'>
-							{revenue.products.map((product) => (
+							{filteredProducts.map((product) => (
 								<li
 									key={product.id}
 									className='p-6 bg-gray-50 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 transition duration-200 flex flex-col sm:flex-row justify-between items-start sm:items-center'>
 									{/* Product Details */}
 									<div className='flex flex-col sm:flex-row sm:items-center sm:space-x-4 w-full'>
 										<div className='flex items-center space-x-3'>
-											{/* Status Icon */}
-											<span>
-												{product.isBooked ? (
-													<svg
-														className='h-6 w-6 text-green-500'
-														xmlns='http://www.w3.org/2000/svg'
-														fill='none'
-														viewBox='0 0 24 24'
-														stroke='currentColor'>
-														<path
-															strokeLinecap='round'
-															strokeLinejoin='round'
-															strokeWidth={2}
-															d='M5 13l4 4L19 7'
-														/>
-													</svg>
-												) : (
-													<svg
-														className='h-6 w-6 text-red-500'
-														xmlns='http://www.w3.org/2000/svg'
-														fill='none'
-														viewBox='0 0 24 24'
-														stroke='currentColor'>
-														<path
-															strokeLinecap='round'
-															strokeLinejoin='round'
-															strokeWidth={2}
-															d='M6 18L18 6M6 6l12 12'
-														/>
-													</svg>
-												)}
-											</span>
-
-											{/* Product Name */}
 											<h5 className='text-lg font-semibold text-blue-600'>
 												{product.name}
 											</h5>
@@ -143,25 +164,26 @@ const ProductRevenue = () => {
 									{/* Revenue Details */}
 									<div className='mt-4 sm:mt-0 text-sm text-gray-600'>
 										<p>
-											<strong>Status:</strong>{' '}
-											<span
-												className={`font-semibold ${
-													product.isBooked ? 'text-green-600' : 'text-red-600'
-												}`}>
-												{product.isBooked ? 'Booked' : 'Not Booked'}
-											</span>
-										</p>
-										<p className='mt-2'>
 											<strong>Revenue:</strong>{' '}
 											<span className='text-blue-700'>
 												${product.revenue.toLocaleString()}
 											</span>
+										</p>
+										<p>
+											<strong>Date:</strong> {product.date}
 										</p>
 									</div>
 								</li>
 							))}
 						</ul>
 					</div>
+				)}
+
+				{/* No Results */}
+				{!loading && filteredProducts.length === 0 && (
+					<p className='text-center text-gray-600'>
+						No products match the selected date range.
+					</p>
 				)}
 
 				{/* Refresh Button */}
