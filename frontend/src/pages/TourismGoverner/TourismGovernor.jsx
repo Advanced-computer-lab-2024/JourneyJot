@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const TourismGovernor = () => {
 	const [places, setPlaces] = useState([]); // List of attractions
@@ -18,6 +19,7 @@ const TourismGovernor = () => {
 		tags: [], // New field for tags (references to Tag schema)
 	}); // Form data for add/edit
 	const [editingId, setEditingId] = useState(null); // ID of the place being edited
+	const navigate = useNavigate();
 
 	// Fetch places on component mount
 	useEffect(() => {
@@ -141,7 +143,7 @@ const TourismGovernor = () => {
 	};
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center py-10 px-4'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-300 flex items-center justify-center py-10 px-4'>
 			<div className='container mx-auto'>
 				<h1 className='text-3xl font-bold text-gray-800 text-center mb-8'>
 					Tourism Governor - Museums & Historical Places
@@ -149,6 +151,24 @@ const TourismGovernor = () => {
 
 				{/* Form */}
 				<div className='max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8'>
+					<button
+						onClick={() => navigate(-1)}
+						className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							className='h-6 w-6 mr-2'
+							fill='none'
+							viewBox='0 0 24 24'
+							stroke='currentColor'
+							strokeWidth={2}>
+							<path
+								strokeLinecap='round'
+								strokeLinejoin='round'
+								d='M15 19l-7-7 7-7'
+							/>
+						</svg>
+						Back
+					</button>
 					<h2 className='text-2xl font-semibold text-gray-700 mb-6'>
 						{editingId ? 'Edit Place' : 'Add a New Place'}
 					</h2>

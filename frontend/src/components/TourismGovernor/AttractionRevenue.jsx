@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AttractionRevenue = () => {
 	const [revenue, setRevenue] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+	const navigate = useNavigate();
 
 	// Fetch revenue data when the component mounts
 	useEffect(() => {
@@ -32,6 +34,24 @@ const AttractionRevenue = () => {
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center p-4'>
 			<div className='p-6 max-w-5xl w-full bg-white rounded-lg shadow-md space-y-8'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h2 className='text-center text-4xl font-semibold text-indigo-700'>
 					Attraction Revenue Dashboard
 				</h2>
