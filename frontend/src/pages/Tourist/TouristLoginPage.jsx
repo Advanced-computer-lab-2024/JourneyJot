@@ -1,101 +1,117 @@
 /** @format */
 
-import { useState } from 'react';
-import { touristLogin } from '../../api';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState } from "react";
+import { touristLogin } from "../../api";
+import { useNavigate, Link } from "react-router-dom";
 
 const TouristLoginPage = () => {
-	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		username: '',
-		password: '',
-	});
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
-	const [errorMessage, setErrorMessage] = useState(''); // For displaying login errors
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-	const handleChange = (e) => {
-		setFormData({ ...formData, [e.target.name]: e.target.value });
-	};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null); // Reset error before attempting login
+    setSuccess(null); // Reset success before attempting login
+    try {
+      const response = await touristLogin(formData);
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      setSuccess("Login successful! Redirecting...");
+      setTimeout(() => navigate("/tourist/homePage"), 1000); // Delay for success message
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          "Login failed. Please check your credentials."
+      );
+    }
+  };
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		setErrorMessage(''); // Reset error message
-		try {
-			const response = await touristLogin(formData);
-			const token = response.data.token;
-			localStorage.setItem('token', token);
-			console.log('Login successful', response.data);
-			navigate('/tourist/homePage');
-		} catch (error) {
-			const errorMsg =
-				error.response?.data?.message ||
-				'Something went wrong. Please try again.';
-			setErrorMessage(errorMsg);
-		}
-	};
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500">
+      <div className="max-w-md w-full bg-white p-8 shadow-2xl rounded-lg border-t-8 border-indigo-600">
+        <h2 className="text-4xl font-bold text-center text-gray-800 mb-6">
+          Welcome Tourist
+        </h2>
+        <p className="text-center text-gray-600 mb-6">
+          Please log in to access your account
+        </p>
 
-	return (
-		<div className='flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500'>
-			<div className='max-w-lg w-full bg-white p-8 shadow-xl rounded-lg'>
-				<h2 className='text-3xl font-semibold text-center text-gray-800 mb-6'>
-					Tourist Login
-				</h2>
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            {error}
+          </div>
+        )}
+        {/* Success Message */}
+        {success && (
+          <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            {success}
+          </div>
+        )}
 
-				{/* Error Message */}
-				{errorMessage && (
-					<div className='bg-red-100 text-red-700 px-4 py-2 rounded-lg mb-4 text-center'>
-						{errorMessage}
-					</div>
-				)}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex flex-col">
+            <label
+              htmlFor="username"
+              className="text-sm font-medium text-gray-700 mb-2"
+            >
+              Username
+            </label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              placeholder="Username"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 text-gray-700 placeholder-gray-500"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700 mb-2"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Password"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 text-gray-700 placeholder-gray-500"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            Login
+          </button>
+        </form>
 
-				<form
-					onSubmit={handleSubmit}
-					className='space-y-6'>
-					{/* Username Field */}
-					<div>
-						<input
-							type='text'
-							name='username'
-							value={formData.username}
-							onChange={handleChange}
-							required
-							placeholder='Username'
-							className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-gray-50'
-						/>
-					</div>
-
-					{/* Password Field */}
-					<div>
-						<input
-							type='password'
-							name='password'
-							value={formData.password}
-							onChange={handleChange}
-							required
-							placeholder='Password'
-							className='w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-gray-50'
-						/>
-					</div>
-
-					{/* Login Button */}
-					<button
-						type='submit'
-						className='w-full bg-teal-500 text-white py-2 rounded-lg shadow-md hover:bg-teal-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500'>
-						Login
-					</button>
-				</form>
-
-				{/* Redirect to Signup */}
-				<div className='mt-4 text-center'>
-					<Link to='/tourist-signup'>
-						<h1 className='underline text-teal-500 hover:text-teal-600 transition-all duration-200'>
-							Don't have an account? Sign Up
-						</h1>
-					</Link>
-				</div>
-			</div>
-		</div>
-	);
+        <div className="mt-6 text-center">
+          <Link to="/tourist-signup">
+            <span className="text-indigo-600 hover:text-indigo-800 transition-all duration-200">
+              Don't have an account?{" "}
+              <span className="font-semibold">Sign Up</span>
+            </span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default TouristLoginPage;
