@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const TouristItineraryNotifications = () => {
 	const [notifications, setNotifications] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const navigate = useNavigate;
 
 	// Fetch notifications
 	const fetchNotifications = useCallback(async () => {
