@@ -56,7 +56,7 @@ const TouristNotifications = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-300 flex items-center justify-center p-4">
       <div className="max-w-3xl mx-auto p-8 bg-white rounded-2xl shadow-xl">
         <button
           onClick={() => navigate(-1)}

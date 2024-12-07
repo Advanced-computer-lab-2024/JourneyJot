@@ -46,7 +46,7 @@ const TouristSignUp = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-300 ">
       <div className="max-w-md w-full bg-white p-8 shadow-2xl rounded-lg border-t-8 border-indigo-600">
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-6">
           Tourist Sign Up

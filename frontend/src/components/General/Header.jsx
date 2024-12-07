@@ -1,29 +1,31 @@
 /** @format */
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
-	return (
-		<div className='flex justify-between items-center p-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-md'>
-			<h1 className='text-3xl font-extrabold text-white md:text-4xl'>
-				Welcome to JourneyJot
-			</h1>
-			<div className='flex space-x-4'>
-				<button
-					onClick={() => navigate('/signup')}
-					className='bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition duration-200'>
-					Sign Up
-				</button>
-				<button
-					onClick={() => navigate('/login')}
-					className='bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition duration-200'>
-					Log In
-				</button>
-			</div>
-		</div>
-	);
+  return (
+    <div className="flex justify-between items-center p-4 bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-300  shadow-md">
+      <h1 className="text-3xl font-extrabold text-white md:text-4xl">
+        Welcome to JourneyJot
+      </h1>
+      <div className="flex space-x-4">
+        <button
+          onClick={() => navigate("/signup")}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition duration-200"
+        >
+          Sign Up
+        </button>
+        <button
+          onClick={() => navigate("/login")}
+          className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition duration-200"
+        >
+          Log In
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default Header;

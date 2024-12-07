@@ -38,7 +38,7 @@ const RequestOTP = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-500 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-300  flex items-center justify-center">
       <div className="bg-white shadow-2xl rounded-xl p-8 w-full max-w-md">
         <div>
           <button
