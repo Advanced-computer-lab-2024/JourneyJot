@@ -9,7 +9,7 @@ const ChangePassword = () => {
 	const [newPassword, setNewPassword] = useState('');
 	const [error, setError] = useState(null);
 	const [success, setSuccess] = useState(null);
-	const navigate = useNavigate;
+	const navigate = useNavigate();
 
 	const handleChangePassword = async (e) => {
 		e.preventDefault();

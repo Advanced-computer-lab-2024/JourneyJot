@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const TourGuideProfile = () => {
 	const [profileData, setProfileData] = useState({
@@ -20,6 +21,7 @@ const TourGuideProfile = () => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [image, setImage] = useState('');
 	const [imageUploadError, setImageUploadError] = useState(null);
+	const navigate = useNavigate();
 
 	const fetchProfile = async () => {
 		try {
@@ -181,6 +183,24 @@ const TourGuideProfile = () => {
 	return (
 		<div className='min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 p-8 flex items-center justify-center'>
 			<div className='max-w-xl mx-auto p-6 bg-white shadow-lg rounded-lg'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h1 className='text-3xl font-semibold text-center mb-4'>
 					Tour Guide Profile
 				</h1>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ItinerariesComponent = () => {
 	const [itineraries, setItineraries] = useState([]);
@@ -24,6 +25,7 @@ const ItinerariesComponent = () => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editItineraryId, setEditItineraryId] = useState(null);
 	const [availableDatesError, setAvailableDatesError] = useState('');
+	const navigate = useNavigate();
 
 	// Fetch all itineraries on component mount
 	useEffect(() => {
@@ -188,8 +190,26 @@ const ItinerariesComponent = () => {
 	};
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center p-8'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300 flex items-center justify-center p-8'>
 			<div className='bg-white rounded-lg shadow-lg w-full max-w-4xl p-6'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h2 className='text-2xl font-bold text-gray-800 mb-6'>
 					Manage Itineraries
 				</h2>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CompletedItineraries = () => {
 	const [distinctTouristCount, setDistinctTouristCount] = useState(0);
@@ -12,6 +13,7 @@ const CompletedItineraries = () => {
 	const [error, setError] = useState(null);
 	const [month, setMonth] = useState('');
 	const [year, setYear] = useState('');
+	const navigate = useNavigate();
 
 	// API URLs
 	const BASE_API_URL = 'http://localhost:3000/tourists';
@@ -72,8 +74,26 @@ const CompletedItineraries = () => {
 	}, [month, year]);
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-8 flex items-center justify-center'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300  p-8 flex items-center justify-center'>
 			<div className='bg-white shadow-lg rounded-lg p-6 max-w-5xl w-full'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h1 className='text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-8'>
 					Completed Itineraries Report
 				</h1>

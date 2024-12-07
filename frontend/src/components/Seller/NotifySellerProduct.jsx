@@ -78,7 +78,7 @@ const NotifySellerProduct = () => {
 	};
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300  flex items-center justify-center'>
 			<div className='max-w-4xl w-full bg-white p-8 rounded-lg shadow-xl space-y-8'>
 				<h1 className='text-4xl font-semibold text-center text-gray-800 mb-8'>
 					Seller Dashboard

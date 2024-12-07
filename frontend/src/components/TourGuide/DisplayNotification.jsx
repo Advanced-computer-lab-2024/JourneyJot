@@ -4,12 +4,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AiOutlineWarning } from 'react-icons/ai'; // Warning icon for flagged itineraries
 import { BiCheckCircle } from 'react-icons/bi'; // Check icon for active itineraries
+import { useNavigate } from 'react-router-dom';
 
 const DisplayNotificationItinerary = () => {
 	const [itineraries, setItineraries] = useState([]);
 	const [flaggedItineraries, setFlaggedItineraries] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
+	const navigate = useNavigate();
 
 	const API_URL = 'http://localhost:3000/tour-guides/notifications';
 
@@ -41,8 +43,26 @@ const DisplayNotificationItinerary = () => {
 	}, []);
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center p-6'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300 flex items-center justify-center p-6'>
 			<div className='bg-white shadow-xl rounded-lg p-8 max-w-3xl w-full'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h1 className='text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center'>
 					Itinerary Notifications
 				</h1>
