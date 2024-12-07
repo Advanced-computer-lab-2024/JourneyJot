@@ -31,7 +31,7 @@ const ActivitiesCard = ({
 	const [tags, setTags] = useState([]);
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [selectedActivity, setSelectedActivity] = useState(null);
-	const [shareOptionsVisible, setShareOptionsVisible] = useState({});
+	// Removed shareOptionsVisible state
 	const [loading, setLoading] = useState({
 		book: false,
 		cancel: false,
@@ -181,12 +181,7 @@ const ActivitiesCard = ({
 		window.location.href = `mailto:?subject=${subject}&body=${body}`;
 	};
 
-	const toggleShareOptions = (activityId) => {
-		setShareOptionsVisible((prev) => ({
-			...prev,
-			[activityId]: !prev[activityId],
-		}));
-	};
+	// Removed toggleShareOptions function
 
 	const handlePayActivityViaStripe = (activity) => {
 		navigate('/pay-activity-stripe', {
@@ -242,6 +237,24 @@ const ActivitiesCard = ({
 				pauseOnHover
 				theme='colored'
 			/>
+			<button
+				onClick={() => navigate(-1)}
+				className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition absolute top-0 left-0 mt-4 ml-4'>
+				<svg
+					xmlns='http://www.w3.org/2000/svg'
+					className='h-6 w-6 mr-2'
+					fill='none'
+					viewBox='0 0 24 24'
+					stroke='currentColor'
+					strokeWidth={2}>
+					<path
+						strokeLinecap='round'
+						strokeLinejoin='round'
+						d='M15 19l-7-7 7-7'
+					/>
+				</svg>
+				Back
+			</button>
 
 			{activities.length > 0 ? (
 				activities.map((activity) => (
@@ -335,64 +348,57 @@ const ActivitiesCard = ({
 
 								{/* Share and Bookmark Icons */}
 								<div className='flex justify-between items-center'>
-									{/* Share Dropdown */}
+									{/* Share Options are now always visible */}
 									<div className='relative'>
-										<button
-											onClick={() => toggleShareOptions(activity._id)}
-											className='flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200'
-											aria-label='Share Activity'>
-											<FiShare2 size={20} />
-										</button>
-
-										{shareOptionsVisible[activity._id] && (
-											<div className='absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10'>
-												<button
-													onClick={() => handleCopyLink(activity)}
-													className='flex items-center w-full text-left px-2 py-1 hover:bg-gray-100 rounded'>
-													Copy Link
-												</button>
-												<button
-													onClick={() => handleShareViaEmail(activity)}
-													className='flex items-center w-full text-left px-2 py-1 hover:bg-gray-100 rounded'>
-													Share via Email
-												</button>
-												{/* Social Media Share Icons */}
-												<div className='flex justify-around mt-2'>
-													<a
-														href={`https://facebook.com/sharer/sharer.php?u=http://localhost:5173/activities/${activity._id}`}
-														target='_blank'
-														rel='noopener noreferrer'
-														className='text-blue-600 hover:text-blue-800'
-														aria-label='Share on Facebook'>
-														<FaFacebookF size={18} />
-													</a>
-													<a
-														href={`https://twitter.com/intent/tweet?url=http://localhost:5173/activities/${activity._id}`}
-														target='_blank'
-														rel='noopener noreferrer'
-														className='text-blue-400 hover:text-blue-600'
-														aria-label='Share on Twitter'>
-														<FaTwitter size={18} />
-													</a>
-													<a
-														href={`https://instagram.com/?url=http://localhost:5173/activities/${activity._id}`}
-														target='_blank'
-														rel='noopener noreferrer'
-														className='text-pink-500 hover:text-pink-700'
-														aria-label='Share on Instagram'>
-														<FaInstagram size={18} />
-													</a>
-													<a
-														href={`https://linkedin.com/shareArticle?mini=true&url=http://localhost:5173/activities/${activity._id}`}
-														target='_blank'
-														rel='noopener noreferrer'
-														className='text-blue-700 hover:text-blue-900'
-														aria-label='Share on LinkedIn'>
-														<FaLinkedinIn size={18} />
-													</a>
-												</div>
+										{/* Removed the toggle share button */}
+										{/* Share options are always rendered */}
+										<div className='mt-2 w-40 bg-blue-50 border border-gray-200 rounded-lg shadow-lg p-2 z-50'>
+											<button
+												onClick={() => handleCopyLink(activity)}
+												className='flex items-center w-full text-left px-2 py-1 hover:bg-blue-100 rounded text-blue-600'>
+												Copy Link
+											</button>
+											<button
+												onClick={() => handleShareViaEmail(activity)}
+												className='flex items-center w-full text-left px-2 py-1 hover:bg-blue-100 rounded text-blue-600'>
+												Share via Email
+											</button>
+											{/* Social Media Share Icons */}
+											<div className='flex justify-around mt-2'>
+												<a
+													href={`https://facebook.com/sharer/sharer.php?u=http://localhost:5173/activities/${activity._id}`}
+													target='_blank'
+													rel='noopener noreferrer'
+													className='text-blue-600 hover:text-blue-800'
+													aria-label='Share on Facebook'>
+													<FaFacebookF size={18} />
+												</a>
+												<a
+													href={`https://twitter.com/intent/tweet?url=http://localhost:5173/activities/${activity._id}`}
+													target='_blank'
+													rel='noopener noreferrer'
+													className='text-blue-400 hover:text-blue-600'
+													aria-label='Share on Twitter'>
+													<FaTwitter size={18} />
+												</a>
+												<a
+													href={`https://instagram.com/?url=http://localhost:5173/activities/${activity._id}`}
+													target='_blank'
+													rel='noopener noreferrer'
+													className='text-pink-500 hover:text-pink-700'
+													aria-label='Share on Instagram'>
+													<FaInstagram size={18} />
+												</a>
+												<a
+													href={`https://linkedin.com/shareArticle?mini=true&url=http://localhost:5173/activities/${activity._id}`}
+													target='_blank'
+													rel='noopener noreferrer'
+													className='text-blue-700 hover:text-blue-900'
+													aria-label='Share on LinkedIn'>
+													<FaLinkedinIn size={18} />
+												</a>
 											</div>
-										)}
+										</div>
 									</div>
 
 									{/* Bookmark Icon */}

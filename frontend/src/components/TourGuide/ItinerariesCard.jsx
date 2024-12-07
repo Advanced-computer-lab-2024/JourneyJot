@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import StarRating from '../Helper/StarRating';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +23,7 @@ const ItinerariesCard = ({
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedItinerary, setSelectedItinerary] = useState(null);
 	const [error, setError] = useState(null); // State to handle errors
-	const [shareOptionsVisible, setShareOptionsVisible] = useState({}); // Toggle for share options
+	// Removed shareOptionsVisible state
 	const navigate = useNavigate(); // For navigation
 
 	const handleBookItinerary = (itinerary) => {
@@ -76,12 +76,7 @@ const ItinerariesCard = ({
 		window.location.href = `mailto:?subject=${subject}&body=${body}`;
 	};
 
-	const toggleShareOptions = (itineraryId) => {
-		setShareOptionsVisible((prev) => ({
-			...prev,
-			[itineraryId]: !prev[itineraryId],
-		}));
-	};
+	// Removed toggleShareOptions function
 
 	const handlePayItineraryViaStripe = (itinerary) => {
 		navigate('/pay-itinerary-stripe', {
@@ -120,6 +115,19 @@ const ItinerariesCard = ({
 
 	return (
 		<div className='flex flex-wrap justify-center gap-4 p-4'>
+			{/* Toast Container for Notifications */}
+			<ToastContainer
+				position='top-right'
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme='colored'
+			/>
+
 			{itineraries.length > 0 ? (
 				itineraries.map((itinerary) => (
 					<div
@@ -136,12 +144,20 @@ const ItinerariesCard = ({
 									{itinerary.tourGuideId?.username || 'Unknown'}
 								</li>
 								<li>
+									<span className='font-medium'>Language:</span>{' '}
+									{itinerary.language || 'Unknown'}
+								</li>
+								<li>
 									<span className='font-medium'>Activities:</span>{' '}
-									{itinerary.activities.join(', ') || 'N/A'}
+									{itinerary.activities.length > 0
+										? itinerary.activities.join(', ')
+										: 'N/A'}
 								</li>
 								<li>
 									<span className='font-medium'>Locations:</span>{' '}
-									{itinerary.locations.join(', ') || 'N/A'}
+									{itinerary.locations.length > 0
+										? itinerary.locations.join(', ')
+										: 'N/A'}
 								</li>
 								<li>
 									<span className='font-medium'>Price:</span>{' '}
@@ -152,7 +168,9 @@ const ItinerariesCard = ({
 								</li>
 								<li>
 									<span className='font-medium'>Date:</span>{' '}
-									{itinerary.availableDates.join(', ') || 'N/A'}
+									{itinerary.availableDates.length > 0
+										? itinerary.availableDates.join(', ')
+										: 'N/A'}
 								</li>
 
 								<li>
@@ -189,64 +207,57 @@ const ItinerariesCard = ({
 
 						{/* Share and Bookmark Icons */}
 						<div className='flex justify-between items-center p-4 bg-gray-50'>
-							{/* Share Dropdown */}
+							{/* Share Options are now always visible */}
 							<div className='relative'>
-								<button
-									onClick={() => toggleShareOptions(itinerary._id)}
-									className='flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200'
-									aria-label='Share Itinerary'>
-									<FiShare2 size={20} />
-								</button>
-
-								{shareOptionsVisible[itinerary._id] && (
-									<div className='absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10'>
-										<button
-											onClick={() => handleCopyLink(itinerary)}
-											className='flex items-center w-full text-left px-2 py-1 hover:bg-gray-100 rounded'>
-											Copy Link
-										</button>
-										<button
-											onClick={() => handleShareViaEmail(itinerary)}
-											className='flex items-center w-full text-left px-2 py-1 hover:bg-gray-100 rounded'>
-											Share via Email
-										</button>
-										{/* Social Media Share Icons */}
-										<div className='flex justify-around mt-2'>
-											<a
-												href={`https://facebook.com/sharer/sharer.php?u=http://localhost:5173/itineraries/${itinerary._id}`}
-												target='_blank'
-												rel='noopener noreferrer'
-												className='text-blue-600 hover:text-blue-800'
-												aria-label='Share on Facebook'>
-												<FaFacebookF size={18} />
-											</a>
-											<a
-												href={`https://twitter.com/intent/tweet?url=http://localhost:5173/itineraries/${itinerary._id}`}
-												target='_blank'
-												rel='noopener noreferrer'
-												className='text-blue-400 hover:text-blue-600'
-												aria-label='Share on Twitter'>
-												<FaTwitter size={18} />
-											</a>
-											<a
-												href={`https://instagram.com/?url=http://localhost:5173/itineraries/${itinerary._id}`}
-												target='_blank'
-												rel='noopener noreferrer'
-												className='text-pink-500 hover:text-pink-700'
-												aria-label='Share on Instagram'>
-												<FaInstagram size={18} />
-											</a>
-											<a
-												href={`https://linkedin.com/shareArticle?mini=true&url=http://localhost:5173/itineraries/${itinerary._id}`}
-												target='_blank'
-												rel='noopener noreferrer'
-												className='text-blue-700 hover:text-blue-900'
-												aria-label='Share on LinkedIn'>
-												<FaLinkedinIn size={18} />
-											</a>
-										</div>
+								{/* Removed the toggle share button */}
+								{/* Share options are always rendered */}
+								<div className='mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10'>
+									<button
+										onClick={() => handleCopyLink(itinerary)}
+										className='flex items-center w-full text-left px-2 py-1 hover:bg-gray-100 rounded'>
+										Copy Link
+									</button>
+									<button
+										onClick={() => handleShareViaEmail(itinerary)}
+										className='flex items-center w-full text-left px-2 py-1 hover:bg-gray-100 rounded'>
+										Share via Email
+									</button>
+									{/* Social Media Share Icons */}
+									<div className='flex justify-around mt-2'>
+										<a
+											href={`https://facebook.com/sharer/sharer.php?u=http://localhost:5173/itineraries/${itinerary._id}`}
+											target='_blank'
+											rel='noopener noreferrer'
+											className='text-blue-600 hover:text-blue-800'
+											aria-label='Share on Facebook'>
+											<FaFacebookF size={18} />
+										</a>
+										<a
+											href={`https://twitter.com/intent/tweet?url=http://localhost:5173/itineraries/${itinerary._id}`}
+											target='_blank'
+											rel='noopener noreferrer'
+											className='text-blue-400 hover:text-blue-600'
+											aria-label='Share on Twitter'>
+											<FaTwitter size={18} />
+										</a>
+										<a
+											href={`https://instagram.com/?url=http://localhost:5173/itineraries/${itinerary._id}`}
+											target='_blank'
+											rel='noopener noreferrer'
+											className='text-pink-500 hover:text-pink-700'
+											aria-label='Share on Instagram'>
+											<FaInstagram size={18} />
+										</a>
+										<a
+											href={`https://linkedin.com/shareArticle?mini=true&url=http://localhost:5173/itineraries/${itinerary._id}`}
+											target='_blank'
+											rel='noopener noreferrer'
+											className='text-blue-700 hover:text-blue-900'
+											aria-label='Share on LinkedIn'>
+											<FaLinkedinIn size={18} />
+										</a>
 									</div>
-								)}
+								</div>
 							</div>
 
 							{/* Bookmark Icon */}

@@ -12,6 +12,8 @@ import {
 } from 'react-icons/fa';
 import StarRating from '../Helper/StarRating'; // Ensure this component exists and is properly implemented
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 	const [attractions, setAttractions] = useState([]);
@@ -22,7 +24,7 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 	const [selectedTicketType, setSelectedTicketType] = useState('');
 	const [ticketPrice, setTicketPrice] = useState(null); // NEW state for ticket price
 	const [error, setError] = useState(null);
-	const [shareOptionsVisible, setShareOptionsVisible] = useState({});
+	// Removed shareOptionsVisible state
 	const navigate = useNavigate(); // Ensure you have imported useNavigate from 'react-router-dom'
 
 	// Fetch data from the API using axios
@@ -36,6 +38,7 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 				setTags(uniqueTags);
 			} catch (error) {
 				console.error('Error fetching attractions:', error);
+				toast.error('Failed to fetch attractions.');
 			}
 		};
 
@@ -89,23 +92,26 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 			const { message, updatedWalletBalance, pointsEarned, totalPoints } =
 				response.data;
 
-			// Display a success message with wallet and points details
-			alert(
+			// Display a success toast with wallet and points details
+			toast.success(
 				`${message}. You earned ${pointsEarned} points! Your total points are now ${totalPoints}. Wallet balance: $${updatedWalletBalance}.`
 			);
 
 			setIsConfirmModalOpen(false); // Close the modal after booking
 		} catch (error) {
-			setError(error.response?.data?.message || 'An error occurred.'); // Set the error message in state
+			setError(error.response?.data?.message || 'An error occurred.');
 			console.error('Error booking attraction:', error);
 			setIsConfirmModalOpen(false);
+			toast.error(
+				error.response?.data?.message || 'An error occurred while booking.'
+			);
 		}
 	};
 
 	const handleCopyLink = (attraction) => {
 		const link = `http://localhost:5173/attractions/${attraction._id}`;
 		navigator.clipboard.writeText(link);
-		alert('Link copied to clipboard!');
+		toast.info('Link copied to clipboard!');
 	};
 
 	const handleShareViaEmail = (attraction) => {
@@ -116,12 +122,7 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 		window.location.href = `mailto:?subject=${subject}&body=${body}`;
 	};
 
-	const toggleShareOptions = (attractionId) => {
-		setShareOptionsVisible((prev) => ({
-			...prev,
-			[attractionId]: !prev[attractionId],
-		}));
-	};
+	// Removed toggleShareOptions function
 
 	const handlePayAttractionViaStripe = (attraction) => {
 		navigate('/pay-attraction-stripe', {
@@ -148,10 +149,12 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 				config
 			);
 
-			alert(response.data.message || 'Attraction bookmarked successfully!');
+			toast.success(
+				response.data.message || 'Attraction bookmarked successfully!'
+			);
 		} catch (error) {
 			console.error('Error bookmarking Attraction:', error);
-			alert(
+			toast.error(
 				error.response?.data?.message ||
 					'Failed to bookmark Attraction. Try again later.'
 			);
@@ -160,6 +163,19 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 
 	return (
 		<div className='flex flex-col items-center py-10'>
+			{/* Toast Container for Notifications */}
+			<ToastContainer
+				position='top-right'
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme='colored'
+			/>
+
 			{/* Filter Section */}
 			<div className='w-full max-w-7xl px-4 mb-8'>
 				<label
@@ -278,72 +294,61 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 
 							{/* Share and Bookmark Icons */}
 							<div className='flex justify-between items-center p-4 bg-gray-50 border-t border-gray-200'>
-								{/* Share Dropdown */}
-								<div className='relative '>
-									<button
-										onClick={() => toggleShareOptions(attraction._id)}
-										className='flex items-center text-gray-700 hover:text-indigo-600 font-semibold transition-colors duration-200'
-										aria-label='Share Attraction'>
-										<FiShare2
-											size={22}
-											className='mr-2'
-										/>
-										Share
-									</button>
-
-									{shareOptionsVisible[attraction._id] && (
-										<div className='absolute right-0 mt-2 w-48 bg-blue border border-gray-300 rounded-lg shadow-lg z-20'>
-											<div className='p-2'>
-												{/* Copy Link */}
-												<button
-													onClick={() => handleCopyLink(attraction)}
-													className='flex items-center w-full text-left px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200'>
-													Copy Link
-												</button>
-												{/* Share via Email */}
-												<button
-													onClick={() => handleShareViaEmail(attraction)}
-													className='flex items-center w-full text-left px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200'>
-													Share via Email
-												</button>
-											</div>
-											{/* Social Media Share Icons */}
-											<div className='flex justify-around p-2 border-t border-gray-200 bg-gray-50'>
-												<a
-													href={`https://facebook.com/sharer/sharer.php?u=http://localhost:5173/attractions/${attraction._id}`}
-													target='_blank'
-													rel='noopener noreferrer'
-													className='text-blue-600 hover:text-blue-800'
-													aria-label='Share on Facebook'>
-													<FaFacebookF size={20} />
-												</a>
-												<a
-													href={`https://twitter.com/intent/tweet?url=http://localhost:5173/attractions/${attraction._id}`}
-													target='_blank'
-													rel='noopener noreferrer'
-													className='text-blue-400 hover:text-blue-600'
-													aria-label='Share on Twitter'>
-													<FaTwitter size={20} />
-												</a>
-												<a
-													href={`https://instagram.com/?url=http://localhost:5173/attractions/${attraction._id}`}
-													target='_blank'
-													rel='noopener noreferrer'
-													className='text-pink-500 hover:text-pink-700'
-													aria-label='Share on Instagram'>
-													<FaInstagram size={20} />
-												</a>
-												<a
-													href={`https://linkedin.com/shareArticle?mini=true&url=http://localhost:5173/attractions/${attraction._id}`}
-													target='_blank'
-													rel='noopener noreferrer'
-													className='text-blue-700 hover:text-blue-900'
-													aria-label='Share on LinkedIn'>
-													<FaLinkedinIn size={20} />
-												</a>
-											</div>
+								{/* Share Options are now always visible */}
+								<div className='relative'>
+									{/* Removed the toggle share button */}
+									{/* Share options are always rendered */}
+									<div className='mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-20'>
+										<div className='p-2'>
+											{/* Copy Link */}
+											<button
+												onClick={() => handleCopyLink(attraction)}
+												className='flex items-center w-full text-left px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200'>
+												Copy Link
+											</button>
+											{/* Share via Email */}
+											<button
+												onClick={() => handleShareViaEmail(attraction)}
+												className='flex items-center w-full text-left px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200'>
+												Share via Email
+											</button>
 										</div>
-									)}
+										{/* Social Media Share Icons */}
+										<div className='flex justify-around p-2 border-t border-gray-200 bg-gray-50'>
+											<a
+												href={`https://facebook.com/sharer/sharer.php?u=http://localhost:5173/attractions/${attraction._id}`}
+												target='_blank'
+												rel='noopener noreferrer'
+												className='text-blue-600 hover:text-blue-800'
+												aria-label='Share on Facebook'>
+												<FaFacebookF size={20} />
+											</a>
+											<a
+												href={`https://twitter.com/intent/tweet?url=http://localhost:5173/attractions/${attraction._id}`}
+												target='_blank'
+												rel='noopener noreferrer'
+												className='text-blue-400 hover:text-blue-600'
+												aria-label='Share on Twitter'>
+												<FaTwitter size={20} />
+											</a>
+											<a
+												href={`https://instagram.com/?url=http://localhost:5173/attractions/${attraction._id}`}
+												target='_blank'
+												rel='noopener noreferrer'
+												className='text-pink-500 hover:text-pink-700'
+												aria-label='Share on Instagram'>
+												<FaInstagram size={20} />
+											</a>
+											<a
+												href={`https://linkedin.com/shareArticle?mini=true&url=http://localhost:5173/attractions/${attraction._id}`}
+												target='_blank'
+												rel='noopener noreferrer'
+												className='text-blue-700 hover:text-blue-900'
+												aria-label='Share on LinkedIn'>
+												<FaLinkedinIn size={20} />
+											</a>
+										</div>
+									</div>
 								</div>
 
 								{/* Bookmark Icon */}
@@ -389,7 +394,7 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 							</label>
 							<select
 								value={selectedTicketType}
-								onChange={(e) => setSelectedTicketType(e.target.value)}
+								onChange={handleTicketTypeChange}
 								className='ml-2 border border-gray-300 rounded-md p-2'>
 								<option value=''>Select Ticket Type</option>
 								{selectedAttraction.ticketPrices && (
