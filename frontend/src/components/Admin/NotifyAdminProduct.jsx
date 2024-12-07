@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiAlertCircle, FiCheckCircle, FiLoader } from 'react-icons/fi'; // Icons for better visuals
+import { useNavigate } from 'react-router-dom';
 
 // Function to retrieve token from localStorage
 const getToken = () => {
@@ -76,6 +77,7 @@ const NotifyAdminProduct = () => {
 	const [newQuantity, setNewQuantity] = useState('');
 	const [authToken, setAuthToken] = useState(getToken());
 	const [formError, setFormError] = useState('');
+	const navigate = useNavigate();
 
 	const { notifications, loading, error } = useNotifications(authToken);
 	const {
@@ -97,6 +99,24 @@ const NotifyAdminProduct = () => {
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='max-w-5xl w-full bg-white p-10 rounded-xl shadow-2xl space-y-10'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h1 className='text-5xl font-bold text-center text-indigo-600'>
 					Admin Dashboard
 				</h1>

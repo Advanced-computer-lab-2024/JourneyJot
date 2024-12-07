@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AddGovernor = () => {
 	const [newGovernor, setNewGovernor] = useState({
@@ -12,6 +13,7 @@ const AddGovernor = () => {
 	const [isCreating, setIsCreating] = useState(false);
 	const [error, setError] = useState(''); // To display errors
 	const [success, setSuccess] = useState(''); // To display success message
+	const navigate = useNavigate();
 
 	// Handle input changes for the new governor form
 	const handleInputChange = (e) => {
@@ -68,6 +70,24 @@ const AddGovernor = () => {
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='p-8'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h2 className='text-2xl mb-4 font-bold'>Governor Management</h2>
 
 				{/* Display success and error messages */}

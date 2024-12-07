@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ChangePassword = () => {
 	const [currentPassword, setCurrentPassword] = useState('');
 	const [newPassword, setNewPassword] = useState('');
 	const [error, setError] = useState(null);
 	const [success, setSuccess] = useState(null);
+	const navigate = useNavigate();
 
 	const handleChangePassword = async (e) => {
 		e.preventDefault();
@@ -43,6 +45,24 @@ const ChangePassword = () => {
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='max-w-md mx-auto bg-white shadow-md rounded-lg p-6'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h2 className='text-2xl font-bold mb-4'>Change Password</h2>
 				<form onSubmit={handleChangePassword}>
 					<div className='mb-4'>

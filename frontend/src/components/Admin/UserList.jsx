@@ -2,12 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const UserList = () => {
 	const [users, setUsers] = useState([]);
 	const [tourists, setTourists] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
+	const navigate = useNavigate();
 
 	const API_URL = 'http://localhost:3000/admins/users-and-tourists'; // Replace with your API URL
 
@@ -47,6 +49,24 @@ const UserList = () => {
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='bg-white shadow-2xl rounded-lg p-8 max-w-6xl mx-auto'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h1 className='text-3xl font-bold text-gray-900 mb-8 text-center'>
 					Users and Tourists Data
 				</h1>

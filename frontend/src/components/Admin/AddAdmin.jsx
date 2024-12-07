@@ -1,6 +1,7 @@
 /** @format */
 import { useState } from 'react';
 import axios from 'axios';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const AddAdmin = () => {
 	const [newAdmin, setNewAdmin] = useState({
@@ -11,6 +12,7 @@ const AddAdmin = () => {
 	const [isCreating, setIsCreating] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [successMessage, setSuccessMessage] = useState('');
+	const navigate = useNavigate();
 
 	// Handle input changes for the new admin form
 	const handleInputChange = (e) => {
@@ -56,6 +58,25 @@ const AddAdmin = () => {
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='w-full max-w-md p-6 bg-white rounded-lg shadow-lg'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
+
 				<h2 className='text-3xl font-semibold mb-6 text-center text-teal-700'>
 					Admin Management
 				</h2>

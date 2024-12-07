@@ -1,11 +1,13 @@
 /** @format */
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDeleteUser = () => {
 	const [username, setUsername] = useState('');
 	const [success, setSuccess] = useState('');
 	const [error, setError] = useState('');
+	const navigate = useNavigate();
 
 	// Handle input change for username
 	const handleInputChange = (e) => {
@@ -51,6 +53,24 @@ const AdminDeleteUser = () => {
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='p-8 max-w-lg w-full'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h2 className='text-2xl font-semibold mb-6 text-center'>Delete User</h2>
 
 				{/* Success Message */}

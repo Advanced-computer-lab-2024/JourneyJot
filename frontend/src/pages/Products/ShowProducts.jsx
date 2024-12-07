@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Spinner from '../../components/General/Spinner';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ProductCard from '../../components/Products/ProductCard';
 
 const ShowProducts = () => {
@@ -13,6 +13,7 @@ const ShowProducts = () => {
 	const [maxPrice, setMaxPrice] = useState('');
 	const [sort, setSort] = useState(false);
 	const [searchedProduct, setSearchedProduct] = useState('');
+	const navigate = useNavigate();
 
 	const fetchProducts = async () => {
 		setLoading(true);
@@ -91,6 +92,24 @@ const ShowProducts = () => {
 		<div className='min-h-screen bg-gradient-to-r from-blue-300 via-indigo-400 to-purple-500 flex flex-col justify-center items-center py-8'>
 			{/* Header and Search */}
 			<div className='flex flex-col md:flex-row justify-between items-center mb-6 w-full px-4'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h1 className='text-4xl font-semibold text-teal-700 mb-4 md:mb-0'>
 					Products
 				</h1>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ComplaintsAdmin = () => {
 	const [complaints, setComplaints] = useState([]);
@@ -10,6 +11,7 @@ const ComplaintsAdmin = () => {
 	const [status, setStatus] = useState('');
 	const [sortOrder, setSortOrder] = useState('desc');
 	const token = localStorage.getItem('token');
+	const navigate = useNavigate();
 
 	// Function to get all complaints with sort and filter
 	const fetchComplaints = async () => {
@@ -89,6 +91,24 @@ const ComplaintsAdmin = () => {
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='w-full max-w-4xl bg-gray-100 p-8 rounded-lg shadow-lg'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h1 className='text-3xl font-bold text-center mb-8 text-teal-700'>
 					Admin Complaint Management
 				</h1>

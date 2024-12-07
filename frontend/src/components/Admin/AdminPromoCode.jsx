@@ -3,6 +3,7 @@
 // PromoCodeForm.jsx (ADMIN Component)
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const PromoCodeForm = () => {
 	const [code, setCode] = useState('');
@@ -11,6 +12,7 @@ const PromoCodeForm = () => {
 	const [successMessage, setSuccessMessage] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
 	const [promoCodes, setPromoCodes] = useState([]);
+	const navigate = useNavigate();
 
 	// Fetch promo codes
 	useEffect(() => {
@@ -94,6 +96,24 @@ const PromoCodeForm = () => {
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
 			<div className='max-w-3xl mx-auto p-6 bg-gray-50 shadow-md rounded-md'>
+				<button
+					onClick={() => navigate(-1)}
+					className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 mr-2'
+						fill='none'
+						viewBox='0 0 24 24'
+						stroke='currentColor'
+						strokeWidth={2}>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							d='M15 19l-7-7 7-7'
+						/>
+					</svg>
+					Back
+				</button>
 				<h3 className='text-2xl font-bold text-center text-gray-800 mb-6'>
 					Create a Promo Code
 				</h3>
