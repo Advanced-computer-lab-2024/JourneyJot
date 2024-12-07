@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const CompletedActivities = () => {
+	const navigate = useNavigate();
 	const [distinctTouristCount, setDistinctTouristCount] = useState(0);
 	const [allDistinctTouristCount, setAllDistinctTouristCount] = useState(0);
 	const [distinctTourists, setDistinctTourists] = useState([]);
@@ -11,7 +13,7 @@ const CompletedActivities = () => {
 	const [year, setYear] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
-
+	
 	const FILTERED_API_URL =
 		'http://localhost:3000/tourists/completedActivitiesAndTourists';
 	const ALL_API_URL = 'http://localhost:3000/tourists/completedActivities';
@@ -71,8 +73,28 @@ const CompletedActivities = () => {
 	}, [month, year]);
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-300   flex items-center justify-center'>
 			<div className='bg-white shadow-md rounded-lg p-6 max-w-4xl w-full'>
+			<button
+          onClick={() => navigate(-1)}
+          className="text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Back
+        </button>
 				<h1 className='text-2xl font-bold text-gray-800 text-center mb-6'>
 					Completed Activities Report
 				</h1>
