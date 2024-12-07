@@ -175,19 +175,7 @@ const AdminDashboard = () => {
 											className='py-1'
 											role='none'>
 											<Link
-												to='/admins/profile'
-												className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-												role='menuitem'>
-												Profile
-											</Link>
-											<Link
-												to='/admins/settings'
-												className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-												role='menuitem'>
-												Settings
-											</Link>
-											<Link
-												to='/logout'
+												to='/'
 												className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
 												role='menuitem'>
 												<FiLogOut className='inline mr-2' /> Logout

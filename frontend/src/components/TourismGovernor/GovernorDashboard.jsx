@@ -1,7 +1,12 @@
 /** @format */
+import { useState } from 'react';
+import { FaUserCircle } from 'react-icons/fa';
+import { FiLogOut } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
 const GovernorDashBoard = () => {
+	const [dropdownOpen, setDropdownOpen] = useState(false);
+
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-300'>
 			<nav className='bg-white shadow-lg'>
@@ -25,6 +30,37 @@ const GovernorDashBoard = () => {
 							className='text-blue-600 hover:text-blue-800'>
 							Attraction Revenue
 						</Link>
+					</div>
+					<div className='flex items-center'>
+						<div className='ml-3 relative'>
+							<div>
+								<button
+									onClick={() => setDropdownOpen(!dropdownOpen)}
+									className='flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500'
+									id='user-menu'
+									aria-haspopup='true'>
+									<FaUserCircle className='h-8 w-8 text-gray-300' />
+								</button>
+							</div>
+							{dropdownOpen && (
+								<div
+									className='origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5'
+									role='menu'
+									aria-orientation='vertical'
+									aria-labelledby='user-menu'>
+									<div
+										className='py-1'
+										role='none'>
+										<Link
+											to='/'
+											className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+											role='menuitem'>
+											<FiLogOut className='inline mr-2' /> Logout
+										</Link>
+									</div>
+								</div>
+							)}
+						</div>
 					</div>
 				</div>
 			</nav>

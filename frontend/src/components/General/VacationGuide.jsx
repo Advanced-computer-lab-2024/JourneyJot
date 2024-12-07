@@ -11,9 +11,11 @@ import {
 	FaSmile,
 } from 'react-icons/fa';
 import { motion } from 'framer-motion'; // For animations
+import { useNavigate } from 'react-router-dom';
 
 const VacationGuide = () => {
 	// Define the steps of the vacation booking process with unique IDs
+	const navigate = useNavigate();
 	const steps = [
 		{
 			id: 1,
@@ -57,6 +59,24 @@ const VacationGuide = () => {
 			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 				{/* Header */}
 				<div className='text-center mb-12'>
+					<button
+						onClick={() => navigate(-1)}
+						className='text-gray-700 text-xl mb-4 flex items-center hover:text-gray-900 transition'>
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							className='h-6 w-6 mr-2'
+							fill='none'
+							viewBox='0 0 24 24'
+							stroke='currentColor'
+							strokeWidth={2}>
+							<path
+								strokeLinecap='round'
+								strokeLinejoin='round'
+								d='M15 19l-7-7 7-7'
+							/>
+						</svg>
+						Back
+					</button>
 					<h2 className='text-base text-indigo-600 font-semibold tracking-wide uppercase'>
 						JourneyJot Guide
 					</h2>
