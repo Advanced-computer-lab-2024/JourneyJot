@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiBookmark, FiShare2 } from 'react-icons/fi';
+import { FiBookmark } from 'react-icons/fi';
 import { MdPayment } from 'react-icons/md';
 import {
 	FaFacebookF,
@@ -23,8 +23,6 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 	const [selectedAttraction, setSelectedAttraction] = useState(null);
 	const [selectedTicketType, setSelectedTicketType] = useState('');
 	const [ticketPrice, setTicketPrice] = useState(null); // NEW state for ticket price
-	const [error, setError] = useState(null);
-	// Removed shareOptionsVisible state
 	const navigate = useNavigate(); // Ensure you have imported useNavigate from 'react-router-dom'
 
 	// Fetch data from the API using axios
@@ -99,12 +97,11 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 
 			setIsConfirmModalOpen(false); // Close the modal after booking
 		} catch (error) {
-			setError(error.response?.data?.message || 'An error occurred.');
+			const errorMessage =
+				error.response?.data?.message || 'An error occurred.';
+			toast.error(`Booking failed: ${errorMessage}`);
 			console.error('Error booking attraction:', error);
 			setIsConfirmModalOpen(false);
-			toast.error(
-				error.response?.data?.message || 'An error occurred while booking.'
-			);
 		}
 	};
 
@@ -121,8 +118,6 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 		);
 		window.location.href = `mailto:?subject=${subject}&body=${body}`;
 	};
-
-	// Removed toggleShareOptions function
 
 	const handlePayAttractionViaStripe = (attraction) => {
 		navigate('/pay-attraction-stripe', {
@@ -154,10 +149,10 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 			);
 		} catch (error) {
 			console.error('Error bookmarking Attraction:', error);
-			toast.error(
+			const errorMessage =
 				error.response?.data?.message ||
-					'Failed to bookmark Attraction. Try again later.'
-			);
+				'Failed to bookmark Attraction. Try again later.';
+			toast.error(`Bookmark failed: ${errorMessage}`);
 		}
 	};
 
@@ -294,10 +289,8 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 
 							{/* Share and Bookmark Icons */}
 							<div className='flex justify-between items-center p-4 bg-gray-50 border-t border-gray-200'>
-								{/* Share Options are now always visible */}
+								{/* Share Options are always visible */}
 								<div className='relative'>
-									{/* Removed the toggle share button */}
-									{/* Share options are always rendered */}
 									<div className='mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-20'>
 										<div className='p-2'>
 											{/* Copy Link */}
@@ -368,20 +361,6 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 				)}
 			</div>
 
-			{/* Error Notification */}
-			{error && (
-				<div className='fixed bottom-5 right-5 bg-red-600 text-white py-3 px-5 rounded-lg shadow-lg z-50 transition-opacity duration-500 opacity-100'>
-					<div className='flex justify-between items-center'>
-						<span>{error}</span>
-						<button
-							className='text-white font-bold'
-							onClick={() => setError(null)}>
-							X
-						</button>
-					</div>
-				</div>
-			)}
-
 			{/* Confirmation Modal for Booking */}
 			{/* Ticket Selection Modal */}
 			{isConfirmModalOpen && selectedAttraction && (
@@ -394,7 +373,7 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 							</label>
 							<select
 								value={selectedTicketType}
-								onChange={handleTicketTypeChange}
+								onChange={(e) => handleTicketTypeChange(e.target.value)}
 								className='ml-2 border border-gray-300 rounded-md p-2'>
 								<option value=''>Select Ticket Type</option>
 								{selectedAttraction.ticketPrices && (
@@ -423,14 +402,14 @@ const AttractionsCard = ({ currency, conversionRate = 1 }) => {
 									).toFixed(2) || 'N/A'}
 								</p>
 								<button
-									className='mt-4 py-2 px-4 bg-green-600 text-white rounded-md'
+									className='mt-4 py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200'
 									onClick={confirmBooking}>
 									Confirm Booking
 								</button>
 							</div>
 						)}
 						<button
-							className='mt-4 py-2 px-4 bg-red-600 text-white rounded-md'
+							className='mt-4 py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200'
 							onClick={() => setIsConfirmModalOpen(false)}>
 							Close
 						</button>

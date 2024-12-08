@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const PreviousPurchases = () => {
 	const [purchases, setPurchases] = useState([]);
@@ -50,17 +52,33 @@ const PreviousPurchases = () => {
 			// On success, update the state to reflect the canceled order
 			setPurchases((prevPurchases) =>
 				prevPurchases.map((purchase) =>
-					// Check if the productId matches and set all instances to canceled
 					purchase.productId._id === productId && purchase._id === purchaseId
 						? { ...purchase, status: 'canceled' } // Mark as canceled
 						: purchase
 				)
 			);
-			alert(response.data.message); // Show success message
+			toast.success(response.data.message, {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				theme: 'colored',
+			});
 		} catch (err) {
-			alert(
+			toast.error(
 				'Error canceling the order: ' +
-					(err.response?.data?.message || err.message)
+					(err.response?.data?.message || err.message),
+				{
+					position: 'top-right',
+					autoClose: 3000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					theme: 'colored',
+				}
 			);
 		}
 	};
@@ -95,6 +113,7 @@ const PreviousPurchases = () => {
 	// Render the list of previous purchases
 	return (
 		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 p-6'>
+			<ToastContainer />
 			<div className='max-w-7xl mx-auto px-4 py-8 bg-white rounded-lg shadow-md'>
 				<button
 					onClick={() => navigate(-1)}
