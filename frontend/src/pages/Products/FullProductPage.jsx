@@ -199,7 +199,7 @@ const FullProductPage = () => {
 	if (loading) return <div className='text-center py-6'>Loading...</div>;
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-400 flex items-center justify-center relative'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-300 flex items-center justify-center relative'>
 			{/* Toast Container for Notifications */}
 			<ToastContainer
 				position='top-right'

@@ -89,7 +89,7 @@ const ShowProducts = () => {
 	}, [searchedProduct]);
 
 	return (
-		<div className='min-h-screen bg-gradient-to-r from-blue-300 via-indigo-400 to-purple-500 flex flex-col justify-center items-center py-8'>
+		<div className='min-h-screen bg-gradient-to-r from-blue-200 via-indigo-300 to-purple-300 flex flex-col justify-center items-center py-8'>
 			{/* Header and Search */}
 			<div className='flex flex-col md:flex-row justify-between items-center mb-6 w-full px-4'>
 				<button
