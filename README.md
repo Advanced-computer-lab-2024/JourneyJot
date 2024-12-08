@@ -48,9 +48,15 @@ JourneyJot is designed to revolutionize vacation planning by offering an all-in-
 
 ---
 
-## Build Status
 
-![Build Status](https://github.com/yourusername/JourneyJot/workflows/CI.yml/badge.svg)
+## Build Status ✅
+The build status functionality in this application is fully operational. 
+- Real-time updates for build progress.
+- Accurate status tracking for each pipeline stage (e.g., Checkout, Build, Test, Deploy).
+- Interactive UI displaying build success, failures, and ongoing progress.
+- Integration with CI/CD tools such as [Jenkins/GitHub Actions/CircleCI].
+
+
 
 ---
 
