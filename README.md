@@ -1,8 +1,4 @@
-
-
 # Virtual Trip Planner
-
-![Project Banner](./screenshots/HomePage.png)
 
 ## Table of Contents
 
@@ -41,31 +37,31 @@ This project follows the [Airbnb JavaScript Style Guide](https://github.com/airb
 ## Screenshots
 
 ### Home Page
-[![Home Page](./screenshots/HomePage.png)](./screenshots/HomePage.png)
+[![Home Page](./Screenshots/HomePage.png)](./Screenshots/HomePage.png)
 *Home Page showcasing featured attractions and itineraries.*
 
 ### Admin Page
-[![Admin Page](./screenshots/AdminPage.png)](./screenshots/AdminPage.png)
+[![Admin Page](./Screenshots/AdminPage.png)](./Screenshots/AdminPage.png)
 *Admin dashboard for managing users, categories, and preferences.*
 
 ### Advertiser Page
-[![Advertiser Page](./screenshots/AdvertiserPage.png)](./screenshots/AdvertiserPage.png)
+[![Advertiser Page](./Screenshots/AdvertiserPage.png)](./Screenshots/AdvertiserPage.png)
 *Advertiser dashboard for creating and managing activities.*
 
 ### Governor Page
-[![Governor Page](./screenshots/GovernorPage.png)](./screenshots/GovernorPage.png)
+[![Governor Page](./Screenshots/GovernorPage.png)](./Screenshots/GovernorPage.png)
 *Governor dashboard for managing attractions and viewing revenues.*
 
 ### Seller Page
-[![Seller Page](./screenshots/SellerPage.png)](./screenshots/SellerPage.png)
+[![Seller Page](./Screenshots/SellerPage.png)](./Screenshots/SellerPage.png)
 *Seller dashboard for managing products and viewing product revenue.*
 
 ### Tour Guide Page
-[![Tour Guide Page](./screenshots/TourguidePage.png)](./screenshots/TourguidePage.png)
+[![Tour Guide Page](./Screenshots/TourguidePage.png)](./Screenshots/TourguidePage.png)
 *Tour Guide dashboard for creating and managing itineraries.*
 
 ### Tourist Page
-[![Tourist Page](./screenshots/TouristPage.png)](./screenshots/TouristPage.png)
+[![Tourist Page](./Screenshots/TouristPage.png)](./Screenshots/TouristPage.png)
 *Tourist dashboard for browsing attractions, booking trips, and managing reservations.*
 
 ## Tech/Framework Used
@@ -115,4 +111,5 @@ This project follows the [Airbnb JavaScript Style Guide](https://github.com/airb
 ## Code Examples
 
 ### Stripe Payment Integration
+
 
