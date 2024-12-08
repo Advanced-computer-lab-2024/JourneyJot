@@ -1,7 +1,8 @@
+<!-- @format -->
 
 # JourneyJot
 
-![JourneyJot Logo](./Screenshots/JourneyJot.png "JourneyJot - Your Ultimate Travel Companion")
+![JourneyJot Logo](./Screenshots/JourneyJot.png 'JourneyJot - Your Ultimate Travel Companion')
 
 ![GitHub stars](https://img.shields.io/github/stars/yourusername/JourneyJot?style=social) ![GitHub issues]
 
@@ -64,43 +65,44 @@ JourneyJot adheres to the [Airbnb JavaScript Style Guide](https://github.com/air
 ### Home Page
 
 [![Home Page](./Screenshots/HomePage.png)](./Screenshots/HomePage.png)  
-*Home Page showcasing featured attractions and itineraries.*
+_Home Page showcasing featured attractions and itineraries._
 
 ### Admin Page
 
 [![Admin Page](./Screenshots/AdminPage.png)](./Screenshots/AdminPage.png)  
-*Admin dashboard for managing users, categories, and preferences.*
+_Admin dashboard for managing users, categories, and preferences._
 
 ### Advertiser Page
 
 [![Advertiser Page](./Screenshots/AdvertiserPage.png)](./Screenshots/AdvertiserPage.png)  
-*Advertiser dashboard for creating and managing activities.*
+_Advertiser dashboard for creating and managing activities._
 
 ### Governor Page
 
 [![Governor Page](./Screenshots/GovernorPage.png)](./Screenshots/GovernorPage.png)  
-*Governor dashboard for managing attractions and viewing revenues.*
+_Governor dashboard for managing attractions and viewing revenues._
 
 ### Seller Page
 
 [![Seller Page](./Screenshots/SellerPage.png)](./Screenshots/SellerPage.png)  
-*Seller dashboard for managing products and viewing product revenue.*
+_Seller dashboard for managing products and viewing product revenue._
 
 ### Tour Guide Page
 
 [![Tour Guide Page](./Screenshots/TourguidePage.png)](./Screenshots/TourguidePage.png)  
-*Tour Guide dashboard for creating and managing itineraries.*
+_Tour Guide dashboard for creating and managing itineraries._
 
 ### Tourist Page
 
 [![Tourist Page](./Screenshots/TouristPage.png)](./Screenshots/TouristPage.png)  
-*Tourist dashboard for browsing attractions, booking trips, and managing reservations.*
+_Tourist dashboard for browsing attractions, booking trips, and managing reservations._
 
 ---
 
 ## Tech/Framework Used
 
 - **Frontend:**
+
   - React.js
   - React Router DOM
   - Tailwind CSS
@@ -110,6 +112,7 @@ JourneyJot adheres to the [Airbnb JavaScript Style Guide](https://github.com/air
   - Stripe.js & React Stripe.js
 
 - **Backend:**
+
   - Node.js
   - Express.js
   - MongoDB
@@ -487,3 +490,4 @@ Postman - API Testing Tool
 Airbnb JavaScript Style Guide - Code Style Reference
 License
 This project is licensed under the Apache 2.0 License.
+```
