@@ -48,15 +48,14 @@ JourneyJot is designed to revolutionize vacation planning by offering an all-in-
 
 ---
 
-
 ## Build Status ✅
-The build status functionality in this application is fully operational. 
+
+The build status functionality in this application is fully operational.
+
 - Real-time updates for build progress.
 - Accurate status tracking for each pipeline stage (e.g., Checkout, Build, Test, Deploy).
 - Interactive UI displaying build success, failures, and ongoing progress.
 - Integration with CI/CD tools such as [Jenkins/GitHub Actions/CircleCI].
-
-
 
 ---
 
@@ -157,9 +156,9 @@ _Tourist dashboard for browsing attractions, booking trips, and managing reserva
 
 ## Code Examples
 
-### Auth  Integration Backend
+### Auth Integration Backend
 
-```jsx
+````jsx
 exports.login = (req, res, next) => {
 	User.findOne({ username: req.body.username })
 		.exec()
@@ -564,4 +563,4 @@ Postman - API Testing Tool
 Airbnb JavaScript Style Guide - Code Style Reference
 License
 This project is licensed under the Apache 2.0 License.
-```
+````
