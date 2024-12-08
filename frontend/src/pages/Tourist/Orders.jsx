@@ -134,7 +134,7 @@ const PreviousPurchases = () => {
 					Back
 				</button>
 				<h1 className='text-3xl font-semibold text-center text-indigo-800 mb-8'>
-					Purchase History
+					Orders
 				</h1>
 				<ul className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
 					{purchases.map((purchase, index) => (
