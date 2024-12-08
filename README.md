@@ -1,8 +1,9 @@
-<!-- @format -->
 
 # JourneyJot
 
-![JourneyJot Logo](./Screenshots/JourneyJot.png)
+![JourneyJot Logo](./Screenshots/JourneyJot.png "JourneyJot - Your Ultimate Travel Companion")
+
+![GitHub stars](https://img.shields.io/github/stars/yourusername/JourneyJot?style=social) ![GitHub issues](https://img.shields.io/github/issues/yourusername/JourneyJot) ![Build Status](https://github.com/yourusername/JourneyJot/workflows/CI.yml/badge.svg)
 
 **German University in Cairo**  
 **Media Engineering and Technology**  
@@ -27,6 +28,8 @@
 - [API References](#api-references)
 - [Tests](#tests)
 - [How to Use](#how-to-use)
+- [Roadmap](#roadmap)
+- [FAQ](#faq)
 - [Contribute](#contribute)
 - [Credits](#credits)
 - [License](#license)
@@ -47,7 +50,7 @@ JourneyJot is designed to revolutionize vacation planning by offering an all-in-
 
 ## Build Status
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Build Status](https://github.com/yourusername/JourneyJot/workflows/CI.yml/badge.svg)
 
 ---
 
@@ -62,44 +65,43 @@ JourneyJot adheres to the [Airbnb JavaScript Style Guide](https://github.com/air
 ### Home Page
 
 [![Home Page](./Screenshots/HomePage.png)](./Screenshots/HomePage.png)  
-_Home Page showcasing featured attractions and itineraries._
+*Home Page showcasing featured attractions and itineraries.*
 
 ### Admin Page
 
 [![Admin Page](./Screenshots/AdminPage.png)](./Screenshots/AdminPage.png)  
-_Admin dashboard for managing users, categories, and preferences._
+*Admin dashboard for managing users, categories, and preferences.*
 
 ### Advertiser Page
 
 [![Advertiser Page](./Screenshots/AdvertiserPage.png)](./Screenshots/AdvertiserPage.png)  
-_Advertiser dashboard for creating and managing activities._
+*Advertiser dashboard for creating and managing activities.*
 
 ### Governor Page
 
 [![Governor Page](./Screenshots/GovernorPage.png)](./Screenshots/GovernorPage.png)  
-_Governor dashboard for managing attractions and viewing revenues._
+*Governor dashboard for managing attractions and viewing revenues.*
 
 ### Seller Page
 
 [![Seller Page](./Screenshots/SellerPage.png)](./Screenshots/SellerPage.png)  
-_Seller dashboard for managing products and viewing product revenue._
+*Seller dashboard for managing products and viewing product revenue.*
 
 ### Tour Guide Page
 
 [![Tour Guide Page](./Screenshots/TourguidePage.png)](./Screenshots/TourguidePage.png)  
-_Tour Guide dashboard for creating and managing itineraries._
+*Tour Guide dashboard for creating and managing itineraries.*
 
 ### Tourist Page
 
 [![Tourist Page](./Screenshots/TouristPage.png)](./Screenshots/TouristPage.png)  
-_Tourist dashboard for browsing attractions, booking trips, and managing reservations._
+*Tourist dashboard for browsing attractions, booking trips, and managing reservations.*
 
 ---
 
 ## Tech/Framework Used
 
 - **Frontend:**
-
   - React.js
   - React Router DOM
   - Tailwind CSS
@@ -109,7 +111,6 @@ _Tourist dashboard for browsing attractions, booking trips, and managing reserva
   - Stripe.js & React Stripe.js
 
 - **Backend:**
-
   - Node.js
   - Express.js
   - MongoDB
@@ -150,7 +151,7 @@ _Tourist dashboard for browsing attractions, booking trips, and managing reserva
 
 ### Stripe Payment Integration
 
-````jsx
+```jsx
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -195,30 +196,45 @@ const handlePayment = async (e) => {
 Fetching Cart Items
 jsx
 Copy code
-useEffect(() => {
-  const fetchCart = async () => {
-    try {
-      const response = await axios.get('/tourists/getCart', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setCart(response.data.cart || []);
-      setTotalCost(
-        response.data.cart.reduce(
-          (total, item) => total + item.quantity * item.productId.price,
-          0
-        )
-      );
-    } catch (error) {
-      toast.error('Failed to fetch cart. Please try again.');
-    }
-  };
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-  if (cart.length === 0) {
-    fetchCart();
-  }
-}, [cart]);
+const CartComponent = () => {
+  const [cart, setCart] = useState([]);
+  const [totalCost, setTotalCost] = useState(0);
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get('/tourists/getCart', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        setCart(response.data.cart || []);
+        setTotalCost(
+          response.data.cart.reduce(
+            (total, item) => total + item.quantity * item.productId.price,
+            0
+          )
+        );
+      } catch (error) {
+        toast.error('Failed to fetch cart. Please try again.');
+      }
+    };
+
+    if (cart.length === 0) {
+      fetchCart();
+    }
+  }, [cart]);
+
+  return (
+    <div>
+      {/* Cart UI Components */}
+    </div>
+  );
+};
 Installation
 Prerequisites
 Node.js (v14 or later)
@@ -247,6 +263,13 @@ env
 Copy code
 REACT_APP_STRIPE_PUBLIC_KEY=your_stripe_public_key
 REACT_APP_API_URL=http://localhost:3000
+Alternatively, you can copy the provided example:
+
+bash
+Copy code
+cp .env.example .env
+Tip: Create a .env.example file with placeholder values to guide users without exposing sensitive information.
+
 Run the Application
 
 bash
@@ -257,6 +280,8 @@ yarn start
 Backend Setup
 
 Ensure the backend server is running and accessible at the URL specified in REACT_APP_API_URL.
+
+Note: Follow the backend setup instructions provided in the Backend Documentation.
 
 API References
 General Routes
@@ -392,7 +417,7 @@ Handle seller-specific notifications.
 Manage profile and change password.
 Administrator Features
 
-Manage users, categories, and preference tags.
+Manage users, categories, preference tags.
 Review documents and handle complaints.
 Oversee revenue and generate reports.
 Send emails to advertisers and tour guides.
@@ -405,6 +430,25 @@ Payment Processing
 
 Use the integrated Stripe payment gateway to securely process transactions.
 Navigate to payment pages such as /pay-itinerary-stripe to complete purchases.
+Roadmap
+ Implement user reviews and ratings
+ Add multi-language support
+ Integrate social media sharing
+ Enhance mobile responsiveness
+ Develop advanced analytics dashboard
+FAQ
+Q: How do I reset my password?
+A: Navigate to /tourist/homePage/change-password to reset your password.
+
+Q: Can I use JourneyJot without creating an account?
+A: Yes, you can browse as a guest, but some features require an account.
+
+Q: How secure is my payment information?
+A: JourneyJot uses Stripe for payment processing, ensuring secure transactions and data protection.
+
+Q: Who do I contact for support?
+A: Please open an issue in the Issue Tracker for any support or queries.
+
 Contribute
 Contributions are welcome! Please follow these steps:
 
@@ -429,6 +473,8 @@ Open a Pull Request
 
 Provide a detailed description of your changes and submit the pull request for review.
 
+Tip: Review the Contributing Guidelines for more details.
+
 Credits
 React.js - Frontend Library
 Express.js - Backend Framework
@@ -442,89 +488,3 @@ Postman - API Testing Tool
 Airbnb JavaScript Style Guide - Code Style Reference
 License
 This project is licensed under the Apache 2.0 License.
-
-Note: Ensure all routes are functioning as expected. Refer to the API References section for detailed information on available routes. For any issues not covered in this README, please open an issue on the GitHub repository.
-
-markdown
-Copy code
-
----
-
-### **Enhancements Made:**
-
-1. **Project Branding:**
-   - **Logo Inclusion:** Added a logo section at the top with a placeholder for the JourneyJot logo (`JourneyJotLogo.png`). Ensure you create a logo image and place it in the `Screenshots` folder.
-   - **Project Information:** Included essential project details such as the university, department, semester, project grade, report grade, and relevant deadlines.
-
-2. **Structured Layout:**
-   - **Consistent Section Separators:** Used horizontal rules (`---`) to clearly separate major sections for better readability.
-   - **Consolidated Sections:** Removed redundant or course-specific instructions to focus on the project's technical aspects.
-
-3. **Improved Navigation:**
-   - **Table of Contents:** Maintained a clear Table of Contents for easy navigation through the ReadMe.
-   - **Clickable Screenshots:** Ensured each screenshot is both visible and clickable, allowing users to view the full-sized image.
-
-4. **Enhanced Clarity:**
-   - **Detailed Installation Steps:** Provided clear, step-by-step instructions for setting up the project, including cloning the repository, installing dependencies, setting up environment variables, and running the application.
-   - **Comprehensive API References:** Organized API routes by user roles and functionalities for easier reference.
-   - **Clear Contribution Guidelines:** Simplified the contribution process with precise git commands and instructions.
-
-5. **Professional Presentation:**
-   - **Consistent Formatting:** Used consistent markdown formatting, such as bold text for section titles and italicized descriptions for screenshots.
-   - **Code Blocks:** Properly formatted code examples with syntax highlighting for better readability.
-
-6. **Accessibility and Usability:**
-   - **Descriptive Alt Text:** Ensured that all images have descriptive alt text to improve accessibility.
-   - **Environment Variables Guidance:** Suggested the inclusion of a `.env.example` file for guiding users without exposing sensitive information.
-
-7. **Additional Recommendations:**
-   - **Logo Design:** To create a professional logo for JourneyJot, consider using graphic design tools like [Canva](https://www.canva.com/), [Adobe Illustrator](https://www.adobe.com/products/illustrator.html), or [Figma](https://www.figma.com/). Alternatively, collaborate with a designer to craft a unique and memorable logo that represents travel and journey planning.
-   - **Live Demo Link:** If available, include a link to a live demo of JourneyJot to provide users with immediate access to the application.
-   - **.env.example File:** Create a `.env.example` file with placeholder values to guide contributors on necessary environment variables without exposing sensitive data.
-   - **Continuous Integration (CI):** Integrate CI tools like GitHub Actions to automate testing and deployment, and update the Build Status badge accordingly.
-   - **Contribution Guidelines and Code of Conduct:** Consider adding separate `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` files to outline detailed guidelines for contributors and establish a positive project environment.
-
----
-
-### **Steps to Add Your Logo:**
-
-1. **Design the Logo:**
-   - Create a travel-themed logo for JourneyJot using graphic design tools or by collaborating with a designer.
-   - Save the logo as `JourneyJotLogo.png`.
-
-2. **Add the Logo to Your Repository:**
-   - Place the `JourneyJotLogo.png` file inside the `Screenshots` folder in your repository.
-   - Ensure the path `./Screenshots/JourneyJotLogo.png` is correct.
-
-3. **Commit and Push the Logo:**
-
-   ```bash
-   git add ./Screenshots/JourneyJotLogo.png
-   git commit -m "Add JourneyJot logo"
-   git push origin main
-Verify the Logo in README:
-Navigate to your repository on GitHub.
-Open the README.md file to ensure the logo displays correctly at the top.
-Final Checklist:
-Images:
-
-Ensure all specified images (AdminPage.png, AdvertiserPage.png, GovernorPage.png, HomePage.png, SellerPage.png, TourguidePage.png, TouristPage.png, JourneyJotLogo.png) are placed inside the Screenshots folder with exact file names.
-Verify that the images are committed and pushed to GitHub.
-README File:
-
-Confirm that the README.md file is located at the root of your repository.
-Open the README on GitHub to ensure that all images display correctly and are clickable.
-Link Verification:
-
-Test each image link by clicking on it in the GitHub README to ensure it opens the full-sized image.
-Consistency:
-
-Maintain consistent image sizes and quality for a professional appearance.
-Use descriptive alt text for accessibility.
-Environment Variables:
-
-Consider adding a .env.example file to guide users on required environment variables without exposing sensitive information.
-Live Demo:
-
-If possible, deploy the application and include a link to the live demo in the ReadMe for easy access.
-````
