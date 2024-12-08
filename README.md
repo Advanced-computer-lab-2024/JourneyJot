@@ -1,1 +1,2 @@
-![Homepage Screenshot]("C:\Users/ASUS/Pictures/cherry.jpeg")
+![Home Page](./Screenshots/HomePage.png)
+
