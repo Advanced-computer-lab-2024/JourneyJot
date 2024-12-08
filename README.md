@@ -3,7 +3,7 @@
 
 ![JourneyJot Logo](./Screenshots/JourneyJot.png "JourneyJot - Your Ultimate Travel Companion")
 
-![GitHub stars](https://img.shields.io/github/stars/yourusername/JourneyJot?style=social) ![GitHub issues](https://img.shields.io/github/issues/yourusername/JourneyJot) ![Build Status](https://github.com/yourusername/JourneyJot/workflows/CI.yml/badge.svg)
+![GitHub stars](https://img.shields.io/github/stars/yourusername/JourneyJot?style=social) ![GitHub issues]
 
 **German University in Cairo**  
 **Media Engineering and Technology**  
@@ -18,7 +18,6 @@
 
 - [Project Title](#project-title)
 - [Motivation](#motivation)
-- [Build Status](#build-status)
 - [Code Style](#code-style)
 - [Screenshots](#screenshots)
 - [Tech/Framework Used](#techframework-used)
