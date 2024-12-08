@@ -159,6 +159,7 @@ _Tourist dashboard for browsing attractions, booking trips, and managing reserva
 
 ### Auth  Integration Backend
 
+```jsx
 exports.login = (req, res, next) => {
 	User.findOne({ username: req.body.username })
 		.exec()
